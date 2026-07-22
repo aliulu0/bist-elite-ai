@@ -1,0 +1,36 @@
+[Unit]
+Description=BIST Elite AI - Telegram Bot
+Documentation=https://github.com/bist-elite-ai/bist-elite-ai
+After=network.target bist-api.service
+Wants=bist-api.service
+
+[Service]
+Type=simple
+User=bist
+Group=bist
+WorkingDirectory=/opt/bist-elite-ai/apps/telegram
+EnvironmentFile=/opt/bist-elite-ai/.env
+ExecStart=/usr/bin/node dist/main.js
+ExecStop=/bin/kill -TERM $MAINPID
+Restart=on-failure
+RestartSec=10
+StartLimitBurst=3
+StartLimitIntervalSec=120
+
+# Security
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+
+# Resource limits
+LimitNOFILE=65535
+MemoryMax=256M
+CPUQuota=40%
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=bist-telegram
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,12 @@
+{
+    "name": "sentiment_analyzer",
+    "version": "1.0.0",
+    "author": "BIST Elite AI",
+    "description": "Basic text sentiment analyzer for financial news",
+    "category": "ai",
+    "min_app_version": "1.0.0",
+    "permissions": ["read_data", "access_ai"],
+    "tags": ["ai", "nlp", "sentiment", "news"],
+    "entry_point": "plugin.py",
+    "class_name": "SentimentAnalyzerPlugin"
+}

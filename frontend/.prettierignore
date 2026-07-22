@@ -1,0 +1,3 @@
+name: "BIST Elite AI - Frontend"
+plugins:
+  - "@next/next"

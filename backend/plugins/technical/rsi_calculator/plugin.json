@@ -1,0 +1,12 @@
+{
+    "name": "rsi_calculator",
+    "version": "1.0.0",
+    "author": "BIST Elite AI",
+    "description": "Calculates Relative Strength Index (RSI) indicator",
+    "category": "technical",
+    "min_app_version": "1.0.0",
+    "permissions": ["read_data", "write_data"],
+    "tags": ["rsi", "momentum", "oscillator"],
+    "entry_point": "plugin.py",
+    "class_name": "RSICalculatorPlugin"
+}

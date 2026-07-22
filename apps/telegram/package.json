@@ -1,0 +1,20 @@
+{
+  "name": "@bist-elite/telegram",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "ts-node src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "start:webhook": "BOT_MODE=webhook node dist/index.js"
+  },
+  "dependencies": {
+    "grammy": "^1.28.0",
+    "dotenv": "^16.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "typescript": "^5.5.0",
+    "ts-node": "^10.9.0"
+  }
+}

@@ -1,0 +1,38 @@
+[Unit]
+Description=BIST Elite AI - Web Application
+Documentation=https://github.com/bist-elite-ai/bist-elite-ai
+After=network.target bist-api.service
+Wants=bist-api.service
+
+[Service]
+Type=simple
+User=bist
+Group=bist
+WorkingDirectory=/opt/bist-elite-ai/apps/web
+EnvironmentFile=/opt/bist-elite-ai/.env
+Environment=NODE_ENV=production
+Environment=PORT=3000
+ExecStart=/usr/bin/node server.js
+ExecStop=/bin/kill -TERM $MAINPID
+Restart=on-failure
+RestartSec=5
+StartLimitBurst=5
+StartLimitIntervalSec=60
+
+# Security
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+
+# Resource limits
+LimitNOFILE=65535
+MemoryMax=384M
+CPUQuota=60%
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=bist-web
+
+[Install]
+WantedBy=multi-user.target

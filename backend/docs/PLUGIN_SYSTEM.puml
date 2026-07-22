@@ -1,0 +1,256 @@
+@startuml Plugin System Architecture
+
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam linetype ortho
+
+title BIST Elite AI - Plugin System Architecture
+
+package "plugin_system.interfaces" #F0F0F0 {
+    enum PluginCategory {
+        TECHNICAL
+        PROVIDER
+        AI
+        REPORT
+        NOTIFICATION
+        STRATEGY
+        RISK
+    }
+
+    enum PluginStatus {
+        DISCOVERED
+        LOADED
+        INITIALIZED
+        RUNNING
+        STOPPED
+        ERROR
+        DISABLED
+    }
+
+    enum PluginPermission {
+        READ_DATA
+        WRITE_DATA
+        READ_CONFIG
+        WRITE_CONFIG
+        ACCESS_DATABASE
+        ACCESS_NETWORK
+        ACCESS_FILESYSTEM
+        REGISTER_ROUTES
+        MODIFY_CORE
+        ACCESS_AI
+    }
+
+    class PluginMeta {
+        +name: str
+        +version: str
+        +author: str
+        +description: str
+        +category: PluginCategory
+        +min_app_version: str
+        +max_app_version: str
+        +dependencies: tuple
+        +permissions: tuple
+        +to_dict(): dict
+    }
+
+    class PluginConfigSchema {
+        +fields: dict[str, PluginConfigField]
+        +to_dict(): dict
+    }
+
+    class PluginConfigField {
+        +field_type: str
+        +default: Any
+        +required: bool
+        +description: str
+        +to_dict(): dict
+    }
+
+    class PluginHealth {
+        +status: PluginStatus
+        +error_message: str
+        +uptime_seconds: float
+        +execution_count: int
+        +error_count: int
+        +to_dict(): dict
+    }
+
+    abstract class PluginInterface {
+        <<abstract>>
+        -_meta: PluginMeta
+        -_config: dict
+        -_health: PluginHealth
+        -_initialized: bool
+        --
+        +{abstract} initialize(config): bool
+        +{abstract} validate(): bool
+        +{abstract} execute(context): dict
+        +{abstract} shutdown(): void
+        +on_enable(): void
+        +on_disable(): void
+        +get_config_value(key): Any
+        +get_status_dict(): dict
+    }
+}
+
+package "plugin_system.interfaces.categories" #E8F4FD {
+    abstract class TechnicalIndicatorPlugin {
+        +{abstract} calculate(price_data, params): list
+    }
+
+    abstract class DataProviderPlugin {
+        +{abstract} fetch(endpoint, params): dict
+    }
+
+    abstract class AIPlugin {
+        +{abstract} analyze(data, analysis_type): dict
+    }
+
+    abstract class ReportExporterPlugin {
+        +{abstract} supported_format: str
+        +{abstract} export(data, output_path): dict
+    }
+
+    abstract class NotificationPlugin {
+        +{abstract} send(title, message, severity): dict
+    }
+
+    abstract class StrategyPlugin {
+        +{abstract} generate_signals(market_data, portfolio): dict
+    }
+
+    abstract class RiskModelPlugin {
+        +{abstract} calculate_risk(portfolio, market_data): dict
+    }
+}
+
+package "plugin_system.manager" #E8F5E9 {
+    class PluginLoader {
+        -_root: Path
+        +discover(): list[PluginManifest]
+        +load(manifest): PluginInterface
+        +unload(name): bool
+    }
+
+    class PluginManifest {
+        +data: dict
+        +plugin_dir: Path
+        +entry_point: str
+        +class_name: str
+        +to_meta(): PluginMeta
+        +{static} from_file(): PluginManifest
+    }
+
+    class PluginRegistry {
+        -_instance: PluginRegistry
+        -_records: dict[str, PluginRecord]
+        --
+        +{static} instance: PluginRegistry
+        +register(plugin): void
+        +unregister(name): bool
+        +enable(name): bool
+        +disable(name): bool
+        +get(name): PluginInterface
+        +get_by_category(cat): list
+        +get_all_status(): dict
+        +get_category_summary(): dict
+    }
+
+    class PluginManager {
+        -_loader: PluginLoader
+        -_registry: PluginRegistry
+        -_config: PluginConfiguration
+        -_app_version: str
+        --
+        +discover_and_load(): dict
+        +enable_plugin(name): dict
+        +disable_plugin(name): dict
+        +uninstall_plugin(name): dict
+        +execute_plugin(name, context): dict
+        +shutdown_all(): dict
+        +get_all_info(): dict
+    }
+
+    class PluginRecord {
+        +plugin: PluginInterface
+        +enabled: bool
+        +category: PluginCategory
+    }
+}
+
+package "plugin_system.config" #FFF3E0 {
+    class PluginConfiguration {
+        -_instance: PluginConfiguration
+        -_config_path: Path
+        -_configs: dict
+        --
+        +load(): void
+        +save(): void
+        +get_plugin_config(name): dict
+        +set_plugin_config(name, config): void
+        +get_plugin_enabled(name): bool
+        +set_plugin_enabled(name, enabled): void
+    }
+}
+
+package "plugins/ (on disk)" #F5F5F5 {
+    package "technical/" {
+        class RSICalculatorPlugin
+    }
+    package "reports/" {
+        class CSVExporterPlugin
+    }
+    package "notifications/" {
+        class LogNotifierPlugin
+    }
+    package "strategies/" {
+        class MACrossoverStrategy
+        class PortfolioRiskPlugin
+    }
+    package "ai/" {
+        class SentimentAnalyzerPlugin
+    }
+    package "providers/" {
+        class MockDataProviderPlugin
+    }
+}
+
+' --- Core Relationships ---
+
+PluginInterface "1" *-- "1" PluginMeta : has
+PluginInterface "1" *-- "1" PluginHealth : has
+PluginInterface "1" *-- "0..1" PluginConfigSchema : has
+
+PluginConfigSchema "1" *-- "0..*" PluginConfigField : contains
+
+PluginManager "1" o-- "1" PluginLoader : uses
+PluginManager "1" o-- "1" PluginRegistry : uses
+PluginManager "1" o-- "1" PluginConfiguration : uses
+
+PluginRegistry "1" *-- "0..*" PluginRecord : contains
+PluginRecord "1" o-- "1" PluginInterface : wraps
+
+PluginLoader ..> PluginManifest : creates
+PluginLoader ..> PluginInterface : loads
+
+' --- Category Inheritance ---
+
+TechnicalIndicatorPlugin --|> PluginInterface
+DataProviderPlugin --|> PluginInterface
+AIPlugin --|> PluginInterface
+ReportExporterPlugin --|> PluginInterface
+NotificationPlugin --|> PluginInterface
+StrategyPlugin --|> PluginInterface
+RiskModelPlugin --|> PluginInterface
+
+' --- Plugin Implementations ---
+
+RSICalculatorPlugin --|> TechnicalIndicatorPlugin
+CSVExporterPlugin --|> ReportExporterPlugin
+LogNotifierPlugin --|> NotificationPlugin
+MACrossoverStrategy --|> StrategyPlugin
+PortfolioRiskPlugin --|> RiskModelPlugin
+SentimentAnalyzerPlugin --|> AIPlugin
+MockDataProviderPlugin --|> DataProviderPlugin
+
+@enduml

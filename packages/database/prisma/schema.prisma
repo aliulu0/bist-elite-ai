@@ -1,0 +1,808 @@
+// ==========================================================
+// BIST Elite AI - Prisma Schema
+// Version: 1.0.0
+// ==========================================================
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==========================================================
+// ENUMS
+// ==========================================================
+
+enum MarketSegment {
+  MAIN
+  SECONDARY
+  COLLECTOR
+  IPO
+}
+
+enum Timeframe {
+  M4
+  D1
+  W1
+  M1
+}
+
+enum OrderSide {
+  BUY
+  SELL
+}
+
+enum SignalStrength {
+  WEAK
+  MODERATE
+  STRONG
+  VERY_STRONG
+}
+
+enum SignalAction {
+  BUY
+  SELL
+  HOLD
+  WATCH
+}
+
+enum BacktestStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  VERY_HIGH
+}
+
+enum MarketRegimeType {
+  BULL
+  BEAR
+  SIDEWAYS
+  HIGH_VOLATILITY
+  LOW_VOLATILITY
+  CRASH
+  RECOVERY
+  MOMENTUM
+  MEAN_REVERSION
+  BREAKOUT
+  CONSOLIDATION
+  TRANSITION
+}
+
+enum CorporateActionType {
+  DIVIDEND
+  SPLIT
+  BONUS
+  RIGHTS
+  MERGER
+  DEMERGER
+  NAME_CHANGE
+  SECTOR_CHANGE
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  FAILED
+  CANCELLED
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  VIEWER
+}
+
+enum LogSeverity {
+  DEBUG
+  INFO
+  WARNING
+  ERROR
+  CRITICAL
+}
+
+// ==========================================================
+// MARKET DATA DOMAIN
+// ==========================================================
+
+model Company {
+  id            String         @id @default(uuid())
+  symbol        String         @unique
+  name          String
+  sector        String
+  industry      String?
+  marketCap     Float?
+  marketSegment MarketSegment  @default(MAIN)
+  isin          String?        @unique
+  website       String?
+  description   String?
+  isActive      Boolean        @default(true)
+  listedAt      DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  createdBy     String?
+  updatedBy     String?
+
+  stocks             Stock[]
+  corporateActions   CorporateAction[]
+  financialStatements FinancialStatement[]
+  financialRatios    FinancialRatio[]
+
+  @@index([symbol])
+  @@index([sector])
+  @@index([industry])
+  @@index([marketCap])
+  @@index([marketSegment])
+  @@index([isActive])
+}
+
+model Stock {
+  id            String        @id @default(uuid())
+  companyId     String
+  symbol        String        @unique
+  ticker        String
+  exchange      String        @default("BIST")
+  currency      String        @default("TRY")
+  lotSize       Int           @default(1)
+  tickSize      Float         @default(0.01)
+  isActive      Boolean       @default(true)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  createdBy     String?
+  updatedBy     String?
+
+  company          Company           @relation(fields: [companyId], references: [id])
+  prices           HistoricalPrice[]
+  intradayPrices   IntradayPrice[]
+  indicators       IndicatorSnapshot[]
+  technicalScores  TechnicalScore[]
+  financialScores  FinancialScore[]
+  eliteScores      EliteScore[]
+  confidenceScores ConfidenceScore[]
+  decisionSignals  DecisionSignal[]
+  backtestResults  BacktestResult[]
+  portfolioPositions PortfolioPosition[]
+  watchlistItems   WatchlistItem[]
+
+  @@unique([ticker, exchange])
+  @@index([symbol])
+  @@index([ticker])
+  @@index([exchange])
+  @@index([isActive])
+  @@index([companyId])
+}
+
+model HistoricalPrice {
+  id             String    @id @default(uuid())
+  stockId        String
+  date           DateTime
+  timeframe      Timeframe @default(D1)
+  open           Decimal   @db.Decimal(18, 4)
+  high           Decimal   @db.Decimal(18, 4)
+  low            Decimal   @db.Decimal(18, 4)
+  close          Decimal   @db.Decimal(18, 4)
+  adjustedClose  Decimal   @db.Decimal(18, 4)
+  volume         BigInt
+  turnover       Decimal?  @db.Decimal(18, 4)
+  changePercent  Decimal?  @db.Decimal(8, 4)
+  createdAt      DateTime  @default(now())
+
+  stock Stock @relation(fields: [stockId], references: [id])
+
+  @@unique([stockId, date, timeframe])
+  @@index([stockId, date])
+  @@index([stockId, timeframe])
+  @@index([date])
+  @@index([timeframe])
+}
+
+model IntradayPrice {
+  id        String   @id @default(uuid())
+  stockId   String
+  timestamp DateTime
+  open      Decimal  @db.Decimal(18, 4)
+  high      Decimal  @db.Decimal(18, 4)
+  low       Decimal  @db.Decimal(18, 4)
+  close     Decimal  @db.Decimal(18, 4)
+  volume    BigInt
+  createdAt DateTime @default(now())
+
+  stock Stock @relation(fields: [stockId], references: [id])
+
+  @@unique([stockId, timestamp])
+  @@index([stockId, timestamp])
+  @@index([timestamp])
+}
+
+model CorporateAction {
+  id          String               @id @default(uuid())
+  companyId   String
+  type        CorporateActionType
+  exDate       DateTime
+  value        Decimal?             @db.Decimal(18, 4)
+  ratio        Decimal?             @db.Decimal(10, 4)
+  description  String?
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  createdBy    String?
+  updatedBy    String?
+
+  company Company @relation(fields: [companyId], references: [id])
+
+  @@index([companyId, exDate])
+  @@index([type])
+  @@index([exDate])
+}
+
+model TradingSession {
+  id          String    @id @default(uuid())
+  date        DateTime
+  openTime    DateTime
+  closeTime   DateTime
+  isOpen      Boolean   @default(true)
+  notes       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([date])
+  @@index([date])
+  @@index([isOpen])
+}
+
+// ==========================================================
+// ANALYSIS DOMAIN
+// ==========================================================
+
+model IndicatorSnapshot {
+  id          String    @id @default(uuid())
+  stockId     String
+  indicator   String
+  timeframe   Timeframe @default(D1)
+  value       Decimal   @db.Decimal(18, 6)
+  signal      String?
+  parameters  Json?
+  computedAt  DateTime
+  createdAt   DateTime  @default(now())
+
+  stock Stock @relation(fields: [stockId], references: [id])
+
+  @@unique([stockId, indicator, timeframe, computedAt])
+  @@index([stockId, indicator])
+  @@index([stockId, timeframe])
+  @@index([indicator])
+  @@index([computedAt])
+}
+
+model FinancialStatement {
+  id              String   @id @default(uuid())
+  companyId       String
+  period          String
+  reportType      String
+  revenue         Decimal? @db.Decimal(18, 4)
+  costOfRevenue   Decimal? @db.Decimal(18, 4)
+  grossProfit     Decimal? @db.Decimal(18, 4)
+  operatingIncome Decimal? @db.Decimal(18, 4)
+  netIncome       Decimal? @db.Decimal(18, 4)
+  totalAssets     Decimal? @db.Decimal(18, 4)
+  totalLiabilities Decimal? @db.Decimal(18, 4)
+  totalEquity     Decimal? @db.Decimal(18, 4)
+  cashAndEquivalents Decimal? @db.Decimal(18, 4)
+  debt            Decimal? @db.Decimal(18, 4)
+  sharesOutstanding Decimal? @db.Decimal(18, 0)
+  eps             Decimal? @db.Decimal(18, 4)
+  bookValue       Decimal? @db.Decimal(18, 4)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  createdBy       String?
+  updatedBy       String?
+
+  company Company @relation(fields: [companyId], references: [id])
+
+  @@unique([companyId, period, reportType])
+  @@index([companyId, period])
+  @@index([period])
+  @@index([reportType])
+}
+
+model FinancialRatio {
+  id              String   @id @default(uuid())
+  companyId       String
+  period          String
+  peRatio         Decimal? @db.Decimal(10, 4)
+  pbRatio         Decimal? @db.Decimal(10, 4)
+  psRatio         Decimal? @db.Decimal(10, 4)
+  pcfRatio        Decimal? @db.Decimal(10, 4)
+  evEbitda        Decimal? @db.Decimal(10, 4)
+  roe             Decimal? @db.Decimal(10, 4)
+  roa             Decimal? @db.Decimal(10, 4)
+  roic            Decimal? @db.Decimal(10, 4)
+  grossMargin     Decimal? @db.Decimal(10, 4)
+  operatingMargin Decimal? @db.Decimal(10, 4)
+  netMargin       Decimal? @db.Decimal(10, 4)
+  currentRatio    Decimal? @db.Decimal(10, 4)
+  quickRatio      Decimal? @db.Decimal(10, 4)
+  debtToEquity    Decimal? @db.Decimal(10, 4)
+  dividendYield   Decimal? @db.Decimal(10, 4)
+  payoutRatio     Decimal? @db.Decimal(10, 4)
+  beta            Decimal? @db.Decimal(10, 4)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  createdBy       String?
+  updatedBy       String?
+
+  company Company @relation(fields: [companyId], references: [id])
+
+  @@unique([companyId, period])
+  @@index([companyId, period])
+  @@index([period])
+}
+
+// ==========================================================
+// SCORING DOMAIN
+// ==========================================================
+
+model TechnicalScore {
+  id          String    @id @default(uuid())
+  stockId     String
+  timeframe   Timeframe @default(D1)
+  momentum    Decimal?  @db.Decimal(5, 2)
+  trend       Decimal?  @db.Decimal(5, 2)
+  volatility  Decimal?  @db.Decimal(5, 2)
+  volume      Decimal?  @db.Decimal(5, 2)
+  support     Decimal?  @db.Decimal(5, 2)
+  resistance  Decimal?  @db.Decimal(5, 2)
+  pattern     Decimal?  @db.Decimal(5, 2)
+  composite   Decimal   @db.Decimal(5, 2)
+  factors     Json?
+  computedAt  DateTime
+  createdAt   DateTime  @default(now())
+
+  stock Stock @relation(fields: [stockId], references: [id])
+
+  @@unique([stockId, timeframe, computedAt])
+  @@index([stockId, timeframe])
+  @@index([computedAt])
+  @@index([composite])
+}
+
+model FinancialScore {
+  id          String   @id @default(uuid())
+  stockId     String
+  period      String
+  growth      Decimal? @db.Decimal(5, 2)
+  profitability Decimal? @db.Decimal(5, 2)
+  valuation   Decimal? @db.Decimal(5, 2)
+  quality     Decimal? @db.Decimal(5, 2)
+  health      Decimal? @db.Decimal(5, 2)
+  composite   Decimal  @db.Decimal(5, 2)
+  factors     Json?
+  computedAt  DateTime
+  createdAt   DateTime @default(now())
+
+  stock Stock @relation(fields: [stockId], references: [id])
+
+  @@unique([stockId, period, computedAt])
+  @@index([stockId, period])
+  @@index([computedAt])
+  @@index([composite])
+}
+
+model EliteScore {
+  id              String    @id @default(uuid())
+  stockId         String
+  timeframe       Timeframe @default(D1)
+  technical       Decimal   @db.Decimal(5, 2)
+  financial       Decimal   @db.Decimal(5, 2)
+  confidence      Decimal   @db.Decimal(5, 2)
+  composite       Decimal   @db.Decimal(5, 2)
+  rank            Int?
+  positiveFactors Json?
+  negativeFactors Json?
+  reasoning       String?
+  regime          MarketRegimeType?
+  computedAt      DateTime
+  createdAt       DateTime  @default(now())
+
+  stock Stock @relation(fields: [stockId], references: [id])
+
+  @@unique([stockId, timeframe, computedAt])
+  @@index([stockId, timeframe])
+  @@index([computedAt])
+  @@index([composite])
+  @@index([rank])
+}
+
+model ConfidenceScore {
+  id              String    @id @default(uuid())
+  stockId         String
+  timeframe       Timeframe @default(D1)
+  dataQuality     Decimal   @db.Decimal(5, 2)
+  modelConsistency Decimal  @db.Decimal(5, 2)
+  regimeStability Decimal   @db.Decimal(5, 2)
+  historicalMatch Decimal?  @db.Decimal(5, 2)
+  composite       Decimal   @db.Decimal(5, 2)
+  factors         Json?
+  computedAt      DateTime
+  createdAt       DateTime  @default(now())
+
+  stock Stock @relation(fields: [stockId], references: [id])
+
+  @@unique([stockId, timeframe, computedAt])
+  @@index([stockId, timeframe])
+  @@index([computedAt])
+  @@index([composite])
+}
+
+model DecisionSignal {
+  id              String         @id @default(uuid())
+  stockId         String
+  timeframe       Timeframe      @default(D1)
+  action          SignalAction
+  strength        SignalStrength
+  entryPrice      Decimal?       @db.Decimal(18, 4)
+  targetPrice     Decimal?       @db.Decimal(18, 4)
+  stopLossPrice   Decimal?       @db.Decimal(18, 4)
+  riskRewardRatio Decimal?       @db.Decimal(5, 2)
+  positionSize    Decimal?       @db.Decimal(5, 2)
+  reasoning       String?
+  factors         Json?
+  expiresAt       DateTime?
+  generatedAt     DateTime
+  createdAt       DateTime       @default(now())
+
+  stock Stock @relation(fields: [stockId], references: [id])
+
+  @@unique([stockId, timeframe, generatedAt])
+  @@index([stockId, timeframe])
+  @@index([action])
+  @@index([strength])
+  @@index([generatedAt])
+  @@index([expiresAt])
+}
+
+// ==========================================================
+// BACKTESTING DOMAIN
+// ==========================================================
+
+model BacktestResult {
+  id                String       @id @default(uuid())
+  stockId           String
+  strategyName      String
+  timeframe         Timeframe    @default(D1)
+  status            BacktestStatus @default(PENDING)
+  startDate         DateTime
+  endDate           DateTime
+  initialCapital    Decimal      @db.Decimal(18, 4)
+  finalCapital      Decimal?     @db.Decimal(18, 4)
+  totalReturn       Decimal?     @db.Decimal(10, 4)
+  annualReturn      Decimal?     @db.Decimal(10, 4)
+  sharpeRatio       Decimal?     @db.Decimal(10, 4)
+  sortinoRatio      Decimal?     @db.Decimal(10, 4)
+  maxDrawdown       Decimal?     @db.Decimal(10, 4)
+  winRate           Decimal?     @db.Decimal(5, 2)
+  profitFactor      Decimal?     @db.Decimal(10, 4)
+  totalTrades       Int?
+  avgTradeReturn    Decimal?     @db.Decimal(10, 4)
+  parameters        Json?
+  trades            Json?
+  equity            Json?
+  errorMessage      String?
+  computedAt        DateTime
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  createdBy         String?
+
+  stock Stock @relation(fields: [stockId], references: [id])
+  walkForwardResults WalkForwardResult[]
+  monteCarloResults  MonteCarloResult[]
+
+  @@unique([stockId, strategyName, timeframe, startDate, endDate])
+  @@index([stockId, strategyName])
+  @@index([status])
+  @@index([sharpeRatio])
+  @@index([totalReturn])
+  @@index([computedAt])
+}
+
+model WalkForwardResult {
+  id                String       @id @default(uuid())
+  backtestId        String
+  windowIndex       Int
+  inSampleStart     DateTime
+  inSampleEnd       DateTime
+  outSampleStart    DateTime
+  outSampleEnd      DateTime
+  inSampleReturn    Decimal?     @db.Decimal(10, 4)
+  outSampleReturn   Decimal?     @db.Decimal(10, 4)
+  parameters        Json?
+  degradationRatio  Decimal?     @db.Decimal(10, 4)
+  computedAt        DateTime
+  createdAt         DateTime     @default(now())
+
+  backtest BacktestResult @relation(fields: [backtestId], references: [id])
+
+  @@unique([backtestId, windowIndex])
+  @@index([backtestId])
+  @@index([outSampleReturn])
+}
+
+model MonteCarloResult {
+  id                String       @id @default(uuid())
+  backtestId        String
+  simulations       Int
+  confidenceLevel   Decimal      @db.Decimal(5, 2)
+  var95             Decimal?     @db.Decimal(10, 4)
+  var99             Decimal?     @db.Decimal(10, 4)
+  cvar95            Decimal?     @db.Decimal(10, 4)
+  cvar99            Decimal?     @db.Decimal(10, 4)
+  expectedReturn    Decimal?     @db.Decimal(10, 4)
+  worstCase         Decimal?     @db.Decimal(10, 4)
+  bestCase          Decimal?     @db.Decimal(10, 4)
+  percentiles       Json?
+  simulations_data  Json?
+  computedAt        DateTime
+  createdAt         DateTime     @default(now())
+
+  backtest BacktestResult @relation(fields: [backtestId], references: [id])
+
+  @@unique([backtestId, confidenceLevel])
+  @@index([backtestId])
+}
+
+// ==========================================================
+// PORTFOLIO DOMAIN
+// ==========================================================
+
+model Portfolio {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  strategy    String?
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   String?
+  updatedBy   String?
+
+  positions        PortfolioPosition[]
+  snapshots        PortfolioSnapshot[]
+  riskProfiles     RiskProfile[]
+
+  @@index([name])
+  @@index([isDefault])
+}
+
+model PortfolioPosition {
+  id            String   @id @default(uuid())
+  portfolioId   String
+  stockId       String
+  quantity      Decimal  @db.Decimal(18, 4)
+  avgPrice      Decimal  @db.Decimal(18, 4)
+  weight        Decimal  @db.Decimal(5, 4)
+  side          OrderSide @default(BUY)
+  entryDate     DateTime
+  exitDate      DateTime?
+  exitPrice     Decimal? @db.Decimal(18, 4)
+  stopLoss      Decimal? @db.Decimal(18, 4)
+  takeProfit    Decimal? @db.Decimal(18, 4)
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  createdBy     String?
+  updatedBy     String?
+
+  portfolio Portfolio @relation(fields: [portfolioId], references: [id])
+  stock     Stock     @relation(fields: [stockId], references: [id])
+
+  @@unique([portfolioId, stockId, entryDate])
+  @@index([portfolioId])
+  @@index([stockId])
+  @@index([entryDate])
+  @@index([exitDate])
+}
+
+model PortfolioSnapshot {
+  id            String   @id @default(uuid())
+  portfolioId   String
+  date          DateTime
+  totalValue    Decimal  @db.Decimal(18, 4)
+  cashBalance   Decimal  @db.Decimal(18, 4)
+  investedValue Decimal  @db.Decimal(18, 4)
+  dailyReturn   Decimal? @db.Decimal(10, 4)
+  totalReturn   Decimal? @db.Decimal(10, 4)
+  sharpeRatio   Decimal? @db.Decimal(10, 4)
+  maxDrawdown   Decimal? @db.Decimal(10, 4)
+  positions     Json?
+  createdAt     DateTime @default(now())
+
+  portfolio Portfolio @relation(fields: [portfolioId], references: [id])
+
+  @@unique([portfolioId, date])
+  @@index([portfolioId, date])
+  @@index([date])
+}
+
+model RiskProfile {
+  id              String     @id @default(uuid())
+  portfolioId     String
+  riskLevel       RiskLevel
+  maxPositionSize Decimal    @db.Decimal(5, 4)
+  maxSectorExposure Decimal  @db.Decimal(5, 4)
+  maxCorrelation  Decimal    @db.Decimal(5, 4)
+  stopLossPercent Decimal    @db.Decimal(5, 4)
+  takeProfitRatio Decimal    @db.Decimal(5, 2)
+  maxDrawdown     Decimal    @db.Decimal(5, 4)
+  varLimit        Decimal?   @db.Decimal(10, 4)
+  cvarLimit       Decimal?   @db.Decimal(10, 4)
+  parameters      Json?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  portfolio Portfolio @relation(fields: [portfolioId], references: [id])
+
+  @@unique([portfolioId, riskLevel])
+  @@index([portfolioId])
+}
+
+// ==========================================================
+// MARKET DOMAIN
+// ==========================================================
+
+model MarketRegime {
+  id              String           @id @default(uuid())
+  date            DateTime
+  timeframe       Timeframe        @default(D1)
+  regime          MarketRegimeType
+  confidence      Decimal          @db.Decimal(5, 2)
+  vixLevel        Decimal?         @db.Decimal(10, 4)
+  breadthIndicator Decimal?        @db.Decimal(5, 2)
+  momentumScore   Decimal?         @db.Decimal(5, 2)
+  factors         Json?
+  detectedAt      DateTime
+  createdAt       DateTime         @default(now())
+
+  @@unique([date, timeframe])
+  @@index([date])
+  @@index([timeframe])
+  @@index([regime])
+  @@index([detectedAt])
+}
+
+// ==========================================================
+// SYSTEM DOMAIN
+// ==========================================================
+
+model SystemSetting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     Json
+  category  String
+  description String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+  updatedBy String?
+
+  @@index([key])
+  @@index([category])
+  @@index([isActive])
+}
+
+model ApplicationLog {
+  id        String      @id @default(uuid())
+  severity  LogSeverity
+  source    String
+  message   String
+  context   Json?
+  traceId   String?
+  userId    String?
+  ipAddress String?
+  createdAt DateTime    @default(now())
+
+  @@index([severity])
+  @@index([source])
+  @@index([createdAt])
+  @@index([traceId])
+  @@index([userId])
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  name          String
+  passwordHash  String
+  role          UserRole  @default(USER)
+  isActive      Boolean   @default(true)
+  lastLoginAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  createdBy     String?
+  updatedBy     String?
+
+  watchlists    Watchlist[]
+  notifications NotificationQueue[]
+  telegramMessages TelegramMessage[]
+
+  @@index([email])
+  @@index([role])
+  @@index([isActive])
+}
+
+model Watchlist {
+  id        String   @id @default(uuid())
+  name      String
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User            @relation(fields: [userId], references: [id])
+  items WatchlistItem[]
+
+  @@index([userId])
+  @@index([name])
+}
+
+model WatchlistItem {
+  id          String   @id @default(uuid())
+  watchlistId String
+  stockId     String
+  notes       String?
+  addedAt     DateTime @default(now())
+
+  watchlist Watchlist @relation(fields: [watchlistId], references: [id])
+  stock     Stock     @relation(fields: [stockId], references: [id])
+
+  @@unique([watchlistId, stockId])
+  @@index([watchlistId])
+  @@index([stockId])
+}
+
+model NotificationQueue {
+  id         String           @id @default(uuid())
+  userId     String
+  type       String
+  title      String
+  message    String
+  data       Json?
+  status     NotificationStatus @default(PENDING)
+  sentAt     DateTime?
+  createdAt  DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, status])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model TelegramMessage {
+  id          String   @id @default(uuid())
+  userId      String?
+  chatId      BigInt
+  messageId   BigInt?
+  text        String
+  command     String?
+  parameters  Json?
+  response    String?
+  sentAt      DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([chatId])
+  @@index([userId])
+  @@index([command])
+  @@index([sentAt])
+}

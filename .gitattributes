@@ -1,0 +1,49 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# TypeScript
+*.ts text diff=typescript
+*.tsx text diff=typescript
+
+# JavaScript
+*.js text diff=javascript
+*.jsx text diff=javascript
+
+# JSON
+*.json text
+
+# Markdown
+*.md text diff=markdown
+
+# YAML
+*.yml text
+*.yaml text
+
+# Python
+*.py text diff=python
+
+# Docker
+Dockerfile text
+
+# Prisma
+*.prisma text
+
+# Shell scripts
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+
+# Lock files - do not edit
+pnpm-lock.yaml -diff
+package-lock.json -diff
+yarn.lock -diff

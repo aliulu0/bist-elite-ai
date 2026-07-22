@@ -1,0 +1,37 @@
+[Unit]
+Description=BIST Elite AI - REST API
+Documentation=https://github.com/bist-elite-ai/bist-elite-ai
+After=network.target postgresql.service redis-server.service
+Wants=postgresql.service redis-server.service
+
+[Service]
+Type=simple
+User=bist
+Group=bist
+WorkingDirectory=/opt/bist-elite-ai/apps/api
+EnvironmentFile=/opt/bist-elite-ai/.env
+ExecStart=/usr/bin/node dist/main.js
+ExecStop=/bin/kill -TERM $MAINPID
+Restart=on-failure
+RestartSec=5
+StartLimitBurst=5
+StartLimitIntervalSec=60
+
+# Security
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/bist-elite-ai/logs
+
+# Resource limits
+LimitNOFILE=65535
+MemoryMax=512M
+CPUQuota=80%
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=bist-api
+
+[Install]
+WantedBy=multi-user.target

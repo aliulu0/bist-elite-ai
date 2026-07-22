@@ -1,0 +1,73 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Testing
+coverage/
+.pytest_cache/
+htmlcov/
+.nyc_output/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentation (not needed in containers)
+docs/
+*.md
+!apps/*/README.md
+
+# Python
+.mypy_cache/
+.ruff_cache/
+
+# Docker
+docker-compose*.yml
+docker/Dockerfile.*
+
+# Monorepo root
+turbo.json
+tsconfig.json
+.prettierrc
+.editorconfig
+commitlint.config.*
+labels.yml
+pnpm-lock.yaml
+
+# Old backend (not needed in new containers)
+backend/
+
+# Prisma migrations (handled at runtime)
+packages/database/prisma/migrations/

@@ -1,0 +1,56 @@
+{
+  "app": {
+    "name": "BIST Elite AI",
+    "description": "Yapay Zeka Destekli Erken Fırsat Tespit Platformu"
+  },
+  "nav": {
+    "dashboard": "Kontrol Paneli",
+    "scanner": "Tarayıcı",
+    "watchlist": "İzleme Listesi",
+    "signals": "Sinyaller",
+    "portfolio": "Portföy",
+    "backtest": "Geri Test",
+    "reports": "Raporlar",
+    "settings": "Ayarlar"
+  },
+  "dashboard": {
+    "marketSummary": "Piyasa Özeti",
+    "todaysSignals": "Bugünün Sinyalleri",
+    "eliteOpportunities": "Elite Fırsatlar",
+    "topRanked": "En Yüksek Sıralı Hisseler",
+    "marketRegime": "Piyasa Rejimi",
+    "portfolioSummary": "Portföy Özeti",
+    "riskIndicator": "Risk Göstergesi",
+    "recentNotifications": "Son Bildirimler"
+  },
+  "scanner": {
+    "title": "Hisse Tarayıcı",
+    "search": "Hisse ara...",
+    "filter": "Filtrele",
+    "sort": "Sırala",
+    "noResults": "Sonuç bulunamadı"
+  },
+  "portfolio": {
+    "totalValue": "Toplam Değer",
+    "cashBalance": "Nakit Bakiye",
+    "dailyReturn": "Günlük Getiri",
+    "totalReturn": "Toplam Getiri",
+    "positions": "Pozisyonlar",
+    "noPositions": "Pozisyon yok"
+  },
+  "backtest": {
+    "title": "Geri Test Sonuçları",
+    "strategy": "Strateji",
+    "return": "Getiri",
+    "sharpe": "Sharpe Oranı",
+    "maxDrawdown": "Maks Düşüş",
+    "winRate": "Kazanma Oranı",
+    "noResults": "Geri test sonucu yok"
+  },
+  "settings": {
+    "appearance": "Görünüm",
+    "language": "Dil",
+    "theme": "Tema",
+    "notifications": "Bildirimler"
+  }
+}

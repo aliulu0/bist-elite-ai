@@ -1,0 +1,20 @@
+# Default owners for everything
+* @bist-elite/team
+
+# Frontend
+apps/web/ @bist-elite/frontend
+
+# Backend
+apps/api/ @bist-elite/backend
+apps/worker/ @bist-elite/backend
+
+# Database
+packages/database/ @bist-elite/database
+
+# Infrastructure
+docker/ @bist-elite/devops
+.github/ @bist-elite/devops
+
+# Shared packages
+packages/shared/ @bist-elite/core
+packages/ui/ @bist-elite/frontend

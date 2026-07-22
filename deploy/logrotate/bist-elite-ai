@@ -1,0 +1,27 @@
+# ==========================================================
+# BIST Elite AI - Log Rotation
+# Deploy to: /etc/logrotate.d/bist-elite-ai
+# ==========================================================
+
+/opt/bist-elite-ai/logs/*.log {
+    daily
+    missingok
+    rotate 14
+    compress
+    delaycompress
+    notifempty
+    create 0640 bist bist
+    sharedscripts
+    postrotate
+        systemctl reload bist-api bist-worker bist-telegram 2>/dev/null || true
+    endscript
+}
+
+/opt/bist-elite-ai/backups/**/*.log {
+    weekly
+    missingok
+    rotate 4
+    compress
+    notifempty
+    create 0640 bist bist
+}
