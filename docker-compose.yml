@@ -93,9 +93,12 @@ services:
     ports:
       - "${WORKER_PORT:-8000}:8000"
     environment:
+      WORKER_DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-bist_elite_ai}
+      WORKER_REDIS_URL: redis://redis:6379/0
+      WORKER_APP_ENV: ${APP_ENV:-development}
+      WORKER_LOG_LEVEL: ${WORKER_LOG_LEVEL:-info}
       DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-bist_elite_ai}
       REDIS_URL: redis://redis:6379/0
-      APP_ENV: ${APP_ENV:-development}
     depends_on:
       postgres:
         condition: service_healthy

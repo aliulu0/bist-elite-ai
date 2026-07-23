@@ -13,8 +13,8 @@ import { getEarlyAlignmentDescription, getFalseConfirmWarning } from './turkish-
 export class EarlyAlignmentService {
   private readonly config: ConsensusConfig;
 
-  constructor(configOverrides?: Partial<ConsensusConfig>) {
-    this.config = getConsensusConfig(configOverrides);
+  constructor() {
+    this.config = getConsensusConfig();
   }
 
   detect(timeframes: TimeframeData[]): EarlyAlignment[] {
@@ -63,12 +63,12 @@ export class EarlyAlignmentService {
     let factors = 0;
 
     if (current.trend !== undefined) {
-      const trendAligned = allTimeframes.filter(
-        tf => tf.timeframe !== current.timeframe && tf.trend !== undefined,
-      ).filter(tf => this.areTrendsAligned(current.trend!, tf.trend!)).length;
+      const trendAligned = allTimeframes
+        .filter((tf) => tf.timeframe !== current.timeframe && tf.trend !== undefined)
+        .filter((tf) => this.areTrendsAligned(current.trend!, tf.trend!)).length;
 
       const totalOthers = allTimeframes.filter(
-        tf => tf.timeframe !== current.timeframe && tf.trend !== undefined,
+        (tf) => tf.timeframe !== current.timeframe && tf.trend !== undefined,
       ).length;
 
       if (totalOthers > 0) {
@@ -78,15 +78,15 @@ export class EarlyAlignmentService {
     }
 
     if (current.momentumScore !== undefined) {
-      const momentumAligned = allTimeframes.filter(
-        tf => tf.timeframe !== current.timeframe && tf.momentumScore !== undefined,
-      ).filter(tf => {
-        const diff = Math.abs(current.momentumScore! - tf.momentumScore!);
-        return diff < 25;
-      }).length;
+      const momentumAligned = allTimeframes
+        .filter((tf) => tf.timeframe !== current.timeframe && tf.momentumScore !== undefined)
+        .filter((tf) => {
+          const diff = Math.abs(current.momentumScore! - tf.momentumScore!);
+          return diff < 25;
+        }).length;
 
       const totalMomentum = allTimeframes.filter(
-        tf => tf.timeframe !== current.timeframe && tf.momentumScore !== undefined,
+        (tf) => tf.timeframe !== current.timeframe && tf.momentumScore !== undefined,
       ).length;
 
       if (totalMomentum > 0) {
@@ -96,7 +96,8 @@ export class EarlyAlignmentService {
     }
 
     if (current.indicators && current.indicators.length > 0) {
-      const positiveRatio = current.indicators.filter(i => i.isPositive).length / current.indicators.length;
+      const positiveRatio =
+        current.indicators.filter((i) => i.isPositive).length / current.indicators.length;
       score += positiveRatio * 20;
       factors++;
     }
@@ -115,7 +116,10 @@ export class EarlyAlignmentService {
     return factors > 0 ? Math.min(100, score) : 0;
   }
 
-  private calculateConfirmationLevel(current: TimeframeData, allTimeframes: TimeframeData[]): number {
+  private calculateConfirmationLevel(
+    current: TimeframeData,
+    allTimeframes: TimeframeData[],
+  ): number {
     let confirmations = 0;
     let totalChecks = 0;
 
@@ -145,14 +149,14 @@ export class EarlyAlignmentService {
   private isLeadingTimeframe(current: TimeframeData, allTimeframes: TimeframeData[]): boolean {
     const tfOrder = this.getTimeframeOrder(current.timeframe);
     const shorterTimeframes = allTimeframes.filter(
-      tf => this.getTimeframeOrder(tf.timeframe) < tfOrder,
+      (tf) => this.getTimeframeOrder(tf.timeframe) < tfOrder,
     );
 
     if (shorterTimeframes.length === 0) return false;
 
     const hasEarlySignal = current.trend !== undefined && current.trend !== TrendDirection.SIDEWAYS;
     const shorterAligned = shorterTimeframes.filter(
-      tf => tf.trend && this.areTrendsAligned(current.trend!, tf.trend),
+      (tf) => tf.trend && this.areTrendsAligned(current.trend!, tf.trend),
     ).length;
 
     return hasEarlySignal && shorterAligned >= Math.ceil(shorterTimeframes.length / 2);
@@ -165,11 +169,11 @@ export class EarlyAlignmentService {
       for (const ind of current.indicators) {
         if (ind.value > 70 || ind.value < 30) {
           const otherTFsWithIndicator = allTimeframes
-            .filter(tf => tf.timeframe !== current.timeframe && tf.indicators)
-            .flatMap(tf => tf.indicators!.filter(i => i.name === ind.name));
+            .filter((tf) => tf.timeframe !== current.timeframe && tf.indicators)
+            .flatMap((tf) => tf.indicators!.filter((i) => i.name === ind.name));
 
           const notYetConfirmed = otherTFsWithIndicator.every(
-            i => Math.abs(i.value - ind.value) > 15,
+            (i) => Math.abs(i.value - ind.value) > 15,
           );
 
           if (notYetConfirmed && otherTFsWithIndicator.length > 0) {
@@ -183,10 +187,12 @@ export class EarlyAlignmentService {
       const isExtreme = current.momentumScore > 75 || current.momentumScore < 25;
       if (isExtreme) {
         const otherMomentum = allTimeframes
-          .filter(tf => tf.timeframe !== current.timeframe && tf.momentumScore !== undefined)
-          .map(tf => tf.momentumScore!);
+          .filter((tf) => tf.timeframe !== current.timeframe && tf.momentumScore !== undefined)
+          .map((tf) => tf.momentumScore!);
 
-        const notYetInExtreme = otherMomentum.every(m => Math.abs(m - current.momentumScore!) > 20);
+        const notYetInExtreme = otherMomentum.every(
+          (m) => Math.abs(m - current.momentumScore!) > 20,
+        );
         if (notYetInExtreme && otherMomentum.length > 0) {
           emerging.push('Momentum');
         }
@@ -212,7 +218,7 @@ export class EarlyAlignmentService {
     }
 
     if (current.indicators) {
-      const positive = current.indicators.filter(i => i.isPositive).length;
+      const positive = current.indicators.filter((i) => i.isPositive).length;
       const total = current.indicators.length;
       if (total > 0 && positive / total < 0.5) {
         riskFactors++;
@@ -220,12 +226,12 @@ export class EarlyAlignmentService {
     }
 
     const shorterTimeframes = allTimeframes.filter(
-      tf => this.getTimeframeOrder(tf.timeframe) < this.getTimeframeOrder(current.timeframe),
+      (tf) => this.getTimeframeOrder(tf.timeframe) < this.getTimeframeOrder(current.timeframe),
     );
 
     if (shorterTimeframes.length > 0) {
       const shorterAgreeing = shorterTimeframes.filter(
-        tf => tf.trend && current.trend && this.areTrendsAligned(tf.trend, current.trend),
+        (tf) => tf.trend && current.trend && this.areTrendsAligned(tf.trend, current.trend),
       ).length;
 
       if (shorterAgreeing === 0) {
@@ -243,8 +249,20 @@ export class EarlyAlignmentService {
   }
 
   private getTrendValue(trend: TrendDirection): number {
-    if ([TrendDirection.STRONG_UPTREND, TrendDirection.UPTREND, TrendDirection.WEAK_UPTREND].includes(trend)) return 1;
-    if ([TrendDirection.STRONG_DOWNTREND, TrendDirection.DOWNTREND, TrendDirection.WEAK_DOWNTREND].includes(trend)) return -1;
+    if (
+      [TrendDirection.STRONG_UPTREND, TrendDirection.UPTREND, TrendDirection.WEAK_UPTREND].includes(
+        trend,
+      )
+    )
+      return 1;
+    if (
+      [
+        TrendDirection.STRONG_DOWNTREND,
+        TrendDirection.DOWNTREND,
+        TrendDirection.WEAK_DOWNTREND,
+      ].includes(trend)
+    )
+      return -1;
     return 0;
   }
 

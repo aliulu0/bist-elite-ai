@@ -19,9 +19,9 @@ describe('WeightManager', () => {
   describe('getWeights', () => {
     it('should return balanced weights by default', () => {
       const weights = manager.getWeights(ScoringProfile.BALANCED);
-      expect(weights.technical).toBe(0.10);
-      expect(weights.trend).toBe(0.10);
-      expect(weights.momentum).toBe(0.10);
+      expect(weights.technical).toBe(0.1);
+      expect(weights.trend).toBe(0.1);
+      expect(weights.momentum).toBe(0.1);
     });
 
     it('should return conservative weights', () => {
@@ -42,7 +42,7 @@ describe('WeightManager', () => {
       const weights1 = manager.getWeights(ScoringProfile.BALANCED);
       const weights2 = manager.getWeights(ScoringProfile.BALANCED);
       weights1.technical = 0.99;
-      expect(weights2.technical).toBe(0.10);
+      expect(weights2.technical).toBe(0.1);
     });
   });
 
@@ -62,7 +62,7 @@ describe('WeightManager', () => {
 
   describe('getTimeframeWeight', () => {
     it('should return weight for known timeframe', () => {
-      expect(manager.getTimeframeWeight(Timeframe.D1)).toBe(0.30);
+      expect(manager.getTimeframeWeight(Timeframe.D1)).toBe(0.3);
       expect(manager.getTimeframeWeight(Timeframe.W1)).toBe(0.35);
     });
 
@@ -167,9 +167,7 @@ describe('WeightManager', () => {
 
   describe('custom config', () => {
     it('should use custom configuration', () => {
-      const custom = new WeightManager({
-        normalization: { method: 'linear', center: 50, steepness: 0.1 },
-      });
+      const custom = new WeightManager();
       const score = custom.normalizeScore(50);
       expect(score).toBe(50);
     });

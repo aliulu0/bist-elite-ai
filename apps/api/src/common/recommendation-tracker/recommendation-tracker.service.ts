@@ -41,26 +41,20 @@ export class RecommendationTrackerService {
     private readonly strategyAnalyzer: StrategyAnalyzerService,
     private readonly failureAnalyzer: FailureAnalyzerService,
     private readonly reportGenerator: RecommendationReportGeneratorService,
-    config?: Partial<RecommendationTrackerConfig>,
   ) {
     this.config = {
       ...RECOMMENDATION_TRACKER_DEFAULTS,
-      ...config,
       successThresholds: {
         ...RECOMMENDATION_TRACKER_DEFAULTS.successThresholds,
-        ...config?.successThresholds,
       },
       alertThresholds: {
         ...RECOMMENDATION_TRACKER_DEFAULTS.alertThresholds,
-        ...config?.alertThresholds,
       },
       metricWeights: {
         ...RECOMMENDATION_TRACKER_DEFAULTS.metricWeights,
-        ...config?.metricWeights,
       },
       tracking: {
         ...RECOMMENDATION_TRACKER_DEFAULTS.tracking,
-        ...config?.tracking,
       },
     };
   }
@@ -96,10 +90,7 @@ export class RecommendationTrackerService {
     return record;
   }
 
-  updateRecommendation(
-    id: string,
-    updates: Partial<RecommendationRecord>,
-  ): RecommendationRecord {
+  updateRecommendation(id: string, updates: Partial<RecommendationRecord>): RecommendationRecord {
     const record = this.recommendations.get(id);
     if (!record) {
       throw new RecommendationNotFoundError(id);
@@ -117,25 +108,21 @@ export class RecommendationTrackerService {
     return updated;
   }
 
-  closeRecommendation(
-    id: string,
-    exitPrice: number,
-    exitReason: string,
-  ): RecommendationRecord {
+  closeRecommendation(id: string, exitPrice: number, exitReason: string): RecommendationRecord {
     const record = this.recommendations.get(id);
     if (!record) {
       throw new RecommendationNotFoundError(id);
     }
 
-    const actualReturn = record.entryPrice > 0
-      ? ((exitPrice - record.entryPrice) / record.entryPrice) * 100
-      : 0;
+    const actualReturn =
+      record.entryPrice > 0 ? ((exitPrice - record.entryPrice) / record.entryPrice) * 100 : 0;
 
-    const outcome = actualReturn > 0.5
-      ? RecommendationOutcome.WINNER
-      : actualReturn < -0.5
-        ? RecommendationOutcome.LOSER
-        : RecommendationOutcome.BREAKEVEN;
+    const outcome =
+      actualReturn > 0.5
+        ? RecommendationOutcome.WINNER
+        : actualReturn < -0.5
+          ? RecommendationOutcome.LOSER
+          : RecommendationOutcome.BREAKEVEN;
 
     const updated: RecommendationRecord = {
       ...record,
@@ -159,10 +146,10 @@ export class RecommendationTrackerService {
 
   getRecommendations(query: RecommendationHistoryQuery): RecommendationHistoryResult {
     const all = Array.from(this.recommendations.values());
-    const filtered = all.filter(rec => this.matchesQuery(rec, query));
+    const filtered = all.filter((rec) => this.matchesQuery(rec, query));
 
-    const sorted = filtered.sort((a, b) =>
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    const sorted = filtered.sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
 
     const limit = query.limit || 50;
@@ -179,33 +166,31 @@ export class RecommendationTrackerService {
   getRecommendationHistory(stockSymbol?: string): RecommendationRecord[] {
     const all = Array.from(this.recommendations.values());
     if (stockSymbol) {
-      return all.filter(r => r.stockSymbol === stockSymbol);
+      return all.filter((r) => r.stockSymbol === stockSymbol);
     }
     return all;
   }
 
   getActiveRecommendations(): RecommendationRecord[] {
     return Array.from(this.recommendations.values()).filter(
-      r => r.status !== RecommendationStatus.FINAL_OUTCOME && r.status !== RecommendationStatus.CANCELLED,
+      (r) =>
+        r.status !== RecommendationStatus.FINAL_OUTCOME &&
+        r.status !== RecommendationStatus.CANCELLED,
     );
   }
 
   getCompletedRecommendations(): RecommendationRecord[] {
     return Array.from(this.recommendations.values()).filter(
-      r => r.status === RecommendationStatus.FINAL_OUTCOME,
+      (r) => r.status === RecommendationStatus.FINAL_OUTCOME,
     );
   }
 
   getRecommendationsByStrategy(strategy: string): RecommendationRecord[] {
-    return Array.from(this.recommendations.values()).filter(
-      r => r.strategyUsed === strategy,
-    );
+    return Array.from(this.recommendations.values()).filter((r) => r.strategyUsed === strategy);
   }
 
   getRecommendationsBySector(sector: string): RecommendationRecord[] {
-    return Array.from(this.recommendations.values()).filter(
-      r => r.sector === sector,
-    );
+    return Array.from(this.recommendations.values()).filter((r) => r.sector === sector);
   }
 
   getSuccessAnalytics(): SuccessAnalytics {
@@ -225,16 +210,19 @@ export class RecommendationTrackerService {
     }
 
     const sorted = [...completed].sort((a, b) => (b.actualReturn || 0) - (a.actualReturn || 0));
-    const topPerformers = sorted.slice(0, 10).map(r => ({
+    const topPerformers = sorted.slice(0, 10).map((r) => ({
       symbol: r.stockSymbol,
       return_: r.actualReturn || 0,
       eliteScore: r.entryEliteScore,
     }));
-    const worstPerformers = sorted.slice(-10).reverse().map(r => ({
-      symbol: r.stockSymbol,
-      return_: r.actualReturn || 0,
-      eliteScore: r.entryEliteScore,
-    }));
+    const worstPerformers = sorted
+      .slice(-10)
+      .reverse()
+      .map((r) => ({
+        symbol: r.stockSymbol,
+        return_: r.actualReturn || 0,
+        eliteScore: r.entryEliteScore,
+      }));
 
     const strategyBreakdown = this.strategyAnalyzer.analyzeStrategyPerformance(completed);
     const sectorBreakdown = this.strategyAnalyzer.analyzeSectorPerformance(completed);
@@ -252,7 +240,8 @@ export class RecommendationTrackerService {
       sectorBreakdown,
       recentRecommendations,
       generatedAt: new Date().toISOString(),
-      disclaimer: 'Bu rapor yalnizca bilgilendirme amaclidir ve yatirim tavsiyesi niteliginde degildir.',
+      disclaimer:
+        'Bu rapor yalnizca bilgilendirme amaclidir ve yatirim tavsiyesi niteliginde degildir.',
     };
   }
 
@@ -361,40 +350,36 @@ export class RecommendationTrackerService {
       };
     }
 
-    const winners = completed.filter(r => (r.actualReturn || 0) > 0);
-    const losers = completed.filter(r => (r.actualReturn || 0) < 0);
+    const winners = completed.filter((r) => (r.actualReturn || 0) > 0);
+    const losers = completed.filter((r) => (r.actualReturn || 0) < 0);
 
     const winRate = (winners.length / completed.length) * 100;
     const lossRate = (losers.length / completed.length) * 100;
 
-    const avgGain = winners.length > 0
-      ? winners.reduce((s, r) => s + (r.actualReturn || 0), 0) / winners.length
-      : 0;
-    const avgLoss = losers.length > 0
-      ? losers.reduce((s, r) => s + (r.actualReturn || 0), 0) / losers.length
-      : 0;
+    const avgGain =
+      winners.length > 0
+        ? winners.reduce((s, r) => s + (r.actualReturn || 0), 0) / winners.length
+        : 0;
+    const avgLoss =
+      losers.length > 0 ? losers.reduce((s, r) => s + (r.actualReturn || 0), 0) / losers.length : 0;
 
     const grossProfit = winners.reduce((s, r) => s + (r.actualReturn || 0), 0);
     const grossLoss = Math.abs(losers.reduce((s, r) => s + (r.actualReturn || 0), 0));
     const profitFactor = grossLoss > 0 ? grossProfit / grossLoss : grossProfit > 0 ? Infinity : 0;
 
-    const returns = completed.map(r => r.actualReturn || 0);
+    const returns = completed.map((r) => r.actualReturn || 0);
     const sharpeRatio = this.performanceEvaluation.calculateSharpeRatio(returns);
     const sortinoRatio = this.performanceEvaluation.calculateSortinoRatio(returns);
 
-    const truePositives = winners.filter(r => r.entryEliteScore >= 50).length;
-    const falsePositives = losers.filter(r => r.entryEliteScore >= 50).length;
-    const falseNegatives = winners.filter(r => r.entryEliteScore < 50).length;
+    const truePositives = winners.filter((r) => r.entryEliteScore >= 50).length;
+    const falsePositives = losers.filter((r) => r.entryEliteScore >= 50).length;
+    const falseNegatives = winners.filter((r) => r.entryEliteScore < 50).length;
 
-    const precision = (truePositives + falsePositives) > 0
-      ? truePositives / (truePositives + falsePositives)
-      : 0;
-    const recall = (truePositives + falseNegatives) > 0
-      ? truePositives / (truePositives + falseNegatives)
-      : 0;
-    const f1Score = (precision + recall) > 0
-      ? 2 * (precision * recall) / (precision + recall)
-      : 0;
+    const precision =
+      truePositives + falsePositives > 0 ? truePositives / (truePositives + falsePositives) : 0;
+    const recall =
+      truePositives + falseNegatives > 0 ? truePositives / (truePositives + falseNegatives) : 0;
+    const f1Score = precision + recall > 0 ? (2 * (precision * recall)) / (precision + recall) : 0;
 
     return {
       totalRecommendations: completed.length,
@@ -420,8 +405,10 @@ export class RecommendationTrackerService {
     if (query.outcome && record.outcome !== query.outcome) return false;
     if (query.startDate && new Date(record.entryDate) < new Date(query.startDate)) return false;
     if (query.endDate && new Date(record.entryDate) > new Date(query.endDate)) return false;
-    if (query.minEliteScore !== undefined && record.entryEliteScore < query.minEliteScore) return false;
-    if (query.maxEliteScore !== undefined && record.entryEliteScore > query.maxEliteScore) return false;
+    if (query.minEliteScore !== undefined && record.entryEliteScore < query.minEliteScore)
+      return false;
+    if (query.maxEliteScore !== undefined && record.entryEliteScore > query.maxEliteScore)
+      return false;
     return true;
   }
 

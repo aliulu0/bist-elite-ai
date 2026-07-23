@@ -35,7 +35,7 @@ function createFullInput(overrides?: Partial<ExplanationInput>): ExplanationInpu
   return {
     stockSymbol: 'THYAO',
     stockName: 'Türk Hava Yolları',
-    currentPrice: 285.50,
+    currentPrice: 285.5,
     technicalScore: {
       momentum: 72,
       trend: 68,
@@ -67,12 +67,60 @@ function createFullInput(overrides?: Partial<ExplanationInput>): ExplanationInpu
       composite: 0.72,
     },
     indicators: [
-      { indicator: 'RSI', timeframe: Timeframe.D1, value: 62, signal: 'bullish', interpretation: 'RSI yükselişte', weight: 0.15, isPositive: true },
-      { indicator: 'MACD', timeframe: Timeframe.D1, value: 1.5, signal: 'bullish', interpretation: 'MACD pozitif', weight: 0.15, isPositive: true },
-      { indicator: 'EMA', timeframe: Timeframe.D1, value: 0.7, signal: 'bullish', interpretation: 'Fiyat EMA üzerinde', weight: 0.12, isPositive: true },
-      { indicator: 'SMA', timeframe: Timeframe.D1, value: 0.65, signal: 'bullish', interpretation: 'Fiyat SMA üzerinde', weight: 0.10, isPositive: true },
-      { indicator: 'ADX', timeframe: Timeframe.D1, value: 30, signal: 'bullish', interpretation: 'Güçlü trend', weight: 0.10, isPositive: true },
-      { indicator: 'BollingerBands', timeframe: Timeframe.D1, value: 0.6, signal: 'neutral', interpretation: 'Bant ortasında', weight: 0.10, isPositive: true },
+      {
+        indicator: 'RSI',
+        timeframe: Timeframe.D1,
+        value: 62,
+        signal: 'bullish',
+        interpretation: 'RSI yükselişte',
+        weight: 0.15,
+        isPositive: true,
+      },
+      {
+        indicator: 'MACD',
+        timeframe: Timeframe.D1,
+        value: 1.5,
+        signal: 'bullish',
+        interpretation: 'MACD pozitif',
+        weight: 0.15,
+        isPositive: true,
+      },
+      {
+        indicator: 'EMA',
+        timeframe: Timeframe.D1,
+        value: 0.7,
+        signal: 'bullish',
+        interpretation: 'Fiyat EMA üzerinde',
+        weight: 0.12,
+        isPositive: true,
+      },
+      {
+        indicator: 'SMA',
+        timeframe: Timeframe.D1,
+        value: 0.65,
+        signal: 'bullish',
+        interpretation: 'Fiyat SMA üzerinde',
+        weight: 0.1,
+        isPositive: true,
+      },
+      {
+        indicator: 'ADX',
+        timeframe: Timeframe.D1,
+        value: 30,
+        signal: 'bullish',
+        interpretation: 'Güçlü trend',
+        weight: 0.1,
+        isPositive: true,
+      },
+      {
+        indicator: 'BollingerBands',
+        timeframe: Timeframe.D1,
+        value: 0.6,
+        signal: 'neutral',
+        interpretation: 'Bant ortasında',
+        weight: 0.1,
+        isPositive: true,
+      },
     ],
     decisionSignal: {
       action: SignalAction.BUY,
@@ -99,7 +147,7 @@ describe('ExplainabilityService', () => {
 
   beforeEach(() => {
     mockLogger = new AppLoggerService(null as any);
-    mockCache = new CacheService({ enabled: false });
+    mockCache = new CacheService();
 
     service = new ExplainabilityService(
       mockLogger,
@@ -176,9 +224,11 @@ describe('ExplainabilityService', () => {
         isPositive: i % 2 === 0,
       }));
 
-      const result = service.generateExplanation(createFullInput({
-        indicators: manyIndicators,
-      }));
+      const result = service.generateExplanation(
+        createFullInput({
+          indicators: manyIndicators,
+        }),
+      );
       expect(result.evidenceTrail.length).toBeLessThanOrEqual(20);
     });
 

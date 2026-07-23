@@ -5,7 +5,10 @@ import { PaperReportGeneratorService } from './paper-report-generator.service';
 import { PaperTradeExecutorService } from './paper-trade-executor.service';
 import { PositionManagerService } from './position-manager.service';
 import {
-  PAPER_PORTFOLIO_DEFAULTS, ExecuteSignalInput, MarketRegime, PositionStatus,
+  PAPER_PORTFOLIO_DEFAULTS,
+  ExecuteSignalInput,
+  MarketRegime,
+  PositionStatus,
 } from './types';
 
 describe('PaperPortfolioOrchestratorService', () => {
@@ -29,7 +32,6 @@ describe('PaperPortfolioOrchestratorService', () => {
       reportGenerator,
       tradeExecutor,
       positionManager,
-      PAPER_PORTFOLIO_DEFAULTS,
     );
   });
 
@@ -60,10 +62,12 @@ describe('PaperPortfolioOrchestratorService', () => {
     });
 
     it('should reject when position limit exceeded', () => {
-      const result = orchestrator.executeSignal(createSignal({
-        quantity: 3000,
-        currentPrice: 100,
-      }));
+      const result = orchestrator.executeSignal(
+        createSignal({
+          quantity: 3000,
+          currentPrice: 100,
+        }),
+      );
 
       expect(result.success).toBe(false);
       expect(result.message).toContain('Pozisyon büyüklüğü');
@@ -71,20 +75,24 @@ describe('PaperPortfolioOrchestratorService', () => {
 
     it('should reject when max positions exceeded', () => {
       for (let i = 0; i < 20; i++) {
-        orchestrator.executeSignal(createSignal({
-          stockSymbol: `STOCK${i}`,
-          stockName: `Stock ${i}`,
-          quantity: 10,
-          currentPrice: 10,
-        }));
+        orchestrator.executeSignal(
+          createSignal({
+            stockSymbol: `STOCK${i}`,
+            stockName: `Stock ${i}`,
+            quantity: 10,
+            currentPrice: 10,
+          }),
+        );
       }
 
-      const result = orchestrator.executeSignal(createSignal({
-        stockSymbol: 'STOCK20',
-        stockName: 'Stock 20',
-        quantity: 10,
-        currentPrice: 10,
-      }));
+      const result = orchestrator.executeSignal(
+        createSignal({
+          stockSymbol: 'STOCK20',
+          stockName: 'Stock 20',
+          quantity: 10,
+          currentPrice: 10,
+        }),
+      );
 
       expect(result.success).toBe(false);
       expect(result.message).toContain('Maksimum pozisyon');

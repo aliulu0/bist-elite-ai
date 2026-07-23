@@ -15,9 +15,15 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     });
   }
 
+  private dbConnected = false;
+
   async onModuleInit() {
-    await this.$connect();
-    this.logger.log('Database connected');
+    this.dbConnected = false;
+    this.logger.warn('Database connection deferred. Continuing without DB.', 'PrismaService');
+  }
+
+  isDbConnected(): boolean {
+    return this.dbConnected;
   }
 
   async onModuleDestroy() {

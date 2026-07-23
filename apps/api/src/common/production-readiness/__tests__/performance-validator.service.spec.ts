@@ -16,7 +16,13 @@ jest.mock('../../monitoring/metrics.service', () => ({
         failedRequests: 5,
         slowRequests: 3,
       },
-      system: { cpuUsage: { user: 1000, system: 500 }, memoryUsage: process.memoryUsage(), uptime: 1000, activeHandles: 10, activeRequests: 2 },
+      system: {
+        cpuUsage: { user: 1000, system: 500 },
+        memoryUsage: process.memoryUsage(),
+        uptime: 1000,
+        activeHandles: 10,
+        activeRequests: 2,
+      },
       database: { slowQueries: [], totalQueries: 50, failedQueries: 0 },
       worker: { activeJobs: 0, completedJobs: 10, failedJobs: 0, queueLength: 0 },
       timestamp: new Date().toISOString(),
@@ -57,8 +63,18 @@ describe('PerformanceValidatorService', () => {
             failedRequests: 5,
             slowRequests: 50,
           },
-          system: { cpuUsage: { user: 1000, system: 500 }, memoryUsage: process.memoryUsage(), uptime: 1000, activeHandles: 10, activeRequests: 2 },
-          database: { slowQueries: [{ query: 'test', duration: 2000, timestamp: Date.now() }], totalQueries: 50, failedQueries: 0 },
+          system: {
+            cpuUsage: { user: 1000, system: 500 },
+            memoryUsage: process.memoryUsage(),
+            uptime: 1000,
+            activeHandles: 10,
+            activeRequests: 2,
+          },
+          database: {
+            slowQueries: [{ query: 'test', duration: 2000, timestamp: Date.now() }],
+            totalQueries: 50,
+            failedQueries: 0,
+          },
           worker: { activeJobs: 0, completedJobs: 10, failedJobs: 0, queueLength: 0 },
           timestamp: new Date().toISOString(),
         }),
@@ -90,7 +106,13 @@ describe('PerformanceValidatorService', () => {
             failedRequests: 0,
             slowRequests: 0,
           },
-          system: { cpuUsage: { user: 1000, system: 500 }, memoryUsage: process.memoryUsage(), uptime: 1000, activeHandles: 10, activeRequests: 2 },
+          system: {
+            cpuUsage: { user: 1000, system: 500 },
+            memoryUsage: process.memoryUsage(),
+            uptime: 1000,
+            activeHandles: 10,
+            activeRequests: 2,
+          },
           database: { slowQueries: [], totalQueries: 50, failedQueries: 0 },
           worker: { activeJobs: 0, completedJobs: 10, failedJobs: 0, queueLength: 0 },
           timestamp: new Date().toISOString(),
@@ -99,7 +121,7 @@ describe('PerformanceValidatorService', () => {
         setGauge: jest.fn(),
       };
 
-      const svc = new PerformanceValidatorService(mockMetrics as never, { 'api.avg': 30, 'api.p95': 50, 'api.p99': 100 });
+      const svc = new PerformanceValidatorService(mockMetrics as never);
       const result = svc.validate();
       expect(result.status).toBe(ReadinessStatus.WARN);
     });

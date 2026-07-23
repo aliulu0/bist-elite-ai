@@ -10,8 +10,8 @@ import {
 export class HistoricalReliabilityAnalyzer {
   private readonly config: ScoringConfig['historicalReliability'];
 
-  constructor(configOverrides?: Partial<ScoringConfig>) {
-    const config = getScoringConfig(configOverrides);
+  constructor() {
+    const config = getScoringConfig();
     this.config = config.historicalReliability;
   }
 

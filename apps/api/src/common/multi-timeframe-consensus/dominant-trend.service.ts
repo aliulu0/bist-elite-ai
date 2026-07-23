@@ -13,8 +13,8 @@ import { TREND_DIRECTION_TR, getTimeframeLabel, getStrengthLabel } from './turki
 export class DominantTrendService {
   private readonly config: ConsensusConfig;
 
-  constructor(configOverrides?: Partial<ConsensusConfig>) {
-    this.config = getConsensusConfig(configOverrides);
+  constructor() {
+    this.config = getConsensusConfig();
   }
 
   analyze(timeframes: TimeframeData[]): {
@@ -97,7 +97,7 @@ export class DominantTrendService {
     timeframes: TimeframeData[],
     type: 'dominant' | 'secondary',
   ): TrendInfo {
-    const supportingTimeframes = timeframes.filter(tf => tf.trend === direction);
+    const supportingTimeframes = timeframes.filter((tf) => tf.trend === direction);
     const strength = this.calculateDirectionStrength(direction, supportingTimeframes);
     const confidence = this.calculateDirectionConfidence(direction, timeframes);
     const indicators = this.extractSupportingIndicators(supportingTimeframes);
@@ -112,7 +112,10 @@ export class DominantTrendService {
     };
   }
 
-  private calculateDirectionStrength(direction: TrendDirection, supportingTfs: TimeframeData[]): number {
+  private calculateDirectionStrength(
+    direction: TrendDirection,
+    supportingTfs: TimeframeData[],
+  ): number {
     if (supportingTfs.length === 0) return 0;
 
     let totalStrength = 0;
@@ -131,15 +134,21 @@ export class DominantTrendService {
     return Math.min(100, baseStrength + tfBonus);
   }
 
-  private calculateDirectionConfidence(direction: TrendDirection, allTimeframes: TimeframeData[]): number {
-    const total = allTimeframes.filter(tf => tf.trend).length;
+  private calculateDirectionConfidence(
+    direction: TrendDirection,
+    allTimeframes: TimeframeData[],
+  ): number {
+    const total = allTimeframes.filter((tf) => tf.trend).length;
     if (total === 0) return 0;
 
-    const supporting = allTimeframes.filter(tf => tf.trend === direction).length;
+    const supporting = allTimeframes.filter((tf) => tf.trend === direction).length;
     const alignment = supporting / total;
 
     let strengthBonus = 0;
-    if (direction === TrendDirection.STRONG_UPTREND || direction === TrendDirection.STRONG_DOWNTREND) {
+    if (
+      direction === TrendDirection.STRONG_UPTREND ||
+      direction === TrendDirection.STRONG_DOWNTREND
+    ) {
       strengthBonus = 0.1;
     }
 
@@ -168,18 +177,21 @@ export class DominantTrendService {
     preferredTimeframes: Timeframe[],
   ): TrendDirection {
     for (const preferred of preferredTimeframes) {
-      const tf = timeframes.find(t => t.timeframe === preferred);
+      const tf = timeframes.find((t) => t.timeframe === preferred);
       if (tf?.trend) return tf.trend;
     }
 
-    const available = timeframes.filter(tf => tf.trend);
+    const available = timeframes.filter((tf) => tf.trend);
     if (available.length === 0) return TrendDirection.SIDEWAYS;
 
     return available[0].trend!;
   }
 
-  private calculateTrendStrength(timeframes: TimeframeData[], dominantDirection: TrendDirection): number {
-    const alignedTimeframes = timeframes.filter(tf => tf.trend === dominantDirection);
+  private calculateTrendStrength(
+    timeframes: TimeframeData[],
+    dominantDirection: TrendDirection,
+  ): number {
+    const alignedTimeframes = timeframes.filter((tf) => tf.trend === dominantDirection);
     if (alignedTimeframes.length === 0) return 0;
 
     let strengthSum = 0;

@@ -11,8 +11,8 @@ import {
 export class WeightManager {
   private readonly config: ScoringConfig;
 
-  constructor(configOverrides?: Partial<ScoringConfig>) {
-    this.config = getScoringConfig(configOverrides);
+  constructor() {
+    this.config = getScoringConfig();
   }
 
   getConfig(): ScoringConfig {
@@ -33,10 +33,7 @@ export class WeightManager {
 
   applyRiskAdjustment(score: number, adjustmentFactor: number): number {
     const adjusted = score * adjustmentFactor;
-    return Math.max(
-      this.config.scoreRange.min,
-      Math.min(this.config.scoreRange.max, adjusted),
-    );
+    return Math.max(this.config.scoreRange.min, Math.min(this.config.scoreRange.max, adjusted));
   }
 
   normalizeScore(raw: number): number {

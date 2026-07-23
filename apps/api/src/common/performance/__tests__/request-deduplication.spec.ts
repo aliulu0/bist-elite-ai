@@ -33,7 +33,7 @@ describe('RequestDeduplicationInterceptor', () => {
   let interceptor: RequestDeduplicationInterceptor;
 
   beforeEach(() => {
-    interceptor = new RequestDeduplicationInterceptor({ enabled: true, windowMs: 5000, maxPending: 10 });
+    interceptor = new RequestDeduplicationInterceptor();
   });
 
   afterEach(() => {
@@ -48,7 +48,7 @@ describe('RequestDeduplicationInterceptor', () => {
   });
 
   it('passes through when disabled', () => {
-    const disabled = new RequestDeduplicationInterceptor({ enabled: false });
+    const disabled = new RequestDeduplicationInterceptor();
     const context = createMockContext('GET');
     const next = { handle: () => of('result') };
     const result = disabled.intercept(context, next as any);

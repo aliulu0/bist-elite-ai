@@ -132,15 +132,10 @@ export class MemoryMonitorService implements OnModuleDestroy {
   private leakThresholdMB = 100;
   private lastHeapMB = 0;
 
-  constructor(options?: { monitorIntervalMs?: number; leakThresholdMB?: number }) {
-    if (options?.leakThresholdMB) this.leakThresholdMB = options.leakThresholdMB;
-
+  constructor() {
     this.recordSnapshot();
     this.lastHeapMB = this.history[0]?.heapUsedMB || 0;
-
-    if (options?.monitorIntervalMs !== 0) {
-      this.monitorInterval = setInterval(() => this.recordSnapshot(), options?.monitorIntervalMs ?? 30_000);
-    }
+    this.monitorInterval = setInterval(() => this.recordSnapshot(), 30_000);
   }
 
   onModuleDestroy(): void {
@@ -184,7 +179,16 @@ export class MemoryMonitorService implements OnModuleDestroy {
   }
 
   private getEmptyStats(): MemoryStats {
-    return { heapUsed: 0, heapTotal: 0, rss: 0, external: 0, arrayBuffers: 0, heapUsedMB: 0, heapTotalMB: 0, rssMB: 0 };
+    return {
+      heapUsed: 0,
+      heapTotal: 0,
+      rss: 0,
+      external: 0,
+      arrayBuffers: 0,
+      heapUsedMB: 0,
+      heapTotalMB: 0,
+      rssMB: 0,
+    };
   }
 }
 
@@ -209,7 +213,7 @@ export class PerformanceMonitorService implements OnModuleDestroy {
 
   constructor() {
     this.connectionPool = new ConnectionPoolService();
-    this.memoryMonitor = new MemoryMonitorService({ monitorIntervalMs: 0 });
+    this.memoryMonitor = new MemoryMonitorService();
 
     if (typeof globalThis.gc === 'function') {
       this.monitorInterval = setInterval(() => this.collectGcStats(), 10_000);

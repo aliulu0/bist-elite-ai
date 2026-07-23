@@ -5,14 +5,23 @@ import { PaperReportGeneratorService } from './paper-report-generator.service';
 import { PaperTradeExecutorService } from './paper-trade-executor.service';
 import { PositionManagerService } from './position-manager.service';
 import {
-  PortfolioState, PaperPortfolioConfig, PAPER_PORTFOLIO_DEFAULTS,
-  PositionStatus, PositionState, ExecuteSignalInput, ClosePositionInput,
-  PartialCloseInput, PortfolioSummary, PerformanceReport,
-  RiskAssessment, MarketRegime,
+  PortfolioState,
+  PaperPortfolioConfig,
+  PAPER_PORTFOLIO_DEFAULTS,
+  PositionStatus,
+  PositionState,
+  ExecuteSignalInput,
+  ClosePositionInput,
+  PartialCloseInput,
+  PortfolioSummary,
+  PerformanceReport,
+  RiskAssessment,
+  MarketRegime,
 } from './types';
 
 @Injectable()
 export class PaperPortfolioOrchestratorService {
+  private readonly config: PaperPortfolioConfig;
   private portfolio: PortfolioState;
 
   constructor(
@@ -21,8 +30,8 @@ export class PaperPortfolioOrchestratorService {
     private readonly reportGenerator: PaperReportGeneratorService,
     private readonly tradeExecutor: PaperTradeExecutorService,
     private readonly positionManager: PositionManagerService,
-    private readonly config: PaperPortfolioConfig = PAPER_PORTFOLIO_DEFAULTS,
   ) {
+    this.config = PAPER_PORTFOLIO_DEFAULTS;
     this.portfolio = this.createDefaultPortfolio();
   }
 
@@ -33,7 +42,10 @@ export class PaperPortfolioOrchestratorService {
     portfolioState: PortfolioState;
   } {
     const riskCheck = this.riskManager.checkPositionLimit(
-      this.portfolio, input.quantity, input.currentPrice, this.config,
+      this.portfolio,
+      input.quantity,
+      input.currentPrice,
+      this.config,
     );
     if (!riskCheck.allowed) {
       return { success: false, message: riskCheck.reason, portfolioState: this.portfolio };
@@ -66,7 +78,8 @@ export class PaperPortfolioOrchestratorService {
       this.config,
     );
 
-    const totalOrderCost = (order.executionPrice || order.price) * order.quantity + order.transactionCost;
+    const totalOrderCost =
+      (order.executionPrice || order.price) * order.quantity + order.transactionCost;
     this.portfolio.cashBalance -= totalOrderCost;
     this.portfolio.orders.push(order);
     this.portfolio.updatedAt = new Date().toISOString();
@@ -122,15 +135,19 @@ export class PaperPortfolioOrchestratorService {
       this.config,
     );
 
-    const totalSellProceeds = (order.executionPrice || order.price) * order.quantity - order.transactionCost;
-    const realizedPnl = totalSellProceeds - (position.avgCost * position.quantity);
+    const totalSellProceeds =
+      (order.executionPrice || order.price) * order.quantity - order.transactionCost;
+    const realizedPnl = totalSellProceeds - position.avgCost * position.quantity;
 
     this.portfolio.cashBalance += totalSellProceeds;
     this.portfolio.orders.push(order);
     this.portfolio.updatedAt = new Date().toISOString();
 
     const closedPosition = this.positionManager.closePosition(
-      position, input.exitPrice, new Date().toISOString(), input.notes,
+      position,
+      input.exitPrice,
+      new Date().toISOString(),
+      input.notes,
     );
     this.portfolio.positions.delete(input.stockSymbol);
     this.portfolio.positions.set(`${input.stockSymbol}_closed`, closedPosition);
@@ -183,15 +200,20 @@ export class PaperPortfolioOrchestratorService {
       this.config,
     );
 
-    const totalSellProceeds = (order.executionPrice || order.price) * order.quantity - order.transactionCost;
-    const realizedPnl = totalSellProceeds - (position.avgCost * input.quantity);
+    const totalSellProceeds =
+      (order.executionPrice || order.price) * order.quantity - order.transactionCost;
+    const realizedPnl = totalSellProceeds - position.avgCost * input.quantity;
 
     this.portfolio.cashBalance += totalSellProceeds;
     this.portfolio.orders.push(order);
     this.portfolio.updatedAt = new Date().toISOString();
 
     const { closed, remaining } = this.positionManager.partialClose(
-      position, input.quantity, input.exitPrice, new Date().toISOString(), input.notes,
+      position,
+      input.quantity,
+      input.exitPrice,
+      new Date().toISOString(),
+      input.notes,
     );
     this.portfolio.positions.set(`${input.stockSymbol}_closed`, closed);
     this.portfolio.positions.set(input.stockSymbol, remaining);
@@ -215,7 +237,7 @@ export class PaperPortfolioOrchestratorService {
     let closedCount = 0;
     let totalUnrealizedPnl = 0;
     let totalRealizedPnl = 0;
-    this.portfolio.positions.forEach(p => {
+    this.portfolio.positions.forEach((p) => {
       if (p.status === PositionStatus.OPEN) {
         openCount++;
         totalUnrealizedPnl += p.unrealizedPnl;
@@ -297,7 +319,7 @@ export class PaperPortfolioOrchestratorService {
 
   private getInvestedValue(): number {
     let invested = 0;
-    this.portfolio.positions.forEach(p => {
+    this.portfolio.positions.forEach((p) => {
       if (p.status === PositionStatus.OPEN) {
         invested += p.quantity * p.currentPrice;
       }

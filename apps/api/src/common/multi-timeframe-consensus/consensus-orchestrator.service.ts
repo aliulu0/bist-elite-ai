@@ -21,11 +21,7 @@ import { ConflictDetector } from './conflict-detector.service';
 import { DominantTrendService } from './dominant-trend.service';
 import { EarlyAlignmentService } from './early-alignment.service';
 import { ExplanationGenerator } from './explanation-generator.service';
-import {
-  getConsensusDescription,
-  getSuggestedObservation,
-  getDisclaimer,
-} from './turkish-terms';
+import { getConsensusDescription, getSuggestedObservation, getDisclaimer } from './turkish-terms';
 
 @Injectable()
 export class ConsensusOrchestrator {
@@ -37,18 +33,20 @@ export class ConsensusOrchestrator {
   private readonly earlyAlignmentService: EarlyAlignmentService;
   private readonly explanationGenerator: ExplanationGenerator;
 
-  constructor(configOverrides?: Partial<ConsensusConfig>) {
-    this.config = getConsensusConfig(configOverrides);
-    this.consensusCalculator = new ConsensusCalculator(configOverrides);
-    this.conflictDetector = new ConflictDetector(configOverrides);
-    this.dominantTrendService = new DominantTrendService(configOverrides);
-    this.earlyAlignmentService = new EarlyAlignmentService(configOverrides);
+  constructor() {
+    this.config = getConsensusConfig();
+    this.consensusCalculator = new ConsensusCalculator();
+    this.conflictDetector = new ConflictDetector();
+    this.dominantTrendService = new DominantTrendService();
+    this.earlyAlignmentService = new EarlyAlignmentService();
     this.explanationGenerator = new ExplanationGenerator();
   }
 
   async analyze(input: ConsensusEngineInput): Promise<ConsensusEngineOutput> {
     const startTime = Date.now();
-    this.logger.debug(`Analyzing consensus for ${input.stockSymbol} with ${input.timeframes.length} timeframes`);
+    this.logger.debug(
+      `Analyzing consensus for ${input.stockSymbol} with ${input.timeframes.length} timeframes`,
+    );
 
     const timeframeScores = this.consensusCalculator.calculate(input.timeframes);
     const conflicts = this.conflictDetector.detect(input.timeframes);
@@ -56,7 +54,12 @@ export class ConsensusOrchestrator {
     const trendAnalysis = this.dominantTrendService.analyze(input.timeframes);
     const earlyAlignments = this.earlyAlignmentService.detect(input.timeframes);
 
-    const consensusSummary = this.buildConsensusSummary(timeframeScores, conflicts, conflictLevel, trendAnalysis);
+    const consensusSummary = this.buildConsensusSummary(
+      timeframeScores,
+      conflicts,
+      conflictLevel,
+      trendAnalysis,
+    );
     const evidenceMatrix = this.buildEvidenceMatrix(timeframeScores, conflicts, trendAnalysis);
     const suggestedAction = this.determineSuggestedAction(consensusSummary, conflicts);
     const suggestedConfidence = this.calculateSuggestedConfidence(consensusSummary, conflicts);
@@ -67,7 +70,9 @@ export class ConsensusOrchestrator {
     );
 
     const elapsed = Date.now() - startTime;
-    this.logger.debug(`Consensus analysis complete for ${input.stockSymbol}: ${consensusSummary.overallScore.toFixed(1)} (${elapsed}ms)`);
+    this.logger.debug(
+      `Consensus analysis complete for ${input.stockSymbol}: ${consensusSummary.overallScore.toFixed(1)} (${elapsed}ms)`,
+    );
 
     return {
       stockSymbol: input.stockSymbol,
@@ -101,7 +106,7 @@ export class ConsensusOrchestrator {
   }
 
   async analyzeBatch(inputs: ConsensusEngineInput[]): Promise<ConsensusEngineOutput[]> {
-    const results = await Promise.all(inputs.map(input => this.analyze(input)));
+    const results = await Promise.all(inputs.map((input) => this.analyze(input)));
     results.sort((a, b) => b.consensusSummary.overallScore - a.consensusSummary.overallScore);
     return results;
   }
@@ -129,7 +134,10 @@ export class ConsensusOrchestrator {
     };
   }
 
-  private calculateOverallScore(timeframeScores: TimeframeConsensusScore[], conflictLevel: number): number {
+  private calculateOverallScore(
+    timeframeScores: TimeframeConsensusScore[],
+    conflictLevel: number,
+  ): number {
     if (timeframeScores.length === 0) return 50;
 
     let weightedSum = 0;
@@ -165,7 +173,8 @@ export class ConsensusOrchestrator {
   ): number {
     if (timeframeScores.length === 0) return 0;
 
-    const avgConfidence = timeframeScores.reduce((sum, ts) => sum + ts.confidence, 0) / timeframeScores.length;
+    const avgConfidence =
+      timeframeScores.reduce((sum, ts) => sum + ts.confidence, 0) / timeframeScores.length;
     const conflictPenalty = conflicts.length * 0.05;
 
     return Math.max(0, Math.min(1, avgConfidence - conflictPenalty));
@@ -193,16 +202,17 @@ export class ConsensusOrchestrator {
 
     evidence.push({
       component: 'Trend Guclulugu',
-      weight: 0.20,
+      weight: 0.2,
       rawScore: trendAnalysis.dominant.strength,
       normalizedScore: trendAnalysis.dominant.strength,
-      contribution: trendAnalysis.dominant.strength * 0.20,
+      contribution: trendAnalysis.dominant.strength * 0.2,
       description: 'Dominant trend strength',
       descriptionTr: `Baskin trend gucu: ${trendAnalysis.dominant.strength.toFixed(1)}`,
     });
 
     if (conflicts.length > 0) {
-      const conflictImpact = conflicts.reduce((sum, c) => sum + Math.abs(c.impact), 0) / conflicts.length;
+      const conflictImpact =
+        conflicts.reduce((sum, c) => sum + Math.abs(c.impact), 0) / conflicts.length;
       evidence.push({
         component: 'Celiski Etkisi',
         weight: 0.15,
@@ -245,8 +255,8 @@ export class ConsensusOrchestrator {
     let confidence = summary.consensusConfidence;
 
     if (conflicts.length > 0) {
-      const maxConflictImpact = Math.max(...conflicts.map(c => Math.abs(c.impact)));
-      confidence *= (1 - maxConflictImpact * 0.3);
+      const maxConflictImpact = Math.max(...conflicts.map((c) => Math.abs(c.impact)));
+      confidence *= 1 - maxConflictImpact * 0.3;
     }
 
     if (summary.trendStrength > 70) {

@@ -27,13 +27,13 @@ export class EliteScoreOrchestrator {
   private readonly earlyOpportunityDetector: EarlyOpportunityDetector;
   private readonly evidenceMatrixService: EvidenceMatrixService;
 
-  constructor(configOverrides?: Partial<ScoringConfig>) {
-    this.config = getScoringConfig(configOverrides);
-    this.weightManager = new WeightManager(configOverrides);
+  constructor() {
+    this.config = getScoringConfig();
+    this.weightManager = new WeightManager();
     this.technicalScorer = new TechnicalScorer();
     this.consensusAnalyzer = new ConsensusAnalyzer();
-    this.historicalReliabilityAnalyzer = new HistoricalReliabilityAnalyzer(configOverrides);
-    this.earlyOpportunityDetector = new EarlyOpportunityDetector(configOverrides);
+    this.historicalReliabilityAnalyzer = new HistoricalReliabilityAnalyzer();
+    this.earlyOpportunityDetector = new EarlyOpportunityDetector();
     this.evidenceMatrixService = new EvidenceMatrixService(this.weightManager);
   }
 
@@ -47,7 +47,8 @@ export class EliteScoreOrchestrator {
     const consensusScore = this.calculateConsensusScore(input);
     const historicalScore = this.calculateHistoricalScore(input);
     const earlyOppScore = this.calculateEarlyOpportunityScore(input);
-    const conflictCount = input.riskAdjustment?.timeframeConflictCount ?? consensusScore.conflictCount;
+    const conflictCount =
+      input.riskAdjustment?.timeframeConflictCount ?? consensusScore.conflictCount;
     const riskAdjustment = this.calculateRiskAdjustment(input, conflictCount);
 
     const componentScores: Record<string, number> = {
@@ -66,7 +67,10 @@ export class EliteScoreOrchestrator {
 
     const weights = this.weightManager.getWeights(profile);
     const overallEliteScore = this.weightManager.computeWeightedScore(componentScores, weights);
-    const adjustedScore = this.weightManager.applyRiskAdjustment(overallEliteScore, riskAdjustment.adjustmentFactor);
+    const adjustedScore = this.weightManager.applyRiskAdjustment(
+      overallEliteScore,
+      riskAdjustment.adjustmentFactor,
+    );
 
     const evidenceMatrix = this.evidenceMatrixService.generate(componentScores, profile, {
       technical: 'Teknik Analiz',
@@ -82,10 +86,16 @@ export class EliteScoreOrchestrator {
       earlyOpportunity: 'Erken Fırsat',
     });
 
-    const confidenceScore = this.calculateConfidenceScore(componentScores, consensusScore, riskAdjustment);
+    const confidenceScore = this.calculateConfidenceScore(
+      componentScores,
+      consensusScore,
+      riskAdjustment,
+    );
 
     const elapsed = Date.now() - startTime;
-    this.logger.debug(`Elite score calculated for ${input.stockSymbol}: ${adjustedScore.toFixed(1)} (${elapsed}ms)`);
+    this.logger.debug(
+      `Elite score calculated for ${input.stockSymbol}: ${adjustedScore.toFixed(1)} (${elapsed}ms)`,
+    );
 
     return {
       stockSymbol: input.stockSymbol,
@@ -113,14 +123,14 @@ export class EliteScoreOrchestrator {
         ...input.metadata,
         calculationTimeMs: elapsed,
         componentCount: Object.keys(componentScores).length,
-        positiveContributions: evidenceMatrix.filter(e => e.rawScore >= 55).length,
-        negativeContributions: evidenceMatrix.filter(e => e.rawScore <= 45).length,
+        positiveContributions: evidenceMatrix.filter((e) => e.rawScore >= 55).length,
+        negativeContributions: evidenceMatrix.filter((e) => e.rawScore <= 45).length,
       },
     };
   }
 
   async calculateBatch(inputs: EliteScoreInput[]): Promise<EliteScoreOutput[]> {
-    const results = await Promise.all(inputs.map(input => this.calculate(input)));
+    const results = await Promise.all(inputs.map((input) => this.calculate(input)));
 
     results.sort((a, b) => b.overallEliteScore - a.overallEliteScore);
     results.forEach((result, index) => {
@@ -137,13 +147,15 @@ export class EliteScoreOrchestrator {
     if (input.indicators && input.indicators.length > 0) {
       return this.technicalScorer.calculateFromIndicators(input.indicators);
     }
-    return this.technicalScorer.calculate([{
-      timeframe: 'D1' as any,
-      trend: 50,
-      momentum: 50,
-      volume: 50,
-      volatility: 50,
-    }]);
+    return this.technicalScorer.calculate([
+      {
+        timeframe: 'D1' as any,
+        trend: 50,
+        momentum: 50,
+        volume: 50,
+        volatility: 50,
+      },
+    ]);
   }
 
   private calculateConsensusScore(input: EliteScoreInput) {
@@ -182,7 +194,9 @@ export class EliteScoreOrchestrator {
 
     const volatility = input.riskAdjustment?.volatility ?? 50;
     if (volatility > config.volatilityThreshold) {
-      const penalty = ((volatility - config.volatilityThreshold) / (100 - config.volatilityThreshold)) * config.maxPenalty;
+      const penalty =
+        ((volatility - config.volatilityThreshold) / (100 - config.volatilityThreshold)) *
+        config.maxPenalty;
       totalPenalty += penalty;
       penalties.push({
         factor: 'volatility',
@@ -193,7 +207,10 @@ export class EliteScoreOrchestrator {
 
     const liquidity = input.riskAdjustment?.liquidity ?? 50;
     if (liquidity < config.liquidityThreshold) {
-      const penalty = ((config.liquidityThreshold - liquidity) / config.liquidityThreshold) * config.maxPenalty * 0.8;
+      const penalty =
+        ((config.liquidityThreshold - liquidity) / config.liquidityThreshold) *
+        config.maxPenalty *
+        0.8;
       totalPenalty += penalty;
       penalties.push({
         factor: 'liquidity',
@@ -250,14 +267,14 @@ export class EliteScoreOrchestrator {
     consensus: any,
     riskAdjustment: RiskAdjustmentOutput,
   ): number {
-    const scores = Object.values(componentScores).filter(s => !isNaN(s));
+    const scores = Object.values(componentScores).filter((s) => !isNaN(s));
     const variance = this.calculateVariance(scores);
     const varianceScore = Math.max(0, 1 - variance / 1000);
 
     const consensusScore = consensus.overallConsensus;
     const riskScore = Math.max(0, 1 - riskAdjustment.penalties.length * 0.1);
 
-    return Math.min(1, (varianceScore * 0.4 + consensusScore * 0.4 + riskScore * 0.2));
+    return Math.min(1, varianceScore * 0.4 + consensusScore * 0.4 + riskScore * 0.2);
   }
 
   private calculateVariance(values: number[]): number {

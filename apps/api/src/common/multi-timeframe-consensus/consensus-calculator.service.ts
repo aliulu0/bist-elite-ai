@@ -13,12 +13,12 @@ import {
 export class ConsensusCalculator {
   private readonly config: ConsensusConfig;
 
-  constructor(configOverrides?: Partial<ConsensusConfig>) {
-    this.config = getConsensusConfig(configOverrides);
+  constructor() {
+    this.config = getConsensusConfig();
   }
 
   calculate(timeframes: TimeframeData[]): TimeframeConsensusScore[] {
-    return timeframes.map(tf => this.calculateTimeframeScore(tf, timeframes));
+    return timeframes.map((tf) => this.calculateTimeframeScore(tf, timeframes));
   }
 
   private calculateTimeframeScore(
@@ -35,12 +35,12 @@ export class ConsensusCalculator {
     const signalTiming = this.calculateSignalTiming(current, allTimeframes);
 
     const rawScore =
-      trendAgreement * 0.20 +
+      trendAgreement * 0.2 +
       momentumAgreement * 0.15 +
       volumeConfirmation * 0.15 +
-      riskAgreement * 0.10 +
+      riskAgreement * 0.1 +
       indicatorAgreement * 0.15 +
-      strategyAgreement * 0.10 +
+      strategyAgreement * 0.1 +
       srAlignment * 0.08 +
       signalTiming * 0.07;
 
@@ -88,7 +88,10 @@ export class ConsensusCalculator {
     return Math.max(0, Math.min(1, rawAgreement));
   }
 
-  private calculateMomentumAgreement(current: TimeframeData, allTimeframes: TimeframeData[]): number {
+  private calculateMomentumAgreement(
+    current: TimeframeData,
+    allTimeframes: TimeframeData[],
+  ): number {
     const currentMomentum = current.momentumScore;
     if (currentMomentum === undefined) return 0.5;
 
@@ -106,7 +109,10 @@ export class ConsensusCalculator {
     return count > 0 ? agreementSum / count : 0.5;
   }
 
-  private calculateVolumeConfirmation(current: TimeframeData, allTimeframes: TimeframeData[]): number {
+  private calculateVolumeConfirmation(
+    current: TimeframeData,
+    allTimeframes: TimeframeData[],
+  ): number {
     if (!current.volume) return 0.5;
 
     const isPositiveVolume = this.isPositiveVolumeState(current.volume);
@@ -142,7 +148,10 @@ export class ConsensusCalculator {
     return count > 0 ? agreementSum / count : 0.5;
   }
 
-  private calculateIndicatorAgreement(current: TimeframeData, allTimeframes: TimeframeData[]): number {
+  private calculateIndicatorAgreement(
+    current: TimeframeData,
+    allTimeframes: TimeframeData[],
+  ): number {
     if (!current.indicators || current.indicators.length === 0) return 0.5;
 
     let positiveCount = 0;
@@ -158,7 +167,8 @@ export class ConsensusCalculator {
     let count = 0;
 
     for (const tf of allTimeframes) {
-      if (tf.timeframe === current.timeframe || !tf.indicators || tf.indicators.length === 0) continue;
+      if (tf.timeframe === current.timeframe || !tf.indicators || tf.indicators.length === 0)
+        continue;
 
       let tfPositive = 0;
       let tfNegative = 0;
@@ -180,7 +190,10 @@ export class ConsensusCalculator {
     return count > 0 ? agreementSum / count : 0.5;
   }
 
-  private calculateStrategyAgreement(current: TimeframeData, allTimeframes: TimeframeData[]): number {
+  private calculateStrategyAgreement(
+    current: TimeframeData,
+    allTimeframes: TimeframeData[],
+  ): number {
     if (!current.strategySignal) return 0.5;
 
     const currentSignal = current.strategySignal;
@@ -233,22 +246,26 @@ export class ConsensusCalculator {
     let timingScore = currentConfidence;
 
     const shorterTimeframes = allTimeframes.filter(
-      tf => this.getTimeframeOrder(tf.timeframe) < this.getTimeframeOrder(current.timeframe),
+      (tf) => this.getTimeframeOrder(tf.timeframe) < this.getTimeframeOrder(current.timeframe),
     );
 
     const longerTimeframes = allTimeframes.filter(
-      tf => this.getTimeframeOrder(tf.timeframe) > this.getTimeframeOrder(current.timeframe),
+      (tf) => this.getTimeframeOrder(tf.timeframe) > this.getTimeframeOrder(current.timeframe),
     );
 
     if (shorterTimeframes.length > 0) {
-      const shorterSignals = shorterTimeframes.filter(tf => tf.strategySignal === current.strategySignal);
+      const shorterSignals = shorterTimeframes.filter(
+        (tf) => tf.strategySignal === current.strategySignal,
+      );
       if (shorterSignals.length > 0) {
         timingScore += 0.15;
       }
     }
 
     if (longerTimeframes.length > 0) {
-      const longerSignals = longerTimeframes.filter(tf => tf.strategySignal === current.strategySignal);
+      const longerSignals = longerTimeframes.filter(
+        (tf) => tf.strategySignal === current.strategySignal,
+      );
       if (longerSignals.length > 0) {
         timingScore += 0.1;
       }
@@ -273,16 +290,16 @@ export class ConsensusCalculator {
 
     let crossTimeframeSupport = 0;
     const supportingTimeframes = allTimeframes.filter(
-      tf => tf.timeframe !== current.timeframe && tf.trend !== undefined,
+      (tf) => tf.timeframe !== current.timeframe && tf.trend !== undefined,
     );
     if (supportingTimeframes.length > 0) {
-      const alignedCount = supportingTimeframes.filter(
-        tf => this.areTrendsAligned(current.trend!, tf.trend!),
+      const alignedCount = supportingTimeframes.filter((tf) =>
+        this.areTrendsAligned(current.trend!, tf.trend!),
       ).length;
       crossTimeframeSupport = alignedCount / supportingTimeframes.length;
     }
 
-    return (dataCompleteness * 0.5 + crossTimeframeSupport * 0.5);
+    return dataCompleteness * 0.5 + crossTimeframeSupport * 0.5;
   }
 
   private areTrendsAligned(a: TrendDirection, b: TrendDirection): boolean {
@@ -298,8 +315,20 @@ export class ConsensusCalculator {
   }
 
   private getTrendDirection(trend: TrendDirection): number {
-    if ([TrendDirection.STRONG_UPTREND, TrendDirection.UPTREND, TrendDirection.WEAK_UPTREND].includes(trend)) return 1;
-    if ([TrendDirection.STRONG_DOWNTREND, TrendDirection.DOWNTREND, TrendDirection.WEAK_DOWNTREND].includes(trend)) return -1;
+    if (
+      [TrendDirection.STRONG_UPTREND, TrendDirection.UPTREND, TrendDirection.WEAK_UPTREND].includes(
+        trend,
+      )
+    )
+      return 1;
+    if (
+      [
+        TrendDirection.STRONG_DOWNTREND,
+        TrendDirection.DOWNTREND,
+        TrendDirection.WEAK_DOWNTREND,
+      ].includes(trend)
+    )
+      return -1;
     return 0;
   }
 

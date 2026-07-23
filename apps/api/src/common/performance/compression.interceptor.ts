@@ -38,9 +38,9 @@ export class CompressionInterceptor implements NestInterceptor {
   private readonly threshold: number;
   private readonly level: number;
 
-  constructor(options?: { threshold?: number; level?: number }) {
-    this.threshold = options?.threshold ?? 1024;
-    this.level = options?.level ?? 6;
+  constructor() {
+    this.threshold = 1024;
+    this.level = 6;
   }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {

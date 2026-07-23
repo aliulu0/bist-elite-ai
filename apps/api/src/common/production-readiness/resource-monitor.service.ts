@@ -25,11 +25,8 @@ export class ResourceMonitorService {
   private readonly thresholds: ResourceThresholds;
   private eventLoopStart: number = Date.now();
 
-  constructor(
-    private readonly logger: AppLoggerService,
-    thresholds?: Partial<ResourceThresholds>,
-  ) {
-    this.thresholds = { ...DEFAULT_THRESHOLDS, ...thresholds };
+  constructor(private readonly logger: AppLoggerService) {
+    this.thresholds = { ...DEFAULT_THRESHOLDS };
   }
 
   async snapshot(): Promise<ResourceSnapshot> {
@@ -58,8 +55,12 @@ export class ResourceMonitorService {
       diskPercent: 0,
       heapUsedMb: Math.round(mem.heapUsed / (1024 * 1024)),
       heapTotalMb: Math.round(mem.heapTotal / (1024 * 1024)),
-      activeHandles: (process as unknown as { _getActiveHandles?: () => unknown[] })._getActiveHandles?.()?.length ?? 0,
-      activeRequests: (process as unknown as { _getActiveRequests?: () => unknown[] })._getActiveRequests?.()?.length ?? 0,
+      activeHandles:
+        (process as unknown as { _getActiveHandles?: () => unknown[] })._getActiveHandles?.()
+          ?.length ?? 0,
+      activeRequests:
+        (process as unknown as { _getActiveRequests?: () => unknown[] })._getActiveRequests?.()
+          ?.length ?? 0,
       eventLoopLagMs: eventLoopLag,
     };
   }

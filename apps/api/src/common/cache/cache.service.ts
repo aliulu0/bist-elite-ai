@@ -38,8 +38,8 @@ export class CacheService implements OnModuleDestroy {
   private readonly stats = { hits: 0, misses: 0, sets: 0, deletes: 0, evictions: 0 };
   private readonly startTime = Date.now();
 
-  constructor(config?: Partial<CacheConfig>) {
-    this.config = getCacheConfig(config);
+  constructor() {
+    this.config = getCacheConfig();
 
     this.registerNamespace('indicators', this.config.strategies.indicators);
     this.registerNamespace('scores', this.config.strategies.scores);
@@ -166,7 +166,12 @@ export class CacheService implements OnModuleDestroy {
     return count;
   }
 
-  getOrSet<T = any>(key: string, factory: () => T | Promise<T>, ttl?: number, namespace?: string): T | Promise<T> {
+  getOrSet<T = any>(
+    key: string,
+    factory: () => T | Promise<T>,
+    ttl?: number,
+    namespace?: string,
+  ): T | Promise<T> {
     const cached = this.get<T>(key, namespace);
     if (cached !== undefined) return cached;
 

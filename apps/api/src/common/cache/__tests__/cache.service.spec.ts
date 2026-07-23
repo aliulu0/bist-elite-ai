@@ -5,7 +5,7 @@ describe('CacheService', () => {
   let service: CacheService;
 
   beforeEach(() => {
-    service = new CacheService({ enabled: true, ttl: 60_000, maxEntries: 100 });
+    service = new CacheService();
   });
 
   afterEach(() => {
@@ -116,7 +116,7 @@ describe('CacheService', () => {
 
   describe('LRU eviction', () => {
     it('evicts when max entries reached', () => {
-      const smallService = new CacheService({ enabled: true, ttl: 60_000, maxEntries: 3 });
+      const smallService = new CacheService();
       smallService.set('a', 1);
       smallService.set('b', 2);
       smallService.set('c', 3);
@@ -155,7 +155,7 @@ describe('CacheService', () => {
 
   describe('disabled cache', () => {
     it('does not store when disabled', () => {
-      const disabled = new CacheService({ enabled: false });
+      const disabled = new CacheService();
       disabled.set('key', 'value');
       expect(disabled.get('key')).toBeUndefined();
       disabled.onModuleDestroy();

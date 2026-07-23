@@ -1,4 +1,8 @@
-import { ConnectionPoolService, MemoryMonitorService, PerformanceMonitorService } from '../performance.service';
+import {
+  ConnectionPoolService,
+  MemoryMonitorService,
+  PerformanceMonitorService,
+} from '../performance.service';
 
 describe('ConnectionPoolService', () => {
   let service: ConnectionPoolService;
@@ -40,7 +44,7 @@ describe('MemoryMonitorService', () => {
   let service: MemoryMonitorService;
 
   beforeEach(() => {
-    service = new MemoryMonitorService({ monitorIntervalMs: 0 });
+    service = new MemoryMonitorService();
   });
 
   afterEach(() => {

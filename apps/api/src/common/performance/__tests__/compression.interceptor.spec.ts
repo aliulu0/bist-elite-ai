@@ -20,7 +20,9 @@ function createMockContext(data: any, acceptEncoding = '', ifNoneMatch = '') {
   const res = {
     setHeader: jest.fn(),
     status: jest.fn().mockReturnThis(),
-    send: jest.fn((d) => { sentData = d; }),
+    send: jest.fn((d) => {
+      sentData = d;
+    }),
     getSentData: () => sentData,
   };
 
@@ -41,7 +43,7 @@ describe('CompressionInterceptor', () => {
   let interceptor: CompressionInterceptor;
 
   beforeEach(() => {
-    interceptor = new CompressionInterceptor({ threshold: 100, level: 6 });
+    interceptor = new CompressionInterceptor();
   });
 
   it('skips compression for small payloads', (done) => {
@@ -106,7 +108,10 @@ describe('ETagInterceptor', () => {
 
     interceptor.intercept(context, next as any).subscribe(() => {
       expect(res.setHeader).toHaveBeenCalledWith('ETag', expect.any(String));
-      expect(res.setHeader).toHaveBeenCalledWith('Cache-Control', 'private, max-age=0, must-revalidate');
+      expect(res.setHeader).toHaveBeenCalledWith(
+        'Cache-Control',
+        'private, max-age=0, must-revalidate',
+      );
       done();
     });
   });

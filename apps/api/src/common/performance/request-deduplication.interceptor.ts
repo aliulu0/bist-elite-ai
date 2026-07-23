@@ -20,12 +20,11 @@ export class RequestDeduplicationInterceptor implements NestInterceptor {
   private cleanupInterval: ReturnType<typeof setInterval> | null = null;
   private readonly config: DedupConfig;
 
-  constructor(config?: Partial<DedupConfig>) {
+  constructor() {
     this.config = {
       enabled: true,
       windowMs: 5000,
       maxPending: 100,
-      ...config,
     };
 
     if (this.config.enabled) {

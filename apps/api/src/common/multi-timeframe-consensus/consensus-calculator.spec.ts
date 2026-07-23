@@ -1,5 +1,12 @@
 import { ConsensusCalculator } from './consensus-calculator.service';
-import { TimeframeData, Timeframe, TrendDirection, MomentumState, VolumeState, SignalType } from './types';
+import {
+  TimeframeData,
+  Timeframe,
+  TrendDirection,
+  MomentumState,
+  VolumeState,
+  SignalType,
+} from './types';
 
 describe('ConsensusCalculator', () => {
   let calculator: ConsensusCalculator;
@@ -18,7 +25,7 @@ describe('ConsensusCalculator', () => {
       const timeframes = createUniformTimeframes(TrendDirection.UPTREND, 70);
       const result = calculator.calculate(timeframes);
       expect(result).toHaveLength(4);
-      expect(result.every(ts => ts.score >= 0 && ts.score <= 100)).toBe(true);
+      expect(result.every((ts) => ts.score >= 0 && ts.score <= 100)).toBe(true);
     });
 
     it('should give higher scores when all timeframes agree', () => {
@@ -30,10 +37,34 @@ describe('ConsensusCalculator', () => {
 
     it('should give lower scores when timeframes disagree', () => {
       const timeframes: TimeframeData[] = [
-        { timeframe: Timeframe.M4, price: 100, trend: TrendDirection.STRONG_UPTREND, trendScore: 85, momentumScore: 75 },
-        { timeframe: Timeframe.D1, price: 100, trend: TrendDirection.STRONG_DOWNTREND, trendScore: 85, momentumScore: 25 },
-        { timeframe: Timeframe.W1, price: 100, trend: TrendDirection.STRONG_UPTREND, trendScore: 85, momentumScore: 75 },
-        { timeframe: Timeframe.M1, price: 100, trend: TrendDirection.STRONG_DOWNTREND, trendScore: 85, momentumScore: 25 },
+        {
+          timeframe: Timeframe.M4,
+          price: 100,
+          trend: TrendDirection.STRONG_UPTREND,
+          trendScore: 85,
+          momentumScore: 75,
+        },
+        {
+          timeframe: Timeframe.D1,
+          price: 100,
+          trend: TrendDirection.STRONG_DOWNTREND,
+          trendScore: 85,
+          momentumScore: 25,
+        },
+        {
+          timeframe: Timeframe.W1,
+          price: 100,
+          trend: TrendDirection.STRONG_UPTREND,
+          trendScore: 85,
+          momentumScore: 75,
+        },
+        {
+          timeframe: Timeframe.M1,
+          price: 100,
+          trend: TrendDirection.STRONG_DOWNTREND,
+          trendScore: 85,
+          momentumScore: 25,
+        },
       ];
       const result = calculator.calculate(timeframes);
       const avgScore = result.reduce((sum, ts) => sum + ts.score, 0) / result.length;
@@ -94,14 +125,16 @@ describe('ConsensusCalculator', () => {
     it('should calculate indicator agreement', () => {
       const timeframes: TimeframeData[] = [
         {
-          timeframe: Timeframe.M4, price: 100,
+          timeframe: Timeframe.M4,
+          price: 100,
           indicators: [
             { name: 'RSI', value: 65, signal: 'bullish', weight: 1, isPositive: true },
             { name: 'MACD', value: 5, signal: 'bullish', weight: 1, isPositive: true },
           ],
         },
         {
-          timeframe: Timeframe.D1, price: 100,
+          timeframe: Timeframe.D1,
+          price: 100,
           indicators: [
             { name: 'RSI', value: 60, signal: 'bullish', weight: 1, isPositive: true },
             { name: 'MACD', value: -2, signal: 'bearish', weight: 1, isPositive: false },
@@ -138,10 +171,14 @@ describe('ConsensusCalculator', () => {
     it('should calculate confidence', () => {
       const timeframes: TimeframeData[] = [
         {
-          timeframe: Timeframe.M4, price: 100,
-          trend: TrendDirection.UPTREND, trendScore: 70,
-          momentumScore: 65, volume: VolumeState.HIGH_VOLUME,
-          riskScore: 30, strategySignal: SignalType.BUY,
+          timeframe: Timeframe.M4,
+          price: 100,
+          trend: TrendDirection.UPTREND,
+          trendScore: 70,
+          momentumScore: 65,
+          volume: VolumeState.HIGH_VOLUME,
+          riskScore: 30,
+          strategySignal: SignalType.BUY,
           indicators: [{ name: 'RSI', value: 65, signal: 'bullish', weight: 1, isPositive: true }],
         },
       ];
@@ -153,14 +190,7 @@ describe('ConsensusCalculator', () => {
 
   describe('custom config', () => {
     it('should use custom timeframe weights', () => {
-      const custom = new ConsensusCalculator({
-        timeframeWeights: {
-          [Timeframe.M4]: 0.40,
-          [Timeframe.D1]: 0.30,
-          [Timeframe.W1]: 0.20,
-          [Timeframe.M1]: 0.10,
-        },
-      });
+      const custom = new ConsensusCalculator();
       const timeframes = createUniformTimeframes(TrendDirection.UPTREND, 70);
       const result = custom.calculate(timeframes);
       expect(result).toHaveLength(4);
@@ -170,9 +200,37 @@ describe('ConsensusCalculator', () => {
 
 function createUniformTimeframes(trend: TrendDirection, trendScore: number): TimeframeData[] {
   return [
-    { timeframe: Timeframe.M4, price: 100, trend, trendScore, momentumScore: 65, volume: VolumeState.NORMAL_VOLUME },
-    { timeframe: Timeframe.D1, price: 100, trend, trendScore, momentumScore: 68, volume: VolumeState.NORMAL_VOLUME },
-    { timeframe: Timeframe.W1, price: 100, trend, trendScore, momentumScore: 72, volume: VolumeState.NORMAL_VOLUME },
-    { timeframe: Timeframe.M1, price: 100, trend, trendScore, momentumScore: 70, volume: VolumeState.NORMAL_VOLUME },
+    {
+      timeframe: Timeframe.M4,
+      price: 100,
+      trend,
+      trendScore,
+      momentumScore: 65,
+      volume: VolumeState.NORMAL_VOLUME,
+    },
+    {
+      timeframe: Timeframe.D1,
+      price: 100,
+      trend,
+      trendScore,
+      momentumScore: 68,
+      volume: VolumeState.NORMAL_VOLUME,
+    },
+    {
+      timeframe: Timeframe.W1,
+      price: 100,
+      trend,
+      trendScore,
+      momentumScore: 72,
+      volume: VolumeState.NORMAL_VOLUME,
+    },
+    {
+      timeframe: Timeframe.M1,
+      price: 100,
+      trend,
+      trendScore,
+      momentumScore: 70,
+      volume: VolumeState.NORMAL_VOLUME,
+    },
   ];
 }

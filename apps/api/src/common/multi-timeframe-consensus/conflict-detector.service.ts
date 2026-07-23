@@ -11,18 +11,14 @@ import {
   ConsensusConfig,
   getConsensusConfig,
 } from './types';
-import {
-  CONFLICT_TYPE_TR,
-  CONFLICT_SEVERITY_TR,
-  getTimeframeLabel,
-} from './turkish-terms';
+import { CONFLICT_TYPE_TR, CONFLICT_SEVERITY_TR, getTimeframeLabel } from './turkish-terms';
 
 @Injectable()
 export class ConflictDetector {
   private readonly config: ConsensusConfig;
 
-  constructor(configOverrides?: Partial<ConsensusConfig>) {
-    this.config = getConsensusConfig(configOverrides);
+  constructor() {
+    this.config = getConsensusConfig();
   }
 
   detect(timeframes: TimeframeData[]): ConflictDetail[] {
@@ -59,12 +55,13 @@ export class ConflictDetector {
 
   private detectShortLongConflicts(timeframes: TimeframeData[]): ConflictDetail[] {
     const conflicts: ConflictDetail[] = [];
-    const shortTerm = timeframes.filter(tf =>
-      [Timeframe.M4, Timeframe.D1].includes(tf.timeframe) && tf.trend,
+    const shortTerm = timeframes.filter(
+      (tf) => [Timeframe.M4, Timeframe.D1].includes(tf.timeframe) && tf.trend,
     );
-    const longTerm = timeframes.filter(tf =>
-      [Timeframe.W1, Timeframe.M1].includes(tf.trend as any) ||
-      (tf.trend && this.getTimeframeOrder(tf.timeframe) >= 2),
+    const longTerm = timeframes.filter(
+      (tf) =>
+        [Timeframe.W1, Timeframe.M1].includes(tf.trend as any) ||
+        (tf.trend && this.getTimeframeOrder(tf.timeframe) >= 2),
     );
 
     for (const short of shortTerm) {
@@ -92,7 +89,9 @@ export class ConflictDetector {
 
   private detectTrendReversals(timeframes: TimeframeData[]): ConflictDetail[] {
     const conflicts: ConflictDetail[] = [];
-    const sorted = [...timeframes].sort((a, b) => this.getTimeframeOrder(a.timeframe) - this.getTimeframeOrder(b.timeframe));
+    const sorted = [...timeframes].sort(
+      (a, b) => this.getTimeframeOrder(a.timeframe) - this.getTimeframeOrder(b.timeframe),
+    );
 
     for (let i = 0; i < sorted.length - 1; i++) {
       const current = sorted[i];
@@ -146,7 +145,7 @@ export class ConflictDetector {
     for (const tf of timeframes) {
       if (!tf.indicators || tf.indicators.length < 3) continue;
 
-      const positive = tf.indicators.filter(i => i.isPositive).length;
+      const positive = tf.indicators.filter((i) => i.isPositive).length;
       const negative = tf.indicators.length - positive;
       const ratio = Math.min(positive, negative) / Math.max(positive, negative || 1);
 
@@ -159,7 +158,7 @@ export class ConflictDetector {
           description: `Mixed indicator signals in ${getTimeframeLabel(tf.timeframe)}: ${positive} positive, ${negative} negative`,
           descriptionTr: `${getTimeframeLabel(tf.timeframe)} zaman diliminde karistirici gosterge sinyalleri: ${positive} olumlu, ${negative} olumsuz`,
           impact: ratio * 0.6,
-          indicators: tf.indicators.map(i => i.name),
+          indicators: tf.indicators.map((i) => i.name),
         });
       }
     }
@@ -169,16 +168,16 @@ export class ConflictDetector {
 
   private detectVolumeInconsistencies(timeframes: TimeframeData[]): ConflictDetail[] {
     const conflicts: ConflictDetail[] = [];
-    const withVolume = timeframes.filter(tf => tf.volume);
+    const withVolume = timeframes.filter((tf) => tf.volume);
 
     if (withVolume.length < 2) return conflicts;
 
-    const volumeSignals = withVolume.map(tf => ({
+    const volumeSignals = withVolume.map((tf) => ({
       timeframe: tf.timeframe,
       positive: tf.volume === VolumeState.HIGH_VOLUME || tf.volume === VolumeState.INCREASING,
     }));
 
-    const positiveCount = volumeSignals.filter(v => v.positive).length;
+    const positiveCount = volumeSignals.filter((v) => v.positive).length;
     const negativeCount = volumeSignals.length - positiveCount;
 
     if (positiveCount > 0 && negativeCount > 0) {
@@ -202,7 +201,7 @@ export class ConflictDetector {
 
   private detectRiskInconsistencies(timeframes: TimeframeData[]): ConflictDetail[] {
     const conflicts: ConflictDetail[] = [];
-    const withRisk = timeframes.filter(tf => tf.riskScore !== undefined);
+    const withRisk = timeframes.filter((tf) => tf.riskScore !== undefined);
 
     if (withRisk.length < 2) return conflicts;
 
@@ -233,12 +232,18 @@ export class ConflictDetector {
 
   private detectMomentumDivergence(timeframes: TimeframeData[]): ConflictDetail[] {
     const conflicts: ConflictDetail[] = [];
-    const withMomentum = timeframes.filter(tf => tf.momentum !== undefined && tf.trend !== undefined);
+    const withMomentum = timeframes.filter(
+      (tf) => tf.momentum !== undefined && tf.trend !== undefined,
+    );
 
     for (const tf of withMomentum) {
       if (!tf.momentum || !tf.trend) continue;
 
-      const trendBullish = [TrendDirection.STRONG_UPTREND, TrendDirection.UPTREND, TrendDirection.WEAK_UPTREND].includes(tf.trend);
+      const trendBullish = [
+        TrendDirection.STRONG_UPTREND,
+        TrendDirection.UPTREND,
+        TrendDirection.WEAK_UPTREND,
+      ].includes(tf.trend);
       const momentumBullish = tf.momentum === MomentumState.BULLISH_MOMENTUM;
 
       if (trendBullish && !momentumBullish && tf.momentum !== MomentumState.NEUTRAL) {
@@ -260,7 +265,7 @@ export class ConflictDetector {
 
   private deduplicateConflicts(conflicts: ConflictDetail[]): ConflictDetail[] {
     const seen = new Set<string>();
-    return conflicts.filter(c => {
+    return conflicts.filter((c) => {
       const key = `${c.type}:${c.timeframe1}:${c.timeframe2}`;
       if (seen.has(key)) return false;
       seen.add(key);
@@ -268,7 +273,10 @@ export class ConflictDetector {
     });
   }
 
-  private calculateConflictSeverity(trend1: TrendDirection, trend2: TrendDirection): ConflictSeverity {
+  private calculateConflictSeverity(
+    trend1: TrendDirection,
+    trend2: TrendDirection,
+  ): ConflictSeverity {
     const dir1 = this.getTrendDirectionValue(trend1);
     const dir2 = this.getTrendDirectionValue(trend2);
     const diff = Math.abs(dir1 - dir2);

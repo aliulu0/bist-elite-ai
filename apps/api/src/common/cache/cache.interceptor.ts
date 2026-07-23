@@ -2,7 +2,7 @@ import { Injectable, NestInterceptor, ExecutionContext, CallHandler, Logger } fr
 import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { CacheService } from './cache.service';
-import { CacheConfig } from './cache.config';
+import { CacheConfig, getCacheConfig } from './cache.config';
 
 function buildCacheKey(context: ExecutionContext, config: CacheConfig): string | null {
   const request = context.switchToHttp().getRequest();
@@ -17,11 +17,11 @@ function buildCacheKey(context: ExecutionContext, config: CacheConfig): string |
 @Injectable()
 export class CacheInterceptor implements NestInterceptor {
   private readonly logger = new Logger(CacheInterceptor.name);
+  private readonly config: CacheConfig;
 
-  constructor(
-    private readonly cacheService: CacheService,
-    private readonly config: CacheConfig,
-  ) {}
+  constructor(private readonly cacheService: CacheService) {
+    this.config = getCacheConfig();
+  }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     if (!this.config.enabled) return next.handle();
@@ -48,7 +48,10 @@ export class CacheInterceptor implements NestInterceptor {
           this.cacheService.set(cacheKey, data, this.config.ttl, 'api');
           const response = context.switchToHttp().getResponse();
           response.setHeader('X-Cache', 'MISS');
-          response.setHeader('Cache-Control', `public, max-age=${Math.floor(this.config.ttl / 1000)}`);
+          response.setHeader(
+            'Cache-Control',
+            `public, max-age=${Math.floor(this.config.ttl / 1000)}`,
+          );
         }
       }),
     );

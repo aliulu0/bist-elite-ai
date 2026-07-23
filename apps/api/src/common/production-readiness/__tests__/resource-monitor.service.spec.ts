@@ -32,16 +32,15 @@ describe('ResourceMonitorService', () => {
   describe('validate', () => {
     it('should return PASS for normal resource usage', async () => {
       const result = await service.validate();
-      expect([ReadinessStatus.PASS, ReadinessStatus.WARN, ReadinessStatus.FAIL]).toContain(result.status);
+      expect([ReadinessStatus.PASS, ReadinessStatus.WARN, ReadinessStatus.FAIL]).toContain(
+        result.status,
+      );
       expect(result.snapshot).toBeDefined();
       expect(Array.isArray(result.breaches)).toBe(true);
     });
 
     it('should detect breaches with low thresholds', async () => {
-      const strictService = new ResourceMonitorService(
-        new AppLoggerService(null as never),
-        { memoryPercentWarn: 1, memoryPercentCritical: 2 },
-      );
+      const strictService = new ResourceMonitorService(new AppLoggerService(null as never));
 
       const result = await strictService.validate();
       expect(result.breaches.length).toBeGreaterThan(0);

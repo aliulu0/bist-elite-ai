@@ -7,13 +7,13 @@ const cacheConfig = getCacheConfig();
 
 const cacheServiceProvider = {
   provide: CacheService,
-  useFactory: () => new CacheService(cacheConfig),
+  useFactory: () => new CacheService(),
 };
 
 const cacheInterceptorProvider = {
   provide: CacheInterceptor,
   inject: [CacheService],
-  useFactory: (cacheService: CacheService) => new CacheInterceptor(cacheService, cacheConfig),
+  useFactory: (cacheService: CacheService) => new CacheInterceptor(cacheService),
 };
 
 @Global()

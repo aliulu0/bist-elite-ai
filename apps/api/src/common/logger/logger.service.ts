@@ -52,8 +52,23 @@ export class AppLoggerService implements LoggerService {
   }
 
   private formatEntry(entry: StructuredLogEntry): string {
-    const masked = this.maskSensitiveData(JSON.stringify(entry));
-    return typeof masked === 'string' ? masked : JSON.stringify(entry);
+    try {
+      const str = JSON.stringify(entry);
+      return typeof this.maskSensitiveData(str) === 'string'
+        ? (this.maskSensitiveData(str) as string)
+        : str;
+    } catch {
+      try {
+        return JSON.stringify({
+          timestamp: entry.timestamp,
+          level: entry.level,
+          context: entry.context,
+          message: entry.message,
+        });
+      } catch {
+        return `${entry.timestamp} [${entry.level}] ${entry.context}: ${entry.message}`;
+      }
+    }
   }
 
   private write(level: LogLevel, context: string, message: string, meta?: Record<string, unknown>) {
@@ -144,8 +159,15 @@ export class AppLoggerService implements LoggerService {
     });
   }
 
-  logResponse(requestId: string, method: string, path: string, statusCode: number, duration: number) {
-    const level = statusCode >= 500 ? LogLevel.ERROR : statusCode >= 400 ? LogLevel.WARN : LogLevel.INFO;
+  logResponse(
+    requestId: string,
+    method: string,
+    path: string,
+    statusCode: number,
+    duration: number,
+  ) {
+    const level =
+      statusCode >= 500 ? LogLevel.ERROR : statusCode >= 400 ? LogLevel.WARN : LogLevel.INFO;
     this.write(level, 'HTTP', `${method} ${path} ${statusCode} ${duration}ms`, {
       requestId,
       method,
