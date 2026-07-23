@@ -4,10 +4,10 @@ import { tr } from './tr';
 export type Locale = typeof en;
 export type LocaleKey = keyof Locale;
 
-const locales = { en, tr } as const;
+const locales = { en, tr };
 
 export function getLocale(lang: 'en' | 'tr' = 'en'): Locale {
-  return locales[lang];
+  return locales[lang] as Locale;
 }
 
 export function t(locale: Locale, key: string): string {

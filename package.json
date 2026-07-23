@@ -2,7 +2,7 @@
   "name": "bist-elite-ai",
   "version": "1.0.0",
   "private": true,
-  "workspaces": ["apps/*", "packages/*"],
+  "packageManager": "pnpm@11.16.0",
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
@@ -17,10 +17,10 @@
     "docker:build": "docker compose up -d --build",
     "docker:logs": "docker compose logs -f",
     "docker:health": "powershell -ExecutionPolicy Bypass -File scripts/health.ps1",
-    "db:generate": "cd apps/api && npx prisma generate",
-    "db:migrate": "cd apps/api && npx prisma migrate dev",
-    "db:studio": "cd apps/api && npx prisma studio",
-    "db:seed": "cd apps/api && npm run prisma:seed"
+    "db:generate": "cd packages/database && npx prisma generate",
+    "db:migrate": "cd packages/database && npx prisma migrate dev",
+    "db:studio": "cd packages/database && npx prisma studio",
+    "db:seed": "cd packages/database && npm run seed"
   },
   "devDependencies": {
     "turbo": "^2.0.0",

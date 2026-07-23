@@ -8,26 +8,33 @@ if command -v docker-compose &> /dev/null; then
 elif command -v docker &> /dev/null && docker compose version &> /dev/null; then
     docker compose up --build
 else
-    echo "Docker is not installed. Starting in development mode..."
+    echo "Docker not found. Starting in development mode..."
     
-    # Start backend
-    echo "Starting backend..."
-    cd backend
-    uvicorn app.main:app --reload --host 0.0.0.0 --port 8000 &
-    BACKEND_PID=$!
-    cd ..
+    # Ensure dependencies are installed
+    pnpm install
     
-    # Start frontend
-    echo "Starting frontend..."
-    cd frontend
-    npm run dev &
-    FRONTEND_PID=$!
-    cd ..
+    # Start API
+    echo "Starting API (NestJS)..."
+    pnpm --filter @bist-elite/api dev &
+    API_PID=$!
+    
+    # Start Web
+    echo "Starting Web (Next.js)..."
+    pnpm --filter @bist-elite/web dev &
+    WEB_PID=$!
+    
+    # Start Worker
+    echo "Starting Worker (FastAPI)..."
+    cd apps/worker
+    python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000 &
+    WORKER_PID=$!
+    cd ../..
     
     echo "Services started!"
-    echo "Backend: http://localhost:8000"
-    echo "Frontend: http://localhost:3000"
+    echo "API:     http://localhost:3001"
+    echo "Web:     http://localhost:3000"
+    echo "Worker:  http://localhost:8000"
     
-    # Wait for both processes
-    wait $BACKEND_PID $FRONTEND_PID
+    # Wait for processes
+    wait $API_PID $WEB_PID $WORKER_PID
 fi

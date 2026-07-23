@@ -72,9 +72,9 @@ export class HistoricalPriceRepository extends BaseRepository<
       },
       create: {
         stockId,
-        date,
         timeframe,
         ...data,
+        date,
       },
       update: {
         open: data.open,
@@ -107,6 +107,7 @@ export class HistoricalPriceRepository extends BaseRepository<
     const results = await Promise.all(
       prices.map((price) =>
         this.upsertPrice(stockId, price.date, timeframe, {
+          date: price.date,
           open: price.open,
           high: price.high,
           low: price.low,
@@ -136,7 +137,7 @@ export class HistoricalPriceRepository extends BaseRepository<
       select: { date: true },
     });
 
-    const existingSet = new Set(existingDates.map((d) => d.date.toISOString()));
+    const existingSet = new Set(existingDates.map((d: any) => d.date.toISOString()));
     const missing: Date[] = [];
 
     const current = new Date(startDate);

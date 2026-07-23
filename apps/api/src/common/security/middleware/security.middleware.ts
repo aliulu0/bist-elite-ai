@@ -1,7 +1,7 @@
 import { Injectable, NestMiddleware, HttpException, HttpStatus } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { AppLoggerService } from '../../logger/logger.service';
-import { getSecurityConfig, SecurityConfig } from './security.config';
+import { getSecurityConfig, SecurityConfig } from '../security.config';
 
 @Injectable()
 export class SecurityHeadersMiddleware implements NestMiddleware {

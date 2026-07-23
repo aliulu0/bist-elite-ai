@@ -5,7 +5,8 @@
 # Stage 1: Dependencies
 FROM node:20-alpine AS deps
 WORKDIR /app
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY packages/database/prisma ./packages/database/prisma
 RUN corepack enable && pnpm install --frozen-lockfile --prod=false
 
 # Stage 2: Builder
@@ -14,8 +15,9 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY apps/api ./apps/api
 COPY packages ./packages
+COPY --from=deps /app/packages/database/node_modules ./packages/database/node_modules
 WORKDIR /app/apps/api
-RUN npx prisma generate
+RUN npx prisma generate --schema=../../packages/database/prisma/schema.prisma
 RUN npm run build
 
 # Stage 3: Production runner
@@ -31,7 +33,8 @@ RUN adduser --system --uid 1001 nestjs
 COPY --from=builder /app/apps/api/dist ./dist
 COPY --from=builder /app/apps/api/node_modules ./node_modules
 COPY --from=builder /app/apps/api/package.json ./
-COPY --from=builder /app/apps/api/prisma ./prisma
+COPY --from=builder /app/packages/database/prisma ./prisma
+COPY --from=builder /app/packages/database/node_modules ./packages/database/node_modules
 
 RUN chown -R nestjs:nodejs /app
 USER nestjs

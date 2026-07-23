@@ -16,7 +16,7 @@ async function request<T>(endpoint: string): Promise<T> {
     throw new Error(`API error: ${response.status} ${response.statusText}`);
   }
 
-  const json: ApiResponse<T> = await response.json();
+  const json = (await response.json()) as ApiResponse<T>;
   return json.data;
 }
 

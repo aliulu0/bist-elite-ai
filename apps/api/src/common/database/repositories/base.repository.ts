@@ -25,7 +25,7 @@ export abstract class BaseRepository<T, CreateInput, UpdateInput, WhereInput> {
   constructor(protected readonly prisma: PrismaService) {}
 
   protected get model() {
-    return this.prisma[this.modelName] as any;
+    return (this.prisma as any)[this.modelName] as any;
   }
 
   async findById(id: string): Promise<T | null> {

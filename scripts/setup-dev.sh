@@ -2,22 +2,24 @@
 
 echo "Setting up BIST Elite AI development environment..."
 
-# Backend setup
-echo "Setting up backend..."
-cd backend
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-cd ..
+# Install pnpm dependencies
+echo "Installing dependencies..."
+pnpm install
 
-# Frontend setup
-echo "Setting up frontend..."
-cd frontend
-npm install
-cd ..
+# Generate Prisma client
+echo "Generating Prisma client..."
+cd packages/database
+npx prisma generate
+cd ../..
+
+# Create .env from .env.development if it doesn't exist
+if [ ! -f .env ]; then
+    echo "Creating .env from .env.development..."
+    cp .env.development .env
+fi
 
 echo "Development environment setup complete!"
 echo ""
 echo "To start development:"
-echo "  Backend:  cd backend && uvicorn app.main:app --reload"
-echo "  Frontend: cd frontend && npm run dev"
+echo "  docker compose up -d    # Start PostgreSQL & Redis"
+echo "  pnpm dev               # Start all apps in dev mode"

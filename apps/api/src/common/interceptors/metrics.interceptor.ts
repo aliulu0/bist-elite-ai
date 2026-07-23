@@ -17,31 +17,33 @@ export class MetricsInterceptor implements NestInterceptor {
     const { method, url } = request;
     const requestId = request.requestId;
 
-    return next.handle().pipe({
-      next: () => {
-        const duration = Date.now() - startTime;
-        const response = context.switchToHttp().getResponse();
-        this.metrics.recordRequest({
-          method,
-          path: url,
-          statusCode: response.statusCode,
-          duration,
-          timestamp: Date.now(),
-          requestId,
-        });
-      },
-      error: () => {
-        const duration = Date.now() - startTime;
-        const response = context.switchToHttp().getResponse();
-        this.metrics.recordRequest({
-          method,
-          path: url,
-          statusCode: response.statusCode || 500,
-          duration,
-          timestamp: Date.now(),
-          requestId,
-        });
-      },
-    });
+    return next.handle().pipe(
+      tap({
+        next: () => {
+          const duration = Date.now() - startTime;
+          const response = context.switchToHttp().getResponse();
+          this.metrics.recordRequest({
+            method,
+            path: url,
+            statusCode: response.statusCode,
+            duration,
+            timestamp: Date.now(),
+            requestId,
+          });
+        },
+        error: () => {
+          const duration = Date.now() - startTime;
+          const response = context.switchToHttp().getResponse();
+          this.metrics.recordRequest({
+            method,
+            path: url,
+            statusCode: response.statusCode || 500,
+            duration,
+            timestamp: Date.now(),
+            requestId,
+          });
+        },
+      }),
+    );
   }
 }

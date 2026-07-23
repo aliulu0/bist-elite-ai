@@ -50,7 +50,6 @@ async function bootstrap() {
     transform: true,
     forbidNonWhitelisted: true,
     disableErrorMessages: process.env.NODE_ENV === 'production',
-    maxLength: 1000,
   }));
 
   app.setGlobalPrefix('api', {
