@@ -1,21 +1,43 @@
 export const BIST_SECTORS = [
-  'banking', 'holding', 'industrial', 'technology', 'telecom',
-  'retail', 'healthcare', 'energy', 'construction', 'chemistry',
-  'metal', 'food', 'textile', 'transport', 'tourism', 'real_estate',
-  'forestry', 'cement', 'glass', 'auto', 'white_goods', 'defense',
-  'aviation', 'maritime', 'mining', 'insurance', 'asset_mgmt',
+  'banking',
+  'holding',
+  'industrial',
+  'technology',
+  'telecom',
+  'retail',
+  'healthcare',
+  'energy',
+  'construction',
+  'chemistry',
+  'metal',
+  'food',
+  'textile',
+  'transport',
+  'tourism',
+  'real_estate',
+  'forestry',
+  'cement',
+  'glass',
+  'auto',
+  'white_goods',
+  'defense',
+  'aviation',
+  'maritime',
+  'mining',
+  'insurance',
+  'asset_mgmt',
 ] as const;
 
-export const TIMEFRAMES = ['4h', '1d', '1w', '1m'] as const;
+export const TIMEFRAMES = ['4h', '1d', '1w', '1m', '3m', '6m'] as const;
 
 export type Timeframe = (typeof TIMEFRAMES)[number];
 
 export const SCORE_WEIGHTS = {
-  ELITE: 0.30,
+  ELITE: 0.3,
   DECISION: 0.25,
-  CONFIDENCE: 0.20,
+  CONFIDENCE: 0.2,
   RISK: 0.15,
-  LIQUIDITY: 0.10,
+  LIQUIDITY: 0.1,
 } as const;
 
 export const CACHE_DEFAULTS = {

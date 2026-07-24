@@ -20,6 +20,8 @@ import { MarketRegimeModule } from './common/market-regime/market-regime.module'
 import { OpportunityLifecycleModule } from './common/opportunity-lifecycle/opportunity-lifecycle.module';
 import { PortfolioIntelligenceModule } from './common/portfolio-intelligence/portfolio-intelligence.module';
 import { ProductionReadinessModule } from './common/production-readiness/production-readiness.module';
+import { MarketDataModule } from './modules/market-data/market-data.module';
+import { FinancialRulesModule } from './modules/financial-rules/financial-rules.module';
 import { AuthGuard } from './common/auth/guards/auth.guard';
 import { RolesGuard } from './common/auth/guards/roles.guard';
 import { PermissionsGuard } from './common/auth/guards/permissions.guard';
@@ -29,7 +31,10 @@ import { RequestLoggingInterceptor } from './common/interceptors/request-logging
 import { MetricsInterceptor } from './common/interceptors/metrics.interceptor';
 import { RequestSizeInterceptor } from './common/security/interceptors/request-size.interceptor';
 import { CacheInterceptor } from './common/cache/cache.interceptor';
-import { CompressionInterceptor, ETagInterceptor } from './common/performance/compression.interceptor';
+import {
+  CompressionInterceptor,
+  ETagInterceptor,
+} from './common/performance/compression.interceptor';
 import { RequestDeduplicationInterceptor } from './common/performance/request-deduplication.interceptor';
 
 @Module({
@@ -53,6 +58,8 @@ import { RequestDeduplicationInterceptor } from './common/performance/request-de
     OpportunityLifecycleModule,
     PortfolioIntelligenceModule,
     ProductionReadinessModule,
+    MarketDataModule,
+    FinancialRulesModule,
   ],
   controllers: [HealthController],
   providers: [
