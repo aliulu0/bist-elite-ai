@@ -1,0 +1,1572 @@
+﻿node.exe : PASS src/common/market-regime/market-regime.module.spec.ts (54.337 s)
+At C:\Users\aliul\AppData\Roaming\npm\npx.ps1:24 char:5
++     & "node$exe"  "$basedir/node_modules/npm/bin/npx-cli.js" $args
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (PASS src/common...c.ts (54.337 s):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[31m[Nest] 2976  - [39m28.07.2026 14:32:13 [31m  ERROR[39m [38;5;3m[MarketDataService] [39m[31mFailed to fetch d
+ata for THYAO (1d) from mock-provider: Network error[39m
+[31m[Nest] 2976  - [39m28.07.2026 14:32:13 [31m  ERROR[39m [38;5;3m[MarketDataService] [39m[31mFailed to fetch l
+atest price for THYAO from mock-provider: Timeout[39m
+PASS src/modules/market-data/market-data.service.spec.ts (64.417 s)
+[32m[Nest] 35664  - [39m28.07.2026 14:32:17 [32m    LOG[39m [38;5;3m[MarketDataOrchestrator] [39m[32mProvider "fintables" registered (priority: 1, enabled: true)[39m
+[32m[Nest] 35664  - [39m28.07.2026 14:32:17 [32m    LOG[39m [38;5;3m[MarketDataOrchestrator] [39m[32mProvider "fintables" registered (priority: 1, enabled: true)[39m
+[32m[Nest] 35664  - [39m28.07.2026 14:32:17 [32m    LOG[39m [38;5;3m[MarketDataOrchestrator] [39m[32mProvider "fintables" registered (priority: 1, enabled: true)[39m
+[32m[Nest] 35664  - [39m28.07.2026 14:32:17 [32m    LOG[39m [38;5;3m[MarketDataOrchestrator] [39m[32mProvider "finnhub" registered (priority: 2, enabled: true)[39m
+[32m[Nest] 35664  - [39m28.07.2026 14:32:17 [32m    LOG[39m [38;5;3m[MarketDataOrchestrator] [39m[32mProvider "finnhub" registered (priority: 2, enabled: true)[39m
+[32m[Nest] 35664  - [39m28.07.2026 14:32:17 [32m    LOG[39m [38;5;3m[MarketDataOrchestrator] [39m[32mProvider "fintables" registered (priority: 1, enabled: true)[39m
+[95m[Nest] 35664  - [39m28.07.2026 14:32:17 [95m  DEBUG[39m [38;5;3m[MarketDataOrchestrator] [39m[95mData fetched for THYAO (company) from fintables[39m
+[32m[Nest] 35664  - [39m28.07.2026 14:32:17 [32m    LOG[39m [38;5;3m[MarketDataOrchestrator] [39m[32mProvider "finnhub" registered (priority: 2, enabled: true)[39m
+[32m[Nest] 35664  - [39m28.07.2026 14:32:17 [32m    LOG[39m [38;5;3m[MarketDataOrchestrator] [39m[32mProvider "fintables" registered (priority: 1, enabled: true)[39m
+[95m[Nest] 35664  - [39m28.07.2026 14:32:17 [95m  DEBUG[39m [38;5;3m[MarketDataOrchestrator] [39m[95mData fetched for THYAO (company) from fintables[39m
+[32m[Nest] 35664  - [39m28.07.2026 14:32:17 [32m    LOG[39m [38;5;3m[MarketDataOrchestrator] [39m[32mProvider "fintables" registered (priority: 1, enabled: true)[39m
+[32m[Nest] 35664  - [39m28.07.2026 14:32:17 [32m    LOG[39m [38;5;3m[MarketDataOrchestrator] [39m[32mProvider "finnhub" registered (priority: 2, enabled: true)[39m
+[33m[Nest] 35664  - [39m28.07.2026 14:32:17 [33m   WARN[39m [38;5;3m[MarketDataOrchestrator] [39m[33mProvider fintables failed for THYAO (company): Network error[39m
+[95m[Nest] 35664  - [39m28.07.2026 14:32:17 [95m  DEBUG[39m [38;5;3m[MarketDataOrchestrator] [39m[95mData fetched for THYAO (company) from finnhub[39m
+[32m[Nest] 35664  - [39m28.07.2026 14:32:17 [32m    LOG[39m [38;5;3m[MarketDataOrchestrator] [39m[32mProvider "fintables" registered (priority: 1, enabled: true)[39m
+[32m[Nest] 35664  - [39m28.07.2026 14:32:17 [32m    LOG[39m [38;5;3m[MarketDataOrchestrator] [39m[32mProvider "finnhub" registered (priority: 2, enabled: true)[39m
+[33m[Nest] 35664  - [39m28.07.2026 14:32:17 [33m   WARN[39m [38;5;3m[MarketDataOrchestrator] [39m[33mProvider fintables failed for THYAO (company): fail[39m
+[33m[Nest] 35664  - [39m28.07.2026 14:32:17 [33m   WARN[39m [38;5;3m[MarketDataOrchestrator] [39m[33mProvider finnhub failed for THYAO (company): fail[39m
+[33m[Nest] 35664  - [39m28.07.2026 14:32:17 [33m   WARN[39m [38;5;3m[MarketDataOrchestrator] [39m[33mAll providers failed for THYAO (company)[39m
+[32m[Nest] 35664  - [39m28.07.2026 14:32:17 [32m    LOG[39m [38;5;3m[MarketDataOrchestrator] [39m[32mProvider "fintables" registered (priority: 1, enabled: true)[39m
+[95m[Nest] 35664  - [39m28.07.2026 14:32:17 [95m  DEBUG[39m [38;5;3m[MarketDataOrchestrator] [39m[95mData fetched for THYAO (company) from fintables[39m
+[32m[Nest] 35664  - [39m28.07.2026 14:32:17 [32m    LOG[39m [38;5;3m[MarketDataOrchestrator] [39m[32mProvider "fintables" registered (priority: 1, enabled: true)[39m
+[95m[Nest] 35664  - [39m28.07.2026 14:32:17 [95m  DEBUG[39m [38;5;3m[MarketDataOrchestrator] [39m[95mData fetched for THYAO (company) from fintables[39m
+[33m[Nest] 35664  - [39m28.07.2026 14:32:17 [33m   WARN[39m [38;5;3m[CircuitBreakerService] [39m[33mfintables circuit OPENED after 3 consecutive failures[39m
+[32m[Nest] 35664  - [39m28.07.2026 14:32:17 [32m    LOG[39m [38;5;3m[MarketDataOrchestrator] [39m[32mProvider "fintables" registered (priority: 1, enabled: true)[39m
+[32m[Nest] 35664  - [39m28.07.2026 14:32:17 [32m    LOG[39m [38;5;3m[MarketDataOrchestrator] [39m[32mProvider "finnhub" registered (priority: 2, enabled: true)[39m
+[95m[Nest] 35664  - [39m28.07.2026 14:32:17 [95m  DEBUG[39m [38;5;3m[MarketDataOrchestrator] [39m[95mSkipping fintables (circuit open)[39m
+[95m[Nest] 35664  - [39m28.07.2026 14:32:17 [95m  DEBUG[39m [38;5;3m[MarketDataOrchestrator] [39m[95mData fetched for THYAO (company) from finnhub[39m
+[32m[Nest] 35664  - [39m28.07.2026 14:32:17 [32m    LOG[39m [38;5;3m[MarketDataOrchestrator] [39m[32mProvider "fintables" registered (priority: 1, enabled: true)[39m
+[33m[Nest] 35664  - [39m28.07.2026 14:32:17 [33m   WARN[39m [38;5;3m[MarketDataOrchestrator] [39m[33mProvider fintables failed for THYAO (company): fail[39m
+[33m[Nest] 35664  - [39m28.07.2026 14:32:17 [33m   WARN[39m [38;5;3m[MarketDataOrchestrator] [39m[33mAll providers failed for THYAO (company)[39m
+[33m[Nest] 35664  - [39m28.07.2026 14:32:17 [33m   WARN[39m [38;5;3m[MarketDataOrchestrator] [39m[33mProvider fintables failed for THYAO (company): fail[39m
+[33m[Nest] 35664  - [39m28.07.2026 14:32:17 [33m   WARN[39m [38;5;3m[MarketDataOrchestrator] [39m[33mAll providers failed for THYAO (company)[39m
+[33m[Nest] 35664  - [39m28.07.2026 14:32:17 [33m   WARN[39m [38;5;3m[MarketDataOrchestrator] [39m[33mProvider fintables failed for THYAO (company): fail[39m
+[33m[Nest] 35664  - [39m28.07.2026 14:32:17 [33m   WARN[39m [38;5;3m[CircuitBreakerService] [39m[33mfintables circuit OPENED after 3 consecutive failures[39m
+[33m[Nest] 35664  - [39m28.07.2026 14:32:17 [33m   WARN[39m [38;5;3m[MarketDataOrchestrator] [39m[33mAll providers failed for THYAO (company)[39m
+[32m[Nest] 35664  - [39m28.07.2026 14:32:17 [32m    LOG[39m [38;5;3m[MarketDataOrchestrator] [39m[32mProvider "fintables" registered (priority: 1, enabled: true)[39m
+[33m[Nest] 35664  - [39m28.07.2026 14:32:17 [33m   WARN[39m [38;5;3m[MarketDataOrchestrator] [39m[33mAll providers failed for THYAO (company)[39m
+[32m[Nest] 35664  - [39m28.07.2026 14:32:17 [32m    LOG[39m [38;5;3m[MarketDataOrchestrator] [39m[32mProvider "fintables" registered (priority: 1, enabled: false)[39m
+[33m[Nest] 35664  - [39m28.07.2026 14:32:17 [33m   WARN[39m [38;5;3m[MarketDataOrchestrator] [39m[33mAll providers failed for THYAO (company)[39m
+[32m[Nest] 35664  - [39m28.07.2026 14:32:17 [32m    LOG[39m [38;5;3m[MarketDataOrchestrator] [39m[32mProvider "fintables" registered (priority: 1, enabled: true)[39m
+[32m[Nest] 35664  - [39m28.07.2026 14:32:17 [32m    LOG[39m [38;5;3m[MarketDataOrchestrator] [39m[32mProvider "finnhub" registered (priority: 2, enabled: false)[39m
+[32m[Nest] 35664  - [39m28.07.2026 14:32:17 [32m    LOG[39m [38;5;3m[MarketDataOrchestrator] [39m[32mProvider "fintables" registered (priority: 1, enabled: true)[39m
+[95m[Nest] 35664  - [39m28.07.2026 14:32:17 [95m  DEBUG[39m [38;5;3m[MarketDataOrchestrator] [39m[95mData fetched for THYAO (company) from fintables[39m
+[32m[Nest] 35664  - [39m28.07.2026 14:32:17 [32m    LOG[39m [38;5;3m[MarketDataOrchestrator] [39m[32mProvider "fintables" registered (priority: 1, enabled: true)[39m
+[95m[Nest] 35664  - [39m28.07.2026 14:32:17 [95m  DEBUG[39m [38;5;3m[MarketDataOrchestrator] [39m[95mData fetched for THYAO (financials) from fintables[39m
+[32m[Nest] 35664  - [39m28.07.2026 14:32:17 [32m    LOG[39m [38;5;3m[MarketDataOrchestrator] [39m[32mProvider "fintables" registered (priority: 1, enabled: true)[39m
+[32m[Nest] 35664  - [39m28.07.2026 14:32:17 [32m    LOG[39m [38;5;3m[MarketDataOrchestrator] [39m[32mProvider "finnhub" registered (priority: 2, enabled: true)[39m
+[32m[Nest] 35664  - [39m28.07.2026 14:32:17 [32m    LOG[39m [38;5;3m[MarketDataOrchestrator] [39m[32mProvider "fintables" registered (priority: 1, enabled: true)[39m
+PASS src/modules/market-data/orchestrator/market-data-orchestrator.spec.ts (67.205 s)
+[32m[Nest] 35664  - [39m28.07.2026 14:32:17 [32m    LOG[39m [38;5;3m[MarketDataOrchestrator] [39m[32mProvider "finnhub" registered (priority: 2, enabled: false)[39m
+[32m[Nest] 35664  - [39m28.07.2026 14:32:17 [32m    LOG[39m [38;5;3m[MarketDataOrchestrator] [39m[32mProvider "kap" registered (priority: 1, enabled: true)[39m
+[95m[Nest] 35664  - [39m28.07.2026 14:32:17 [95m  DEBUG[39m [38;5;3m[MarketDataOrchestrator] [39m[95mData fetched for THYAO (disclosures) from kap[39m
+[33m[Nest] 35664  - [39m28.07.2026 14:32:17 [33m   WARN[39m [38;5;3m[MarketDataOrchestrator] [39m[33mAll providers failed for THYAO (company)[39m
+[31m[Nest] 20476  - [39m28.07.2026 14:32:19 [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39m[31mUnexpected inter
+nal error[39m
+Error: Unexpected internal error
+    at TestErrorController.serverError (C:\Users\aliul\Desktop\bist-elite-ai\apps\api\src\__tests__\error-handling.inte
+gration.spec.ts:25:11)
+    at C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\@nestjs+core@10.4.22_@nestj_dd45ff8dd70170355229d89f0fa8
+91d2\node_modules\@nestjs\core\router\router-execution-context.js:38:29
+    at InterceptorsConsumer.intercept (C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\@nestjs+core@10.4.22_@ne
+stj_dd45ff8dd70170355229d89f0fa891d2\node_modules\@nestjs\core\interceptors\interceptors-consumer.js:12:20)
+    at C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\@nestjs+core@10.4.22_@nestj_dd45ff8dd70170355229d89f0fa8
+91d2\node_modules\@nestjs\core\router\router-execution-context.js:46:60
+    at C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\@nestjs+core@10.4.22_@nestj_dd45ff8dd70170355229d89f0fa8
+91d2\node_modules\@nestjs\core\router\router-proxy.js:9:23
+    at Layer.handle [as handle_request] (C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_support
+s-color@8.1.1\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_supports-color@8.1.1\node_modules\e
+xpress\lib\router\route.js:149:13)
+    at Route.dispatch (C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_supports-color@8.1.1\node
+_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_support
+s-color@8.1.1\node_modules\express\lib\router\layer.js:95:5)
+    at C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_supports-color@8.1.1\node_modules\express
+\lib\router\index.js:284:15
+    at router.process_params (C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_supports-color@8.1
+.1\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_supports-color@8.1.1\node_modules\e
+xpress\lib\router\index.js:280:10)
+    at urlencodedParser (C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\body-parser@1.20.4_supports-color@8.1.
+1\node_modules\body-parser\lib\types\urlencoded.js:91:7)
+    at Layer.handle [as handle_request] (C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_support
+s-color@8.1.1\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_supports-color@8.1.1\node_mo
+dules\express\lib\router\index.js:328:13)
+    at C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_supports-color@8.1.1\node_modules\express
+\lib\router\index.js:286:9
+    at router.process_params (C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_supports-color@8.1
+.1\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_supports-color@8.1.1\node_modules\e
+xpress\lib\router\index.js:280:10)
+    at jsonParser (C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\body-parser@1.20.4_supports-color@8.1.1\node
+_modules\body-parser\lib\types\json.js:113:7)
+    at Layer.handle [as handle_request] (C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_support
+s-color@8.1.1\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_supports-color@8.1.1\node_mo
+dules\express\lib\router\index.js:328:13)
+    at C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_supports-color@8.1.1\node_modules\express
+\lib\router\index.js:286:9
+    at router.process_params (C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_supports-color@8.1
+.1\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_supports-color@8.1.1\node_modules\e
+xpress\lib\router\index.js:280:10)
+    at expressInit (C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_supports-color@8.1.1\node_mo
+dules\express\lib\middleware\init.js:40:5)
+    at Layer.handle [as handle_request] (C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_support
+s-color@8.1.1\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_supports-color@8.1.1\node_mo
+dules\express\lib\router\index.js:328:13)
+    at C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_supports-color@8.1.1\node_modules\express
+\lib\router\index.js:286:9
+    at router.process_params (C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_supports-color@8.1
+.1\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_supports-color@8.1.1\node_modules\e
+xpress\lib\router\index.js:280:10)
+    at query (C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_supports-color@8.1.1\node_modules\
+express\lib\middleware\query.js:45:5)
+    at Layer.handle [as handle_request] (C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_support
+s-color@8.1.1\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_supports-color@8.1.1\node_mo
+dules\express\lib\router\index.js:328:13)
+    at C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_supports-color@8.1.1\node_modules\express
+\lib\router\index.js:286:9
+    at router.process_params (C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_supports-color@8.1
+.1\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_supports-color@8.1.1\node_modules\e
+xpress\lib\router\index.js:280:10)
+    at router.handle (C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_supports-color@8.1.1\node_
+modules\express\lib\router\index.js:175:3)
+    at app.handle (C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_supports-color@8.1.1\node_mod
+ules\express\lib\application.js:181:10)
+    at Server.app (C:\Users\aliul\Desktop\bist-elite-ai\node_modules\.pnpm\express@4.22.1_supports-color@8.1.1\node_mod
+ules\express\lib\express.js:39:9)
+    at Server.emit (node:events:509:28)
+    at parserOnIncoming (node:_http_server:1268:12)
+    at HTTPParser.parserOnHeadersComplete (node:_http_common:125:17)
+PASS src/__tests__/error-handling.integration.spec.ts (14.592 s)
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mAnalyzing consensus for THYAO with 4 timeframes[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mConsensus analysis complete for THYAO: 91.0 (80ms)[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mAnalyzing consensus for THYAO with 4 timeframes[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mConsensus analysis complete for THYAO: 91.0 (1ms)[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mAnalyzing consensus for THYAO with 4 timeframes[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mConsensus analysis complete for THYAO: 91.0 (5ms)[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mAnalyzing consensus for THYAO with 4 timeframes[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mConsensus analysis complete for THYAO: 91.0 (6ms)[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mAnalyzing consensus for THYAO with 4 timeframes[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mConsensus analysis complete for THYAO: 91.0 (2ms)[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mAnalyzing consensus for MIXED with 4 timeframes[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mConsensus analysis complete for MIXED: 45.6 (10ms)[39m
+PASS src/modules/configuration/configuration.service.spec.ts
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mAnalyzing consensus for TEST with 4 timeframes[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mConsensus analysis complete for TEST: 99.0 (10ms)[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mAnalyzing consensus for MIXED with 4 timeframes[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mConsensus analysis complete for MIXED: 45.6 (3ms)[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mAnalyzing consensus for STRONG with 4 timeframes[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mConsensus analysis complete for STRONG: 92.7 (3ms)[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mAnalyzing consensus for THYAO with 4 timeframes[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mConsensus analysis complete for THYAO: 91.0 (3ms)[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mAnalyzing consensus for GARAN with 1 timeframes[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mConsensus analysis complete for GARAN: 15.0 (2ms)[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mAnalyzing consensus for THYAO with 4 timeframes[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mConsensus analysis complete for THYAO: 91.0 (0ms)[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mAnalyzing consensus for GARAN with 4 timeframes[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mConsensus analysis complete for GARAN: 91.0 (2ms)[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mAnalyzing consensus for ASELS with 4 timeframes[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mConsensus analysis complete for ASELS: 91.0 (1ms)[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mAnalyzing consensus for LOW with 4 timeframes[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mConsensus analysis complete for LOW: 91.0 (3ms)[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mAnalyzing consensus for HIGH with 4 timeframes[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mConsensus analysis complete for HIGH: 99.0 (1ms)[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mAnalyzing consensus for TEST with 4 timeframes[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mConsensus analysis complete for TEST: 99.0 (2ms)[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mAnalyzing consensus for MIXED with 4 timeframes[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:32:22 [95m  DEBUG[39m [38;5;3m[ConsensusOrchestrator] [39m[95mConsensus analysis complete for MIXED: 45.6 (4ms)[39m
+PASS src/common/multi-timeframe-consensus/consensus-orchestrator.spec.ts (72.448 s)
+PASS src/modules/workflow/workflow.engine.spec.ts
+PASS src/modules/analysis-pipeline/analysis.controller.spec.ts (74.447 s)
+PASS src/modules/workflow/workflow.controller.spec.ts (21.018 s)
+PASS src/modules/workflow-integration/workflow-integration.service.spec.ts (86.614 s)
+PASS src/modules/audit-log/audit-log.engine.spec.ts (55.275 s)
+FAIL src/common/production-readiness/__tests__/performance-validator.service.spec.ts (145.597 s)
+  ÔùÅ PerformanceValidatorService ÔÇ║ validate ÔÇ║ should respect custom thresholds
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "warn"
+    Received: "pass"
+
+    [0m [90m 124 |[39m       [36mconst[39m svc [33m=[39m [36mnew[39m [33mPerformanceValidatorService[39m(moc
+kMetrics [36mas[39m never)[33m;[39m
+     [90m 125 |[39m       [36mconst[39m result [33m=[39m svc[33m.[39mvalidate()[33m;[39m
+    [31m[1m>[22m[39m[90m 126 |[39m       expect(result[33m.[39mstatus)[33m.[39mtoBe([33mReadinessStatus[39m
+[33m.[39m[33mWARN[39m)[33m;[39m
+     [90m     |[39m                             [31m[1m^[22m[39m
+     [90m 127 |[39m     })[33m;[39m
+     [90m 128 |[39m   })[33m;[39m
+     [90m 129 |[39m })[33m;[39m[0m
+
+      at Object.<anonymous> (common/production-readiness/__tests__/performance-validator.service.spec.ts:126:29)
+
+PASS src/modules/backtest/backtest.engine.spec.ts (51.592 s)
+[31m[Nest] 22168  - [39m28.07.2026 14:33:39 [31m  ERROR[39m [38;5;3m[YahooFinanceProvider] [39m[31mFailed to fet
+ch historical data for THYAO.IS: ECONNREFUSED[39m
+[31m[Nest] 22168  - [39m28.07.2026 14:33:39 [31m  ERROR[39m [38;5;3m[YahooFinanceProvider] [39m[31mFailed to fet
+ch latest price for THYAO.IS: ECONNREFUSED[39m
+PASS src/modules/market-data/providers/yahoo-finance.provider.spec.ts (149.54 s)
+PASS src/modules/performance-monitor/performance-monitor.controller.spec.ts (80.713 s)
+[33m[Nest] 11376  - [39m28.07.2026 14:33:44 [33m   WARN[39m [38;5;3m[CacheService] [39m[33mCache entry too large: big (4194308 bytes)[39m
+FAIL src/common/cache/__tests__/cache.service.spec.ts (154.556 s)
+  ÔùÅ Console
+
+    console.warn
+      A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFake
+Timers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Je
+st configuration file.
+      Stack Trace:
+      
+          [0m [90m 27 |[39m       expect(service[33m.[39m[36mget[39m([32m'expire'[39m))[33m.[39mtoBe([32m'v
+alue'[39m)[33m;[39m
+           [90m 28 |[39m
+          [31m[1m>[22m[39m[90m 29 |[39m       jest[33m.[39madvanceTimersByTime([35m2[39m)[33m;[39m
+           [90m    |[39m            [31m[1m^[22m[39m
+           [90m 30 |[39m       expect(service[33m.[39m[36mget[39m([32m'expire'[39m))[33m.[39mtoBeUndefined()
+[33m;[39m
+           [90m 31 |[39m     })[33m;[39m
+           [90m 32 |[39m[0m
+      
+            Error: 
+            at FakeTimers._checkFakeTimers (../../../node_modules/@jest/fake-timers/build/modernFakeTimers.js:158:13)
+            at FakeTimers.advanceTimersByTime (../../../node_modules/@jest/fake-timers/build/modernFakeTimers.js:93:14)
+            at Object.<anonymous> (common/cache/__tests__/cache.service.spec.ts:29:12)
+
+    [0m [90m 27 |[39m       expect(service[33m.[39m[36mget[39m([32m'expire'[39m))[33m.[39mtoBe([32m'value'
+[39m)[33m;[39m
+     [90m 28 |[39m
+    [31m[1m>[22m[39m[90m 29 |[39m       jest[33m.[39madvanceTimersByTime([35m2[39m)[33m;[39m
+     [90m    |[39m            [31m[1m^[22m[39m
+     [90m 30 |[39m       expect(service[33m.[39m[36mget[39m([32m'expire'[39m))[33m.[39mtoBeUndefined()[33m;
+[39m
+     [90m 31 |[39m     })[33m;[39m
+     [90m 32 |[39m[0m
+
+      at FakeTimers._checkFakeTimers (../../../node_modules/@jest/fake-timers/build/modernFakeTimers.js:152:28)
+      at FakeTimers.advanceTimersByTime (../../../node_modules/@jest/fake-timers/build/modernFakeTimers.js:93:14)
+      at Object.<anonymous> (common/cache/__tests__/cache.service.spec.ts:29:12)
+
+  ÔùÅ CacheService ÔÇ║ LRU eviction ÔÇ║ evicts when max entries reached
+
+    expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 3
+    Received:    4
+
+    [0m [90m 122 |[39m       smallService[33m.[39m[36mset[39m([32m'c'[39m[33m,[39m [35m3[39m)[33m;[39m
+     [90m 123 |[39m       smallService[33m.[39m[36mset[39m([32m'd'[39m[33m,[39m [35m4[39m)[33m;[39m
+    [31m[1m>[22m[39m[90m 124 |[39m       expect(smallService[33m.[39msize())[33m.[39mtoBeLessThanOrEqual([35
+m3[39m)[33m;[39m
+     [90m     |[39m                                   [31m[1m^[22m[39m
+     [90m 125 |[39m       smallService[33m.[39monModuleDestroy()[33m;[39m
+     [90m 126 |[39m     })[33m;[39m
+     [90m 127 |[39m   })[33m;[39m[0m
+
+      at Object.<anonymous> (common/cache/__tests__/cache.service.spec.ts:124:35)
+
+  ÔùÅ CacheService ÔÇ║ disabled cache ÔÇ║ does not store when disabled
+
+    expect(received).toBeUndefined()
+
+    Received: "value"
+
+    [0m [90m 158 |[39m       [36mconst[39m disabled [33m=[39m [36mnew[39m [33mCacheService[39m()[33m;[39m
+     [90m 159 |[39m       disabled[33m.[39m[36mset[39m([32m'key'[39m[33m,[39m [32m'value'[39m)[33m;[39m
+    [31m[1m>[22m[39m[90m 160 |[39m       expect(disabled[33m.[39m[36mget[39m([32m'key'[39m))[33m.[39mtoBe
+Undefined()[33m;[39m
+     [90m     |[39m                                   [31m[1m^[22m[39m
+     [90m 161 |[39m       disabled[33m.[39monModuleDestroy()[33m;[39m
+     [90m 162 |[39m     })[33m;[39m
+     [90m 163 |[39m   })[33m;[39m[0m
+
+      at Object.<anonymous> (common/cache/__tests__/cache.service.spec.ts:160:35)
+
+PASS src/modules/market-data/market-data.controller.spec.ts (154.994 s)
+PASS src/modules/provider-health-monitor/provider-health-monitor.service.spec.ts (6.415 s)
+PASS src/common/paper-portfolio/paper-portfolio.module.spec.ts (88.668 s)
+PASS src/modules/market-scanner/scanner.service.spec.ts (5.499 s)
+[95m[Nest] 11376  - [39m28.07.2026 14:33:52 [95m  DEBUG[39m [38;5;3m[ScannerService] [39m[95mScan complete: 4 top, 1 watchlist, 0 rejected[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:33:52 [95m  DEBUG[39m [38;5;3m[ScannerService] [39m[95mScan complete: 3 top, 0 watchlist, 0 rejected[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:33:52 [95m  DEBUG[39m [38;5;3m[ScannerService] [39m[95mScan complete: 2 top, 0 watchlist, 0 rejected[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:33:52 [95m  DEBUG[39m [38;5;3m[ScannerService] [39m[95mScan complete: 4 top, 1 watchlist, 0 rejected[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:33:52 [95m  DEBUG[39m [38;5;3m[ScannerService] [39m[95mScan complete: 4 top, 1 watchlist, 0 rejected[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:33:52 [95m  DEBUG[39m [38;5;3m[ScannerService] [39m[95mScan complete: 4 top, 1 watchlist, 0 rejected[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:33:52 [95m  DEBUG[39m [38;5;3m[ScannerService] [39m[95mScan complete: 4 top, 1 watchlist, 0 rejected[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:33:52 [95m  DEBUG[39m [38;5;3m[ScannerService] [39m[95mScan complete: 4 top, 1 watchlist, 0 rejected[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:33:52 [95m  DEBUG[39m [38;5;3m[ScannerService] [39m[95mScan complete: 4 top, 1 watchlist, 0 rejected[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:33:52 [95m  DEBUG[39m [38;5;3m[ScannerService] [39m[95mScan complete: 4 top, 1 watchlist, 0 rejected[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:33:52 [95m  DEBUG[39m [38;5;3m[ScannerService] [39m[95mScan complete: 4 top, 1 watchlist, 0 rejected[39m
+PASS src/__tests__/health-endpoints.integration.spec.ts (12.986 s)
+PASS src/modules/market-scanner/scanner.controller.spec.ts (89.31 s)
+PASS src/modules/provider-health-monitor/provider-health-monitor.controller.spec.ts (11.813 s)
+FAIL src/common/performance/__tests__/compression.interceptor.spec.ts (167.027 s)
+  ÔùÅ CompressionInterceptor ÔÇ║ compresses large payloads with gzip
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    Expected: "Content-Encoding", "gzip"
+
+    Number of calls: 0
+
+    [0m [90m 64 |[39m     interceptor[33m.[39mintercept(context[33m,[39m next [36mas[39m any)[33m.[39msubscr
+ibe({
+     [90m 65 |[39m       next[33m:[39m () [33m=>[39m {
+    [31m[1m>[22m[39m[90m 66 |[39m         expect(res[33m.[39msetHeader)[33m.[39mtoHaveBeenCalledWith([32m'Co
+ntent-Encoding'[39m[33m,[39m [32m'gzip'[39m)[33m;[39m
+     [90m    |[39m                               [31m[1m^[22m[39m
+     [90m 67 |[39m         expect(res[33m.[39msetHeader)[33m.[39mtoHaveBeenCalledWith([32m'Vary'[39m[33m,[39m
+ [32m'Accept-Encoding'[39m)[33m;[39m
+     [90m 68 |[39m         done()[33m;[39m
+     [90m 69 |[39m       }[33m,[39m[0m
+
+      at Object.next (common/performance/__tests__/compression.interceptor.spec.ts:66:31)
+      at ConsumerObserver.Object.<anonymous>.ConsumerObserver.next (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules
+/rxjs/src/internal/Subscriber.ts:155:25)
+      at SafeSubscriber.Object.<anonymous>.Subscriber._next (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/s
+rc/internal/Subscriber.ts:113:22)
+      at SafeSubscriber.Object.<anonymous>.Subscriber.next (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/sr
+c/internal/Subscriber.ts:71:12)
+      at ../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/operators/switchMap.ts:114:42
+      at OperatorSubscriber._this._next (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/operator
+s/OperatorSubscriber.ts:70:13)
+      at OperatorSubscriber.Object.<anonymous>.Subscriber.next (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxj
+s/src/internal/Subscriber.ts:71:12)
+      at Observable._subscribe (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/observable/innerF
+rom.ts:78:18)
+      at Observable.Object.<anonymous>.Observable._trySubscribe (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rx
+js/src/internal/Observable.ts:235:19)
+      at ../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/Observable.ts:225:18
+      at Object.errorContext (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/util/errorContext.t
+s:29:5)
+      at Observable.Object.<anonymous>.Observable.subscribe (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/s
+rc/internal/Observable.ts:211:5)
+      at ../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/operators/switchMap.ts:108:49
+      at OperatorSubscriber._this._next (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/operator
+s/OperatorSubscriber.ts:70:13)
+      at OperatorSubscriber.Object.<anonymous>.Subscriber.next (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxj
+s/src/internal/Subscriber.ts:71:12)
+      at Observable._subscribe (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/observable/innerF
+rom.ts:78:18)
+      at Observable.Object.<anonymous>.Observable._trySubscribe (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rx
+js/src/internal/Observable.ts:235:19)
+      at ../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/Observable.ts:225:18
+      at Object.errorContext (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/util/errorContext.t
+s:29:5)
+      at Observable.Object.<anonymous>.Observable.subscribe (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/s
+rc/internal/Observable.ts:211:5)
+      at ../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/operators/switchMap.ts:99:12
+      at SafeSubscriber.<anonymous> (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/util/lift.ts
+:24:18)
+      at ../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/Observable.ts:217:22
+      at Object.errorContext (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/util/errorContext.t
+s:29:5)
+      at Observable.Object.<anonymous>.Observable.subscribe (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/s
+rc/internal/Observable.ts:211:5)
+      at Object.<anonymous> (common/performance/__tests__/compression.interceptor.spec.ts:64:49)
+
+  ÔùÅ CompressionInterceptor ÔÇ║ compresses large payloads with gzip
+
+    thrown: "Exceeded timeout of 5000 ms for a test while waiting for `done()` to be called.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/doc
+s/api#testname-fn-timeout."
+
+    [0m [90m 57 |[39m   })[33m;[39m
+     [90m 58 |[39m
+    [31m[1m>[22m[39m[90m 59 |[39m   it([32m'compresses large payloads with gzip'[39m[33m,[39m (done) [33m=>
+[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 60 |[39m     [36mconst[39m largeData [33m=[39m [32m'x'[39m[33m.[39mrepeat([35m200[39m)[33m;[39m
+     [90m 61 |[39m     [36mconst[39m { context[33m,[39m res } [33m=[39m createMockContext(largeData[33m,[39m 
+[32m'gzip'[39m)[33m;[39m
+     [90m 62 |[39m     [36mconst[39m next [33m=[39m { handle[33m:[39m () [33m=>[39m [36mof[39m(largeData) }
+[33m;[39m[0m
+
+      at common/performance/__tests__/compression.interceptor.spec.ts:59:3
+      at Object.<anonymous> (common/performance/__tests__/compression.interceptor.spec.ts:42:1)
+
+  ÔùÅ CompressionInterceptor ÔÇ║ compresses large payloads with brotli
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    Expected: "Content-Encoding", "br"
+
+    Number of calls: 0
+
+    [0m [90m 78 |[39m     interceptor[33m.[39mintercept(context[33m,[39m next [36mas[39m any)[33m.[39msubscr
+ibe({
+     [90m 79 |[39m       next[33m:[39m () [33m=>[39m {
+    [31m[1m>[22m[39m[90m 80 |[39m         expect(res[33m.[39msetHeader)[33m.[39mtoHaveBeenCalledWith([32m'Co
+ntent-Encoding'[39m[33m,[39m [32m'br'[39m)[33m;[39m
+     [90m    |[39m                               [31m[1m^[22m[39m
+     [90m 81 |[39m         done()[33m;[39m
+     [90m 82 |[39m       }[33m,[39m
+     [90m 83 |[39m     })[33m;[39m[0m
+
+      at Object.next (common/performance/__tests__/compression.interceptor.spec.ts:80:31)
+      at ConsumerObserver.Object.<anonymous>.ConsumerObserver.next (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules
+/rxjs/src/internal/Subscriber.ts:155:25)
+      at SafeSubscriber.Object.<anonymous>.Subscriber._next (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/s
+rc/internal/Subscriber.ts:113:22)
+      at SafeSubscriber.Object.<anonymous>.Subscriber.next (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/sr
+c/internal/Subscriber.ts:71:12)
+      at ../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/operators/switchMap.ts:114:42
+      at OperatorSubscriber._this._next (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/operator
+s/OperatorSubscriber.ts:70:13)
+      at OperatorSubscriber.Object.<anonymous>.Subscriber.next (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxj
+s/src/internal/Subscriber.ts:71:12)
+      at Observable._subscribe (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/observable/innerF
+rom.ts:78:18)
+      at Observable.Object.<anonymous>.Observable._trySubscribe (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rx
+js/src/internal/Observable.ts:235:19)
+      at ../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/Observable.ts:225:18
+      at Object.errorContext (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/util/errorContext.t
+s:29:5)
+      at Observable.Object.<anonymous>.Observable.subscribe (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/s
+rc/internal/Observable.ts:211:5)
+      at ../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/operators/switchMap.ts:108:49
+      at OperatorSubscriber._this._next (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/operator
+s/OperatorSubscriber.ts:70:13)
+      at OperatorSubscriber.Object.<anonymous>.Subscriber.next (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxj
+s/src/internal/Subscriber.ts:71:12)
+      at Observable._subscribe (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/observable/innerF
+rom.ts:78:18)
+      at Observable.Object.<anonymous>.Observable._trySubscribe (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rx
+js/src/internal/Observable.ts:235:19)
+      at ../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/Observable.ts:225:18
+      at Object.errorContext (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/util/errorContext.t
+s:29:5)
+      at Observable.Object.<anonymous>.Observable.subscribe (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/s
+rc/internal/Observable.ts:211:5)
+      at ../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/operators/switchMap.ts:99:12
+      at SafeSubscriber.<anonymous> (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/util/lift.ts
+:24:18)
+      at ../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/Observable.ts:217:22
+      at Object.errorContext (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/util/errorContext.t
+s:29:5)
+      at Observable.Object.<anonymous>.Observable.subscribe (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/s
+rc/internal/Observable.ts:211:5)
+      at Object.<anonymous> (common/performance/__tests__/compression.interceptor.spec.ts:78:49)
+
+  ÔùÅ CompressionInterceptor ÔÇ║ compresses large payloads with brotli
+
+    thrown: "Exceeded timeout of 5000 ms for a test while waiting for `done()` to be called.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/doc
+s/api#testname-fn-timeout."
+
+    [0m [90m 71 |[39m   })[33m;[39m
+     [90m 72 |[39m
+    [31m[1m>[22m[39m[90m 73 |[39m   it([32m'compresses large payloads with brotli'[39m[33m,[39m (done) [33m=
+>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 74 |[39m     [36mconst[39m largeData [33m=[39m [32m'x'[39m[33m.[39mrepeat([35m200[39m)[33m;[39m
+     [90m 75 |[39m     [36mconst[39m { context[33m,[39m res } [33m=[39m createMockContext(largeData[33m,[39m 
+[32m'br, gzip'[39m)[33m;[39m
+     [90m 76 |[39m     [36mconst[39m next [33m=[39m { handle[33m:[39m () [33m=>[39m [36mof[39m(largeData) }
+[33m;[39m[0m
+
+      at common/performance/__tests__/compression.interceptor.spec.ts:73:3
+      at Object.<anonymous> (common/performance/__tests__/compression.interceptor.spec.ts:42:1)
+
+PASS src/common/portfolio-intelligence/dashboard-data.service.spec.ts (6.576 s)
+PASS src/modules/technical-rules/technical-rules.engine.spec.ts (10.791 s)
+PASS src/modules/configuration/configuration.controller.spec.ts (26.235 s)
+PASS src/modules/financial-rules/financial-analysis.controller.spec.ts (30.599 s)
+PASS src/modules/indicators/trend/trend.indicators.spec.ts (11.753 s)
+PASS src/modules/performance-monitor/performance-monitor.service.spec.ts (7.628 s)
+PASS src/common/monitoring/__tests__/health.service.spec.ts (17.194 s)
+[32m[Nest] 16276  - [39m28.07.2026 14:34:13 [32m    LOG[39m [38;5;3m[FeatureFlags] [39m[32mFeatureFlags initialized: auth_enabled=false, registration_enabled=false, oauth2_google=false, oauth2_github=false, oauth2_microsoft=false, api_keys=false, multi_tenant=false, audit_logging=true, rate_limiting=true, notification_preferences=true[39m
+[32m[Nest] 16276  - [39m28.07.2026 14:34:13 [32m    LOG[39m [38;5;3m[FeatureFlags] [39m[32mFeatureFlags initialized: auth_enabled=false, registration_enabled=false, oauth2_google=false, oauth2_github=false, oauth2_microsoft=false, api_keys=false, multi_tenant=false, audit_logging=true, rate_limiting=true, notification_preferences=true[39m
+[32m[Nest] 16276  - [39m28.07.2026 14:34:13 [32m    LOG[39m [38;5;3m[FeatureFlags] [39m[32mFeatureFlags initialized: auth_enabled=false, registration_enabled=false, oauth2_google=false, oauth2_github=false, oauth2_microsoft=false, api_keys=false, multi_tenant=false, audit_logging=true, rate_limiting=true, notification_preferences=true[39m
+[32m[Nest] 16276  - [39m28.07.2026 14:34:13 [32m    LOG[39m [38;5;3m[FeatureFlags] [39m[32mFeatureFlags initialized: auth_enabled=false, registration_enabled=false, oauth2_google=false, oauth2_github=false, oauth2_microsoft=false, api_keys=false, multi_tenant=false, audit_logging=true, rate_limiting=true, notification_preferences=true[39m
+[32m[Nest] 16276  - [39m28.07.2026 14:34:13 [32m    LOG[39m [38;5;3m[FeatureFlags] [39m[32mFeatureFlags initialized: auth_enabled=false, registration_enabled=false, oauth2_google=false, oauth2_github=false, oauth2_microsoft=false, api_keys=false, multi_tenant=false, audit_logging=true, rate_limiting=true, notification_preferences=true[39m
+[32m[Nest] 16276  - [39m28.07.2026 14:34:13 [32m    LOG[39m [38;5;3m[FeatureFlags] [39m[32mFeatureFlags initialized: auth_enabled=false, registration_enabled=false, oauth2_google=false, oauth2_github=false, oauth2_microsoft=false, api_keys=false, multi_tenant=false, audit_logging=true, rate_limiting=true, notification_preferences=true[39m
+[32m[Nest] 16276  - [39m28.07.2026 14:34:13 [32m    LOG[39m [38;5;3m[FeatureFlags] [39m[32mFeatureFlags initialized: auth_enabled=false, registration_enabled=false, oauth2_google=false, oauth2_github=false, oauth2_microsoft=false, api_keys=false, multi_tenant=false, audit_logging=true, rate_limiting=true, notification_preferences=true[39m
+[32m[Nest] 16276  - [39m28.07.2026 14:34:13 [32m    LOG[39m [38;5;3m[FeatureFlags] [39m[32mFeatureFlags initialized: auth_enabled=false, registration_enabled=false, oauth2_google=false, oauth2_github=false, oauth2_microsoft=false, api_keys=false, multi_tenant=false, audit_logging=true, rate_limiting=true, notification_preferences=true[39m
+[32m[Nest] 16276  - [39m28.07.2026 14:34:13 [32m    LOG[39m [38;5;3m[FeatureFlags] [39m[32mFeatureFlags initialized: auth_enabled=false, registration_enabled=false, oauth2_google=false, oauth2_github=false, oauth2_microsoft=false, api_keys=false, multi_tenant=false, audit_logging=true, rate_limiting=true, notification_preferences=true[39m
+[32m[Nest] 16276  - [39m28.07.2026 14:34:14 [32m    LOG[39m [38;5;3m[FeatureFlags] [39m[32mFeatureFlags initialized: auth_enabled=false, registration_enabled=false, oauth2_google=false, oauth2_github=false, oauth2_microsoft=false, api_keys=false, multi_tenant=false, audit_logging=true, rate_limiting=true, notification_preferences=true[39m
+[32m[Nest] 16276  - [39m28.07.2026 14:34:14 [32m    LOG[39m [38;5;3m[FeatureFlags] [39m[32mFeatureFlags initialized: auth_enabled=false, registration_enabled=false, oauth2_google=false, oauth2_github=false, oauth2_microsoft=false, api_keys=false, multi_tenant=false, audit_logging=true, rate_limiting=true, notification_preferences=true[39m
+[32m[Nest] 16276  - [39m28.07.2026 14:34:14 [32m    LOG[39m [38;5;3m[FeatureFlags] [39m[32mFeatureFlags initialized: auth_enabled=false, registration_enabled=false, oauth2_google=false, oauth2_github=false, oauth2_microsoft=false, api_keys=false, multi_tenant=false, audit_logging=true, rate_limiting=true, notification_preferences=true[39m
+[32m[Nest] 16276  - [39m28.07.2026 14:34:14 [32m    LOG[39m [38;5;3m[FeatureFlags] [39m[32mFeatureFlags initialized: auth_enabled=false, registration_enabled=false, oauth2_google=false, oauth2_github=false, oauth2_microsoft=false, api_keys=false, multi_tenant=false, audit_logging=true, rate_limiting=true, notification_preferences=true[39m
+[32m[Nest] 16276  - [39m28.07.2026 14:34:14 [32m    LOG[39m [38;5;3m[FeatureFlags] [39m[32mFeatureFlags initialized: auth_enabled=false, registration_enabled=false, oauth2_google=false, oauth2_github=false, oauth2_microsoft=false, api_keys=false, multi_tenant=false, audit_logging=true, rate_limiting=true, notification_preferences=true[39m
+PASS src/common/auth/__tests__/feature-flags.spec.ts (27.488 s)
+PASS src/modules/event-bus/event-bus.service.spec.ts (88.195 s)
+PASS src/common/recommendation-tracker/recommendation-tracker.module.spec.ts (8.668 s)
+PASS src/common/multi-timeframe-consensus/consensus-calculator.spec.ts (12.451 s)
+PASS src/common/elite-score/consensus-analyzer.spec.ts (6.047 s)
+PASS src/modules/smart-money/smart-money.engine.spec.ts (19.805 s)
+PASS src/common/production-readiness/__tests__/orchestrator.service.spec.ts
+PASS src/common/production-readiness/__tests__/backup.service.spec.ts (9.84 s)
+PASS src/modules/indicators/indicator-engine.spec.ts (7.777 s)
+PASS src/modules/openapi/openapi.service.spec.ts (27.083 s)
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled marketOpenScan every 900000ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled incrementalScan every 900000ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled nightlyBacktest every 900000ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled benchmark every 900000ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled ruleAnalytics every 900000ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled weightOptimization every 900000ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled cacheRefresh every 900000ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled providerHealthCheck every 900000ms[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:34:21 [32m    LOG[39m [38;5;3m[SchedulerEngine] [39m[32mScheduler started with 8 active jobs[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: marketOpenScan[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: incrementalScan[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: nightlyBacktest[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: benchmark[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: ruleAnalytics[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: weightOptimization[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: cacheRefresh[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: providerHealthCheck[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:34:21 [32m    LOG[39m [38;5;3m[SchedulerEngine] [39m[32mScheduler stopped[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerService] [39m[95mManual execution requested for: marketOpenScan[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerService] [39m[95mManual execution requested for: marketOpenScan[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerService] [39m[95mManual execution requested for: marketOpenScan[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerService] [39m[95mManual execution requested for: marketOpenScan[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerService] [39m[95mManual execution requested for: marketOpenScan[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerService] [39m[95mManual execution requested for: marketOpenScan[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan failed in 1ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerService] [39m[95mManual execution requested for: marketOpenScan[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled marketOpenScan every 900000ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled incrementalScan every 900000ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled nightlyBacktest every 900000ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled benchmark every 900000ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled ruleAnalytics every 900000ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled weightOptimization every 900000ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled cacheRefresh every 900000ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled providerHealthCheck every 900000ms[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:34:21 [32m    LOG[39m [38;5;3m[SchedulerEngine] [39m[32mScheduler started with 8 active jobs[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: marketOpenScan[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: incrementalScan[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: nightlyBacktest[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: benchmark[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: ruleAnalytics[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: weightOptimization[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: cacheRefresh[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: providerHealthCheck[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:34:21 [32m    LOG[39m [38;5;3m[SchedulerEngine] [39m[32mScheduler stopped[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled marketOpenScan every 900000ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled incrementalScan every 900000ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled nightlyBacktest every 900000ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled benchmark every 900000ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled ruleAnalytics every 900000ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled weightOptimization every 900000ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled cacheRefresh every 900000ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled providerHealthCheck every 900000ms[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:34:21 [32m    LOG[39m [38;5;3m[SchedulerEngine] [39m[32mScheduler started with 8 active jobs[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: marketOpenScan[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: incrementalScan[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: nightlyBacktest[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: benchmark[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: ruleAnalytics[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: weightOptimization[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: cacheRefresh[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: providerHealthCheck[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:34:21 [32m    LOG[39m [38;5;3m[SchedulerEngine] [39m[32mScheduler stopped[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled marketOpenScan every 900000ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled incrementalScan every 900000ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled nightlyBacktest every 900000ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled benchmark every 900000ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled ruleAnalytics every 900000ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled weightOptimization every 900000ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled cacheRefresh every 900000ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled providerHealthCheck every 900000ms[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:34:21 [32m    LOG[39m [38;5;3m[SchedulerEngine] [39m[32mScheduler started with 8 active jobs[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: marketOpenScan[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: incrementalScan[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: nightlyBacktest[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: benchmark[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: ruleAnalytics[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: weightOptimization[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: cacheRefresh[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: providerHealthCheck[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:34:21 [32m    LOG[39m [38;5;3m[SchedulerEngine] [39m[32mScheduler stopped[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:34:21 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+PASS src/modules/scheduler/scheduler.service.spec.ts (5.525 s)
+PASS src/common/opportunity-lifecycle/evolution-analyzer.service.spec.ts (7.258 s)
+PASS src/common/elite-score/technical-scorer.spec.ts
+[95m[Nest] 32964  - [39m28.07.2026 14:34:22 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:22 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:22 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+PASS src/modules/benchmark/benchmark.engine.spec.ts (8.477 s)
+PASS src/common/explainability/__tests__/market-interpreter.spec.ts
+[95m[Nest] 32964  - [39m28.07.2026 14:34:22 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:22 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan failed in 0ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:22 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[33m[Nest] 32964  - [39m28.07.2026 14:34:22 [33m   WARN[39m [38;5;3m[SchedulerEngine] [39m[33mJob marketOpenScan already running, skipping[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:22 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:22 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[33m[Nest] 32964  - [39m28.07.2026 14:34:22 [33m   WARN[39m [38;5;3m[SchedulerEngine] [39m[33mJob marketOpenScan attempt 1 failed: fail-1, retrying...[39m
+[33m[Nest] 32964  - [39m28.07.2026 14:34:22 [33m   WARN[39m [38;5;3m[SchedulerEngine] [39m[33mJob marketOpenScan attempt 2 failed: fail-2, retrying...[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:22 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 11ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:22 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[33m[Nest] 32964  - [39m28.07.2026 14:34:22 [33m   WARN[39m [38;5;3m[SchedulerEngine] [39m[33mJob marketOpenScan attempt 1 failed: OK, retrying...[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:22 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan failed in 10ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:22 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:22 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan failed in 0ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:22 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan failed in 0ms[39m
+[31m[Nest] 32964  - [39m28.07.2026 14:34:22 [31m  ERROR[39m [38;5;3m[SchedulerEngine] [39m[31mJob marketOpenScan
+ disabled after 3 consecutive failures[39m
+[31m[Nest] 32964  - [39m28.07.2026 14:34:23 [31m  ERROR[39m [38;5;3m[SchedulerEngine] [39m[31mJob marketOpenScan
+ disabled after 3 consecutive failures[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:22 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan failed in 0ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan failed in 0ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan failed in 0ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan failed in 0ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan failed in 0ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled marketOpenScan every 1000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled nightlyBacktest every 86400000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled benchmark every 21600000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled ruleAnalytics every 43200000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled weightOptimization every 86400000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled cacheRefresh every 900000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled providerHealthCheck every 300000ms[39m
+[32m[Nest] 32964  - [39m28.07.2026 14:34:23 [32m    LOG[39m [38;5;3m[SchedulerEngine] [39m[32mScheduler started with 7 active jobs[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: marketOpenScan[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: nightlyBacktest[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: benchmark[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: ruleAnalytics[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: weightOptimization[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: cacheRefresh[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: providerHealthCheck[39m
+[32m[Nest] 32964  - [39m28.07.2026 14:34:23 [32m    LOG[39m [38;5;3m[SchedulerEngine] [39m[32mScheduler stopped[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled marketOpenScan every 1000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled nightlyBacktest every 86400000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled benchmark every 21600000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled ruleAnalytics every 43200000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled weightOptimization every 86400000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled cacheRefresh every 900000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled providerHealthCheck every 300000ms[39m
+[32m[Nest] 32964  - [39m28.07.2026 14:34:23 [32m    LOG[39m [38;5;3m[SchedulerEngine] [39m[32mScheduler started with 7 active jobs[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: marketOpenScan[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: nightlyBacktest[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: benchmark[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: ruleAnalytics[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: weightOptimization[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: cacheRefresh[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: providerHealthCheck[39m
+[32m[Nest] 32964  - [39m28.07.2026 14:34:23 [32m    LOG[39m [38;5;3m[SchedulerEngine] [39m[32mScheduler stopped[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled marketOpenScan every 1000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled nightlyBacktest every 86400000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled benchmark every 21600000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled ruleAnalytics every 43200000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled weightOptimization every 86400000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled cacheRefresh every 900000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled providerHealthCheck every 300000ms[39m
+[32m[Nest] 32964  - [39m28.07.2026 14:34:23 [32m    LOG[39m [38;5;3m[SchedulerEngine] [39m[32mScheduler started with 7 active jobs[39m
+[33m[Nest] 32964  - [39m28.07.2026 14:34:23 [33m   WARN[39m [38;5;3m[SchedulerEngine] [39m[33mScheduler already running[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: marketOpenScan[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: nightlyBacktest[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: benchmark[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: ruleAnalytics[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: weightOptimization[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: cacheRefresh[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: providerHealthCheck[39m
+[32m[Nest] 32964  - [39m28.07.2026 14:34:23 [32m    LOG[39m [38;5;3m[SchedulerEngine] [39m[32mScheduler stopped[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled marketOpenScan every 1000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled nightlyBacktest every 86400000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled benchmark every 21600000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled ruleAnalytics every 43200000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled weightOptimization every 86400000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled cacheRefresh every 900000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled providerHealthCheck every 300000ms[39m
+[32m[Nest] 32964  - [39m28.07.2026 14:34:23 [32m    LOG[39m [38;5;3m[SchedulerEngine] [39m[32mScheduler started with 7 active jobs[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:24 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 100ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:24 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: marketOpenScan[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:24 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: nightlyBacktest[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:24 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: benchmark[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:24 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: ruleAnalytics[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:24 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: weightOptimization[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:24 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: cacheRefresh[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:24 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: providerHealthCheck[39m
+[32m[Nest] 32964  - [39m28.07.2026 14:34:24 [32m    LOG[39m [38;5;3m[SchedulerEngine] [39m[32mScheduler stopped[39m
+PASS src/__tests__/scheduler-integration.spec.ts (13.425 s)
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled marketOpenScan every 1000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled nightlyBacktest every 86400000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled benchmark every 21600000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled ruleAnalytics every 43200000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled weightOptimization every 86400000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled cacheRefresh every 900000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled providerHealthCheck every 300000ms[39m
+[32m[Nest] 32964  - [39m28.07.2026 14:34:23 [32m    LOG[39m [38;5;3m[SchedulerEngine] [39m[32mScheduler started with 7 active jobs[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: marketOpenScan[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: nightlyBacktest[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: benchmark[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: ruleAnalytics[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: weightOptimization[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: cacheRefresh[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: providerHealthCheck[39m
+[32m[Nest] 32964  - [39m28.07.2026 14:34:23 [32m    LOG[39m [38;5;3m[SchedulerEngine] [39m[32mScheduler stopped[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled marketOpenScan every 1000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled nightlyBacktest every 86400000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled benchmark every 21600000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled ruleAnalytics every 43200000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled weightOptimization every 86400000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled cacheRefresh every 900000ms[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled providerHealthCheck every 300000ms[39m
+[32m[Nest] 32964  - [39m28.07.2026 14:34:23 [32m    LOG[39m [38;5;3m[SchedulerEngine] [39m[32mScheduler started with 7 active jobs[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: marketOpenScan[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: nightlyBacktest[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: benchmark[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: ruleAnalytics[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: weightOptimization[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: cacheRefresh[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: providerHealthCheck[39m
+[32m[Nest] 32964  - [39m28.07.2026 14:34:23 [32m    LOG[39m [38;5;3m[SchedulerEngine] [39m[32mScheduler stopped[39m
+[95m[Nest] 32964  - [39m28.07.2026 14:34:23 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+PASS src/modules/event-bus/event-bus.controller.spec.ts (31.952 s)
+PASS src/modules/indicators/compression/compression.indicators.spec.ts
+PASS src/modules/opportunity-detection/modules-batch1.spec.ts
+PASS src/modules/opportunity-detection/modules-batch2.spec.ts
+PASS src/common/adaptive-calibration/calibration-report-generator.service.spec.ts (7.187 s)
+[31m[Nest] 35664  - [39m28.07.2026 14:34:29 [31m  ERROR[39m [38;5;3m[FintablesProvider] [39m[31m[getCompanyProfi
+le] Unknown error for INVALID: Not found[39m
+[31m[Nest] 35664  - [39m28.07.2026 14:34:30 [31m  ERROR[39m [38;5;3m[FintablesProvider] [39m[31m[getCompanyProfi
+le] Unknown error for THYAO: ECONNREFUSED[39m
+PASS src/modules/workflow-queue/workflow-queue.controller.spec.ts (15.541 s)
+[31m[Nest] 35664  - [39m28.07.2026 14:34:33 [31m  ERROR[39m [38;5;3m[FintablesProvider] [39m[31m[getFinancialRat
+ios] Unknown error for INVALID: Not found[39m
+[31m[Nest] 35664  - [39m28.07.2026 14:34:38 [31m  ERROR[39m [38;5;3m[FintablesProvider] [39m[31m[getSector] Unkn
+own error for THYAO: ECONNREFUSED[39m
+PASS src/modules/opportunity-detection/services.spec.ts (23.608 s)
+PASS src/modules/market-data/providers/fintables.provider.spec.ts (33.13 s)
+PASS src/common/portfolio-intelligence/explainability-center.service.spec.ts (29.351 s)
+PASS src/common/adaptive-calibration/recommendation-engine.service.spec.ts (31.207 s)
+PASS src/modules/system-diagnostics/system-diagnostics.engine.spec.ts (24.406 s)
+PASS src/modules/technical-analysis/technical-analysis.controller.spec.ts (41.758 s)
+PASS src/common/security/__tests__/rate-limit.guard.spec.ts (33.498 s)
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: incrementalScan[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: nightlyBacktest[39m
+[31m[Nest] 11376  - [39m28.07.2026 14:35:02 [31m  ERROR[39m [38;5;3m[SchedulerEngine] [39m[31mJob marketOpenScan
+ attempt 1 error: Fail #1[39m
+[31m[Nest] 11376  - [39m28.07.2026 14:35:03 [31m  ERROR[39m [38;5;3m[SchedulerEngine] [39m[31mJob marketOpenScan
+ disabled after 2 consecutive failures[39m
+PASS src/modules/scheduler/scheduler.engine.spec.ts
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled marketOpenScan every 900000ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled incrementalScan every 3600000ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled nightlyBacktest every 86400000ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled benchmark every 21600000ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled ruleAnalytics every 43200000ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled weightOptimization every 86400000ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled cacheRefresh every 900000ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled providerHealthCheck every 300000ms[39m
+[32m[Nest] 11376  - [39m28.07.2026 14:35:02 [32m    LOG[39m [38;5;3m[SchedulerEngine] [39m[32mScheduler started with 8 active jobs[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: marketOpenScan[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: incrementalScan[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: nightlyBacktest[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: benchmark[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: ruleAnalytics[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: weightOptimization[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: cacheRefresh[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: providerHealthCheck[39m
+[32m[Nest] 11376  - [39m28.07.2026 14:35:02 [32m    LOG[39m [38;5;3m[SchedulerEngine] [39m[32mScheduler stopped[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled marketOpenScan every 900000ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled incrementalScan every 3600000ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled nightlyBacktest every 86400000ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled benchmark every 21600000ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled ruleAnalytics every 43200000ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled weightOptimization every 86400000ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled cacheRefresh every 900000ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled providerHealthCheck every 300000ms[39m
+[32m[Nest] 11376  - [39m28.07.2026 14:35:02 [32m    LOG[39m [38;5;3m[SchedulerEngine] [39m[32mScheduler started with 8 active jobs[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: marketOpenScan[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: incrementalScan[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: nightlyBacktest[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: benchmark[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: ruleAnalytics[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: weightOptimization[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: cacheRefresh[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: providerHealthCheck[39m
+[32m[Nest] 11376  - [39m28.07.2026 14:35:02 [32m    LOG[39m [38;5;3m[SchedulerEngine] [39m[32mScheduler stopped[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled marketOpenScan every 900000ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled incrementalScan every 3600000ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled nightlyBacktest every 86400000ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled benchmark every 21600000ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled ruleAnalytics every 43200000ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled weightOptimization every 86400000ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled cacheRefresh every 900000ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled providerHealthCheck every 300000ms[39m
+[32m[Nest] 11376  - [39m28.07.2026 14:35:02 [32m    LOG[39m [38;5;3m[SchedulerEngine] [39m[32mScheduler started with 8 active jobs[39m
+[33m[Nest] 11376  - [39m28.07.2026 14:35:02 [33m   WARN[39m [38;5;3m[SchedulerEngine] [39m[33mScheduler already running[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: marketOpenScan[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: incrementalScan[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: nightlyBacktest[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: benchmark[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: ruleAnalytics[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: weightOptimization[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: cacheRefresh[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: providerHealthCheck[39m
+[32m[Nest] 11376  - [39m28.07.2026 14:35:02 [32m    LOG[39m [38;5;3m[SchedulerEngine] [39m[32mScheduler stopped[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan failed in 0ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:02 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan failed in 0ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan failed in 0ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan failed in 0ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan failed in 0ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan failed in 0ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan failed in 0ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: incrementalScan[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob incrementalScan completed in 0ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled marketOpenScan every 900000ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled incrementalScan every 3600000ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled nightlyBacktest every 86400000ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled benchmark every 21600000ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled ruleAnalytics every 43200000ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled weightOptimization every 86400000ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled cacheRefresh every 900000ms[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mScheduled providerHealthCheck every 300000ms[39m
+[32m[Nest] 11376  - [39m28.07.2026 14:35:03 [32m    LOG[39m [38;5;3m[SchedulerEngine] [39m[32mScheduler started with 8 active jobs[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: marketOpenScan[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: incrementalScan[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: nightlyBacktest[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: benchmark[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: ruleAnalytics[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: weightOptimization[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: cacheRefresh[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mStopped job: providerHealthCheck[39m
+[32m[Nest] 11376  - [39m28.07.2026 14:35:03 [32m    LOG[39m [38;5;3m[SchedulerEngine] [39m[32mScheduler stopped[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mRegistered job: marketOpenScan[39m
+[33m[Nest] 11376  - [39m28.07.2026 14:35:03 [33m   WARN[39m [38;5;3m[SchedulerEngine] [39m[33mJob marketOpenScan already running, skipping[39m
+[95m[Nest] 11376  - [39m28.07.2026 14:35:03 [95m  DEBUG[39m [38;5;3m[SchedulerEngine] [39m[95mJob marketOpenScan completed in 0ms[39m
+PASS src/modules/analysis-pipeline/analysis-pipeline.orchestrator.spec.ts (40.124 s)
+PASS src/common/market-regime/regime-detector.service.spec.ts (11.308 s)
+PASS src/common/paper-portfolio/paper-performance-tracker.service.spec.ts (9.196 s)
+PASS src/modules/event-bus/event-bus.engine.spec.ts (33.814 s)
+PASS src/modules/contract-validator/contract-validator.service.spec.ts (7.55 s)
+PASS src/modules/technical-score/technical-score.engine.spec.ts (40.057 s)
+PASS src/common/paper-portfolio/paper-portfolio-orchestrator.service.spec.ts (20.61 s)
+PASS src/common/recommendation-tracker/performance-evaluation.service.spec.ts
+PASS src/modules/opportunity-detection/opportunity-detection-engine.spec.ts (48.714 s)
+PASS src/modules/backtest-validation/backtest-validation.validator.spec.ts
+PASS src/modules/configuration/configuration.engine.spec.ts (5.214 s)
+PASS src/modules/market-structure/market-structure.engine.spec.ts (9.708 s)
+PASS src/common/portfolio-intelligence/portfolio-intelligence.module.spec.ts (19.209 s)
+PASS src/modules/workflow-queue/workflow-queue.engine.spec.ts (9.098 s)
+PASS src/modules/performance-monitor/performance-monitor.engine.spec.ts (5.948 s)
+PASS src/common/auth/__tests__/user-context.spec.ts
+PASS src/common/portfolio-intelligence/types.spec.ts
+PASS src/common/security/__tests__/sanitize.pipe.spec.ts
+PASS src/modules/technical-analysis/technical-analysis.service.spec.ts (7.329 s)
+[31m[Nest] 2976  - [39m28.07.2026 14:35:16 [31m  ERROR[39m [38;5;3m[PersistenceService] [39m[31mFailed to save a
+nalysis result for THYAO/1d: DB error[39m
+PASS src/modules/market-data/market-data-validation.service.spec.ts (6.635 s)
+[31m[Nest] 2976  - [39m28.07.2026 14:35:16 [31m  ERROR[39m [38;5;3m[PersistenceService] [39m[31mFailed to fetch 
+analysis result for THYAO/1d: DB error[39m
+PASS src/common/strategy-validation/performance-metrics.service.spec.ts
+PASS src/common/portfolio-intelligence/performance-analytics.service.spec.ts
+PASS src/modules/persistence/persistence.service.spec.ts (21.097 s)
+[31m[Nest] 25644  - [39m28.07.2026 14:35:18 [31m  ERROR[39m [38;5;3m[App] [39m[31m{"timestamp":"2026-07-28T11:35
+:18.816Z","level":"error","context":"TestContext","message":"error message","stack":"stack"}[39m
+[31m[Nest] 25644  - [39m28.07.2026 14:35:18 [31m  ERROR[39m [38;5;3m[App] [39m[31mstack[39m
+TestContext
+[31m[Nest] 25644  - [39m28.07.2026 14:35:18 [31m  ERROR[39m [38;5;3m[App] [39m[31m{"timestamp":"2026-07-28T11:35
+:18.820Z","level":"fatal","context":"TestContext","message":"fatal message","stack":"stack"}[39m
+[31m[Nest] 25644  - [39m28.07.2026 14:35:18 [31m  ERROR[39m [38;5;3m[App] [39m[31mstack[39m
+TestContext
+[32m[Nest] 25644  - [39m28.07.2026 14:35:18 [32m    LOG[39m [38;5;3m[App] [39m[32m{"timestamp":"2026-07-28T11:35:18.786Z","level":"info","context":"TestContext","message":"test message"}[39m
+[32m[Nest] 25644  - [39m28.07.2026 14:35:18 [32m    LOG[39m [38;5;3m[App] [39m[32mTestContext[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:35:18 [95m  DEBUG[39m [38;5;3m[App] [39m[95m{"timestamp":"2026-07-28T11:35:18.808Z","level":"debug","context":"TestContext","message":"debug message"}[39m
+[95m[Nest] 25644  - [39m28.07.2026 14:35:18 [95m  DEBUG[39m [38;5;3m[App] [39m[95mTestContext[39m
+[33m[Nest] 25644  - [39m28.07.2026 14:35:18 [33m   WARN[39m [38;5;3m[App] [39m[33m{"timestamp":"2026-07-28T11:35:18.811Z","level":"warn","context":"TestContext","message":"warn message"}[39m
+[33m[Nest] 25644  - [39m28.07.2026 14:35:18 [33m   WARN[39m [38;5;3m[App] [39m[33mTestContext[39m
+[32m[Nest] 25644  - [39m28.07.2026 14:35:18 [32m    LOG[39m [38;5;3m[App] [39m[32m{"timestamp":"2026-07-28T11:35:18.842Z","level":"info","context":"HTTP","message":"GET /api/health","metadata":{"requestId":"req-1","userId":"user-1","method":"GET","path":"/api/health"}}[39m
+[32m[Nest] 25644  - [39m28.07.2026 14:35:18 [32m    LOG[39m [38;5;3m[App] [39m[32mHTTP[39m
+[32m[Nest] 25644  - [39m28.07.2026 14:35:18 [32m    LOG[39m [38;5;3m[App] [39m[32m{"timestamp":"2026-07-28T11:35:18.852Z","level":"info","context":"HTTP","message":"POST /api/data","metadata":{"requestId":"req-2","userId":"anonymous","method":"POST","path":"/api/data"}}[39m
+[32m[Nest] 25644  - [39m28.07.2026 14:35:18 [32m    LOG[39m [38;5;3m[App] [39m[32mHTTP[39m
+[32m[Nest] 25644  - [39m28.07.2026 14:35:18 [32m    LOG[39m [38;5;3m[App] [39m[32m{"timestamp":"2026-07-28T11:35:18.867Z","level":"info","context":"HTTP","message":"GET /api/health 200 50ms","metadata":{"requestId":"req-1","method":"GET","path":"/api/health","statusCode":200,"duration":50}}[39m
+[32m[Nest] 25644  - [39m28.07.2026 14:35:18 [32m    LOG[39m [38;5;3m[App] [39m[32mHTTP[39m
+[33m[Nest] 25644  - [39m28.07.2026 14:35:18 [33m   WARN[39m [38;5;3m[App] [39m[33m{"timestamp":"2026-07-28T11:35:18.903Z","level":"warn","context":"HTTP","message":"GET /api/missing 404 10ms","metadata":{"requestId":"req-2","method":"GET","path":"/api/missing","statusCode":404,"duration":10}}[39m
+[33m[Nest] 25644  - [39m28.07.2026 14:35:18 [33m   WARN[39m [38;5;3m[App] [39m[33mHTTP[39m
+[31m[Nest] 25644  - [39m28.07.2026 14:35:18 [31m  ERROR[39m [38;5;3m[App] [39m[31m{"timestamp":"2026-07-28T11:35
+:18.911Z","level":"error","context":"HTTP","message":"POST /api/data 500 1000ms","metadata":{"requestId":"req-3","metho
+d":"POST","path":"/api/data","statusCode":500,"duration":1000}}[39m
+HTTP
+PASS src/common/logger/__tests__/logger.service.spec.ts
+PASS src/modules/workflow-queue/workflow-queue.service.spec.ts (5.225 s)
+[32m[Nest] 25644  - [39m28.07.2026 14:35:18 [32m    LOG[39m [38;5;3m[App] [39m[32m{"timestamp":"2026-07-28T11:35:18.917Z","level":"info","context":"Scanner","message":"Scan completed","metadata":{"stockCount":500,"duration":1200}}[39m
+[32m[Nest] 25644  - [39m28.07.2026 14:35:18 [32m    LOG[39m [38;5;3m[App] [39m[32mScanner[39m
+[32m[Nest] 25644  - [39m28.07.2026 14:35:18 [32m    LOG[39m [38;5;3m[App] [39m[32m{"timestamp":"2026-07-28T11:35:18.919Z","level":"info","context":"Scheduler","message":"Cron job triggered"}[39m
+[32m[Nest] 25644  - [39m28.07.2026 14:35:18 [32m    LOG[39m [38;5;3m[App] [39m[32mScheduler[39m
+PASS src/modules/market-scanner/market-scanner.engine.spec.ts (6.593 s)
+[32m[Nest] 20476  - [39m28.07.2026 14:35:19 [32m    LOG[39m [38;5;3m[AuthService] [39m[32mAuthService initialized: enabled=false, allowAnonymous=true[39m
+[32m[Nest] 20476  - [39m28.07.2026 14:35:19 [32m    LOG[39m [38;5;3m[AuthService] [39m[32mAuthService initialized: enabled=false, allowAnonymous=true[39m
+[32m[Nest] 20476  - [39m28.07.2026 14:35:19 [32m    LOG[39m [38;5;3m[AuthService] [39m[32mAuthService initialized: enabled=false, allowAnonymous=true[39m
+[32m[Nest] 20476  - [39m28.07.2026 14:35:19 [32m    LOG[39m [38;5;3m[AuthService] [39m[32mAuthService initialized: enabled=false, allowAnonymous=true[39m
+[32m[Nest] 20476  - [39m28.07.2026 14:35:19 [32m    LOG[39m [38;5;3m[AuthService] [39m[32mAuthService initialized: enabled=false, allowAnonymous=true[39m
+[32m[Nest] 20476  - [39m28.07.2026 14:35:19 [32m    LOG[39m [38;5;3m[AuthService] [39m[32mAuthService initialized: enabled=false, allowAnonymous=true[39m
+[32m[Nest] 20476  - [39m28.07.2026 14:35:19 [32m    LOG[39m [38;5;3m[AuthService] [39m[32mAuthService initialized: enabled=false, allowAnonymous=true[39m
+[32m[Nest] 20476  - [39m28.07.2026 14:35:19 [32m    LOG[39m [38;5;3m[AuthService] [39m[32mAuthService initialized: enabled=false, allowAnonymous=true[39m
+[32m[Nest] 20476  - [39m28.07.2026 14:35:19 [32m    LOG[39m [38;5;3m[AuthService] [39m[32mAuthService initialized: enabled=false, allowAnonymous=true[39m
+[32m[Nest] 20476  - [39m28.07.2026 14:35:19 [32m    LOG[39m [38;5;3m[AuthService] [39m[32mAuthService initialized: enabled=false, allowAnonymous=true[39m
+[32m[Nest] 20476  - [39m28.07.2026 14:35:19 [32m    LOG[39m [38;5;3m[AuthService] [39m[32mAuthService initialized: enabled=false, allowAnonymous=true[39m
+[32m[Nest] 20476  - [39m28.07.2026 14:35:19 [32m    LOG[39m [38;5;3m[AuthService] [39m[32mAuthService initialized: enabled=false, allowAnonymous=true[39m
+[32m[Nest] 20476  - [39m28.07.2026 14:35:19 [32m    LOG[39m [38;5;3m[AuthService] [39m[32mAuthService initialized: enabled=false, allowAnonymous=true[39m
+PASS src/common/auth/__tests__/auth.service.spec.ts (6.52 s)
+[32m[Nest] 20476  - [39m28.07.2026 14:35:20 [32m    LOG[39m [38;5;3m[AuthService] [39m[32mAuthService initialized: enabled=false, allowAnonymous=true[39m
+PASS src/common/auth/__tests__/guards.spec.ts
+[32m[Nest] 22168  - [39m28.07.2026 14:35:20 [32m    LOG[39m [38;5;3m[AuthService] [39m[32mAuthService initialized: enabled=false, allowAnonymous=true[39m
+[32m[Nest] 22168  - [39m28.07.2026 14:35:20 [32m    LOG[39m [38;5;3m[AuthService] [39m[32mAuthService initialized: enabled=false, allowAnonymous=true[39m
+[32m[Nest] 22168  - [39m28.07.2026 14:35:20 [32m    LOG[39m [38;5;3m[AuthService] [39m[32mAuthService initialized: enabled=false, allowAnonymous=true[39m
+[32m[Nest] 22168  - [39m28.07.2026 14:35:20 [32m    LOG[39m [38;5;3m[AuthService] [39m[32mAuthService initialized: enabled=false, allowAnonymous=true[39m
+PASS src/modules/elite-score/elite-score.engine.spec.ts
+PASS src/common/recommendation-tracker/strategy-analyzer.service.spec.ts (6.839 s)
+PASS src/common/portfolio-intelligence/notification-center.service.spec.ts (7.232 s)
+PASS src/common/market-regime/regime-transition.service.spec.ts
+[33m[Nest] 2572  - [39m28.07.2026 14:35:23 [33m   WARN[39m [38;5;3m[PrismaService] [39m[33mDatabase connection deferred. Continuing without DB.[39m
+[33m[Nest] 2572  - [39m28.07.2026 14:35:23 [33m   WARN[39m [38;5;3m[PrismaService] [39m[33mPrismaService[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:35:23 [32m    LOG[39m [38;5;3m[PrismaService] [39m[32mDatabase disconnected[39m
+PASS src/__tests__/prisma-integration.spec.ts (5.584 s)
+[32m[Nest] 2572  - [39m28.07.2026 14:35:23 [32m    LOG[39m [38;5;3m[PrismaService] [39m[32mDatabase disconnected[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:35:23 [32m    LOG[39m [38;5;3m[PrismaService] [39m[32mDatabase disconnected[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:35:23 [32m    LOG[39m [38;5;3m[PrismaService] [39m[32mDatabase disconnected[39m
+PASS src/__tests__/cache-integration.spec.ts
+PASS src/common/production-readiness/__tests__/config-validator.service.spec.ts
+PASS src/common/opportunity-lifecycle/lifecycle-tracker.service.spec.ts (6.678 s)
+PASS src/common/opportunity-lifecycle/opportunity-lifecycle.module.spec.ts (5.501 s)
+PASS src/common/recommendation-tracker/recommendation-report-generator.service.spec.ts (7.563 s)
+PASS src/common/production-readiness/__tests__/deployment-checklist.service.spec.ts
+PASS src/modules/market-data/aggregation/conflict-resolver.service.spec.ts
+PASS src/modules/financial-rules/financial-score-engine.spec.ts (6.689 s)
+PASS src/modules/sdk-generator/sdk-generator.service.spec.ts
+PASS src/modules/scheduler/scheduler.controller.spec.ts (8.603 s)
+PASS src/modules/financial-rules/financial-rules-engine.spec.ts (11.983 s)
+PASS src/modules/confluence/confluence.engine.spec.ts (5.555 s)
+PASS src/common/recommendation-tracker/elite-score-analyzer.service.spec.ts
+PASS src/modules/ai-analysis/signal-generator.service.spec.ts
+PASS src/common/production-readiness/__tests__/production-health.service.spec.ts
+PASS src/modules/opportunity/opportunity.engine.spec.ts
+PASS src/common/security/__tests__/file-validation.pipe.spec.ts
+PASS src/common/adaptive-calibration/scoring-diagnostics.service.spec.ts
+PASS src/common/portfolio-intelligence/risk-center.service.spec.ts
+PASS src/modules/rule-analytics/rule-analytics.engine.spec.ts
+[95m[Nest] 20476  - [39m28.07.2026 14:35:31 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mCalculating elite score for THYAO (profile: balanced)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:31 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mElite score calculated for THYAO: 45.0 (14ms)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mCalculating elite score for GARAN (profile: aggressive)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mElite score calculated for GARAN: 47.4 (3ms)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mCalculating elite score for ASELS (profile: balanced)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mElite score calculated for ASELS: 51.2 (2ms)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mCalculating elite score for KCHOL (profile: balanced)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mElite score calculated for KCHOL: 50.5 (2ms)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mCalculating elite score for BIMAS (profile: balanced)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mElite score calculated for BIMAS: 46.9 (3ms)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mCalculating elite score for TUPRS (profile: balanced)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mElite score calculated for TUPRS: 47.3 (1ms)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mCalculating elite score for VAKBN (profile: balanced)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mElite score calculated for VAKBN: 37.6 (1ms)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mCalculating elite score for SISE (profile: balanced)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mElite score calculated for SISE: 45.0 (2ms)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mCalculating elite score for KRDMD (profile: balanced)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mElite score calculated for KRDMD: 45.0 (2ms)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mCalculating elite score for EREGL (profile: balanced)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mElite score calculated for EREGL: 45.0 (1ms)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mCalculating elite score for THYAO (profile: balanced)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mElite score calculated for THYAO: 45.0 (1ms)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mCalculating elite score for GARAN (profile: balanced)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mElite score calculated for GARAN: 45.0 (1ms)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mCalculating elite score for ASELS (profile: balanced)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mElite score calculated for ASELS: 45.0 (1ms)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mCalculating elite score for LOW (profile: balanced)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mElite score calculated for LOW: 39.9 (3ms)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mCalculating elite score for HIGH (profile: balanced)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mElite score calculated for HIGH: 53.3 (4ms)[39m
+[33m[Nest] 22168  - [39m28.07.2026 14:35:32 [33m   WARN[39m [38;5;3m[MemoryMonitorService] [39m[33mPossible memory leak: heap grew from 0.0MB to 401.0MB[39m
+[33m[Nest] 22168  - [39m28.07.2026 14:35:32 [33m   WARN[39m [38;5;3m[MemoryMonitorService] [39m[33mPossible memory leak: heap grew from 0.0MB to 401.3MB[39m
+[33m[Nest] 22168  - [39m28.07.2026 14:35:32 [33m   WARN[39m [38;5;3m[MemoryMonitorService] [39m[33mPossible memory leak: heap grew from 0.0MB to 401.4MB[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mCalculating elite score for VOL (profile: balanced)[39m
+[33m[Nest] 22168  - [39m28.07.2026 14:35:32 [33m   WARN[39m [38;5;3m[MemoryMonitorService] [39m[33mPossible memory leak: heap grew from 0.0MB to 401.9MB[39m
+[33m[Nest] 22168  - [39m28.07.2026 14:35:32 [33m   WARN[39m [38;5;3m[MemoryMonitorService] [39m[33mPossible memory leak: heap grew from 0.0MB to 402.1MB[39m
+PASS src/modules/candidate/candidate.engine.spec.ts
+PASS src/common/performance/__tests__/performance.service.spec.ts
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mElite score calculated for VOL: 34.9 (62ms)[39m
+PASS src/common/elite-score/elite-score.spec.ts (5.401 s)
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mCalculating elite score for ILLIQ (profile: balanced)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mElite score calculated for ILLIQ: 37.1 (1ms)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mCalculating elite score for CONFLICT (profile: balanced)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mElite score calculated for CONFLICT: 42.3 (2ms)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mCalculating elite score for SAFE (profile: balanced)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mElite score calculated for SAFE: 45.0 (3ms)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mCalculating elite score for TEST (profile: conservative)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mElite score calculated for TEST: 38.6 (2ms)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mCalculating elite score for TEST (profile: aggressive)[39m
+[95m[Nest] 20476  - [39m28.07.2026 14:35:32 [95m  DEBUG[39m [38;5;3m[EliteScoreOrchestrator] [39m[95mElite score calculated for TEST: 41.7 (1ms)[39m
+PASS src/common/explainability/__tests__/multi-timeframe.service.spec.ts
+PASS src/common/multi-timeframe-consensus/multi-timeframe-consensus.module.spec.ts
+PASS src/modules/technical-summary/technical-summary.generator.spec.ts (7.184 s)
+PASS src/common/recommendation-tracker/recommendation-tracker.service.spec.ts
+PASS src/common/recommendation-tracker/ai-analysis-reviewer.service.spec.ts (5.473 s)
+PASS src/common/opportunity-lifecycle/failure-analyzer.service.spec.ts
+PASS src/modules/ai-analysis/liquidity-vol-trend-valuation.spec.ts
+PASS src/modules/indicators/money-flow/money-flow.indicators.spec.ts (5.332 s)
+PASS src/modules/ai-analysis/confidence-calculator.service.spec.ts (5.472 s)
+PASS src/modules/ai-analysis/score-aggregator.service.spec.ts (6.535 s)
+PASS src/common/production-readiness/__tests__/dependency-validator.service.spec.ts (7.654 s)
+PASS src/common/security/__tests__/request-size.interceptor.spec.ts
+PASS src/modules/indicators/volatility/volatility.indicators.spec.ts
+PASS src/common/multi-timeframe-consensus/dominant-trend.spec.ts (6.246 s)
+PASS src/common/strategy-validation/multi-timeframe-validator.service.spec.ts (8.209 s)
+PASS src/common/multi-timeframe-consensus/early-alignment.spec.ts
+PASS src/common/adaptive-calibration/performance-evaluator.service.spec.ts
+[31m[Nest] 2572  - [39m28.07.2026 14:35:42 [31m  ERROR[39m [38;5;3m[NightlyBacktestJob] [39m[31mBacktest failed 
+for THYAO: Network error[39m
+[31m[Nest] 2572  - [39m28.07.2026 14:35:42 [31m  ERROR[39m [38;5;3m[NightlyBacktestJob] [39m[31mBacktest failed 
+for THYAO: Provider down[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:35:42 [95m  DEBUG[39m [38;5;3m[NightlyBacktestJob] [39m[95mNightlyBacktestJob started[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:35:42 [32m    LOG[39m [38;5;3m[NightlyBacktestJob] [39m[32mNightlyBacktest completed: 5 succeeded, 0 failed, 0 trades, duration: 64ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:35:42 [95m  DEBUG[39m [38;5;3m[NightlyBacktestJob] [39m[95mNightlyBacktestJob started[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:35:42 [32m    LOG[39m [38;5;3m[NightlyBacktestJob] [39m[32mNightlyBacktest completed: 5 succeeded, 0 failed, 0 trades, duration: 7ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:35:42 [95m  DEBUG[39m [38;5;3m[NightlyBacktestJob] [39m[95mNightlyBacktestJob started[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:35:42 [32m    LOG[39m [38;5;3m[NightlyBacktestJob] [39m[32mNightlyBacktest completed: 4 succeeded, 1 failed, 0 trades, duration: 10ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:35:42 [95m  DEBUG[39m [38;5;3m[NightlyBacktestJob] [39m[95mNightlyBacktestJob started[39m
+[33m[Nest] 2572  - [39m28.07.2026 14:35:42 [33m   WARN[39m [38;5;3m[NightlyBacktestJob] [39m[33mNo benchmark data fetched[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:35:42 [32m    LOG[39m [38;5;3m[NightlyBacktestJob] [39m[32mNightlyBacktest completed: 4 succeeded, 1 failed, 0 trades, duration: 18ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:35:42 [95m  DEBUG[39m [38;5;3m[NightlyBacktestJob] [39m[95mNightlyBacktestJob started[39m
+[33m[Nest] 2572  - [39m28.07.2026 14:35:42 [33m   WARN[39m [38;5;3m[NightlyBacktestJob] [39m[33mInvalid dataset for THYAO (quality: 10): 3 OHLC integrity issue(s) detected[39m
+[33m[Nest] 2572  - [39m28.07.2026 14:35:42 [33m   WARN[39m [38;5;3m[NightlyBacktestJob] [39m[33mInvalid dataset for GARAN (quality: 10): 3 OHLC integrity issue(s) detected[39m
+[33m[Nest] 2572  - [39m28.07.2026 14:35:42 [33m   WARN[39m [38;5;3m[NightlyBacktestJob] [39m[33mInvalid dataset for ASELS (quality: 10): 3 OHLC integrity issue(s) detected[39m
+[33m[Nest] 2572  - [39m28.07.2026 14:35:42 [33m   WARN[39m [38;5;3m[NightlyBacktestJob] [39m[33mInvalid dataset for BIMAS (quality: 10): 3 OHLC integrity issue(s) detected[39m
+[33m[Nest] 2572  - [39m28.07.2026 14:35:42 [33m   WARN[39m [38;5;3m[NightlyBacktestJob] [39m[33mInvalid dataset for KCHOL (quality: 10): 3 OHLC integrity issue(s) detected[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:35:42 [32m    LOG[39m [38;5;3m[NightlyBacktestJob] [39m[32mNightlyBacktest completed: 0 succeeded, 5 failed, 0 trades, duration: 42ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:35:42 [95m  DEBUG[39m [38;5;3m[NightlyBacktestJob] [39m[95mNightlyBacktestJob started[39m
+[33m[Nest] 2572  - [39m28.07.2026 14:35:42 [33m   WARN[39m [38;5;3m[NightlyBacktestJob] [39m[33mNo data fetched for THYAO[39m
+[33m[Nest] 2572  - [39m28.07.2026 14:35:42 [33m   WARN[39m [38;5;3m[NightlyBacktestJob] [39m[33mNo data fetched for GARAN[39m
+[33m[Nest] 2572  - [39m28.07.2026 14:35:42 [33m   WARN[39m [38;5;3m[NightlyBacktestJob] [39m[33mNo data fetched for ASELS[39m
+[33m[Nest] 2572  - [39m28.07.2026 14:35:42 [33m   WARN[39m [38;5;3m[NightlyBacktestJob] [39m[33mNo data fetched for BIMAS[39m
+[33m[Nest] 2572  - [39m28.07.2026 14:35:42 [33m   WARN[39m [38;5;3m[NightlyBacktestJob] [39m[33mNo data fetched for KCHOL[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:35:42 [32m    LOG[39m [38;5;3m[NightlyBacktestJob] [39m[32mNightlyBacktest completed: 0 succeeded, 5 failed, 0 trades, duration: 19ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:35:42 [95m  DEBUG[39m [38;5;3m[NightlyBacktestJob] [39m[95mNightlyBacktestJob started[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:35:42 [32m    LOG[39m [38;5;3m[NightlyBacktestJob] [39m[32mNightlyBacktest completed: 5 succeeded, 0 failed, 0 trades, duration: 35ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:35:42 [95m  DEBUG[39m [38;5;3m[NightlyBacktestJob] [39m[95mNightlyBacktestJob started[39m
+[33m[Nest] 2572  - [39m28.07.2026 14:35:42 [33m   WARN[39m [38;5;3m[NightlyBacktestJob] [39m[33mNo benchmark data fetched[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:35:42 [32m    LOG[39m [38;5;3m[NightlyBacktestJob] [39m[32mNightlyBacktest completed: 5 succeeded, 0 failed, 0 trades, duration: 25ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:35:42 [95m  DEBUG[39m [38;5;3m[NightlyBacktestJob] [39m[95mNightlyBacktestJob started[39m
+[31m[Nest] 2572  - [39m28.07.2026 14:35:42 [31m  ERROR[39m [38;5;3m[NightlyBacktestJob] [39m[31mBacktest failed 
+for THYAO: fail[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:35:42 [32m    LOG[39m [38;5;3m[NightlyBacktestJob] [39m[32mNightlyBacktest completed: 5 succeeded, 0 failed, 0 trades, duration: 18ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:35:42 [95m  DEBUG[39m [38;5;3m[NightlyBacktestJob] [39m[95mNightlyBacktestJob started[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:35:42 [32m    LOG[39m [38;5;3m[NightlyBacktestJob] [39m[32mNightlyBacktest completed: 5 succeeded, 0 failed, 0 trades, duration: 4ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:35:42 [95m  DEBUG[39m [38;5;3m[NightlyBacktestJob] [39m[95mNightlyBacktestJob started[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:35:42 [32m    LOG[39m [38;5;3m[NightlyBacktestJob] [39m[32mNightlyBacktest completed: 5 succeeded, 0 failed, 0 trades, duration: 4ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:35:42 [95m  DEBUG[39m [38;5;3m[NightlyBacktestJob] [39m[95mNightlyBacktestJob started[39m
+[33m[Nest] 2572  - [39m28.07.2026 14:35:42 [33m   WARN[39m [38;5;3m[NightlyBacktestJob] [39m[33mNo benchmark data fetched[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:35:42 [32m    LOG[39m [38;5;3m[NightlyBacktestJob] [39m[32mNightlyBacktest completed: 4 succeeded, 1 failed, 0 trades, duration: 6ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:35:42 [95m  DEBUG[39m [38;5;3m[NightlyBacktestJob] [39m[95mNightlyBacktestJob started[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:35:42 [32m    LOG[39m [38;5;3m[NightlyBacktestJob] [39m[32mNightlyBacktest completed: 5 succeeded, 0 failed, 0 trades, duration: 18ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:35:42 [95m  DEBUG[39m [38;5;3m[NightlyBacktestJob] [39m[95mNightlyBacktestJob started[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:35:42 [32m    LOG[39m [38;5;3m[NightlyBacktestJob] [39m[32mNightlyBacktest completed: 5 succeeded, 0 failed, 0 trades, duration: 21ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:35:42 [95m  DEBUG[39m [38;5;3m[NightlyBacktestJob] [39m[95mNightlyBacktestJob started[39m
+[31m[Nest] 2572  - [39m28.07.2026 14:35:42 [31m  ERROR[39m [38;5;3m[NightlyBacktestJob] [39m[31mBacktest failed 
+for THYAO: fail[39m
+PASS src/modules/ai-analysis/risk-growth-momentum-health.spec.ts
+[32m[Nest] 2572  - [39m28.07.2026 14:35:42 [32m    LOG[39m [38;5;3m[NightlyBacktestJob] [39m[32mNightlyBacktest completed: 5 succeeded, 0 failed, 0 trades, duration: 22ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:35:42 [95m  DEBUG[39m [38;5;3m[NightlyBacktestJob] [39m[95mNightlyBacktestJob started[39m
+[33m[Nest] 2572  - [39m28.07.2026 14:35:42 [33m   WARN[39m [38;5;3m[NightlyBacktestJob] [39m[33mNo benchmark data fetched[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:35:42 [32m    LOG[39m [38;5;3m[NightlyBacktestJob] [39m[32mNightlyBacktest completed: 4 succeeded, 1 failed, 0 trades, duration: 42ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:35:42 [95m  DEBUG[39m [38;5;3m[NightlyBacktestJob] [39m[95mNightlyBacktestJob started[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:35:42 [32m    LOG[39m [38;5;3m[NightlyBacktestJob] [39m[32mNightlyBacktest completed: 5 succeeded, 0 failed, 0 trades, duration: 23ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:35:42 [95m  DEBUG[39m [38;5;3m[NightlyBacktestJob] [39m[95mNightlyBacktestJob started[39m
+[31m[Nest] 2572  - [39m28.07.2026 14:35:43 [31m  ERROR[39m [38;5;3m[NightlyBacktestJob] [39m[31mBacktest failed 
+for THYAO: Provider down[39m
+[31m[Nest] 2572  - [39m28.07.2026 14:35:43 [31m  ERROR[39m [38;5;3m[NightlyBacktestJob] [39m[31mBacktest failed 
+for GARAN: Provider down[39m
+[31m[Nest] 2572  - [39m28.07.2026 14:35:43 [31m  ERROR[39m [38;5;3m[NightlyBacktestJob] [39m[31mBacktest failed 
+for ASELS: Provider down[39m
+[31m[Nest] 2572  - [39m28.07.2026 14:35:43 [31m  ERROR[39m [38;5;3m[NightlyBacktestJob] [39m[31mBacktest failed 
+for BIMAS: Provider down[39m
+[31m[Nest] 2572  - [39m28.07.2026 14:35:43 [31m  ERROR[39m [38;5;3m[NightlyBacktestJob] [39m[31mBacktest failed 
+for KCHOL: Provider down[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:35:42 [32m    LOG[39m [38;5;3m[NightlyBacktestJob] [39m[32mNightlyBacktest completed: 5 succeeded, 0 failed, 0 trades, duration: 12ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:35:42 [95m  DEBUG[39m [38;5;3m[NightlyBacktestJob] [39m[95mNightlyBacktestJob started[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:35:42 [32m    LOG[39m [38;5;3m[NightlyBacktestJob] [39m[32mNightlyBacktest completed: 5 succeeded, 0 failed, 0 trades, duration: 12ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:35:42 [95m  DEBUG[39m [38;5;3m[NightlyBacktestJob] [39m[95mNightlyBacktestJob started[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:35:42 [32m    LOG[39m [38;5;3m[NightlyBacktestJob] [39m[32mNightlyBacktest completed: 5 succeeded, 0 failed, 0 trades, duration: 13ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:35:43 [95m  DEBUG[39m [38;5;3m[NightlyBacktestJob] [39m[95mNightlyBacktestJob started[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:35:43 [32m    LOG[39m [38;5;3m[NightlyBacktestJob] [39m[32mNightlyBacktest completed: 5 succeeded, 0 failed, 0 trades, duration: 4ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:35:43 [95m  DEBUG[39m [38;5;3m[NightlyBacktestJob] [39m[95mNightlyBacktestJob started[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:35:43 [32m    LOG[39m [38;5;3m[NightlyBacktestJob] [39m[32mNightlyBacktest completed: 5 succeeded, 0 failed, 0 trades, duration: 3ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:35:43 [95m  DEBUG[39m [38;5;3m[NightlyBacktestJob] [39m[95mNightlyBacktestJob started[39m
+[33m[Nest] 2572  - [39m28.07.2026 14:35:43 [33m   WARN[39m [38;5;3m[NightlyBacktestJob] [39m[33mNightlyBacktestJob aborted by signal[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:35:43 [32m    LOG[39m [38;5;3m[NightlyBacktestJob] [39m[32mNightlyBacktest completed: 2 succeeded, 0 failed, 0 trades, duration: 5ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:35:43 [95m  DEBUG[39m [38;5;3m[NightlyBacktestJob] [39m[95mNightlyBacktestJob started[39m
+[33m[Nest] 2572  - [39m28.07.2026 14:35:43 [33m   WARN[39m [38;5;3m[NightlyBacktestJob] [39m[33mNo benchmark data fetched[39m
+[32m[Nest] 2572  - [39m28.07.2026 14:35:43 [32m    LOG[39m [38;5;3m[NightlyBacktestJob] [39m[32mNightlyBacktest completed: 0 succeeded, 5 failed, 0 trades, duration: 3ms[39m
+[95m[Nest] 2572  - [39m28.07.2026 14:35:43 [95m  DEBUG[39m [38;5;3m[NightlyBacktestJob] [39m[95mNightlyBacktestJob started[39m
+[33m[Nest] 2572  - [39m28.07.2026 14:35:43 [33m   WARN[39m [38;5;3m[NightlyBacktestJob] [39m[33mFailed to fetch benchmark data: Timeout[39m
+PASS src/modules/scheduler/jobs/nightly-backtest.job.spec.ts (7.632 s)
+[32m[Nest] 2572  - [39m28.07.2026 14:35:43 [32m    LOG[39m [38;5;3m[NightlyBacktestJob] [39m[32mNightlyBacktest completed: 5 succeeded, 0 failed, 0 trades, duration: 4ms[39m
+PASS src/common/strategy-validation/market-condition.service.spec.ts (5.661 s)
+PASS src/common/explainability/__tests__/confidence.service.spec.ts
+PASS src/common/security/__tests__/input-sanitization.spec.ts (5.036 s)
+PASS src/modules/financial-rules/financial-summary-generator.spec.ts (7.04 s)
+PASS src/modules/provider-health-monitor/provider-health-monitor.engine.spec.ts
+PASS src/common/recommendation-tracker/failure-analyzer.service.spec.ts
+[95m[Nest] 25644  - [39m28.07.2026 14:35:45 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 25644  - [39m28.07.2026 14:35:45 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 25644  - [39m28.07.2026 14:35:45 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 25644  - [39m28.07.2026 14:35:45 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 25644  - [39m28.07.2026 14:35:45 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 25644  - [39m28.07.2026 14:35:46 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 25644  - [39m28.07.2026 14:35:46 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 25644  - [39m28.07.2026 14:35:46 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 25644  - [39m28.07.2026 14:35:46 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 25644  - [39m28.07.2026 14:35:46 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 25644  - [39m28.07.2026 14:35:46 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 25644  - [39m28.07.2026 14:35:46 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 25644  - [39m28.07.2026 14:35:46 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 25644  - [39m28.07.2026 14:35:46 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 25644  - [39m28.07.2026 14:35:46 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 25644  - [39m28.07.2026 14:35:46 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 25644  - [39m28.07.2026 14:35:46 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 25644  - [39m28.07.2026 14:35:46 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 25644  - [39m28.07.2026 14:35:46 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 25644  - [39m28.07.2026 14:35:46 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+PASS src/modules/historical-data/historical-data.pipeline.spec.ts (8.009 s)
+[95m[Nest] 25644  - [39m28.07.2026 14:35:46 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 25644  - [39m28.07.2026 14:35:46 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 25644  - [39m28.07.2026 14:35:46 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 25644  - [39m28.07.2026 14:35:46 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 25644  - [39m28.07.2026 14:35:46 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 25644  - [39m28.07.2026 14:35:46 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 25644  - [39m28.07.2026 14:35:46 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 25644  - [39m28.07.2026 14:35:46 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 25644  - [39m28.07.2026 14:35:46 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 25644  - [39m28.07.2026 14:35:46 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+PASS src/modules/ai-analysis/ai-analysis-pipeline.service.spec.ts
+PASS src/common/opportunity-lifecycle/health-index.service.spec.ts
+PASS src/common/elite-score/evidence-matrix.spec.ts
+PASS src/common/market-regime/regime-context.service.spec.ts
+PASS src/common/production-readiness/__tests__/recovery.service.spec.ts (8.15 s)
+PASS src/modules/ai-analysis/explanation-builder.service.spec.ts
+PASS src/common/opportunity-lifecycle/lifecycle-report-generator.service.spec.ts
+PASS src/common/portfolio-intelligence/dashboard-timeline.service.spec.ts
+PASS src/modules/indicators/trend-strength/trend-strength.indicators.spec.ts
+[95m[Nest] 10180  - [39m28.07.2026 14:35:49 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCreating workflow: type=single_stock_analysis, symbol=THYAO[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:50 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCreating workflow: type=market_scan, symbol=N/A[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:50 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCreating workflow: type=backtest, symbol=N/A[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:50 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCreating workflow: type=market_scan, symbol=N/A[39m
+PASS src/modules/ai-analysis/technical-and-fundamental.spec.ts
+PASS src/common/strategy-validation/report-generator.service.spec.ts
+[95m[Nest] 10180  - [39m28.07.2026 14:35:50 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mStarting workflow: wf-1785238550279-3[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:50 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mStarting workflow: nonexistent[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:50 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCreating workflow: type=market_scan, symbol=N/A[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:50 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mStarting workflow: wf-1785238550778-4[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:50 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCreating workflow: type=market_scan, symbol=N/A[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:50 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCancelling workflow: wf-1785238550853-5[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:50 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCancelling workflow: nonexistent[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:50 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCreating workflow: type=market_scan, symbol=N/A[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:50 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mStarting workflow: wf-1785238550960-6[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:50 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCancelling workflow: wf-1785238550960-6[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:50 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCreating workflow: type=market_scan, symbol=N/A[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:50 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mStarting workflow: wf-1785238550971-7[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:50 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mRetrying workflow: wf-1785238550971-7[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:50 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mRetrying workflow: nonexistent[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:50 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCreating workflow: type=market_scan, symbol=N/A[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:50 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mStarting workflow: wf-1785238550986-9[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:51 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mRetrying workflow: wf-1785238550986-9[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:51 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCreating workflow: type=single_stock_analysis, symbol=THYAO[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:51 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCreating workflow: type=market_scan, symbol=N/A[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:51 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCreating workflow: type=backtest, symbol=N/A[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:51 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCreating workflow: type=market_scan, symbol=N/A[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:51 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCreating workflow: type=backtest, symbol=N/A[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:51 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCreating workflow: type=market_scan, symbol=N/A[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:51 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCreating workflow: type=backtest, symbol=N/A[39m
+PASS src/common/elite-score/early-opportunity.spec.ts
+PASS src/common/market-regime/regime-report-generator.service.spec.ts
+PASS src/common/market-regime/market-regime-orchestrator.service.spec.ts (5.564 s)
+PASS src/common/paper-portfolio/paper-trade-executor.service.spec.ts (5.014 s)
+PASS src/modules/weight-optimizer/weight-optimizer.engine.spec.ts
+PASS src/common/performance/__tests__/request-deduplication.spec.ts (5.47 s)
+PASS src/common/portfolio-intelligence/turkish-terms.spec.ts (5.682 s)
+[95m[Nest] 2976  - [39m28.07.2026 14:35:53 [95m  DEBUG[39m [38;5;3m[RequestDeduplicationInterceptor] [39m[95mDeduplicating request: user-1:GET:/api/test[39m
+PASS src/modules/workflow/workflow.service.spec.ts (10.597 s)
+[95m[Nest] 10180  - [39m28.07.2026 14:35:54 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCreating workflow: type=market_scan, symbol=N/A[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:54 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCreating workflow: type=market_scan, symbol=N/A[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:54 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCreating workflow: type=market_scan, symbol=N/A[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:54 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mStarting workflow: wf-1785238554698-j[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:54 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCreating workflow: type=market_scan, symbol=N/A[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:54 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCreating workflow: type=backtest, symbol=N/A[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:54 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mStarting workflow: wf-1785238554782-k[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:54 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mStarting workflow: wf-1785238554782-l[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:54 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCreating workflow: type=market_scan, symbol=N/A[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:54 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mStarting workflow: wf-1785238554785-m[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:54 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCreating workflow: type=market_scan, symbol=N/A[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:54 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mStarting workflow: wf-1785238554785-n[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:54 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCreating workflow: type=market_scan, symbol=N/A[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:54 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mStarting workflow: wf-1785238554786-o[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:54 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCreating workflow: type=market_scan, symbol=N/A[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:54 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mStarting workflow: wf-1785238554786-p[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:54 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCreating workflow: type=market_scan, symbol=N/A[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:54 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mStarting workflow: wf-1785238554786-q[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:54 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCreating workflow: type=market_scan, symbol=N/A[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:54 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mStarting workflow: wf-1785238554791-r[39m
+[95m[Nest] 10180  - [39m28.07.2026 14:35:54 [95m  DEBUG[39m [38;5;3m[WorkflowService] [39m[95mCreating workflow: type=market_scan, symbol=N/A[39m
+PASS src/common/portfolio-intelligence/dashboard-report-generator.service.spec.ts (6.075 s)
+PASS src/common/production-readiness/__tests__/release-management.service.spec.ts
+PASS src/common/elite-score/weight-manager.spec.ts
+PASS src/common/strategy-validation/signal-quality.service.spec.ts (5.601 s)
+PASS src/modules/indicators/volume/volume.indicators.spec.ts (5.659 s)
+PASS src/common/market-regime/regime-historical.service.spec.ts
+PASS src/common/adaptive-calibration/trend-analyzer.service.spec.ts
+PASS src/common/portfolio-intelligence/dashboard-filter.service.spec.ts (9.494 s)
+PASS src/common/portfolio-intelligence/intelligence-panel.service.spec.ts
+PASS src/common/explainability/__tests__/explainability.service.spec.ts (7.115 s)
+[95m[Nest] 11376  - [39m28.07.2026 14:36:02 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 11376  - [39m28.07.2026 14:36:02 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 11376  - [39m28.07.2026 14:36:02 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 8 null field(s) [netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+[95m[Nest] 11376  - [39m28.07.2026 14:36:02 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 6 null field(s) [priceToBook, evToEBITDA, netProfit, marketCap, sector, companyName][39m
+[95m[Nest] 11376  - [39m28.07.2026 14:36:02 [95m  DEBUG[39m [38;5;3m[FundamentalMapper] [39m[95mFundamental mapping: 10 null field(s) [priceToBook, evToEBITDA, netProfit, equity, totalDebt, totalAssets, sharesOutstanding, marketCap, sector, companyName][39m
+PASS src/common/multi-timeframe-consensus/conflict-detector.spec.ts (6.097 s)
+PASS src/modules/analysis-pipeline/fundamental.mapper.spec.ts
+PASS src/common/production-readiness/__tests__/security-validator.service.spec.ts (12.399 s)
+PASS src/common/elite-score/historical-reliability.spec.ts (16.787 s)
+PASS src/common/opportunity-lifecycle/early-detection-analyzer.service.spec.ts (21.188 s)
+PASS src/common/strategy-validation/validation-orchestrator.service.spec.ts (20.797 s)
+PASS src/modules/indicators/momentum/momentum.indicators.spec.ts (18.739 s)
+PASS src/common/monitoring/__tests__/metrics.service.spec.ts (19.614 s)
+PASS src/modules/market-data/circuit-breaker/circuit-breaker.service.spec.ts (19.247 s)
+PASS src/common/paper-portfolio/position-manager.service.spec.ts (18.782 s)
+[33m[Nest] 10180  - [39m28.07.2026 14:36:21 [33m   WARN[39m [38;5;3m[CircuitBreakerService] [39m[33mp1 circuit OPENED after 3 consecutive failures[39m
+[32m[Nest] 10180  - [39m28.07.2026 14:36:21 [32m    LOG[39m [38;5;3m[CircuitBreakerService] [39m[32mp1 circuit CLOSED after successful recovery[39m
+[33m[Nest] 10180  - [39m28.07.2026 14:36:21 [33m   WARN[39m [38;5;3m[CircuitBreakerService] [39m[33mp1 circuit OPENED after 3 consecutive failures[39m
+[33m[Nest] 10180  - [39m28.07.2026 14:36:21 [33m   WARN[39m [38;5;3m[CircuitBreakerService] [39m[33mp1 circuit OPENED after 3 consecutive failures[39m
+[33m[Nest] 10180  - [39m28.07.2026 14:36:21 [33m   WARN[39m [38;5;3m[CircuitBreakerService] [39m[33mp1 circuit re-OPENED from HALF_OPEN[39m
+[33m[Nest] 10180  - [39m28.07.2026 14:36:21 [33m   WARN[39m [38;5;3m[CircuitBreakerService] [39m[33mp1 circuit OPENED after 3 consecutive failures[39m
+[32m[Nest] 10180  - [39m28.07.2026 14:36:21 [32m    LOG[39m [38;5;3m[CircuitBreakerService] [39m[32mp1 circuit transitioning to HALF_OPEN[39m
+[33m[Nest] 10180  - [39m28.07.2026 14:36:21 [33m   WARN[39m [38;5;3m[CircuitBreakerService] [39m[33mp1 circuit OPENED after 3 consecutive failures[39m
+[33m[Nest] 10180  - [39m28.07.2026 14:36:21 [33m   WARN[39m [38;5;3m[CircuitBreakerService] [39m[33mp1 circuit OPENED after 3 consecutive failures[39m
+[32m[Nest] 10180  - [39m28.07.2026 14:36:21 [32m    LOG[39m [38;5;3m[CircuitBreakerService] [39m[32mp1 circuit reset to CLOSED[39m
+[32m[Nest] 10180  - [39m28.07.2026 14:36:21 [32m    LOG[39m [38;5;3m[CircuitBreakerService] [39m[32mp1 circuit reset to CLOSED[39m
+[32m[Nest] 10180  - [39m28.07.2026 14:36:21 [32m    LOG[39m [38;5;3m[CircuitBreakerService] [39m[32mp2 circuit reset to CLOSED[39m
+PASS src/modules/market-data/aggregation/aggregation-engine.service.spec.ts (19.944 s)
+[33m[Nest] 28612  - [39m28.07.2026 14:36:22 [33m   WARN[39m [38;5;3m[AggregationEngine] [39m[33mNo valid responses for THYAO (company)[39m
+[33m[Nest] 28612  - [39m28.07.2026 14:36:22 [33m   WARN[39m [38;5;3m[AggregationEngine] [39m[33mNo valid responses for THYAO (company)[39m
+PASS src/common/market-regime/types.spec.ts
+PASS src/common/paper-portfolio/paper-risk-manager.service.spec.ts (23.561 s)
+PASS src/common/elite-score/types.spec.ts
+PASS src/common/paper-portfolio/types.spec.ts
+PASS src/common/cache/__tests__/cache.config.spec.ts
+PASS src/common/strategy-validation/elite-score-validator.service.spec.ts
+PASS src/common/adaptive-calibration/calibration-orchestrator.service.spec.ts (25.499 s)
+PASS src/common/explainability/__tests__/turkish-terms.spec.ts
+PASS src/common/opportunity-lifecycle/types.spec.ts
+PASS src/common/recommendation-tracker/types.spec.ts
+PASS src/common/explainability/__tests__/types.spec.ts
+PASS src/modules/market-data/aggregation/quality-scorer.service.spec.ts
+PASS src/modules/market-data/aggregation/data-validator.service.spec.ts (9.106 s)
+PASS src/common/recommendation-tracker/turkish-terms.spec.ts
+PASS src/common/multi-timeframe-consensus/types.spec.ts
+PASS src/common/security/__tests__/security.config.spec.ts
+PASS src/common/market-regime/turkish-terms.spec.ts
+PASS src/common/paper-portfolio/paper-report-generator.service.spec.ts (6.992 s)
+PASS src/common/elite-score/elite-score.module.spec.ts (21.773 s)
+PASS src/common/explainability/__tests__/risk.service.spec.ts (6.854 s)
+PASS src/common/opportunity-lifecycle/turkish-terms.spec.ts
+PASS src/common/production-readiness/__tests__/resource-monitor.service.spec.ts
+PASS src/common/auth/__tests__/auth-types.spec.ts (34.99 s)
+A worker process has failed to exit gracefully and has been force exited. This is likely caused by tests leaking due to
+ improper teardown. Try running with --detectOpenHandles to find leaks. Active timers can also cause this, ensure that 
+.unref() was called on them.
+
+Summary of all failing tests
+FAIL common/production-readiness/__tests__/performance-validator.service.spec.ts (145.597 s)
+  ÔùÅ PerformanceValidatorService ÔÇ║ validate ÔÇ║ should respect custom thresholds
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "warn"
+    Received: "pass"
+
+    [0m [90m 124 |[39m       [36mconst[39m svc [33m=[39m [36mnew[39m [33mPerformanceValidatorService[39m(moc
+kMetrics [36mas[39m never)[33m;[39m
+     [90m 125 |[39m       [36mconst[39m result [33m=[39m svc[33m.[39mvalidate()[33m;[39m
+    [31m[1m>[22m[39m[90m 126 |[39m       expect(result[33m.[39mstatus)[33m.[39mtoBe([33mReadinessStatus[39m
+[33m.[39m[33mWARN[39m)[33m;[39m
+     [90m     |[39m                             [31m[1m^[22m[39m
+     [90m 127 |[39m     })[33m;[39m
+     [90m 128 |[39m   })[33m;[39m
+     [90m 129 |[39m })[33m;[39m[0m
+
+      at Object.<anonymous> (common/production-readiness/__tests__/performance-validator.service.spec.ts:126:29)
+
+FAIL common/cache/__tests__/cache.service.spec.ts (154.556 s)
+  ÔùÅ CacheService ÔÇ║ LRU eviction ÔÇ║ evicts when max entries reached
+
+    expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 3
+    Received:    4
+
+    [0m [90m 122 |[39m       smallService[33m.[39m[36mset[39m([32m'c'[39m[33m,[39m [35m3[39m)[33m;[39m
+     [90m 123 |[39m       smallService[33m.[39m[36mset[39m([32m'd'[39m[33m,[39m [35m4[39m)[33m;[39m
+    [31m[1m>[22m[39m[90m 124 |[39m       expect(smallService[33m.[39msize())[33m.[39mtoBeLessThanOrEqual([35
+m3[39m)[33m;[39m
+     [90m     |[39m                                   [31m[1m^[22m[39m
+     [90m 125 |[39m       smallService[33m.[39monModuleDestroy()[33m;[39m
+     [90m 126 |[39m     })[33m;[39m
+     [90m 127 |[39m   })[33m;[39m[0m
+
+      at Object.<anonymous> (common/cache/__tests__/cache.service.spec.ts:124:35)
+
+  ÔùÅ CacheService ÔÇ║ disabled cache ÔÇ║ does not store when disabled
+
+    expect(received).toBeUndefined()
+
+    Received: "value"
+
+    [0m [90m 158 |[39m       [36mconst[39m disabled [33m=[39m [36mnew[39m [33mCacheService[39m()[33m;[39m
+     [90m 159 |[39m       disabled[33m.[39m[36mset[39m([32m'key'[39m[33m,[39m [32m'value'[39m)[33m;[39m
+    [31m[1m>[22m[39m[90m 160 |[39m       expect(disabled[33m.[39m[36mget[39m([32m'key'[39m))[33m.[39mtoBe
+Undefined()[33m;[39m
+     [90m     |[39m                                   [31m[1m^[22m[39m
+     [90m 161 |[39m       disabled[33m.[39monModuleDestroy()[33m;[39m
+     [90m 162 |[39m     })[33m;[39m
+     [90m 163 |[39m   })[33m;[39m[0m
+
+      at Object.<anonymous> (common/cache/__tests__/cache.service.spec.ts:160:35)
+
+FAIL common/performance/__tests__/compression.interceptor.spec.ts (167.027 s)
+  ÔùÅ CompressionInterceptor ÔÇ║ compresses large payloads with gzip
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    Expected: "Content-Encoding", "gzip"
+
+    Number of calls: 0
+
+    [0m [90m 64 |[39m     interceptor[33m.[39mintercept(context[33m,[39m next [36mas[39m any)[33m.[39msubscr
+ibe({
+     [90m 65 |[39m       next[33m:[39m () [33m=>[39m {
+    [31m[1m>[22m[39m[90m 66 |[39m         expect(res[33m.[39msetHeader)[33m.[39mtoHaveBeenCalledWith([32m'Co
+ntent-Encoding'[39m[33m,[39m [32m'gzip'[39m)[33m;[39m
+     [90m    |[39m                               [31m[1m^[22m[39m
+     [90m 67 |[39m         expect(res[33m.[39msetHeader)[33m.[39mtoHaveBeenCalledWith([32m'Vary'[39m[33m,[39m
+ [32m'Accept-Encoding'[39m)[33m;[39m
+     [90m 68 |[39m         done()[33m;[39m
+     [90m 69 |[39m       }[33m,[39m[0m
+
+      at Object.next (common/performance/__tests__/compression.interceptor.spec.ts:66:31)
+      at ConsumerObserver.Object.<anonymous>.ConsumerObserver.next (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules
+/rxjs/src/internal/Subscriber.ts:155:25)
+      at SafeSubscriber.Object.<anonymous>.Subscriber._next (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/s
+rc/internal/Subscriber.ts:113:22)
+      at SafeSubscriber.Object.<anonymous>.Subscriber.next (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/sr
+c/internal/Subscriber.ts:71:12)
+      at ../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/operators/switchMap.ts:114:42
+      at OperatorSubscriber._this._next (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/operator
+s/OperatorSubscriber.ts:70:13)
+      at OperatorSubscriber.Object.<anonymous>.Subscriber.next (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxj
+s/src/internal/Subscriber.ts:71:12)
+      at Observable._subscribe (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/observable/innerF
+rom.ts:78:18)
+      at Observable.Object.<anonymous>.Observable._trySubscribe (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rx
+js/src/internal/Observable.ts:235:19)
+      at ../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/Observable.ts:225:18
+      at Object.errorContext (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/util/errorContext.t
+s:29:5)
+      at Observable.Object.<anonymous>.Observable.subscribe (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/s
+rc/internal/Observable.ts:211:5)
+      at ../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/operators/switchMap.ts:108:49
+      at OperatorSubscriber._this._next (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/operator
+s/OperatorSubscriber.ts:70:13)
+      at OperatorSubscriber.Object.<anonymous>.Subscriber.next (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxj
+s/src/internal/Subscriber.ts:71:12)
+      at Observable._subscribe (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/observable/innerF
+rom.ts:78:18)
+      at Observable.Object.<anonymous>.Observable._trySubscribe (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rx
+js/src/internal/Observable.ts:235:19)
+      at ../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/Observable.ts:225:18
+      at Object.errorContext (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/util/errorContext.t
+s:29:5)
+      at Observable.Object.<anonymous>.Observable.subscribe (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/s
+rc/internal/Observable.ts:211:5)
+      at ../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/operators/switchMap.ts:99:12
+      at SafeSubscriber.<anonymous> (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/util/lift.ts
+:24:18)
+      at ../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/Observable.ts:217:22
+      at Object.errorContext (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/util/errorContext.t
+s:29:5)
+      at Observable.Object.<anonymous>.Observable.subscribe (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/s
+rc/internal/Observable.ts:211:5)
+      at Object.<anonymous> (common/performance/__tests__/compression.interceptor.spec.ts:64:49)
+
+  ÔùÅ CompressionInterceptor ÔÇ║ compresses large payloads with gzip
+
+    thrown: "Exceeded timeout of 5000 ms for a test while waiting for `done()` to be called.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/doc
+s/api#testname-fn-timeout."
+
+    [0m [90m 57 |[39m   })[33m;[39m
+     [90m 58 |[39m
+    [31m[1m>[22m[39m[90m 59 |[39m   it([32m'compresses large payloads with gzip'[39m[33m,[39m (done) [33m=>
+[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 60 |[39m     [36mconst[39m largeData [33m=[39m [32m'x'[39m[33m.[39mrepeat([35m200[39m)[33m;[39m
+     [90m 61 |[39m     [36mconst[39m { context[33m,[39m res } [33m=[39m createMockContext(largeData[33m,[39m 
+[32m'gzip'[39m)[33m;[39m
+     [90m 62 |[39m     [36mconst[39m next [33m=[39m { handle[33m:[39m () [33m=>[39m [36mof[39m(largeData) }
+[33m;[39m[0m
+
+      at common/performance/__tests__/compression.interceptor.spec.ts:59:3
+      at Object.<anonymous> (common/performance/__tests__/compression.interceptor.spec.ts:42:1)
+
+  ÔùÅ CompressionInterceptor ÔÇ║ compresses large payloads with brotli
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    Expected: "Content-Encoding", "br"
+
+    Number of calls: 0
+
+    [0m [90m 78 |[39m     interceptor[33m.[39mintercept(context[33m,[39m next [36mas[39m any)[33m.[39msubscr
+ibe({
+     [90m 79 |[39m       next[33m:[39m () [33m=>[39m {
+    [31m[1m>[22m[39m[90m 80 |[39m         expect(res[33m.[39msetHeader)[33m.[39mtoHaveBeenCalledWith([32m'Co
+ntent-Encoding'[39m[33m,[39m [32m'br'[39m)[33m;[39m
+     [90m    |[39m                               [31m[1m^[22m[39m
+     [90m 81 |[39m         done()[33m;[39m
+     [90m 82 |[39m       }[33m,[39m
+     [90m 83 |[39m     })[33m;[39m[0m
+
+      at Object.next (common/performance/__tests__/compression.interceptor.spec.ts:80:31)
+      at ConsumerObserver.Object.<anonymous>.ConsumerObserver.next (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules
+/rxjs/src/internal/Subscriber.ts:155:25)
+      at SafeSubscriber.Object.<anonymous>.Subscriber._next (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/s
+rc/internal/Subscriber.ts:113:22)
+      at SafeSubscriber.Object.<anonymous>.Subscriber.next (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/sr
+c/internal/Subscriber.ts:71:12)
+      at ../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/operators/switchMap.ts:114:42
+      at OperatorSubscriber._this._next (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/operator
+s/OperatorSubscriber.ts:70:13)
+      at OperatorSubscriber.Object.<anonymous>.Subscriber.next (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxj
+s/src/internal/Subscriber.ts:71:12)
+      at Observable._subscribe (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/observable/innerF
+rom.ts:78:18)
+      at Observable.Object.<anonymous>.Observable._trySubscribe (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rx
+js/src/internal/Observable.ts:235:19)
+      at ../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/Observable.ts:225:18
+      at Object.errorContext (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/util/errorContext.t
+s:29:5)
+      at Observable.Object.<anonymous>.Observable.subscribe (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/s
+rc/internal/Observable.ts:211:5)
+      at ../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/operators/switchMap.ts:108:49
+      at OperatorSubscriber._this._next (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/operator
+s/OperatorSubscriber.ts:70:13)
+      at OperatorSubscriber.Object.<anonymous>.Subscriber.next (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxj
+s/src/internal/Subscriber.ts:71:12)
+      at Observable._subscribe (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/observable/innerF
+rom.ts:78:18)
+      at Observable.Object.<anonymous>.Observable._trySubscribe (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rx
+js/src/internal/Observable.ts:235:19)
+      at ../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/Observable.ts:225:18
+      at Object.errorContext (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/util/errorContext.t
+s:29:5)
+      at Observable.Object.<anonymous>.Observable.subscribe (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/s
+rc/internal/Observable.ts:211:5)
+      at ../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/operators/switchMap.ts:99:12
+      at SafeSubscriber.<anonymous> (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/util/lift.ts
+:24:18)
+      at ../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/Observable.ts:217:22
+      at Object.errorContext (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/src/internal/util/errorContext.t
+s:29:5)
+      at Observable.Object.<anonymous>.Observable.subscribe (../../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs/s
+rc/internal/Observable.ts:211:5)
+      at Object.<anonymous> (common/performance/__tests__/compression.interceptor.spec.ts:78:49)
+
+  ÔùÅ CompressionInterceptor ÔÇ║ compresses large payloads with brotli
+
+    thrown: "Exceeded timeout of 5000 ms for a test while waiting for `done()` to be called.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/doc
+s/api#testname-fn-timeout."
+
+    [0m [90m 71 |[39m   })[33m;[39m
+     [90m 72 |[39m
+    [31m[1m>[22m[39m[90m 73 |[39m   it([32m'compresses large payloads with brotli'[39m[33m,[39m (done) [33m=
+>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 74 |[39m     [36mconst[39m largeData [33m=[39m [32m'x'[39m[33m.[39mrepeat([35m200[39m)[33m;[39m
+     [90m 75 |[39m     [36mconst[39m { context[33m,[39m res } [33m=[39m createMockContext(largeData[33m,[39m 
+[32m'br, gzip'[39m)[33m;[39m
+     [90m 76 |[39m     [36mconst[39m next [33m=[39m { handle[33m:[39m () [33m=>[39m [36mof[39m(largeData) }
+[33m;[39m[0m
+
+      at common/performance/__tests__/compression.interceptor.spec.ts:73:3
+      at Object.<anonymous> (common/performance/__tests__/compression.interceptor.spec.ts:42:1)
+
+
+Test Suites: 3 failed, 203 passed, 206 total
+Tests:       5 failed, 3993 passed, 3998 total
+Snapshots:   0 total
+Time:        366.761 s, estimated 405 s
+Ran all test suites.

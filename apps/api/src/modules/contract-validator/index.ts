@@ -1,0 +1,36 @@
+export { ContractValidatorModule } from './contract-validator.module';
+export { ContractValidatorEngine } from './contract-validator.service';
+export type {
+  ValidationConfig,
+  ValidationIssue,
+  CompatibilityIssue,
+  BreakingChange,
+  Warning,
+  ValidationReport,
+  CompatibilityReport,
+  BreakingChangeReport,
+  WarningReport,
+  ContractValidationSummary,
+  ValidationSummary,
+  CompatibilitySummary,
+  BreakingChangeSummary,
+  WarningSummary,
+  SchemaValidationResult,
+  DTOCompatibilityResult,
+  EnumCompatibilityResult,
+  EndpointCompatibilityResult,
+  ContractValidatorInput,
+  ValidationSeverity,
+  ValidationCategory,
+  ReportFormat,
+  SchemaCacheEntry,
+  SDKCacheEntry,
+} from './contract-validator.types';
+export {
+  DEFAULT_VALIDATION_CONFIG,
+  ALL_VALIDATION_CATEGORIES,
+  SCHEMA_TYPE_MAP,
+  HTTP_METHODS,
+  BREAKING_CHANGE_PATTERNS,
+  PAGINATION_FIELDS,
+} from './contract-validator.config';

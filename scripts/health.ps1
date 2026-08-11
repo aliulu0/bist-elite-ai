@@ -52,8 +52,8 @@ Write-Host "Containers:" -ForegroundColor Yellow
 Test-Container -Name "postgres"
 Test-Container -Name "redis"
 Test-Container -Name "api"
+Test-Container -Name "scheduler"
 Test-Container -Name "web"
-Test-Container -Name "worker"
 Write-Host ""
 
 # Check endpoints

@@ -17,23 +17,23 @@ export class MarketDataValidationService {
       errors.push('timeframe is required and must be a string');
     }
 
-    if (typeof point.open !== 'number' || Number.isNaN(point.open)) {
+    if (typeof point.open !== 'number' || !Number.isFinite(point.open)) {
       errors.push('open must be a valid number');
     }
 
-    if (typeof point.high !== 'number' || Number.isNaN(point.high)) {
+    if (typeof point.high !== 'number' || !Number.isFinite(point.high)) {
       errors.push('high must be a valid number');
     }
 
-    if (typeof point.low !== 'number' || Number.isNaN(point.low)) {
+    if (typeof point.low !== 'number' || !Number.isFinite(point.low)) {
       errors.push('low must be a valid number');
     }
 
-    if (typeof point.close !== 'number' || Number.isNaN(point.close)) {
+    if (typeof point.close !== 'number' || !Number.isFinite(point.close)) {
       errors.push('close must be a valid number');
     }
 
-    if (typeof point.volume !== 'number' || Number.isNaN(point.volume)) {
+    if (typeof point.volume !== 'number' || !Number.isFinite(point.volume)) {
       errors.push('volume must be a valid number');
     }
 
@@ -95,6 +95,8 @@ export class MarketDataValidationService {
 
   validateDataPoints(points: MarketDataPoint[]): MarketDataPoint[] {
     const validated: MarketDataPoint[] = [];
+    const seen = new Set<string>();
+    let duplicates = 0;
 
     for (const point of points) {
       const result = this.validateDataPoint(point);
@@ -110,7 +112,20 @@ export class MarketDataValidationService {
         point.validationStatus = 'valid';
       }
 
+      const key = `${point.symbol}|${point.timestamp}`;
+      if (seen.has(key)) {
+        duplicates++;
+        point.validationStatus = 'invalid';
+        this.logger.warn(`Duplicate candle for ${point.symbol} at ${point.timestamp}`);
+      } else {
+        seen.add(key);
+      }
+
       validated.push(point);
+    }
+
+    if (duplicates > 0) {
+      this.logger.warn(`${duplicates} duplicate candle(s) detected across ${points.length} points`);
     }
 
     return validated;

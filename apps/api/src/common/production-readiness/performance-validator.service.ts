@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Optional } from '@nestjs/common';
 import { PerformanceValidationResult, PerformanceBenchmark, ReadinessStatus } from './types';
 import { MetricsService } from '../monitoring/metrics.service';
 
@@ -13,8 +13,11 @@ const DEFAULT_THRESHOLDS: Record<string, number> = {
 export class PerformanceValidatorService {
   private readonly thresholds: Record<string, number>;
 
-  constructor(private readonly metricsService: MetricsService) {
-    this.thresholds = { ...DEFAULT_THRESHOLDS };
+  constructor(
+    private readonly metricsService: MetricsService,
+    @Optional() thresholds?: Record<string, number>,
+  ) {
+    this.thresholds = { ...DEFAULT_THRESHOLDS, ...thresholds };
   }
 
   validate(): PerformanceValidationResult {

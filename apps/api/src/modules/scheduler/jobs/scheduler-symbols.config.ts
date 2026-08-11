@@ -1,0 +1,22 @@
+export const BIST_TRACKED_SYMBOLS = [
+  'THYAO', 'GARAN', 'ASELS', 'BIMAS', 'KCHOL', 'EREGL', 'AKBNK',
+  'SISE', 'TUPRS', 'TCELL', 'SAHOL', 'TOASO', 'TAVHL', 'YKBNK',
+  'FROTO', 'SASA', 'ISCTR', 'ARCLK', 'KONTR', 'PGSUS', 'KOZAL',
+  'BRLSM', 'EKGYO', 'ODAS', 'VESTL', 'PETKM', 'TKFEN', 'TTRAK',
+];
+
+export const BIST_BACKTEST_SYMBOLS = [
+  'THYAO', 'GARAN', 'ASELS', 'BIMAS', 'KCHOL',
+];
+
+export const BIST_BENCHMARK_INDEX = 'XU100.IS';
+
+export const BIST_BENCHMARK_STOCKS = ['THYAO', 'GARAN', 'KCHOL'];
+
+export const BIST_ANALYTICS_SYMBOLS = [
+  'THYAO', 'GARAN', 'ASELS', 'BIMAS', 'KCHOL',
+];
+
+export const BIST_OPTIMIZATION_SYMBOLS = [
+  'THYAO', 'GARAN', 'ASELS', 'BIMAS', 'KCHOL',
+];

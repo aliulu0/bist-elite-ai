@@ -19,6 +19,7 @@ export interface BalanceSheet {
   symbol: string;
   equity: number | null;
   totalDebt: number | null;
+  totalAssets: number | null;
   sharesOutstanding: number | null;
   lastUpdated: string;
   source: string;

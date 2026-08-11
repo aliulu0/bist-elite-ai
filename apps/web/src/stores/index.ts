@@ -1,29 +1,25 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-
-interface AppState {
-  theme: 'light' | 'dark';
-  language: 'en' | 'tr';
-  sidebarCollapsed: boolean;
-  setTheme: (theme: 'light' | 'dark') => void;
-  setLanguage: (lang: 'en' | 'tr') => void;
-  toggleSidebar: () => void;
-  setSidebarCollapsed: (collapsed: boolean) => void;
-}
-
-export const useStore = create<AppState>()(
-  persist(
-    (set) => ({
-      theme: 'dark',
-      language: 'tr',
-      sidebarCollapsed: false,
-      setTheme: (theme) => set({ theme }),
-      setLanguage: (language) => set({ language }),
-      toggleSidebar: () => set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
-      setSidebarCollapsed: (sidebarCollapsed) => set({ sidebarCollapsed }),
-    }),
-    {
-      name: 'bist-elite-store',
-    },
-  ),
-);
+export { useThemeStore } from './theme-store';
+export { useLayoutStore } from './layout-store';
+export { useNotificationStore } from './notification-store';
+export type { Notification } from './notification-store';
+export { useScannerStore, filterStocks } from './scanner-store';
+export type { ScannerFilters, RangeFilter, ScannerState } from './scanner-store';
+export { useAnalysisStore } from './analysis-store';
+export type { AnalysisTab, AnalysisState } from './analysis-store';
+export { useBacktestStore } from './backtest-store';
+export { usePortfolioStore, filterHoldings, sortHoldings } from './portfolio-store';
+export { useWatchlistStore, filterItems, sortItems } from './watchlist-store';
+export { useAlertsStore, filterAlerts, sortAlerts } from './alerts-store';
+export { useSettingsStore, settingsEqual } from './settings-store';
+export { usePerformanceStore, buildSnapshot, filterEngines, sortEngines, EMPTY_SNAPSHOT } from './performance-store';
+export type { PerformanceState } from './performance-store';
+export { useProvidersStore, buildSnapshot as buildProviderSnapshot, filterProviders, sortProviders, paginateProviders, computeSummary, EMPTY_SNAPSHOT as EMPTY_PROVIDER_SNAPSHOT } from './providers-store';
+export type { ProvidersState } from './providers-store';
+export { useDiagnosticsStore, buildSnapshot as buildDiagnosticsSnapshot, filterChecks, sortChecks, paginateChecks, computeSummary as computeDiagnosticsSummary, EMPTY_SNAPSHOT as EMPTY_DIAGNOSTICS_SNAPSHOT } from './diagnostics-store';
+export type { DiagnosticsState } from './diagnostics-store';
+export { useAuditStore, buildSnapshot as buildAuditSnapshot, filterLogs, sortLogs, paginateLogs, EMPTY_SNAPSHOT as EMPTY_AUDIT_SNAPSHOT } from './audit-store';
+export type { AuditState } from './audit-store';
+export { useWorkflowDashboardStore, buildSnapshot as buildWorkflowSnapshot, filterWorkflows, sortWorkflows, paginateWorkflows, EMPTY_SNAPSHOT as EMPTY_WORKFLOW_SNAPSHOT } from './workflow-dashboard-store';
+export type { WorkflowDashboardState } from './workflow-dashboard-store';
+export { useEventsStore } from './events-store';
+export type { EventItem, EventsState } from './events-store';

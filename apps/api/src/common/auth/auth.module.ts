@@ -1,5 +1,7 @@
 import { Module, Global, MiddlewareConsumer, NestModule } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { AuthService } from './auth.service';
+import { AuthController } from './auth.controller';
 import { AuthGuard } from './guards/auth.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { PermissionsGuard } from './guards/permissions.guard';
@@ -16,6 +18,8 @@ const INTERCEPTORS = [AuditLogInterceptor];
 
 @Global()
 @Module({
+  imports: [ConfigModule],
+  controllers: [AuthController],
   providers: [AuthService, FeatureFlags, ...GUARDS, ...INTERCEPTORS],
   exports: [AuthService, FeatureFlags, ...GUARDS, ...INTERCEPTORS],
 })

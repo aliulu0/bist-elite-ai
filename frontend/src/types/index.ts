@@ -141,3 +141,5 @@ export interface AIMessage {
   content: string;
   timestamp: string;
 }
+
+export * from "./early-opportunity";

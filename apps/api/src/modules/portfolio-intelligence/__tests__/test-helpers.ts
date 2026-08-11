@@ -1,0 +1,46 @@
+import { PositionAnalysis } from '../portfolio-intelligence.types';
+
+export function makePositionAnalysis(
+  overrides: Partial<PositionAnalysis> = {},
+): PositionAnalysis {
+  const base: PositionAnalysis = {
+    ticker: 'THYAO',
+    company: 'Türk Hava Yolları',
+    sector: 'Havacılık',
+    quantity: 100,
+    averageCost: 100,
+    currentPrice: 120,
+    positionValue: 12000,
+    investedCapital: 10000,
+    unrealizedPnl: 2000,
+    unrealizedPnlPercent: 20,
+    portfolioWeight: 40,
+    sectorWeight: 40,
+    riskLevel: 'low',
+    riskScore: 20,
+    eliteScore: 80,
+    earlyOpportunityScore: 75,
+    earlyOpportunityLevel: 'STRONG',
+    multiTimeframeScore: 72,
+    bullishPercent: 70,
+    confidence: 80,
+    expectedReturn: 12,
+    smartMoneyScore: 78,
+    catalystScore: 70,
+    verificationStatus: 'verified',
+    entryZone: { min: 95, max: 105 },
+    stop: 88,
+    target1: 135,
+    target2: 150,
+    riskRewardRatio: 2.5,
+    holdingPeriod: { value: 30, unit: 'days' },
+    trendStage: 'Growing',
+    momentum: 'bullish',
+    liquidityQuality: 'high',
+    status: 'STRONG_HOLD',
+    recommendation: 'hold',
+    recommendationReason: 'Güçlü skor',
+    evaluation: 'Smart Money skoru 78',
+  };
+  return { ...base, ...overrides };
+}

@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MarketDataService, DATA_PROVIDER } from './market-data.service';
 import { MarketDataValidationService } from './market-data-validation.service';
 import { MarketDataProviderRegistry } from './market-data.provider-registry';
+import { MarketDataOrchestrator } from './orchestrator/market-data-orchestrator';
 import { IDataProvider, MarketDataPoint } from './interfaces';
 
 const mockProvider: IDataProvider = {
@@ -145,6 +146,69 @@ describe('MarketDataService', () => {
     it('should return registered provider names', () => {
       const providers = service.getAvailableProviders();
       expect(providers).toContain('mock-provider');
+    });
+  });
+
+  describe('orchestrator delegation', () => {
+    it('should delegate fetchData to the orchestrator when present', async () => {
+      const point = {
+        symbol: 'THYAO',
+        timeframe: '1d',
+        open: 100,
+        high: 110,
+        low: 95,
+        close: 105,
+        volume: 1000000,
+        timestamp: '2025-01-15T00:00:00Z',
+        validationStatus: 'valid',
+      } as MarketDataPoint;
+      const orchestrator = {
+        fetchHistoricalData: jest.fn().mockResolvedValue({
+          data: [point],
+          provider: 'finnhub',
+          cached: false,
+          timestamp: new Date().toISOString(),
+        }),
+        fetchLatestPrice: jest.fn(),
+      };
+
+      const module = await Test.createTestingModule({
+        providers: [
+          MarketDataValidationService,
+          MarketDataProviderRegistry,
+          MarketDataService,
+          { provide: MarketDataOrchestrator, useValue: orchestrator },
+        ],
+      }).compile();
+
+      const svc = module.get(MarketDataService);
+      const result = await svc.fetchData('THYAO', '1d');
+
+      expect(orchestrator.fetchHistoricalData).toHaveBeenCalledWith('THYAO', '1d', undefined);
+      expect(result).toHaveLength(1);
+      expect(result[0].symbol).toBe('THYAO');
+    });
+
+    it('should delegate fetchLatest to the orchestrator when present', async () => {
+      const orchestrator = {
+        fetchHistoricalData: jest.fn(),
+        fetchLatestPrice: jest.fn().mockResolvedValue(null),
+      };
+
+      const module = await Test.createTestingModule({
+        providers: [
+          MarketDataValidationService,
+          MarketDataProviderRegistry,
+          MarketDataService,
+          { provide: MarketDataOrchestrator, useValue: orchestrator },
+        ],
+      }).compile();
+
+      const svc = module.get(MarketDataService);
+      const result = await svc.fetchLatest('THYAO');
+
+      expect(orchestrator.fetchLatestPrice).toHaveBeenCalledWith('THYAO');
+      expect(result).toBeNull();
     });
   });
 });

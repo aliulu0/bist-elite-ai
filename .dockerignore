@@ -53,21 +53,17 @@ docs/
 .mypy_cache/
 .ruff_cache/
 
-# Docker
+# Docker (only exclude compose files, keep Dockerfiles and scripts)
 docker-compose*.yml
-docker/Dockerfile.*
 
-# Monorepo root
+# Monorepo root (keep tsconfig.json — needed by apps/api/tsconfig.json extends)
 turbo.json
-tsconfig.json
 .prettierrc
 .editorconfig
 commitlint.config.*
 labels.yml
-pnpm-lock.yaml
 
 # Old backend (not needed in new containers)
 backend/
 
-# Prisma migrations (handled at runtime)
-packages/database/prisma/migrations/
+

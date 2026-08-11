@@ -1,123 +1,115 @@
 "use client";
 
 import { MainLayout } from "@/components/layout";
-import { useI18n } from "@/providers/i18n-provider";
-import { Card, CardContent, CardHeader, CardTitle, StatCard, PageHeader } from "@/components";
-import {
-  TrendingUp,
-  TrendingDown,
-  BarChart3,
-  Activity,
-  Star,
-  ArrowUpRight,
-  ArrowDownRight,
-} from "lucide-react";
+import { PageHeader } from "@/components";
+import { PortfolioSummaryWidget } from "@/components/widgets/portfolio-summary-widget";
+import { TopRankedWidget } from "@/components/widgets/top-ranked-widget";
+import { LatestOpportunitiesWidget } from "@/components/widgets/latest-opportunities-widget";
+import { ActiveAlertsWidget } from "@/components/widgets/active-alerts-widget";
+import { WatchlistsWidget } from "@/components/widgets/watchlists-widget";
+import { MarketStatusWidget } from "@/components/widgets/market-status-widget";
+import { AIRecommendationsWidget } from "@/components/widgets/ai-recommendations-widget";
+import { PerformanceOverviewWidget } from "@/components/widgets/performance-overview-widget";
+import { MacroScoreWidget } from "@/components/widgets/macro/macro-score-widget";
+import { MarketRegimeWidget } from "@/components/widgets/macro/market-regime-widget";
+import { RiskAppetiteWidget } from "@/components/widgets/macro/risk-appetite-widget";
+import { useMacroFullAnalysis } from "@/hooks";
+import { TopEarlyOpportunities } from "@/components/dashboard";
+import { MarketOverview } from "@/components/dashboard";
+import { AIFilterPanel } from "@/components/dashboard";
+import { Watchlist } from "@/components/dashboard";
+import { QuickSearch } from "@/components/dashboard";
+import { TimeframePanel } from "@/components/dashboard";
+import { TopLists } from "@/components/dashboard";
+import { DashboardPerformance } from "@/components/dashboard";
+import { useEarlyOpportunities } from "@/hooks/use-dashboard";
+import type { EarlyOpportunityFilters, EarlyOpportunityIntelligenceResult } from "@/types/dashboard";
+import { useState } from "react";
 
 export default function HomePage() {
-  const { t } = useI18n();
+  const { data: macro, isLoading: macroLoading } = useMacroFullAnalysis();
+  const [selectedTicker, setSelectedTicker] = useState<string | null>(null);
+  const [filters, setFilters] = useState<EarlyOpportunityFilters>({});
+
+  const { data: earlyOppsData } = useEarlyOpportunities(filters, 10);
+
+  const handleTickerSelect = (ticker: string) => {
+    setSelectedTicker(ticker);
+  };
 
   return (
     <MainLayout>
       <PageHeader
-        title={t("home.title")}
-        subtitle={t("home.subtitle")}
+        title="BIST Elite AI"
+        subtitle="Professional Multi-Timeframe Intelligence Platform"
       />
 
-      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard
-          title={t("home.marketOverview")}
-          value="10,234.56"
-          change={1.23}
-          icon={<BarChart3 className="h-5 w-5" />}
-        />
-        <StatCard
-          title={t("home.topGainers")}
-          value="156"
-          change={3.45}
-          icon={<TrendingUp className="h-5 w-5" />}
-        />
-        <StatCard
-          title={t("home.topLosers")}
-          value="89"
-          change={-2.1}
-          icon={<TrendingDown className="h-5 w-5" />}
-        />
-        <StatCard
-          title={t("home.mostActive")}
-          value="42"
-          change={0.5}
-          icon={<Activity className="h-5 w-5" />}
-        />
+      {/* Quick Search Bar - Fixed at top */}
+      <div className="mb-6 sticky top-4 z-10 bg-background/80 backdrop-blur-sm pb-4 border-b">
+        <QuickSearch onTickerSelect={handleTickerSelect} />
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>{t("home.topGainers")}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {["GARAN", "AKBNK", "SISE", "EREGL", "BIMAS"].map((symbol, i) => (
-                <div
-                  key={symbol}
-                  className="flex items-center justify-between rounded-xl bg-background/50 p-3"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-success/10 text-success">
-                      <ArrowUpRight className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-text">{symbol}</p>
-                      <p className="text-xs text-muted">Şirket Adı</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-semibold text-text">
-                      {(120.5 + i * 10.3).toFixed(2)} TL
-                    </p>
-                    <p className="text-xs text-success">
-                      +{(3.2 + i * 0.5).toFixed(2)}%
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+        {/* Left Sidebar - Filters & Watchlist */}
+        <div className="lg:col-span-3 space-y-6">
+          <AIFilterPanel onFiltersChange={setFilters} />
+          <Watchlist />
+        </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>{t("home.topLosers")}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {["THYAO", "TOASO", "KOZAL", "PETKM", "KOZAA"].map((symbol, i) => (
-                <div
-                  key={symbol}
-                  className="flex items-center justify-between rounded-xl bg-background/50 p-3"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-danger/10 text-danger">
-                      <ArrowDownRight className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-text">{symbol}</p>
-                      <p className="text-xs text-muted">Şirket Adı</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-semibold text-text">
-                      {(280.5 - i * 15.2).toFixed(2)} TL
-                    </p>
-                    <p className="text-xs text-danger">
-                      -{(2.8 + i * 0.4).toFixed(2)}%
-                    </p>
-                  </div>
-                </div>
-              ))}
+        {/* Main Content */}
+        <div className="lg:col-span-9 space-y-6">
+          {/* Market Overview - Full width */}
+          <MarketOverview />
+
+          {/* Top 10 Early Opportunities - Full width */}
+          <div className="lg:col-span-12">
+            <TopEarlyOpportunities
+              filters={filters}
+              limit={10}
+              onTickerSelect={handleTickerSelect}
+            />
+          </div>
+
+          {/* Timeframe Panel & Top Lists - Side by side */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {selectedTicker && (
+              <TimeframePanel ticker={selectedTicker} />
+            )}
+            <TopLists />
+          </div>
+
+          {/* Dashboard Performance - Full width */}
+          <DashboardPerformance />
+
+          {/* Legacy widgets - kept for compatibility */}
+          <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-4">
+            <div className="lg:col-span-2">
+              <PortfolioSummaryWidget />
             </div>
-          </CardContent>
-        </Card>
+            <MarketStatusWidget />
+            <AIRecommendationsWidget />
+          </div>
+
+          <div className="mb-8">
+            <PerformanceOverviewWidget />
+          </div>
+
+          <div className="mb-8">
+            <h2 className="mb-4 text-sm font-semibold text-text">Macro Intelligence Overview</h2>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+              <MacroScoreWidget score={macro?.score} isLoading={macroLoading} />
+              <MarketRegimeWidget regime={macro?.regime} isLoading={macroLoading} />
+              <RiskAppetiteWidget regime={macro?.regime} isLoading={macroLoading} />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
+            <TopRankedWidget />
+            <LatestOpportunitiesWidget />
+            <ActiveAlertsWidget />
+            <WatchlistsWidget />
+          </div>
+        </div>
       </div>
     </MainLayout>
   );

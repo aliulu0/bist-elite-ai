@@ -38,6 +38,22 @@ AI is an assistant—not the decision maker.
 
 ---
 
+# Current Status
+
+R1-002B FINAL (Macro Intelligence as a first-class feature) is complete:
+
+* `MarketDataOrchestrator` is the single source for macro data; `MacroDataService` consumes it with no fallback constants (30-minute macro cache, stale-cache fallback). Orchestrator also exposes `fetchTcmbInterestDecisions()` for the TCMB decision flow.
+* Real adapters: TCMB/EVDS (policy rate, CPI, USD/TRY, EUR/TRY), KAP (company, sector, disclosures), MKK (ownership via credential-gated MKS REST API), plus the pre-existing Fintables/Finnhub adapters. All unified adapters expose `getStatus()`.
+* **Macro Elite Score** (`MacroEliteScoreService`): 0–100 score = base macro score + TCMB decision adjustment + yield-curve adjustment, with confidence, trend, risk, and recommendation (opportunistic/selective/defensive/cash).
+* **TCMB decision flow** (`TCMBDecisionCaptureService`): fetches the latest TCMB interest decision through the Market Data layer, dedupes by meeting date, runs the rule-based Turkish analyzer, stores in `TCMBDecisionStoreService`, and notifies via `IDecisionNotifier`/`DECISION_NOTIFIER`.
+* **Combined Confidence** (`CombinedConfidenceService`): merges Elite confidence with Macro confidence (0–100) using 50/50 default weights — confidence only, never scores.
+* **Backend endpoints**: `GET /api/macro/elite-score`, `/trend`, `/confidence`, `/recommendation`, `/decision-history`, `/dashboard` (full dashboard bundle with elite/trend/risk cards, opportunities, combined confidence, observability) — all Swagger-documented with validation DTOs.
+* **Observability**: provider status, decision age, and last update surfaced via `MacroEliteScoreService.getObservability()` and the dashboard bundle.
+
+R1-002B FINAL validation complete: 30 macro + market-data suites, 411 tests passing, `npm run build` clean. Do not begin Telegram Bot / Cloud Deployment / Localhost Release until R1-003 is authorized.
+
+---
+
 # Read Before Coding
 
 Before implementing any feature, review the following documents:

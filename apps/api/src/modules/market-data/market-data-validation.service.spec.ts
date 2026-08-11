@@ -48,6 +48,18 @@ describe('MarketDataValidationService', () => {
       expect(result.errors.some((e) => e.includes('open'))).toBe(true);
     });
 
+    it('should reject infinite OHLC values', () => {
+      const result = service.validateDataPoint({ ...validPoint, close: Infinity });
+      expect(result.isValid).toBe(false);
+      expect(result.errors.some((e) => e.includes('close'))).toBe(true);
+    });
+
+    it('should reject infinite volume', () => {
+      const result = service.validateDataPoint({ ...validPoint, volume: -Infinity });
+      expect(result.isValid).toBe(false);
+      expect(result.errors.some((e) => e.includes('volume'))).toBe(true);
+    });
+
     it('should reject high < low', () => {
       const result = service.validateDataPoint({ ...validPoint, high: 90, low: 100 });
       expect(result.isValid).toBe(false);
@@ -172,6 +184,27 @@ describe('MarketDataValidationService', () => {
       ];
       const result = service.validateDataPoints(points);
       expect(result).toHaveLength(2);
+    });
+
+    it('should flag duplicate candles as invalid', () => {
+      const base: MarketDataPoint = {
+        symbol: 'THYAO',
+        timeframe: '1d',
+        open: 100,
+        high: 110,
+        low: 95,
+        close: 105,
+        volume: 1000000,
+        timestamp: '2025-01-15T00:00:00Z',
+        validationStatus: 'valid',
+      };
+      const result = service.validateDataPoints([
+        { ...base },
+        { ...base, close: 106 },
+      ]);
+      expect(result).toHaveLength(2);
+      expect(result[0].validationStatus).toBe('valid');
+      expect(result[1].validationStatus).toBe('invalid');
     });
   });
 

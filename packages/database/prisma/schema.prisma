@@ -806,3 +806,202 @@ model TelegramMessage {
   @@index([command])
   @@index([sentAt])
 }
+
+// ==========================================================
+// F11-005: PERSISTENCE LAYER — Pipeline Analysis Results
+// ==========================================================
+
+model AnalysisResult {
+  id            String   @id @default(uuid())
+  symbol        String
+  timeframe     String
+  isValid       Boolean  @default(true)
+
+  // Summary scores (queryable scalars)
+  eliteScore         Float?
+  eliteRating        String?
+  elitePriority      String?
+  opportunityScore   Float?
+  opportunityLevel   String?
+  financialScore     Float?
+  technicalScore     Float?
+  smartMoneyScore    Float?
+  confluenceScore    Float?
+  candidateScore     Float?
+  candidatePriority  String?
+  confidence         Float?
+  earlyOpportunity   Boolean  @default(false)
+
+  // Full engine outputs as JSON
+  indicators         Json?
+  marketStructure    Json?
+  smartMoney         Json?
+  technicalRules     Json?
+  technicalSummary   Json?
+  financialRules     Json?
+  financialSummary   Json?
+  confluence         Json?
+  candidate          Json?
+  opportunityDetail  Json?
+  eliteScoreDetail   Json?
+  pipelineSteps      Json?
+  metadata           Json?
+
+  createdAt     DateTime  @default(now())
+
+  @@unique([symbol, timeframe, createdAt])
+  @@index([symbol, timeframe])
+  @@index([createdAt])
+  @@index([eliteScore])
+  @@index([eliteRating])
+  @@index([opportunityLevel])
+  @@index([candidatePriority])
+}
+
+// ==========================================================
+// F11-005: PERSISTENCE LAYER — Scanner Runs
+// ==========================================================
+
+model ScannerRun {
+  id            String   @id @default(uuid())
+  scanType      String   // 'marketOpenScan' | 'incrementalScan' | 'manual'
+  totalSymbols  Int      @default(0)
+  topCandidateCount  Int @default(0)
+  watchlistCount     Int @default(0)
+  rejectedCount      Int @default(0)
+  avgEliteScore      Float?
+  avgOpportunityScore Float?
+  avgCandidateScore  Float?
+  scoreDistribution  Json?
+
+  // Full results
+  topCandidates      Json?
+  watchlist          Json?
+  rejected          Json?
+  metadata          Json?
+
+  symbols           ScannerSymbolResult[]
+
+  createdAt     DateTime  @default(now())
+
+  @@index([createdAt])
+  @@index([scanType])
+}
+
+model ScannerSymbolResult {
+  id              String   @id @default(uuid())
+  scannerRunId    String
+  symbol          String
+  status          String   // 'TOP_CANDIDATE' | 'WATCHLIST' | 'REJECTED'
+  eliteScore      Float?
+  eliteRating     String?
+  opportunityLevel String?
+  opportunityScore Float?
+  candidateScore  Float?
+  compositeScore  Float?
+  rank            Int?
+  reasons         Json?
+
+  createdAt       DateTime  @default(now())
+
+  scannerRun      ScannerRun @relation(fields: [scannerRunId], references: [id])
+
+  @@index([symbol, createdAt])
+  @@index([status])
+  @@index([eliteScore])
+  @@index([scannerRunId])
+}
+
+// ==========================================================
+// F11-005: PERSISTENCE LAYER — Nightly Backtest Summaries
+// ==========================================================
+
+model BacktestPipelineRun {
+  id                String   @id @default(uuid())
+  symbolsProcessed  Int      @default(0)
+  symbolsSucceeded  Int      @default(0)
+  symbolsFailed     Int      @default(0)
+  totalTrades       Int      @default(0)
+  winRate           Float?
+  avgReturn         Float?
+  maxDrawdown       Float?
+  profitFactor      Float?
+  benchmarkAlpha    Float?
+  benchmarkBeta     Float?
+
+  // Per-symbol details as JSON
+  perSymbolResults  Json?
+  benchmarkReturns  Json?
+  metadata          Json?
+
+  completionStatus  String   @default("completed")
+  errorMessage      String?
+
+  startedAt         DateTime
+  completedAt       DateTime?
+  createdAt         DateTime  @default(now())
+
+  @@index([startedAt])
+  @@index([completionStatus])
+  @@index([completedAt])
+}
+
+// ==========================================================
+// F11-005: PERSISTENCE LAYER — Provider Health Snapshots
+// ==========================================================
+
+model ProviderHealthRecord {
+  id                    String   @id @default(uuid())
+  provider              String
+  status                String
+  totalRequests         Int      @default(0)
+  successfulRequests    Int      @default(0)
+  failedRequests        Int      @default(0)
+  timeoutCount          Int      @default(0)
+  consecutiveFailures   Int      @default(0)
+  avgLatencyMs          Float?
+  p50LatencyMs          Float?
+  p95LatencyMs          Float?
+  p99LatencyMs          Float?
+  reliabilityScore      Float?
+  successRate           Float?
+  errorRate             Float?
+  uptime                Float?
+  lastFailureTime       DateTime?
+  lastSuccessTime       DateTime?
+  lastRequestTime       DateTime?
+  recoveryTimeMs        Float?
+
+  snapshotTime          DateTime
+  createdAt             DateTime  @default(now())
+
+  @@index([provider, snapshotTime])
+  @@index([provider, status])
+  @@index([snapshotTime])
+  @@index([reliabilityScore])
+}
+
+// ==========================================================
+// F11-005: PERSISTENCE LAYER — Scheduler Job Runs
+// ==========================================================
+
+model SchedulerJobRun {
+  id                  String   @id @default(uuid())
+  jobName             String
+  status              String   // 'completed' | 'failed'
+  symbolsProcessed    Int      @default(0)
+  symbolsSucceeded    Int      @default(0)
+  symbolsFailed       Int      @default(0)
+  durationMs          Int?
+  error               String?
+  metadata            Json?
+
+  startedAt           DateTime
+  completedAt         DateTime?
+  createdAt           DateTime  @default(now())
+
+  @@index([jobName, startedAt])
+  @@index([status])
+  @@index([startedAt])
+  @@index([completedAt])
+}

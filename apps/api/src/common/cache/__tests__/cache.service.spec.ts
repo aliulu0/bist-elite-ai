@@ -89,6 +89,21 @@ describe('CacheService', () => {
       service.set('k2', 'v2', undefined, 'indicators');
       expect(service.size('indicators')).toBe(2);
     });
+
+    it('stores in production namespaces', () => {
+      const namespaces = [
+        'financialDataQuality',
+        'source-quality',
+        'research-evidence',
+        'data-health',
+        'data-freshness',
+        'agent-reach',
+      ];
+      for (const ns of namespaces) {
+        service.set('k', 'v', undefined, ns);
+        expect(service.get('k', ns)).toBe('v');
+      }
+    });
   });
 
   describe('getOrSet', () => {
@@ -116,7 +131,7 @@ describe('CacheService', () => {
 
   describe('LRU eviction', () => {
     it('evicts when max entries reached', () => {
-      const smallService = new CacheService();
+      const smallService = new CacheService(getCacheConfig({ maxEntries: 3 }));
       smallService.set('a', 1);
       smallService.set('b', 2);
       smallService.set('c', 3);
@@ -155,7 +170,7 @@ describe('CacheService', () => {
 
   describe('disabled cache', () => {
     it('does not store when disabled', () => {
-      const disabled = new CacheService();
+      const disabled = new CacheService(getCacheConfig({ enabled: false }));
       disabled.set('key', 'value');
       expect(disabled.get('key')).toBeUndefined();
       disabled.onModuleDestroy();

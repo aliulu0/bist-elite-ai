@@ -1,15 +1,24 @@
 {
   "nav": {
-    "home": "Ana Sayfa",
-    "screener": "Hisse Tarayıcı",
+    "dashboard": "Panel",
+    "ranking": "Sıralama",
+    "scanner": "Tarayıcı",
+    "portfolio": "Portföy",
+    "opportunities": "Fırsatlar",
+    "alerts": "Uyarılar",
+    "watchlists": "İzleme Listeleri",
     "eliteScore": "Elite Score",
     "technicalAnalysis": "Teknik Analiz",
     "fundamentalAnalysis": "Temel Analiz",
     "backtest": "Backtest",
-    "portfolio": "Portföy",
     "news": "KAP Analizi",
     "telegram": "Telegram",
     "aiAssistant": "Yapay Zeka",
+    "macroIntelligence": "Makro Zeka",
+    "macroOpportunities": "Makro Fırsatlar",
+    "macroRisk": "Makro Risk",
+    "marketRegime": "Piyasa Rejimi",
+    "centralBankAnalysis": "Merkez Bankası Analizi",
     "settings": "Ayarlar"
   },
   "home": {

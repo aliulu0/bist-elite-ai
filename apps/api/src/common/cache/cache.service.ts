@@ -1,4 +1,4 @@
-import { Injectable, OnModuleDestroy, Logger } from '@nestjs/common';
+import { Injectable, OnModuleDestroy, Logger, Optional } from '@nestjs/common';
 import { CacheConfig, getCacheConfig } from './cache.config';
 
 interface CacheEntry<T = any> {
@@ -38,14 +38,31 @@ export class CacheService implements OnModuleDestroy {
   private readonly stats = { hits: 0, misses: 0, sets: 0, deletes: 0, evictions: 0 };
   private readonly startTime = Date.now();
 
-  constructor() {
-    this.config = getCacheConfig();
+  constructor(@Optional() config?: CacheConfig) {
+    this.config = config ?? getCacheConfig();
 
     this.registerNamespace('indicators', this.config.strategies.indicators);
     this.registerNamespace('scores', this.config.strategies.scores);
     this.registerNamespace('marketData', this.config.strategies.marketData);
     this.registerNamespace('portfolio', this.config.strategies.portfolio);
     this.registerNamespace('api', this.config.strategies.api);
+    this.registerNamespace('earlySignals', this.config.strategies.scores);
+    this.registerNamespace('research', this.config.strategies.research);
+    this.registerNamespace('research:google-news', this.config.strategies.research);
+    this.registerNamespace('research:rss', this.config.strategies.research);
+    this.registerNamespace('research:kap', this.config.strategies.research);
+    this.registerNamespace('research:tcmb', this.config.strategies.research);
+    this.registerNamespace('research:company', this.config.strategies.research);
+    this.registerNamespace('research:sector', this.config.strategies.research);
+    this.registerNamespace('research:market', this.config.strategies.research);
+    this.registerNamespace('financialDataQuality', this.config.strategies.scores);
+    this.registerNamespace('source-quality', this.config.strategies.research);
+    this.registerNamespace('research-evidence', this.config.strategies.research);
+    this.registerNamespace('data-health', this.config.strategies.research);
+    this.registerNamespace('data-freshness', this.config.strategies.research);
+    this.registerNamespace('agent-reach', this.config.strategies.research);
+    this.registerNamespace('latestPrice', this.config.strategies.latestPrice);
+    this.registerNamespace('indicatorCache', this.config.strategies.indicatorCache);
 
     if (this.config.enabled) {
       this.cleanupInterval = setInterval(() => this.cleanup(), 30_000);
@@ -57,6 +74,10 @@ export class CacheService implements OnModuleDestroy {
       clearInterval(this.cleanupInterval);
       this.cleanupInterval = null;
     }
+  }
+
+  isEnabled(): boolean {
+    return this.config.enabled;
   }
 
   private registerNamespace(name: string, config: { ttl: number; maxEntries: number }): void {

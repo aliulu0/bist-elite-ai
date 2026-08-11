@@ -1,0 +1,18 @@
+export { default as DashboardPage } from './dashboard';
+export { default as ScannerPage } from './scanner';
+export { default as AnalysisPage } from './analysis';
+export { default as BacktestPage } from './backtest';
+export { default as PortfolioPage } from './portfolio';
+export { default as WatchlistPage } from './watchlist';
+export { default as AlertsPage } from './alerts';
+export { default as WorkflowsPage } from './workflows';
+export { default as ConfigurationPage } from './configuration';
+export { default as PerformancePage } from './performance';
+export { default as ProvidersPage } from './providers';
+export { default as EventsPage } from './events';
+export { default as DiagnosticsPage } from './diagnostics';
+export { default as AuditPage } from './audit';
+export { default as SettingsPage } from './settings';
+export { default as AiAssistantPage } from './ai-assistant';
+export { default as AiReportsPage } from './ai-reports';
+export { NotFoundPage } from './not-found';

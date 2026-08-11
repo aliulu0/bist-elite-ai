@@ -566,8 +566,8 @@ describe('Controller Validation', () => {
     expect(content).toContain("@Get('health')");
     expect(content).toContain("@Get('health/ready')");
     expect(content).toContain("@Get('health/live')");
-    expect(content).toContain("@Get('api/auth/status')");
-    expect(content).toContain("@Get('api/metrics')");
+    expect(content).toContain("@Get('auth/status')");
+    expect(content).toContain("@Get('metrics')");
   });
 
   it('should have ProductionReadinessController', () => {
@@ -583,7 +583,7 @@ describe('Controller Validation', () => {
     expect(files.length).toBeGreaterThan(0);
     const content = fs.readFileSync(files[0], 'utf-8');
     expect(content).toContain('Controller');
-    expect(content).toContain('api/dashboard');
+    expect(content).toContain('dashboard');
   });
 
   it('should have Swagger documentation configured', () => {

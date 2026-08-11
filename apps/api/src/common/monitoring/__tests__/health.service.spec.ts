@@ -174,7 +174,26 @@ describe('HealthService', () => {
   });
 
   describe('createMemoryCheck', () => {
-    it('creates a memory health check', async () => {
+    const originalMemoryUsage = process.memoryUsage;
+
+    afterEach(() => {
+      process.memoryUsage = originalMemoryUsage;
+    });
+
+    const mockMemory = (overrides: Partial<{ heapUsed: number; heapTotal: number; rss: number; external: number; arrayBuffers: number }> = {}) => {
+      process.memoryUsage = jest.fn().mockReturnValue({
+        heapUsed: 30 * 1024 * 1024,
+        heapTotal: 50 * 1024 * 1024,
+        rss: 80 * 1024 * 1024,
+        external: 5 * 1024 * 1024,
+        arrayBuffers: 1 * 1024 * 1024,
+        ...overrides,
+      }) as unknown as typeof process.memoryUsage;
+    };
+
+    it('creates a memory health check with required fields', async () => {
+      mockMemory();
+
       const check = service.createMemoryCheck();
       expect(check.name).toBe('memory');
 
@@ -182,7 +201,112 @@ describe('HealthService', () => {
       expect(result.name).toBe('memory');
       expect([HealthStatus.HEALTHY, HealthStatus.DEGRADED, HealthStatus.UNHEALTHY]).toContain(result.status);
       expect(result.message).toContain('Heap:');
+      expect(result.message).toContain('RSS:');
       expect(result.metadata).toBeDefined();
+      expect(result.metadata).toHaveProperty('heapUsedMB');
+      expect(result.metadata).toHaveProperty('heapTotalMB');
+      expect(result.metadata).toHaveProperty('rssMB');
+      expect(result.metadata).toHaveProperty('externalMB');
+      expect(result.metadata).toHaveProperty('heapLimitMB');
+      expect(result.metadata).toHaveProperty('gcPressure');
+    });
+
+    it('reports HEALTHY when heap usage is well below threshold', async () => {
+      mockMemory();
+
+      const check = service.createMemoryCheck();
+      const result = await check.check();
+      expect(result.status).toBe(HealthStatus.HEALTHY);
+    });
+
+    it('reports HEALTHY when heap usage is 93 percent (Node.js normal)', async () => {
+      const svc = new HealthService(new MockLoggerService() as unknown as AppLoggerService);
+      const check = svc.createMemoryCheck();
+
+      mockMemory({ heapUsed: 46.5 * 1024 * 1024, heapTotal: 50 * 1024 * 1024 });
+
+      const result = await check.check();
+      expect(result.status).toBe(HealthStatus.HEALTHY);
+      expect(result.metadata?.heapPercent).toBeGreaterThan(90);
+    });
+
+    it('reports DEGRADED when rolling average heap is between 95 and 98 percent', async () => {
+      const svc = new HealthService(new MockLoggerService() as unknown as AppLoggerService);
+      const check = svc.createMemoryCheck();
+
+      mockMemory({ heapUsed: 48 * 1024 * 1024, heapTotal: 50 * 1024 * 1024 });
+
+      const result = await check.check();
+      expect(result.status).toBe(HealthStatus.DEGRADED);
+    });
+
+    it('reports UNHEALTHY only when sustained high heap across multiple checks', async () => {
+      const svc = new HealthService(new MockLoggerService() as unknown as AppLoggerService);
+      const check = svc.createMemoryCheck();
+
+      mockMemory({ heapUsed: 49.2 * 1024 * 1024, heapTotal: 50 * 1024 * 1024 });
+
+      const r1 = await check.check();
+      expect(r1.status).not.toBe(HealthStatus.UNHEALTHY);
+
+      await check.check();
+      await check.check();
+
+      const r4 = await check.check();
+      expect(r4.status).toBe(HealthStatus.UNHEALTHY);
+    });
+
+    it('reports DEGRADED for high RSS usage', async () => {
+      const fs = require('fs');
+      const origReadFileSync = fs.readFileSync;
+      fs.readFileSync = jest.fn().mockImplementation((path: string) => {
+        if (path === '/sys/fs/cgroup/memory.max') return '104857600';
+        return origReadFileSync(path);
+      });
+
+      const svc = new HealthService(new MockLoggerService() as unknown as AppLoggerService);
+      const check = svc.createMemoryCheck();
+
+      mockMemory({ rss: 87 * 1024 * 1024 });
+
+      const result = await check.check();
+      fs.readFileSync = origReadFileSync;
+      expect(result.status).toBe(HealthStatus.DEGRADED);
+    });
+
+    it('exposes all required metadata fields', async () => {
+      mockMemory();
+
+      const check = service.createMemoryCheck();
+      const result = await check.check();
+      const m = result.metadata as Record<string, unknown>;
+
+      expect(typeof m.heapUsedMB).toBe('number');
+      expect(typeof m.heapTotalMB).toBe('number');
+      expect(typeof m.rssMB).toBe('number');
+      expect(typeof m.externalMB).toBe('number');
+      expect(typeof m.heapLimitMB).toBe('number');
+      expect(typeof m.gcPressure).toBe('number');
+      expect(typeof m.gcPressureLabel).toBe('string');
+      expect(typeof m.heapPercent).toBe('number');
+      expect(typeof m.rssPercent).toBe('number');
+      expect(typeof m.avgHeapPercent).toBe('number');
+      expect(typeof m.rollingWindowSize).toBe('number');
+      expect(m.gcPressureLabel).toMatch(/^(low|moderate|high)$/);
+    });
+
+    it('rolling window does not exceed 10 entries', async () => {
+      const svc = new HealthService(new MockLoggerService() as unknown as AppLoggerService);
+      const check = svc.createMemoryCheck();
+
+      mockMemory();
+
+      for (let i = 0; i < 15; i++) {
+        await check.check();
+      }
+
+      const result = await check.check();
+      expect((result.metadata as Record<string, unknown>).rollingWindowSize).toBe(10);
     });
   });
 

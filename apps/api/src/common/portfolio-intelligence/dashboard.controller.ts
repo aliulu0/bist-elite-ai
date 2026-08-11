@@ -7,7 +7,7 @@ import { DashboardFilterService } from './dashboard-filter.service';
 import { DashboardConfig, DashboardFilter, DashboardFilterType } from './types';
 
 @ApiTags('Dashboard')
-@Controller('api/dashboard')
+@Controller('dashboard')
 export class DashboardController {
   constructor(
     private readonly dashboardData: DashboardDataService,
@@ -108,25 +108,25 @@ export class DashboardController {
     return this.timeline.getEventsBySymbol(symbol);
   }
 
-  @Get('report/portfolio')
+  @Post('report/portfolio')
   @ApiOperation({ summary: 'Generate portfolio report in Turkish' })
   getPortfolioReport(@Body() portfolio: any): string {
     return this.dashboardData.generatePortfolioReport(portfolio);
   }
 
-  @Get('report/risk')
+  @Post('report/risk')
   @ApiOperation({ summary: 'Generate risk report in Turkish' })
   getRiskReport(@Body() risk: any): string {
     return this.dashboardData.generateRiskReport(risk);
   }
 
-  @Get('report/intelligence')
+  @Post('report/intelligence')
   @ApiOperation({ summary: 'Generate intelligence report in Turkish' })
   getIntelligenceReport(@Body() intelligence: any): string {
     return this.dashboardData.generateIntelligenceReport(intelligence);
   }
 
-  @Get('report/performance')
+  @Post('report/performance')
   @ApiOperation({ summary: 'Generate performance report in Turkish' })
   getPerformanceReport(@Body() performance: any): string {
     return this.dashboardData.generatePerformanceReport(performance);

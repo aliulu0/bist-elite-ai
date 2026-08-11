@@ -18,7 +18,10 @@ export interface CacheConfig {
     scores: { ttl: number; maxEntries: number };
     marketData: { ttl: number; maxEntries: number };
     portfolio: { ttl: number; maxEntries: number };
-    api: { ttl: number; maxEntries: number };
+     api: { ttl: number; maxEntries: number };
+    research: { ttl: number; maxEntries: number };
+    latestPrice: { ttl: number; maxEntries: number };
+    indicatorCache: { ttl: number; maxEntries: number };
   };
   compression: {
     enabled: boolean;
@@ -53,6 +56,9 @@ const DEFAULTS: CacheConfig = {
     marketData: { ttl: 60_000, maxEntries: 1_000 },
     portfolio: { ttl: 30_000, maxEntries: 500 },
     api: { ttl: 60_000, maxEntries: 2_000 },
+    research: { ttl: 300_000, maxEntries: 5_000 },
+    latestPrice: { ttl: 120_000, maxEntries: 2_000 },
+    indicatorCache: { ttl: 300_000, maxEntries: 5_000 },
   },
   compression: {
     enabled: true,

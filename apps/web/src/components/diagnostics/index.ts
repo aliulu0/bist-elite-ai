@@ -1,0 +1,10 @@
+export { DiagnosticsHeader } from './diagnostics-header';
+export { DiagnosticsSummary } from './diagnostics-summary';
+export { DiagnosticsTabs } from './diagnostics-tabs';
+export { DiagnosticsOverview } from './diagnostics-overview';
+export { DiagnosticsChecks } from './diagnostics-checks';
+export { DiagnosticsServices } from './diagnostics-services';
+export { DiagnosticsPerformance } from './diagnostics-performance';
+export { DiagnosticsHistory } from './diagnostics-history';
+export { DiagnosticsAlerts } from './diagnostics-alerts';
+export { DiagnosticsExport } from './diagnostics-export';

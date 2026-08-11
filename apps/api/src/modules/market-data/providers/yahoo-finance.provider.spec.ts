@@ -116,6 +116,34 @@ describe('YahooFinanceProvider', () => {
       expect(result[0].validationStatus).toBe('valid');
     });
 
+    it('should append .IS suffix for bare BIST symbols in the request URL', async () => {
+      fetchSpy.mockResolvedValue({
+        ok: true,
+        json: async () => mockChartResponse,
+      } as Response);
+
+      const result = await provider.getHistoricalData('AKBNK', '1d');
+      expect(fetchSpy).toHaveBeenCalledWith(
+        expect.stringContaining('chart/AKBNK.IS?'),
+        expect.objectContaining({ method: 'GET' }),
+      );
+      expect(result).toHaveLength(2);
+      expect(result[0].symbol).toBe('AKBNK');
+    });
+
+    it('should keep already-suffixed symbols unchanged in the request URL', async () => {
+      fetchSpy.mockResolvedValue({
+        ok: true,
+        json: async () => mockChartResponse,
+      } as Response);
+
+      await provider.getHistoricalData('THYAO.IS', '1d');
+      expect(fetchSpy).toHaveBeenCalledWith(
+        expect.stringContaining('chart/THYAO.IS?'),
+        expect.objectContaining({ method: 'GET' }),
+      );
+    });
+
     it('should return empty array for unsupported timeframe', async () => {
       const result = await provider.getHistoricalData('THYAO.IS', '2d');
       expect(result).toEqual([]);

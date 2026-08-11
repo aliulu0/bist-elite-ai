@@ -50,10 +50,12 @@ if ($Detached) {
     Write-Host " Services Started (detached)" -ForegroundColor Green
     Write-Host "========================================" -ForegroundColor Green
     Write-Host ""
-    Write-Host "  Web:      http://localhost:3000" -ForegroundColor White
-    Write-Host "  API:      http://localhost:3001" -ForegroundColor White
-    Write-Host "  API Docs: http://localhost:3001/api/docs" -ForegroundColor White
-    Write-Host "  Worker:   http://localhost:8000" -ForegroundColor White
+    Write-Host "  Frontend:  http://localhost:3000" -ForegroundColor White
+    Write-Host "  API:       http://localhost:3001" -ForegroundColor White
+    Write-Host "  API Docs:  http://localhost:3001/api/docs" -ForegroundColor White
+    Write-Host "  PostgreSQL: localhost:5432" -ForegroundColor White
+    Write-Host "  Redis:     localhost:6379" -ForegroundColor White
+    Write-Host "  Scheduler: (running, no HTTP port)" -ForegroundColor Gray
     Write-Host ""
     Write-Host "  Logs:    docker compose logs -f" -ForegroundColor Gray
     Write-Host "  Stop:    .\scripts\stop.ps1" -ForegroundColor Gray

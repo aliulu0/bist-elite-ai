@@ -1,0 +1,47 @@
+# ==========================================================
+# BIST Elite Scheduler - Standalone Scheduler Process
+# ==========================================================
+# Shares the same build as the API but runs only the scheduler.
+
+# Stage 1: Build (deps + compile in one stage for reliability)
+FROM node:22-bullseye-slim AS builder
+RUN apt-get update && apt-get install -y --no-install-recommends wget && rm -rf /var/lib/apt/lists/*
+RUN corepack enable && corepack prepare pnpm@11.16.0 --activate
+WORKDIR /app
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY packages/database/prisma ./packages/database/prisma
+COPY tsconfig.json ./
+RUN pnpm install --frozen-lockfile
+COPY apps/api ./apps/api
+COPY packages ./packages
+RUN pnpm --filter @bist-elite/api exec prisma generate --schema=../../packages/database/prisma/schema.prisma
+WORKDIR /app/apps/api
+RUN pnpm run build
+
+# Stage 2: Production runner
+FROM node:22-bullseye-slim AS runner
+RUN apt-get update && apt-get install -y --no-install-recommends wget bash openssl && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nestjs
+
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/apps/api/dist ./dist
+COPY --from=builder /app/apps/api/package.json ./
+
+COPY --from=builder /app/packages/database/prisma ./packages/database/prisma
+COPY --from=builder /app/packages/database/package.json ./packages/database/package.json
+
+COPY docker/entrypoint-scheduler.sh ./entrypoint.sh
+RUN chmod +x ./entrypoint.sh
+
+RUN chown -R nestjs:nodejs /app
+USER nestjs
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
+  CMD pidof node > /dev/null 2>&1 || exit 1
+
+ENTRYPOINT ["./entrypoint.sh"]

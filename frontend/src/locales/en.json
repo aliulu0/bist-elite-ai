@@ -1,15 +1,24 @@
 {
   "nav": {
-    "home": "Home",
-    "screener": "Stock Screener",
+    "dashboard": "Dashboard",
+    "ranking": "Ranking",
+    "scanner": "Scanner",
+    "portfolio": "Portfolio",
+    "opportunities": "Opportunities",
+    "alerts": "Alerts",
+    "watchlists": "Watchlists",
     "eliteScore": "Elite Score",
     "technicalAnalysis": "Technical Analysis",
     "fundamentalAnalysis": "Fundamental Analysis",
     "backtest": "Backtest",
-    "portfolio": "Portfolio",
     "news": "KAP Analysis",
     "telegram": "Telegram",
     "aiAssistant": "AI Assistant",
+    "macroIntelligence": "Macro Intelligence",
+    "macroOpportunities": "Macro Opportunities",
+    "macroRisk": "Macro Risk",
+    "marketRegime": "Market Regime",
+    "centralBankAnalysis": "Central Bank Analysis",
     "settings": "Settings"
   },
   "home": {

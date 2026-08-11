@@ -49,19 +49,22 @@ export class HealthController {
     };
   }
 
-  @Get('api/auth/status')
+  @Get('auth/status')
   @Public()
   @ApiOperation({ summary: 'Authentication status' })
   authStatus() {
+    const config = this.authService.getAuthConfigSummary();
     return {
       authEnabled: this.authService.isAuthEnabled,
       allowAnonymous: this.authService.isAllowAnonymous,
+      jwtConfigured: config.jwtConfigured,
+      apiKeyConfigured: config.apiKeyConfigured,
       featureFlags: this.featureFlags.getEnabled().map((f) => f.name),
       timestamp: new Date().toISOString(),
     };
   }
 
-  @Get('api/metrics')
+  @Get('metrics')
   @Public()
   @ApiOperation({ summary: 'Application metrics' })
   metrics() {

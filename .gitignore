@@ -1,5 +1,7 @@
 # Dependencies
 node_modules/
+node_modules.bak_corrupt/
+node_modules.*/
 .pnpm-store/
 
 # Build outputs
@@ -12,6 +14,12 @@ out/
 .env
 .env.local
 .env.*.local
+# Ignore all env files except committed examples (hygiene: prevent real secrets from being committed)
+.env.*
+!.env.example
+!apps/api/.env.example
+!apps/telegram/.env.example
+!apps/worker/.env.example
 
 # IDE
 .idea/
@@ -41,9 +49,6 @@ __pycache__/
 .venv/
 venv/
 .mypy_cache/
-
-# Prisma
-packages/database/prisma/migrations/
 
 # Turbo
 .turbo/

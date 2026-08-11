@@ -121,7 +121,10 @@ describe('PerformanceValidatorService', () => {
         setGauge: jest.fn(),
       };
 
-      const svc = new PerformanceValidatorService(mockMetrics as never);
+      const svc = new PerformanceValidatorService(
+        mockMetrics as never,
+        { 'api.avg': 10, 'api.p95': 20, 'api.p99': 30, 'db_query.slow': 1 },
+      );
       const result = svc.validate();
       expect(result.status).toBe(ReadinessStatus.WARN);
     });

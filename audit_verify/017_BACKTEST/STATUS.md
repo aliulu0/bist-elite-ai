@@ -1,0 +1,6 @@
+﻿# STATUS — 017_BACKTEST
+
+## YELLOW (60/100)
+
+> Verified during MASTER PROJECT AUDIT (A-001), 2026-08-08.
+

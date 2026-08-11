@@ -10,6 +10,14 @@ interface YahooChartResponse {
         exchangeTimezoneName: string;
         regularMarketPrice: number;
         regularMarketTime: number;
+        longName?: string;
+        shortName?: string;
+        exchangeName?: string;
+        fullExchangeName?: string;
+        instrumentType?: string;
+        regularMarketVolume?: number;
+        fiftyTwoWeekHigh?: number;
+        fiftyTwoWeekLow?: number;
       };
       timestamp: number[];
       indicators: {
@@ -34,6 +42,29 @@ interface YahooTimeframeConfig {
   range: string;
 }
 
+export interface YahooChartMeta {
+  symbol?: string;
+  longName?: string;
+  shortName?: string;
+  currency?: string;
+  exchangeName?: string;
+  fullExchangeName?: string;
+  instrumentType?: string;
+  regularMarketPrice?: number;
+  regularMarketVolume?: number;
+  regularMarketTime?: number;
+  fiftyTwoWeekHigh?: number;
+  fiftyTwoWeekLow?: number;
+}
+
+export interface YahooCorporateAction {
+  symbol: string;
+  date: string;
+  type: 'dividend' | 'split';
+  value: number;
+  split?: { numerator: number; denominator: number };
+}
+
 const TIMEFRAME_MAP: Record<string, YahooTimeframeConfig> = {
   '4h': { interval: '60m', range: '60d' },
   '1d': { interval: '1d', range: '1y' },
@@ -54,7 +85,13 @@ const YAHOO_TO_INTERNAL: Record<string, string> = {
 export class YahooFinanceProvider implements IDataProvider {
   readonly name = 'yahoo-finance';
   private readonly logger = new Logger(YahooFinanceProvider.name);
-  private readonly baseUrl = 'https://query1.finance.yahoo.com/v8/finance/chart';
+  private readonly baseUrl: string;
+  private readonly timeoutMs: number;
+
+  constructor() {
+    this.baseUrl = process.env.YAHOO_FINANCE_BASE_URL || 'https://query1.finance.yahoo.com/v8/finance/chart';
+    this.timeoutMs = parseInt(process.env.YAHOO_FINANCE_TIMEOUT_MS || '15000', 10);
+  }
 
   async validateConnection(): Promise<boolean> {
     try {
@@ -83,6 +120,8 @@ export class YahooFinanceProvider implements IDataProvider {
       return [];
     }
 
+    const yahooSymbol = this.toYahooSymbol(symbol);
+
     try {
       const params = new URLSearchParams({
         interval: config.interval,
@@ -100,11 +139,11 @@ export class YahooFinanceProvider implements IDataProvider {
         params.set('period2', String(end));
       }
 
-      const url = `${this.baseUrl}/${encodeURIComponent(symbol)}?${params.toString()}`;
+      const url = `${this.baseUrl}/${encodeURIComponent(yahooSymbol)}?${params.toString()}`;
       const response = await fetch(url, {
         method: 'GET',
         headers: { 'User-Agent': 'BIST-Elite-AI/1.0' },
-        signal: AbortSignal.timeout(15000),
+        signal: AbortSignal.timeout(this.timeoutMs),
       });
 
       if (!response.ok) {
@@ -137,8 +176,10 @@ export class YahooFinanceProvider implements IDataProvider {
   }
 
   async getLatestPrice(symbol: string): Promise<MarketDataPoint | null> {
+    const yahooSymbol = this.toYahooSymbol(symbol);
+
     try {
-      const url = `${this.baseUrl}/${encodeURIComponent(symbol)}?interval=1d&range=1d`;
+      const url = `${this.baseUrl}/${encodeURIComponent(yahooSymbol)}?interval=1d&range=1d`;
       const response = await fetch(url, {
         method: 'GET',
         headers: { 'User-Agent': 'BIST-Elite-AI/1.0' },
@@ -196,6 +237,109 @@ export class YahooFinanceProvider implements IDataProvider {
 
   getAvailableTimeframes(): string[] {
     return Object.keys(TIMEFRAME_MAP);
+  }
+
+  async getQuoteMeta(symbol: string): Promise<YahooChartMeta | null> {
+    const yahooSymbol = this.toYahooSymbol(symbol);
+
+    try {
+      const url = `${this.baseUrl}/${encodeURIComponent(yahooSymbol)}?interval=1d&range=1y`;
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: { 'User-Agent': 'BIST-Elite-AI/1.0' },
+        signal: AbortSignal.timeout(this.timeoutMs),
+      });
+
+      if (!response.ok) return null;
+
+      const data = (await response.json()) as YahooChartResponse;
+      const meta = data.chart?.result?.[0]?.meta;
+      if (!meta || !meta.symbol) return null;
+
+      return {
+        symbol: meta.symbol,
+        longName: meta.longName,
+        shortName: meta.shortName,
+        currency: meta.currency,
+        exchangeName: meta.exchangeName,
+        fullExchangeName: meta.fullExchangeName,
+        instrumentType: meta.instrumentType,
+        regularMarketPrice: meta.regularMarketPrice,
+        regularMarketVolume: meta.regularMarketVolume,
+        regularMarketTime: meta.regularMarketTime,
+        fiftyTwoWeekHigh: meta.fiftyTwoWeekHigh,
+        fiftyTwoWeekLow: meta.fiftyTwoWeekLow,
+      };
+    } catch (error) {
+      this.logger.warn(
+        `Failed to fetch quote meta for ${symbol}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+      return null;
+    }
+  }
+
+  async getCorporateActions(symbol: string): Promise<YahooCorporateAction[]> {
+    const yahooSymbol = this.toYahooSymbol(symbol);
+
+    try {
+      const url = `${this.baseUrl}/${encodeURIComponent(yahooSymbol)}?interval=1d&range=10y&events=div,splits`;
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: { 'User-Agent': 'BIST-Elite-AI/1.0' },
+        signal: AbortSignal.timeout(this.timeoutMs),
+      });
+
+      if (!response.ok) {
+        this.logger.warn(`Yahoo Finance returned ${response.status} for corporate actions on ${symbol}`);
+        return [];
+      }
+
+      const data = (await response.json()) as YahooChartResponse & {
+        chart: { result?: Array<{ events?: { dividends?: Record<string, { amount: number }>; splits?: Record<string, { numerator: number; denominator: number; splitRatio?: string }> } }> };
+      };
+
+      const events = data.chart?.result?.[0]?.events;
+      if (!events) return [];
+
+      const actions: YahooCorporateAction[] = [];
+
+      for (const [ts, dividend] of Object.entries(events.dividends ?? {})) {
+        actions.push({
+          symbol,
+          type: 'dividend',
+          date: new Date(Number(ts) * 1000).toISOString(),
+          value: dividend.amount ?? 0,
+        });
+      }
+
+      for (const [ts, split] of Object.entries(events.splits ?? {})) {
+        const numerator = split.numerator ?? 0;
+        const denominator = split.denominator ?? 1;
+        actions.push({
+          symbol,
+          type: 'split',
+          date: new Date(Number(ts) * 1000).toISOString(),
+          value: denominator > 0 ? numerator / denominator : 0,
+          split: { numerator, denominator },
+        });
+      }
+
+      actions.sort((a, b) => a.date.localeCompare(b.date));
+      return actions;
+    } catch (error) {
+      this.logger.warn(
+        `Failed to fetch corporate actions for ${symbol}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+      return [];
+    }
+  }
+
+  private toYahooSymbol(symbol: string): string {
+    const trimmed = symbol.trim();
+    if (!trimmed || trimmed.includes('.')) {
+      return trimmed;
+    }
+    return `${trimmed}.IS`;
   }
 
   private normalizeResponse(

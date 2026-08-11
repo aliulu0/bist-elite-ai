@@ -1,0 +1,113 @@
+import type { AnalysisResult } from './analysis-types';
+
+export const mockAnalysisResult: AnalysisResult = {
+  symbol: 'GARAN',
+  timeframe: '1d',
+  indicators: {},
+  marketStructure: { trend: 'uptrend' },
+  smartMoney: {
+    timeframe: '1d',
+    accumulationScore: 0.72,
+    distributionScore: 0.28,
+    institutionalActivity: 'accumulating',
+    smartMoneyConfidence: 0.65,
+    trendAlignment: 'bullish',
+    signals: [
+      { type: 'accumulation', strength: 0.75, description: 'Birikim sinyali tespit edildi' },
+      { type: 'volume_confirmation', strength: 0.60, description: 'Hacim doğrulaması' },
+    ],
+    isValid: true,
+  },
+  technicalRules: {
+    rules: [
+      { rule: 'EMA_ALIGNMENT', category: 'trend', status: 'PASS', description: 'EMA hizalaması olumlu' },
+      { rule: 'RSI_LEVEL', category: 'momentum', status: 'WARNING', description: 'RSI aşırı alım bölgesine yakın' },
+      { rule: 'MACD_SIGNAL', category: 'momentum', status: 'PASS', description: 'MACD pozitif sinyal veriyor' },
+    ],
+    isValid: true,
+  },
+  technicalScore: {
+    score: 72.5,
+    grade: 'B',
+    confidence: 0.85,
+    ruleBreakdown: [
+      { rule: 'EMA_ALIGNMENT', category: 'trend', status: 'PASS', weight: 8, contribution: 8 },
+      { rule: 'RSI_LEVEL', category: 'momentum', status: 'WARNING', weight: 6, contribution: 3 },
+      { rule: 'MACD_SIGNAL', category: 'momentum', status: 'PASS', weight: 6, contribution: 6 },
+    ],
+  },
+  technicalSummary: {
+    summary: 'Teknik analiz güçlü bir yükseliş trendi gösteriyor.',
+    overallOpinion: 'Hisse teknik olarak alım bölgesinde bulunuyor.',
+    strengths: ['Güçlü yükseliş trendi', 'Pozitif momentum'],
+    weaknesses: ['RSI uyarısı'],
+    risks: ['Piyasa genel düşüşü'],
+    recommendations: ['Mevcut pozisyonları koruyun'],
+  },
+  financialRules: {
+    rules: [
+      { name: 'Fiyat/Kitap Oranı', status: 'PASS', message: 'PD/DD 1.2 ile sağlıklı seviyede' },
+      { name: 'Borç/Özkaynak', status: 'WARNING', message: 'Borçluluk oranı biraz yüksek' },
+      { name: 'Karlılık', status: 'PASS', message: 'Net kar artışı devam ediyor' },
+    ],
+  },
+  financialScore: {
+    score: 68.0,
+    grade: 'B+',
+    confidence: 0.78,
+  },
+  financialSummary: {
+    summary: 'Finansal durum genel olarak sağlıklı.',
+    overallOpinion: 'Şirket finansal olarak güçlü bir konumda.',
+    strengths: ['Sağlıklı karlılık', 'Güçlü nakit akışı'],
+    weaknesses: ['Yüksek borçluluk'],
+    risks: ['Faiz oranı riski'],
+  },
+  confluence: {
+    confluenceScore: 68,
+    agreement: 'HIGH',
+    financialAlignment: { score: 80, direction: 'bullish', confidence: 0.9, factors: ['Sağlıklı karlılık'] },
+    technicalAlignment: { score: 75, direction: 'bullish', confidence: 0.85, factors: ['Yükseliş trendi'] },
+    smartMoneyAlignment: { score: 60, direction: 'bullish', confidence: 0.7, factors: ['Birikim sinyali'] },
+    trendAlignment: { score: 70, direction: 'bullish', confidence: 0.8, factors: ['Uptrend'] },
+    confidence: 0.82,
+  },
+  opportunity: {
+    opportunityScore: 75,
+    earlyOpportunity: true,
+    opportunityLevel: 'HIGH',
+    confidence: 0.8,
+    strengths: ['Güçlü temeller', 'Pozitif teknik'],
+    riskFactors: ['Piyasa dalgalanması'],
+    reasons: ['Yükseliş trendi devam ediyor'],
+  },
+  eliteScore: {
+    eliteScore: 82.5,
+    rating: 'AA',
+    priority: 'HIGH',
+    confidence: 0.85,
+    earlyOpportunity: true,
+    summary: 'GARAN güçlü finansal ve teknik göstergelere sahip.',
+    breakdown: {
+      financial: { score: 85, weight: 30, contribution: 25.5 },
+      technical: { score: 72, weight: 25, contribution: 18 },
+      opportunity: { score: 75, weight: 20, contribution: 15 },
+      confluence: { score: 68, weight: 15, contribution: 10.2 },
+      candidate: { score: 80, weight: 10, contribution: 8 },
+    },
+  },
+  pipelineSteps: [
+    { step: 'indicators', durationMs: 12, success: true },
+    { step: 'market_structure', durationMs: 8, success: true },
+    { step: 'smart_money', durationMs: 15, success: true },
+    { step: 'technical_rules', durationMs: 10, success: true },
+    { step: 'technical_score', durationMs: 5, success: true },
+    { step: 'financial_rules', durationMs: 20, success: true },
+    { step: 'financial_score', durationMs: 8, success: true },
+  ],
+  metadata: {
+    totalDurationMs: 150,
+    stepsCompleted: 7,
+    stepsSuccessful: 7,
+  },
+};

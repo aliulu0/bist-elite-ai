@@ -57,7 +57,7 @@ describe('CompressionInterceptor', () => {
   });
 
   it('compresses large payloads with gzip', (done) => {
-    const largeData = 'x'.repeat(200);
+    const largeData = 'x'.repeat(2048);
     const { context, res } = createMockContext(largeData, 'gzip');
     const next = { handle: () => of(largeData) };
 
@@ -71,7 +71,7 @@ describe('CompressionInterceptor', () => {
   });
 
   it('compresses large payloads with brotli', (done) => {
-    const largeData = 'x'.repeat(200);
+    const largeData = 'x'.repeat(2048);
     const { context, res } = createMockContext(largeData, 'br, gzip');
     const next = { handle: () => of(largeData) };
 
@@ -84,7 +84,7 @@ describe('CompressionInterceptor', () => {
   });
 
   it('skips when no accept-encoding', (done) => {
-    const largeData = 'x'.repeat(200);
+    const largeData = 'x'.repeat(2048);
     const { context, res } = createMockContext(largeData, '');
     const next = { handle: () => of(largeData) };
 
