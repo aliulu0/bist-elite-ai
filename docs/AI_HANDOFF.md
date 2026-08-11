@@ -134,22 +134,31 @@ Telegram + Dashboard
 | R2-042 Real Analysis Pipeline Integration & Single-Request Optimization | ✅ COMPLETE |
 | R2-043 Indicator Cache & Advanced Deduplication Engine | ✅ COMPLETE |
 | R2-044 Historical Market Data Backfill & Validation Engine | ✅ COMPLETE |
+| R2-045 Early Opportunity Decision & Signal Convergence | ✅ COMPLETE |
 
 ---
 
 # CURRENT SPRINT
 
-R2-044
+R2-046
 
-Historical Market Data Backfill & Validation Engine
+Historical Early Opportunity Backtest & Decision Validation
 
 Status: ✅ COMPLETE
 
-Goal: complete the historical market-data layer required by the existing Early Opportunity, Prediction, Signal, Backtest and Portfolio systems. Build a deterministic, cache-backed BACKFILL / HISTORY MANAGEMENT layer ON TOP of the existing MarketDataOrchestrator / IncrementalMarketDataService pipeline (no second pipeline): per-symbol and all-symbol history status, gap detection with a deterministic BIST trading calendar, smart range-only backfill, partial-provider handling, provider-fallback tracking, a backtest safety gate, validated-history integration into the Backtest Engine, conservative bulk backfill, and a lightweight web "Tarihsel Veri" section.
+Goal: validate whether the existing Early Opportunity Decision engine (R2-045) would have identified useful opportunities BEFORE the market priced them. A new `early-opportunity-backtest` module reuses the existing `HistoricalMarketDataService`, `EarlyOpportunityIntelligenceService`, `EarlyOpportunityDecisionEngine`, `CacheService`, and `IndicatorCacheService` — NO second backtest engine, NO second data pipeline. Point-in-time isolation (`PointInTimeDataService`), future outcome evaluation for 1W/1M/3M/5M/6M/1Y, multi-dimension decision success (RETURN/RISK_ADJUSTED/TARGET/EARLY_OPPORTUNITY), benchmark comparison, confidence calibration, lead-time measurement, false positive analysis (with Turkish "yetersiz kanıt"), missed opportunity analysis, immutable decision snapshots (reusing R2-045 `EarlyOpportunityDecisionSnapshot`), survivorship bias flagging, and `HISTORICAL_OUTCOME_VALIDATION` evaluation type. API: 10 endpoints under `/backtest/early-opportunity`. Tests: 10 suites / 52 tests GREEN. Critical look-ahead tests (5/5) GREEN. Regression: early-opportunity-decision, backtest.engine, backtest.service (3 suites / 54 tests) GREEN. `tsc --noEmit` clean. Details in `docs/R2-046_HISTORICAL_EARLY_OPPORTUNITY_BACKTEST.md`.
 
 ---
 
 # LAST COMPLETED SPRINT
+
+R2-045 Early Opportunity Decision & Signal Convergence
+
+Goal: answer "is this stock currently an EARLY OPPORTUNITY?" with a deterministic convergence layer that reuses all existing engine outputs (no new indicators, no provider calls, no GPT). Build a pure `EarlyOpportunityDecisionEngine` with 10 weighted evidence dimensions, a coverage/convergence scoring model, 7-way status classification, hard safety gates that can invalidate or downgrade on poor data quality, an immutable snapshot for R2-046 backtesting, and deterministic Turkish explanations. Integrate the decision into the TOP-10 scan path (`enrichWithDecisions` batch-attach, concurrency 12) and the intelligence engine's `minDecisionScore` filter. Expose `GET /ai-early-opportunity/decision/:ticker`.
+
+---
+
+# PREVIOUS COMPLETED SPRINT
 
 R2-044 Historical Market Data Backfill & Validation Engine
 

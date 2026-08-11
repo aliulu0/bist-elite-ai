@@ -2,9 +2,70 @@
 
 > Platform-wide roadmap for BIST ELITE AI.
 
-## Current Status: Sprint 20 (v2.16.0)
+## Current Status: Sprint 22 (v2.18.0)
 
 ## Completed
+
+### Phase 4.11: Historical Early Opportunity Backtest & Decision Validation (Sprint 22)
+- [x] R2-046 — Historical Early Opportunity Backtest & Decision Validation
+  - New `early-opportunity-backtest` module: reuses existing `HistoricalMarketDataService`,
+    `EarlyOpportunityIntelligenceService`, `EarlyOpportunityDecisionEngine`, `CacheService`,
+    `IndicatorCacheService` — NO second backtest engine, NO second data pipeline.
+  - **Point-in-time isolation** (`PointInTimeDataService`): filters candles/fundamentals/catalysts/
+    research/signals to `timestamp <= T`. Future data rejected, never silently used.
+  - **Future outcome engine** (`FutureOutcomeService`): 1W/1M/3M/5M/6M/1Y outcomes — abs/pct return,
+    MFE, MAE, max drawdown, time-to-positive, time-to-target, time-to-stop, target/stop reached.
+  - **Decision success** (multi-dimension): RETURN, RISK_ADJUSTED, TARGET, EARLY_OPPORTUNITY.
+  - **Benchmark comparison** (`BenchmarkService`): excess return, relative success; returns null
+    if benchmark unavailable — never fabricates.
+  - **Confidence calibration** (`ConfidenceCalibrationService`): LOW/MEDIUM/HIGH buckets vs actual
+    returns. Sample-quality labels: INSUFFICIENT_SAMPLE (<10), LOW_CONFIDENCE (10-29),
+    MODERATE_CONFIDENCE (30-99), STRONGER_STATISTICAL_SIGNAL (100+).
+  - **Lead-time measurement** (`LeadTimeService`): days from decision to major price appreciation.
+    By score bucket and signal strength.
+  - **False positive analysis** (`FalsePositiveService`): classifies reason from metadata
+    (weak_fundamentals, weak_smart_money, catalyst_failure, prediction_failure, market_wide_selloff,
+    excessive_risk, low_signal_convergence). Returns "yetersiz_kanit" when no deterministic reason.
+  - **Missed opportunity analysis** (`MissedOpportunityService`): stocks with strong later returns
+    but not selected — reports filter failures, missing data.
+  - **Immutable snapshots**: reuses R2-045 `EarlyOpportunityDecisionSnapshot`; frozen with
+    `Object.freeze`; SHA-256 `inputDigest` for reproducibility verification.
+  - **Survivorship bias**: explicitly flags `SURVIVORSHIP_BIAS_POSSIBLE` in every report.
+  - **Evaluation type**: `HISTORICAL_OUTCOME_VALIDATION` (not "ML out-of-sample").
+  - API: `POST /backtest/early-opportunity/run`, `GET /backtest/early-opportunity/:runId` and 8
+    more endpoints (summary, decisions, failures, missed-opportunities, calibration, lead-time).
+  - Tests: 10 suites / 52 tests GREEN. Critical look-ahead tests (5/5) GREEN. Regression:
+    early-opportunity-decision, backtest.engine, backtest.service (3 suites / 54 tests) GREEN.
+  - `tsc --noEmit` clean.
+  - See `docs/R2-046_HISTORICAL_EARLY_OPPORTUNITY_BACKTEST.md`.
+
+### Phase 4.10: Early Opportunity Decision & Signal Convergence (Sprint 21)
+- [x] R2-045 — Early Opportunity Decision & Signal Convergence Engine
+  - Pure, deterministic convergence/decision layer (`EarlyOpportunityDecisionEngine.decide`) over the existing
+    `EarlyOpportunityIntelligenceResult` — NO new data fetch, NO indicator math, NO GPT.
+  - 10 weighted evidence dimensions (earlyStage, multiTimeframe, prediction, smartMoney, catalyst,
+    fundamentals, signals, verification, dataQuality, risk); weights centralized in
+    `early-opportunity-decision.types.ts` (sum 1.00).
+  - convergence = weight-averaged mean of present dimensions; decisionScore = convergence × coverage
+    factor; coverage < 50% downgrades, 0% invalidates; absent evidence never adds positive score.
+  - 7-way status (STRONG_EARLY_OPPORTUNITY, EARLY_OPPORTUNITY, CONFIRMED_OPPORTUNITY,
+    EXTENDED_OPPORTUNITY, WATCHLIST_OPPORTUNITY, WEAK_OPPORTUNITY, INVALID_OPPORTUNITY) with
+    `earlyOpportunity` flag.
+  - Hard gates: invalidate on NO_MARKET_DATA / DATA_INSUFFICIENT / INVALID_HISTORICAL_DATA /
+    low marketDataScore; downgrade on provider conflict / stale / fundamental FAIL / extreme risk /
+    no entry framework.
+  - Confidence = 0.6×decisionScore + 0.4×dataQualityScore.
+  - Immutable snapshot (`EarlyOpportunityDecisionSnapshot` + SHA-256 inputDigest) as the R2-046
+    backtesting input (decisionTimestamp == evaluatedAt; no future data).
+  - API: `GET /ai-early-opportunity/decision/:ticker` (DTO via `.from()`); `enrichWithDecisions()`
+    batch-attaches decisions to the TOP-10 scan (concurrency 12) with zero extra intelligence round-trips.
+  - Intelligence engine `matchesFilters` honors `minDecisionScore` via `result.decision.decisionScore`.
+  - Zero duplicated logic: reuses Early Opportunity Intelligence, Multi-Timeframe, Smart Money,
+    Catalyst, Fundamentals, Signals, Verification, Data Research/Verification, Data Quality, Risk.
+  - No new cache namespace (pure function of an already-cached intelligence result).
+  - Tests: decision 2 suites / 16 tests GREEN; ai-early-opportunity regression 11 suites / 146 tests GREEN.
+  - `tsc --noEmit` clean (apps/api + apps/web).
+  - See `docs/R2-045_EARLY_OPPORTUNITY_DECISION.md`.
 
 ### Phase 4.9: Historical Market Data Backfill & Validation (Sprint 20)
 - [x] R2-044 - Historical Market Data Backfill & Validation Engine

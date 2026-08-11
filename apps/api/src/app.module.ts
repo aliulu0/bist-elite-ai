@@ -87,6 +87,9 @@ import { PipelineOrchestratorModule } from './modules/pipeline-orchestrator/pipe
 // ── Early Opportunity Engine ──
 import { EarlyOpportunityModule } from './modules/ai-early-opportunity/early-opportunity.module';
 
+// ── Early Opportunity Backtest (R2-046) ──
+import { EarlyOpportunityBacktestModule } from './modules/early-opportunity-backtest/early-opportunity-backtest.module';
+
 // ── Data Research Pipeline (R2-031) ──
 import { DataResearchPipelineModule } from './modules/data-research-pipeline/data-research-pipeline.module';
 
@@ -232,6 +235,9 @@ import { RequestDeduplicationInterceptor } from './common/performance/request-de
 
     // ── Early Opportunity Engine ──
     EarlyOpportunityModule,
+
+    // ── Early Opportunity Backtest (R2-046) ──
+    EarlyOpportunityBacktestModule,
 
     // ── Data Research Pipeline (R2-031) ──
     DataResearchPipelineModule,
