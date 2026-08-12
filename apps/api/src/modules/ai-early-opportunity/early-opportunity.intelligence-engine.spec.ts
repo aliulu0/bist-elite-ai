@@ -462,4 +462,46 @@ describe('EarlyOpportunityIntelligenceEngine', () => {
       expect(ranked[1].ticker).toBe('B');
     });
   });
+
+  describe('decision filters', () => {
+    const withDecision = (decisionScore: number, status: any, early: boolean, overrides: any = {}) => {
+      const built = engine.buildIntelligenceResult(baseInput('THYAO'), baseScore('THYAO'), 185000000000);
+      return {
+        ...built,
+        decision: {
+          decisionScore,
+          decisionStatus: status,
+          earlyOpportunity: early,
+          ...overrides,
+        },
+      };
+    };
+
+    it('filters by minDecisionScore', () => {
+      const d = withDecision(65, 'EARLY_OPPORTUNITY', true);
+      expect(engine.matchesFilters(d, { minDecisionScore: 60 })).toBe(true);
+      expect(engine.matchesFilters(d, { minDecisionScore: 66 })).toBe(false);
+    });
+
+    it('filters by decisionStatus', () => {
+      const d = withDecision(75, 'EARLY_OPPORTUNITY', true);
+      expect(engine.matchesFilters(d, { decisionStatus: 'EARLY_OPPORTUNITY' })).toBe(true);
+      expect(engine.matchesFilters(d, { decisionStatus: 'STRONG_EARLY_OPPORTUNITY' })).toBe(false);
+    });
+
+    it('filters by earlyOpportunityOnly', () => {
+      const early = withDecision(75, 'EARLY_OPPORTUNITY', true);
+      const watch = withDecision(50, 'WATCHLIST_OPPORTUNITY', false);
+      expect(engine.matchesFilters(early, { earlyOpportunityOnly: true })).toBe(true);
+      expect(engine.matchesFilters(watch, { earlyOpportunityOnly: true })).toBe(false);
+    });
+
+    it('requires a decision to satisfy minDecisionScore when decision is null', () => {
+      const d = engine.buildIntelligenceResult(baseInput('THYAO'), baseScore('THYAO'), 185000000000);
+      expect(d.decision).toBeNull();
+      expect(engine.matchesFilters(d, { minDecisionScore: 60 })).toBe(false);
+      expect(engine.matchesFilters(d, { decisionStatus: 'EARLY_OPPORTUNITY' })).toBe(false);
+      expect(engine.matchesFilters(d, { earlyOpportunityOnly: true })).toBe(false);
+    });
+  });
 });

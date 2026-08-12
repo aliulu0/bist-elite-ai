@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { PredictionModule } from '../prediction/prediction.module';
 import { AIResearchHubModule } from '../ai-research/ai-research.module';
 import { EliteScoreModule } from '../ai-elite-score/elite-score.module';
@@ -31,6 +31,9 @@ import { SelfLearningService } from './self-learning/self-learning.service';
 import { EarlySignalScannerEngine } from './signals/early-signal-scanner.engine';
 import { EarlySignalScannerService } from './signals/early-signal-scanner.service';
 import { SignalsController } from './signals/signals.controller';
+import { EarlyOpportunityDecisionEngine } from './decision/early-opportunity-decision.engine';
+import { EarlyOpportunityDecisionService } from './decision/early-opportunity-decision.service';
+import { EarlyOpportunityDecisionController } from './decision/early-opportunity-decision.controller';
 
 @Module({
   imports: [
@@ -57,6 +60,7 @@ import { SignalsController } from './signals/signals.controller';
     TopListsController,
     DashboardPerformanceController,
     SignalsController,
+    EarlyOpportunityDecisionController,
   ],
   providers: [
     EarlyOpportunityEngine,
@@ -70,6 +74,8 @@ import { SignalsController } from './signals/signals.controller';
     SelfLearningEngine,
     SelfLearningRegistry,
     SelfLearningService,
+    EarlyOpportunityDecisionEngine,
+    EarlyOpportunityDecisionService,
   ],
   exports: [
     EarlyOpportunityEngine,
@@ -81,6 +87,8 @@ import { SignalsController } from './signals/signals.controller';
     SelfLearningEngine,
     SelfLearningRegistry,
     SelfLearningService,
+    EarlyOpportunityDecisionEngine,
+    EarlyOpportunityDecisionService,
   ],
 })
 export class EarlyOpportunityModule {}

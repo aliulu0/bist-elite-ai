@@ -132,11 +132,11 @@ export class ScannerService {
     return this.lastScan;
   }
 
-  getTopResults(strategyId?: string, limit: number = 10): ScannerTopResult[] {
+  getTopResults(strategyId?: string, limit: number = 10, offset: number = 0): ScannerTopResult[] {
     const scan = strategyId ? this.lastScanByStrategy.get(strategyId) : this.lastScan;
     if (!scan) return [];
     return scan.results
-      .slice(0, limit)
+      .slice(offset, offset + limit)
       .map((r) => ({
         ticker: r.ticker,
         company: r.company,

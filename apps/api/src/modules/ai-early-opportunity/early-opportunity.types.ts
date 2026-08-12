@@ -7,6 +7,7 @@ import { MultiTimeframeOpportunityResult } from './multi-timeframe/multi-timefra
 import { FundamentalValidationReport } from '../financial-rules/fundamental-validation.service';
 import { FinancialDataQualityReport, DataQualityContext } from '../financial-rules/financial-data-quality.types';
 import { EarlySignal, SignalCategory } from './signals/early-signal.types';
+import { EarlyOpportunityDecision } from './decision/early-opportunity-decision.types';
 
 export const EARLY_OPPORTUNITY_ENGINE_VERSION = '1.0.0';
 
@@ -159,8 +160,9 @@ export interface EarlyOpportunityIntelligenceResult {
    earlySignalCount: number;
    confirmedSignalCount: number;
    topSignals: EarlySignal[];
+   decision: EarlyOpportunityDecision | null;
    evaluatedAt: string;
-}
+ }
 
 export type RiskLevel = 'low' | 'medium' | 'high';
 
@@ -187,7 +189,19 @@ export interface EarlyOpportunityFilters {
   signalType?: string;
   earlyOnly?: boolean;
   confirmedOnly?: boolean;
+  minDecisionScore?: number;
+  decisionStatus?: EarlyOpportunityDecisionStatus;
+  earlyOpportunityOnly?: boolean;
 }
+
+export type EarlyOpportunityDecisionStatus =
+  | 'STRONG_EARLY_OPPORTUNITY'
+  | 'EARLY_OPPORTUNITY'
+  | 'WATCHLIST_OPPORTUNITY'
+  | 'CONFIRMED_OPPORTUNITY'
+  | 'EXTENDED_OPPORTUNITY'
+  | 'WEAK_OPPORTUNITY'
+  | 'INVALID_OPPORTUNITY';
 
 export const RISK_LEVEL_ORDER: RiskLevel[] = ['low', 'medium', 'high'];
 

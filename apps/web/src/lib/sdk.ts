@@ -137,6 +137,7 @@ export const sdkClient = {
   researchIntelligenceCompany: (ticker: string) => sdk.researchIntelligence.getCompany(ticker),
   researchIntelligenceProviders: () => sdk.researchIntelligence.getProviders(),
   researchIntelligenceRefresh: () => sdk.researchIntelligence.refresh(),
+  earlyOpportunities: (limit = 10) => sdk.earlyOpportunities.list(limit),
 };
 
 export const sdk = {
@@ -152,6 +153,34 @@ export const sdk = {
     authStatus: () =>
       request<{ authEnabled: boolean; allowAnonymous: boolean; featureFlags: string[]; timestamp: string }>('/auth/status'),
     metrics: () => request<Record<string, unknown>>('/metrics'),
+  },
+
+  earlyOpportunities: {
+    list: (limit = 10) =>
+      request<{
+        results: Array<{
+          ticker: string;
+          company: string;
+          sector: string;
+          earlyOpportunityScore: number;
+          confidence: number;
+          expectedReturn: number;
+          trendStage: string | null;
+          decision: {
+            decisionScore: number;
+            decisionStatus: string;
+            statusLabel: string;
+            earlyOpportunity: boolean;
+            convergence: number;
+            confidence: number;
+            trendStage: string | null;
+            timeframeAgreement: number;
+            explanation: string;
+          } | null;
+        }>;
+        total: number;
+        generatedAt: string;
+      }>(`/early-opportunities?limit=${limit}&earlyOpportunityOnly=true`),
   },
 
   marketData: {

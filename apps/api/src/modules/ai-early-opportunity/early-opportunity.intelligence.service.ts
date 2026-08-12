@@ -1,4 +1,4 @@
-import { Injectable, Logger, Optional } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger, Optional } from '@nestjs/common';
 import { MarketDataOrchestrator } from '../market-data/orchestrator/market-data-orchestrator';
 import { LatestPriceIncrementalService, latestPriceStateToDataPoint } from '../market-data/incremental/latest-price-incremental.service';
 import { EarlyOpportunityService } from './early-opportunity.service';
@@ -7,6 +7,7 @@ import { SelfLearningService } from './self-learning/self-learning.service';
 import { MultiTimeframeOpportunityService } from './multi-timeframe/multi-timeframe.service';
 import { FundamentalIntegrationService } from '../financial-rules/fundamental-integration.service';
 import { FinancialDataQualityService } from '../financial-rules/financial-data-quality.service';
+import { EarlyOpportunityDecisionService } from './decision/early-opportunity-decision.service';
 import {
   EarlyOpportunityFilters,
   EarlyOpportunityIntelligenceResult,
@@ -44,6 +45,8 @@ export class EarlyOpportunityIntelligenceService {
     @Optional() private readonly fundamental?: FundamentalIntegrationService,
     @Optional() private readonly signalScanner?: EarlySignalScannerService,
     @Optional() private readonly dataQuality?: FinancialDataQualityService,
+    @Optional() @Inject(forwardRef(() => EarlyOpportunityDecisionService))
+    private readonly decisionService?: EarlyOpportunityDecisionService,
   ) {}
 
 async getEarlyOpportunities(
@@ -90,12 +93,16 @@ async getEarlyOpportunities(
     const dataQuality = this.dataQuality;
     await this.enrichWithDataQuality(filtered, withCap, dataQuality);
 
-    // Attach signals before applying signal filters (signals are evidence/enrichment)
-    if (this.signalScanner && this.hasSignalFilters(filters)) {
+    // Attach signals + decisions before applying enrichment filters (they are evidence/enrichment)
+    const needsEnrichment = this.hasSignalFilters(filters) || this.hasDecisionFilters(filters);
+    if (this.signalScanner && needsEnrichment) {
       await this.enrichWithSignals(filtered);
     }
+    if (this.decisionService && needsEnrichment) {
+      await this.decisionService.enrichWithDecisions(filtered);
+    }
 
-    // Apply data quality + signal filters after enrichment
+    // Apply data quality + signal + decision filters after enrichment
     const qualityFiltered = filtered.filter((r) => this.intelligenceEngine.matchesFilters(r, filters));
 
     const modifiers = new Map(
@@ -103,11 +110,22 @@ async getEarlyOpportunities(
     );
     const ranked = this.intelligenceEngine.rankByAdjusted(qualityFiltered, modifiers).slice(0, limit);
 
-    if (this.signalScanner && !this.hasSignalFilters(filters)) {
+    if (this.signalScanner && !needsEnrichment) {
       await this.enrichWithSignals(ranked);
+    }
+    if (this.decisionService && !needsEnrichment) {
+      await this.decisionService.enrichWithDecisions(ranked);
     }
 
     return ranked;
+  }
+
+  private hasDecisionFilters(filters: EarlyOpportunityFilters): boolean {
+    return (
+      filters.minDecisionScore != null ||
+      filters.decisionStatus != null ||
+      filters.earlyOpportunityOnly === true
+    );
   }
 
   private hasSignalFilters(filters: EarlyOpportunityFilters): boolean {
@@ -226,6 +244,10 @@ async getEarlyOpportunities(
         financialDataQuality: result.financialDataQuality ?? undefined 
       }).catch(() => null);
       this.attachSignals(result, scan);
+    }
+
+    if (this.decisionService) {
+      await this.decisionService.enrichWithDecisions([result]);
     }
 
     return result;

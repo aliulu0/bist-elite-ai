@@ -7,6 +7,32 @@ export interface Opportunity {
   score: number;
   opportunityScore: number;
   reason: string;
+  decisionScore?: number | null;
+  decisionStatus?: string | null;
+  earlyOpportunity?: boolean | null;
+  convergence?: number | null;
+  trendStage?: string | null;
+}
+
+function getDecisionBadge(status: string): { variant: 'success' | 'info' | 'warning' | 'danger' | 'outline'; label: string } {
+  switch (status) {
+    case 'STRONG_EARLY_OPPORTUNITY':
+      return { variant: 'success', label: 'Güçlü Erken' };
+    case 'EARLY_OPPORTUNITY':
+      return { variant: 'success', label: 'Erken' };
+    case 'CONFIRMED_OPPORTUNITY':
+      return { variant: 'info', label: 'Doğrulanmış' };
+    case 'EXTENDED_OPPORTUNITY':
+      return { variant: 'warning', label: 'Uzatılmış' };
+    case 'WATCHLIST_OPPORTUNITY':
+      return { variant: 'warning', label: 'İzleme' };
+    case 'WEAK_OPPORTUNITY':
+      return { variant: 'danger', label: 'Zayıf' };
+    case 'INVALID_OPPORTUNITY':
+      return { variant: 'danger', label: 'Geçersiz' };
+    default:
+      return { variant: 'outline', label: status ?? '-' };
+  }
 }
 
 interface OpportunityCardProps {
@@ -39,30 +65,53 @@ export function OpportunityCard({ opportunities, loading, error, onRetry }: Oppo
       ) : (
         <div className="overflow-hidden">
           <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b text-left text-[10px] uppercase tracking-wider text-muted-foreground">
-                <th className="pb-2 pr-2 font-medium">Hisse</th>
-                <th className="pb-2 pr-2 font-medium">Skor</th>
-                <th className="pb-2 font-medium">Neden</th>
-              </tr>
-            </thead>
-            <tbody>
-              {opportunities.slice(0, 8).map((opp) => {
-                const badge = getScoreBadge(opp.opportunityScore);
-                return (
-                  <tr key={opp.symbol} className="border-b last:border-0">
-                    <td className="py-2.5 pr-2">
-                      <span className="font-semibold">{opp.symbol}</span>
-                    </td>
-                    <td className="py-2.5 pr-2">
-                      <Badge variant={badge.variant}>{badge.label}</Badge>
-                    </td>
-                    <td className="max-w-[200px] truncate py-2.5 text-xs text-muted-foreground">
-                      {opp.reason}
-                    </td>
-                  </tr>
-                );
-              })}
+             <thead>
+               <tr className="border-b text-left text-[10px] uppercase tracking-wider text-muted-foreground">
+                 <th className="pb-2 pr-2 font-medium">Hisse</th>
+                 <th className="pb-2 pr-2 font-medium">Skor</th>
+                 <th className="pb-2 pr-2 font-medium">Karar</th>
+                 {opportunities.some((o) => o.decisionScore != null) && (
+                   <th className="pb-2 pr-2 font-medium">Karar Skoru</th>
+                 )}
+                 {opportunities.some((o) => o.trendStage != null) && (
+                   <th className="pb-2 pr-2 font-medium">Trend</th>
+                 )}
+                 <th className="pb-2 pr-2 font-medium">Neden</th>
+               </tr>
+             </thead>
+             <tbody>
+               {opportunities.slice(0, 8).map((opp) => {
+                 const badge = getScoreBadge(opp.opportunityScore);
+                 const decisionBadge = opp.decisionStatus
+                   ? getDecisionBadge(opp.decisionStatus)
+                   : badge;
+                 return (
+                   <tr key={opp.symbol} className="border-b last:border-0">
+                     <td className="py-2.5 pr-2">
+                       <span className="font-semibold">{opp.symbol}</span>
+                     </td>
+                     <td className="py-2.5 pr-2">
+                       <Badge variant={badge.variant}>{badge.label}</Badge>
+                     </td>
+                     <td className="py-2.5 pr-2">
+                       {opp.decisionStatus ? (
+                         <Badge variant={decisionBadge.variant}>{decisionBadge.label}</Badge>
+                       ) : (
+                         <span className="text-slate-500">-</span>
+                       )}
+                     </td>
+                     {opportunities.some((o) => o.decisionScore != null) && (
+                       <td className="py-2.5 pr-2 font-mono">{opp.decisionScore ?? '-'}</td>
+                     )}
+                     {opportunities.some((o) => o.trendStage != null) && (
+                       <td className="py-2.5 pr-2 text-slate-400">{opp.trendStage ?? '-'}</td>
+                     )}
+                     <td className="max-w-[200px] truncate py-2.5 text-xs text-muted-foreground">
+                       {opp.reason}
+                     </td>
+                   </tr>
+                 );
+               })}
             </tbody>
           </table>
         </div>

@@ -78,6 +78,7 @@ return {
        earlySignalCount: 0,
        confirmedSignalCount: 0,
        topSignals: [],
+       decision: null,
        evaluatedAt: new Date().toISOString(),
     };
    }
@@ -163,6 +164,15 @@ return {
     }
     if (filters.confirmedOnly === true) {
       if (result.confirmedSignalCount < 1) return false;
+    }
+    if (filters.minDecisionScore != null) {
+      if (result.decision == null || result.decision.decisionScore < filters.minDecisionScore) return false;
+    }
+    if (filters.decisionStatus != null) {
+      if (result.decision == null || result.decision.decisionStatus !== filters.decisionStatus) return false;
+    }
+    if (filters.earlyOpportunityOnly === true) {
+      if (result.decision == null || result.decision.earlyOpportunity !== true) return false;
     }
     return true;
   }
@@ -293,12 +303,13 @@ private emptyIntelligence(input: EarlyOpportunitySymbolInput): EarlyOpportunityI
         fundamentals: null,
         multiTimeframe: null,
         financialDataQuality: null,
-        signals: [],
-        signalConvergenceScore: 0,
-        earlySignalCount: 0,
-        confirmedSignalCount: 0,
-        topSignals: [],
-        evaluatedAt: new Date().toISOString(),
-     };
+         signals: [],
+         signalConvergenceScore: 0,
+         earlySignalCount: 0,
+         confirmedSignalCount: 0,
+         topSignals: [],
+         decision: null,
+         evaluatedAt: new Date().toISOString(),
+      };
   }
 }

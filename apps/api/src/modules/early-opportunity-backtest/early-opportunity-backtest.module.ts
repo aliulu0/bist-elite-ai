@@ -10,15 +10,15 @@ import { LeadTimeService } from './lead-time.service';
 import { FalsePositiveService } from './false-positive.service';
 import { MissedOpportunityService } from './missed-opportunity.service';
 import { HistoricalMarketDataModule } from '../market-data/historical/historical-market-data.module';
-import { CacheModule } from '../common/cache/cache.module';
-import { IndicatorsModule } from '../indicators/indicators.module';
+import { CacheModule } from '../../common/cache/cache.module';
+import { IndicatorCacheModule } from '../indicator-cache/indicator-cache.module';
 import { EarlyOpportunityModule } from '../ai-early-opportunity/early-opportunity.module';
 
 @Module({
   imports: [
     HistoricalMarketDataModule,
     CacheModule,
-    IndicatorsModule,
+    IndicatorCacheModule,
     EarlyOpportunityModule,
   ],
   controllers: [HistoricalEarlyOpportunityBacktestController],

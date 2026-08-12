@@ -70,4 +70,32 @@ describe('OpportunityCard', () => {
     expect(screen.getByText('Skor')).toBeInTheDocument();
     expect(screen.getByText('Neden')).toBeInTheDocument();
   });
+
+  it('renders decision status and score columns when decision data present', () => {
+    const withDecision: Opportunity[] = [
+      {
+        symbol: 'THYAO',
+        score: 85,
+        opportunityScore: 85,
+        reason: 'Erken fırsat',
+        decisionScore: 78,
+        decisionStatus: 'EARLY_OPPORTUNITY',
+        earlyOpportunity: true,
+        trendStage: 'Early',
+      },
+    ];
+    render(<OpportunityCard opportunities={withDecision} />);
+    expect(screen.getByText('Karar')).toBeInTheDocument();
+    expect(screen.getByText('Karar Skoru')).toBeInTheDocument();
+    expect(screen.getByText('Trend')).toBeInTheDocument();
+    expect(screen.getByText('Erken')).toBeInTheDocument();
+    expect(screen.getByText('78')).toBeInTheDocument();
+    expect(screen.getByText('Early')).toBeInTheDocument();
+  });
+
+  it('omits decision columns when no decision data', () => {
+    render(<OpportunityCard opportunities={mockOpps} />);
+    expect(screen.queryByText('Karar Skoru')).not.toBeInTheDocument();
+    expect(screen.queryByText('Trend')).not.toBeInTheDocument();
+  });
 });

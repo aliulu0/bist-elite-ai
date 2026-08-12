@@ -3,6 +3,7 @@ import { EarlyOpportunityIntelligenceResult } from '../early-opportunity.types';
 import { FundamentalValidationReport } from '../../financial-rules/fundamental-validation.service';
 import { FinancialDataQualityReport } from '../../financial-rules/financial-data-quality.types';
 import { EarlySignalDto } from '../signals/signals.dto';
+import { EarlyOpportunityDecisionDto } from '../decision/early-opportunity-decision.dto';
 
 export class EarlyScoreComponentsDto {
   @ApiProperty({ example: 72 })
@@ -316,6 +317,9 @@ export class EarlyOpportunityIntelligenceDto {
   @ApiProperty({ type: [EarlySignalDto] })
   topSignals!: EarlySignalDto[];
 
+  @ApiProperty({ type: EarlyOpportunityDecisionDto, nullable: true })
+  decision!: EarlyOpportunityDecisionDto | null;
+
   @ApiProperty({ example: 'bullish' })
   momentum!: string;
 
@@ -377,6 +381,7 @@ static from(result: EarlyOpportunityIntelligenceResult): EarlyOpportunityIntelli
      dto.earlySignalCount = result.earlySignalCount ?? 0;
      dto.confirmedSignalCount = result.confirmedSignalCount ?? 0;
      dto.topSignals = (result.topSignals ?? []).map(EarlySignalDto.from);
+     dto.decision = result.decision ? EarlyOpportunityDecisionDto.from(result.decision) : null;
      dto.evaluatedAt = result.evaluatedAt;
      return dto;
    }

@@ -39,6 +39,9 @@ export class EarlyOpportunityIntelligenceController {
   @ApiQuery({ name: 'signalType', required: false, type: String, example: 'accumulation' })
   @ApiQuery({ name: 'earlyOnly', required: false, type: Boolean })
   @ApiQuery({ name: 'confirmedOnly', required: false, type: Boolean })
+  @ApiQuery({ name: 'minDecisionScore', required: false, type: Number, example: 60 })
+  @ApiQuery({ name: 'decisionStatus', required: false, enum: ['STRONG_EARLY_OPPORTUNITY', 'EARLY_OPPORTUNITY', 'WATCHLIST_OPPORTUNITY', 'CONFIRMED_OPPORTUNITY', 'EXTENDED_OPPORTUNITY', 'WEAK_OPPORTUNITY', 'INVALID_OPPORTUNITY'] })
+  @ApiQuery({ name: 'earlyOpportunityOnly', required: false, type: Boolean })
   async scan(
     @Query('limit') limit?: string,
     @Query('minEarlyOpportunityScore') minEarlyOpportunityScore?: string,
@@ -58,6 +61,9 @@ export class EarlyOpportunityIntelligenceController {
     @Query('signalType') signalType?: string,
     @Query('earlyOnly') earlyOnly?: string,
     @Query('confirmedOnly') confirmedOnly?: string,
+    @Query('minDecisionScore') minDecisionScore?: string,
+    @Query('decisionStatus') decisionStatus?: string,
+    @Query('earlyOpportunityOnly') earlyOpportunityOnly?: string,
   ): Promise<EarlyOpportunityIntelligenceScanDto> {
     const filters: EarlyOpportunityFilters = {
       minEarlyOpportunityScore: minEarlyOpportunityScore ? Number(minEarlyOpportunityScore) : undefined,
@@ -77,6 +83,9 @@ export class EarlyOpportunityIntelligenceController {
       signalType: signalType || undefined,
       earlyOnly: earlyOnly === 'true' ? true : undefined,
       confirmedOnly: confirmedOnly === 'true' ? true : undefined,
+      minDecisionScore: minDecisionScore ? Number(minDecisionScore) : undefined,
+      decisionStatus: decisionStatus as EarlyOpportunityFilters['decisionStatus'] | undefined,
+      earlyOpportunityOnly: earlyOpportunityOnly === 'true' ? true : undefined,
     };
     const results = await this.intelligence.getEarlyOpportunities(filters, {
       limit: limit ? Number(limit) : 10,

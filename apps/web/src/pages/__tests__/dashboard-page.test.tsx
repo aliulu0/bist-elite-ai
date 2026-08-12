@@ -32,7 +32,8 @@ describe('DashboardPage', () => {
   it('renders opportunity section', async () => {
     render(<MemoryRouter><DashboardPage /></MemoryRouter>);
     await waitFor(() => {
-      expect(screen.getByText('En İyi Fırsatlar')).toBeInTheDocument();
+      const titles = screen.getAllByText('En İyi Fırsatlar');
+      expect(titles.length).toBeGreaterThanOrEqual(1);
     });
   });
 

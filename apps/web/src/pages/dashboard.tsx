@@ -33,6 +33,7 @@ import { Link } from 'react-router-dom';
 import { sdkClient } from '@/lib/sdk';
 import { cn } from '@/lib/utils';
 import { useEventsStore } from '@/stores/events-store';
+import { OpportunityCard, type Opportunity } from '@/components/dashboard/opportunity-card';
 
 type SettleResult<T> = { data: T | null; error: string };
 
@@ -47,9 +48,11 @@ const optionalSettle = <T,>(fn: unknown): Promise<SettleResult<T>> =>
 interface ScanResultRow {
   symbol: string;
   score: number;
+  opportunityScore?: number;
   rank: number;
   status: string;
   reason: string;
+  earlyOpportunity?: boolean;
 }
 
 interface WatchlistRow {
@@ -467,7 +470,7 @@ export default function DashboardPage() {
     setRefreshing(true);
     setLoadError('');
 
-    const [scanRes, oppRes, wfRes, provRes, perfRes, evtRes, diagRes, schedRes, watchRes, macroRes] = await Promise.all([
+    const [scanRes, oppRes, wfRes, provRes, perfRes, evtRes, diagRes, schedRes, watchRes, macroRes, intelOppRes] = await Promise.all([
       settle(sdkClient.scanner()),
       settle(sdkClient.scannerCandidates()),
       settle(sdkClient.workflowQueue()),
@@ -478,6 +481,16 @@ export default function DashboardPage() {
       settle(sdkClient.schedulerStatus()),
       optionalSettle<Awaited<ReturnType<typeof sdkClient.watchlist>>>(sdkClient.watchlist),
       optionalSettle<Awaited<ReturnType<typeof sdkClient.macro>>>(sdkClient.macro),
+      optionalSettle<{
+        results: Array<{
+          ticker: string;
+          decision: { decisionScore: number; decisionStatus: string; earlyOpportunity: boolean; trendStage: string | null } | null;
+        }>;
+        total: number;
+        generatedAt: string;
+      }>(
+        typeof sdkClient.earlyOpportunities === 'function' ? () => sdkClient.earlyOpportunities(15) : undefined,
+      ),
     ]);
 
     const scannerCandidates = scanRes.data?.topCandidates ?? [];
@@ -488,13 +501,32 @@ export default function DashboardPage() {
       status: c.status,
       reason: (c.reasons || [])[0] || 'Pipeline signal',
     }));
-    const opportunities = (oppRes.data?.data?.items ?? []).map((c) => ({
-      symbol: c.symbol,
-      score: c.compositeScore || c.eliteScore || 0,
-      rank: c.rank,
-      status: c.status,
-      reason: (c.reasons || [])[0] || 'Opportunity candidate',
-    }));
+    const intelDecisions = new Map<string, { decisionScore: number; decisionStatus: string; earlyOpportunity: boolean; trendStage: string | null }>();
+    for (const item of intelOppRes.data?.results ?? []) {
+      if (item.decision) {
+        intelDecisions.set(item.ticker, {
+          decisionScore: item.decision.decisionScore,
+          decisionStatus: item.decision.decisionStatus,
+          earlyOpportunity: item.decision.earlyOpportunity,
+          trendStage: item.decision.trendStage,
+        });
+      }
+    }
+    const opportunities = (oppRes.data?.data?.items ?? []).map((c) => {
+      const decision = intelDecisions.get(c.symbol);
+      return {
+        symbol: c.symbol,
+        score: c.compositeScore || c.eliteScore || 0,
+        opportunityScore: c.compositeScore || c.eliteScore || 0,
+        rank: c.rank,
+        status: c.status,
+        reason: (c.reasons || [])[0] || 'Opportunity candidate',
+        earlyOpportunity: decision?.earlyOpportunity,
+        decisionScore: decision?.decisionScore,
+        decisionStatus: decision?.decisionStatus,
+        trendStage: decision?.trendStage,
+      };
+    });
     const rawProviders = provRes.data?.data?.providers ?? [];
     const providers = mapProviderRows(rawProviders as Array<Record<string, unknown>>);
     const macroScore = toNumber((macroRes.data as Record<string, unknown> | null)?.['score'] ?? (macroRes.data as Record<string, unknown> | null)?.['macroScore'], 68);
@@ -534,7 +566,7 @@ export default function DashboardPage() {
       macroScore,
     });
 
-    const errors = [scanRes, oppRes, wfRes, provRes, perfRes, evtRes, diagRes, schedRes, watchRes, macroRes].filter((res) => res.error).length;
+    const errors = [scanRes, oppRes, wfRes, provRes, perfRes, evtRes, diagRes, schedRes, watchRes, macroRes, intelOppRes].filter((res) => res.error).length;
     if (errors > 0) setLoadError(`${errors} data channel${errors > 1 ? 's' : ''} could not be loaded`);
     setRefreshing(false);
   }, []);
@@ -608,18 +640,22 @@ export default function DashboardPage() {
             </div>
           </Panel>
 
-          <Panel title="Tarayıcı" icon={ScanSearch} resizable>
-            <div className="space-y-2">
-              {snapshot.scannerResults.slice(0, 6).map((row) => (
-                <div key={row.symbol} className="rounded-md border border-slate-800 bg-slate-900/60 p-2">
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono text-cyan-200">#{row.rank} {row.symbol}</span>
-                    <span className={cn('font-mono', scoreTone(row.score))}>{row.score.toFixed(0)}</span>
-                  </div>
-                  <div className="mt-1 truncate text-[11px] text-slate-500">{row.reason}</div>
-                </div>
-              ))}
-            </div>
+           <Panel title="Tarayıcı" icon={ScanSearch} resizable>
+             <div className="space-y-2">
+               {snapshot.scannerResults.slice(0, 6).map((row) => (
+                 <div key={row.symbol} className="rounded-md border border-slate-800 bg-slate-900/60 p-2">
+                   <div className="flex items-center justify-between">
+                     <span className="font-mono text-cyan-200">#{row.rank} {row.symbol}</span>
+                     <span className={cn('font-mono', scoreTone(row.score))}>{row.score.toFixed(0)}</span>
+                   </div>
+                   <div className="mt-1 truncate text-[11px] text-slate-500">{row.reason}</div>
+                 </div>
+               ))}
+             </div>
+           </Panel>
+
+          <Panel title="Erken Fırsat Kararları" icon={TrendingUp} resizable>
+            <OpportunityCard opportunities={snapshot.opportunities as Opportunity[]} />
           </Panel>
 
           <Panel title="Portföy" icon={Briefcase} defaultCollapsed resizable>

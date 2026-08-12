@@ -9,6 +9,7 @@ import { SymbolRegistryService } from '../../market-data/symbol-registry/symbol-
 import { BacktestService } from '../../backtest/backtest.service';
 import { CacheService } from '../../../common/cache/cache.service';
 import { EarlyOpportunityIntelligenceResult } from '../../ai-early-opportunity/early-opportunity.types';
+import { EarlyOpportunityDecision } from '../../ai-early-opportunity/decision/early-opportunity-decision.types';
 import { MultiTimeframeOpportunityResult } from '../../ai-early-opportunity/multi-timeframe/multi-timeframe.types';
 
 function makeMultiTimeframe(ticker: string): MultiTimeframeOpportunityResult {
@@ -93,6 +94,66 @@ function makeIntelligence(ticker: string, score = 75): EarlyOpportunityIntellige
     earlySignalCount: 0,
     confirmedSignalCount: 0,
     topSignals: [],
+    decision: makeDecision(ticker, score),
+  };
+}
+
+function makeDecision(ticker: string, score: number): EarlyOpportunityDecision {
+  return {
+    ticker,
+    company: `${ticker} A.Ş.`,
+    decisionScore: score,
+    decisionStatus: 'EARLY_OPPORTUNITY',
+    statusLabel: 'Erken Fırsat',
+    statusEmoji: '🟢',
+    opportunityType: 'EARLY',
+    earlyOpportunity: true,
+    confidence: 80,
+    convergence: 82,
+    coverage: 90,
+    trendStage: 'Early',
+    timeframeAgreement: 90,
+    predictionConfidence: 80,
+    smartMoneyStatus: 'very_strong',
+    catalystStatus: 'strong',
+    fundamentalStatus: 'PASS',
+    financialDataQualityStatus: 'verified',
+    signalSummary: { convergenceScore: 80, totalSignals: 4, strongSignalCount: 2, earlyCount: 3, confirmedCount: 1, categoryCoverage: 3 },
+    verificationStatus: 'verified',
+    riskSummary: { level: 'low', riskRewardRatio: 2.5, hasEntry: true, hasStop: true, hasTarget: true },
+    entryZone: { min: 95, max: 105 },
+    stop: 88,
+    target1: 135,
+    target2: 150,
+    expectedReturn: 12,
+    bestTimeframe: '1d',
+    worstTimeframe: '6m',
+    reasons: ['reason'],
+    positiveFactors: [],
+    negativeFactors: [],
+    warnings: [],
+    dataFreshness: 'fresh',
+    providerStatus: 'consistent',
+    dimensions: [],
+    gates: { invalidated: [], downgraded: [] },
+    snapshot: {
+      decisionTimestamp: new Date().toISOString(),
+      symbol: ticker,
+      timeframeContext: ['1d', '1w'],
+      decisionScore: score,
+      decisionStatus: 'EARLY_OPPORTUNITY',
+      earlyOpportunity: true,
+      entry: { min: 95, max: 105 },
+      stop: 88,
+      target1: 135,
+      target2: 150,
+      expectedReturn: 12,
+      confidence: 80,
+      evidence: {} as any,
+      inputDigest: ticker.padEnd(64, 'a').slice(0, 64),
+    },
+    explanation: 'test explanation',
+    generatedAt: new Date().toISOString(),
   };
 }
 
@@ -332,6 +393,11 @@ describe('PortfolioIntelligenceService', () => {
       const opportunities = await ctx.service.getOpportunities();
       expect(opportunities.newOpportunities).toHaveLength(2);
       expect(ctx.cacheService.set).toHaveBeenCalled();
+      for (const o of opportunities.newOpportunities) {
+        expect(o.decisionScore).not.toBeNull();
+        expect(o.decisionStatus).toBe('EARLY_OPPORTUNITY');
+        expect(o.earlyOpportunity).toBe(true);
+      }
     });
 
     it('does not offer held tickers as new opportunities', async () => {

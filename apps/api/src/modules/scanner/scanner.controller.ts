@@ -160,7 +160,8 @@ export class ScannerController {
   @ApiResponse({ status: 200, description: 'En yüksek AI puanlı hisseler', type: ScannerTopResponseDto })
   getTop(@Query() query: ScannerQueryDto): ScannerTopResponseDto {
     const limit = query.limit ?? 10;
-    const top = this.scannerService.getTopResults(query.strategy, limit);
+    const offset = query.offset ?? 0;
+    const top = this.scannerService.getTopResults(query.strategy, limit, offset);
     const avgAiScore =
       top.length > 0
         ? top.reduce((sum, r) => sum + (r.aiScore ?? 0), 0) / top.length

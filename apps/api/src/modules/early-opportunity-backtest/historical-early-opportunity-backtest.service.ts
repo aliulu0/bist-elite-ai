@@ -1,6 +1,5 @@
 import { Injectable, Logger, Inject, Optional } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
-import { createHash } from 'crypto';
+import { createHash, randomUUID } from 'crypto';
 import { PointInTimeDataService } from './point-in-time-data.service';
 import { FutureOutcomeService } from './future-outcome.service';
 import { DecisionSuccessService } from './decision-success.service';
@@ -10,8 +9,8 @@ import { LeadTimeService } from './lead-time.service';
 import { FalsePositiveService } from './false-positive.service';
 import { MissedOpportunityService } from './missed-opportunity.service';
 import { HistoricalMarketDataService } from '../market-data/historical/historical-market-data.service';
-import { CacheService } from '../common/cache/cache.service';
-import { IndicatorCacheService } from '../indicators/indicator-cache.service';
+import { CacheService } from '../../common/cache/cache.service';
+import { IndicatorCacheService } from '../indicator-cache/indicator-cache.service';
 import { EarlyOpportunityDecisionEngine } from '../ai-early-opportunity/decision/early-opportunity-decision.engine';
 import { EarlyOpportunityIntelligenceService } from '../ai-early-opportunity/early-opportunity.intelligence.service';
 import { EarlyOpportunityIntelligenceResult } from '../ai-early-opportunity/early-opportunity.types';
@@ -71,7 +70,7 @@ export class HistoricalEarlyOpportunityBacktestService {
   ) {}
 
   async runBacktest(config: BacktestRunConfig): Promise<BacktestRunResult> {
-    const runId = uuidv4();
+    const runId = randomUUID();
     const startedAt = new Date().toISOString();
     const run: RunState = {
       runId,
@@ -286,7 +285,11 @@ export class HistoricalEarlyOpportunityBacktestService {
 
     if (this.historicalMarketDataService) {
       try {
-        const data = await this.historicalMarketDataService.getValidatedHistory(symbol, timeframe as any, startDate, endDate);
+        const data = await this.historicalMarketDataService.getValidatedHistory(
+          symbol,
+          timeframe,
+          { startDate, endDate },
+        );
         this.providerCalls++;
         if (this.cacheService && data) {
           await this.cacheService.set(`historical:${symbol}:${timeframe}:${startDate}:${endDate}`, data);

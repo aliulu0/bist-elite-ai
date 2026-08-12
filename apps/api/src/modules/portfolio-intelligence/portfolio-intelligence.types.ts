@@ -199,6 +199,9 @@ export interface PortfolioOpportunity extends OpportunityFit {
   smartMoneyScore: number | null;
   catalystScore: number | null;
   multiTimeframeScore: number | null;
+  decisionScore: number | null;
+  decisionStatus: string | null;
+  earlyOpportunity: boolean | null;
   reasons: string[];
   evaluatedAt: string;
 }

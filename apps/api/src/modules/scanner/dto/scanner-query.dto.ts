@@ -50,6 +50,13 @@ export class ScannerQueryDto {
   @Max(795)
   limit?: number;
 
+  @ApiPropertyOptional({ description: 'Atlanacak sonuç sayısı', example: 0, default: 0 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  offset?: number;
+
   @ApiPropertyOptional({ description: 'Sadece aktif hisseler', example: true, default: true })
   @IsOptional()
   activeOnly?: boolean;
