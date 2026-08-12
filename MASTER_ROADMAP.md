@@ -2,7 +2,13 @@
 
 > Platform-wide roadmap for BIST ELITE AI.
 
-## Current Status: Sprint 22 (v2.18.0)
+> **Status note (R2-047 audit 2026-08-12):** R2-046 was committed in a non-compiling state —
+> `tsc --noEmit -p apps/api/tsconfig.json` currently FAILS with 5 errors in
+> `early-opportunity-backtest`. Its unit tests (52/52) are green but mocked. The line
+> "tsc --noEmit clean" below is **no longer true** until the compile fix is applied.
+> See `FINAL_MASTER_AUDIT/`.
+
+## Current Status: Sprint 22 (v2.18.0) — Build Broker
 
 ## Completed
 
@@ -38,6 +44,11 @@
     early-opportunity-decision, backtest.engine, backtest.service (3 suites / 54 tests) GREEN.
   - `tsc --noEmit` clean.
   - See `docs/R2-046_HISTORICAL_EARLY_OPPORTUNITY_BACKTEST.md`.
+
+  > **❌ R2-047 audit correction:** `tsc --noEmit` is **NOT** clean as committed. 5 errors in this
+  > module break the whole API build (wrong cache/indicator-cache import paths, missing `uuid`,
+  > arity). Tests are green only because dependencies are mocked. Fix details:
+  > `FINAL_MASTER_AUDIT/18_R2-046_BACKTEST_TRUTH_AUDIT.md`.
 
 ### Phase 4.10: Early Opportunity Decision & Signal Convergence (Sprint 21)
 - [x] R2-045 — Early Opportunity Decision & Signal Convergence Engine

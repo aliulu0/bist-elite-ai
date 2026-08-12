@@ -1,10 +1,20 @@
 # PROJECT STATUS
 
-## Overall: GREEN
+## Overall: RED (build broken) — see FINAL_MASTER_AUDIT (R2-047)
 
-- **Build:** `tsc --noEmit` passes (whole project, exit 0).
-- **Tests:** All 326 suites pass (5512 tests, 1 skipped); full regression 326/326 suites pass.
-  R2-046 adds 10 new suites / 52 tests GREEN (all passing).
+> Status corrected by R2-047 Final Master Audit (2026-08-12). Previous "GREEN" status is
+> **no longer true** because the R2-046 module was committed in a non-compiling state.
+
+- **Build:** `tsc --noEmit -p apps/api/tsconfig.json` **FAILS with 5 errors** (all in the R2-046
+  `early-opportunity-backtest` module: wrong `../common/cache/*` and `../indicators/...` import
+  paths, missing `uuid` dependency, arity at `historical-early-opportunity-backtest.service.ts:289`).
+  The API therefore **cannot boot** (`app.module.ts` imports `EarlyOpportunityBacktestModule`).
+  `apps/web` typecheck **passes** (exit 0).
+- **Tests:** R2-046 `early-opportunity-backtest` 10 suites / 52 tests GREEN — **but all mocked**
+  (they construct services directly and do not exercise the broken DI wiring). R2-045
+  `early-opportunity-decision` 2 suites / 16 tests GREEN. Full 5512-test regression is
+  **not re-runnable** here (API compile + turbo/pnpm unavailable in this shell).
+- **Fix:** see `FINAL_MASTER_AUDIT/18_R2-046_BACKTEST_TRUTH_AUDIT.md` (small, ~1–2 h).
 
 ## R2-046 - Historical Early Opportunity Backtest & Decision Validation
 
