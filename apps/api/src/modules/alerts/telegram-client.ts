@@ -1,5 +1,5 @@
-import { Logger } from '@nestjs/common';
-import { TelegramRadarConfig } from './telegram-daily-radar.config';
+import { Logger, Optional } from '@nestjs/common';
+import { getTelegramRadarConfig, TelegramRadarConfig } from './telegram-daily-radar.config';
 
 /**
  * R2-051 — Minimal official Telegram Bot API client.
@@ -39,11 +39,14 @@ interface TelegramApiResponse {
 
 export class TelegramClient {
   private readonly logger = new Logger(TelegramClient.name);
+  private readonly config: TelegramRadarConfig;
 
   constructor(
-    private readonly config: TelegramRadarConfig,
-    private readonly sleepImpl: (ms: number) => Promise<void> = (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
-  ) {}
+    @Optional() config?: TelegramRadarConfig,
+    @Optional() private readonly sleepImpl: (ms: number) => Promise<void> = (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
+  ) {
+    this.config = config ?? getTelegramRadarConfig();
+  }
 
   isConfigured(): boolean {
     return this.config.botToken.length > 0 && this.config.chatId.length > 0;

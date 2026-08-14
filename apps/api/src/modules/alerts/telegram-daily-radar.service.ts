@@ -177,8 +177,12 @@ export class TelegramDailyRadarService implements OnModuleInit, OnModuleDestroy 
   /** Load the current cached radar snapshot, or run a fresh one when absent/stale. */
   private async obtainSnapshot(options?: RadarRunOptions): Promise<{ snapshot: OpportunityRadarSnapshot | null; reused: boolean }> {
     if (!this.radar) return { snapshot: null, reused: false };
-    const fresh = !options?.forceRefresh && this.hasFreshSnapshot(this.lastSnapshot);
+    // Prefer the radar engine's own in-memory snapshot (provider-budget friendly).
+    const radarSnapshot = this.radar.getCurrentSnapshot();
+    const fresh = !options?.forceRefresh && this.hasFreshSnapshot(radarSnapshot ?? this.lastSnapshot);
     if (fresh) {
+      this.lastSnapshot = radarSnapshot ?? this.lastSnapshot;
+      this.lastSnapshotAt = Date.now();
       return { snapshot: this.lastSnapshot, reused: true };
     }
     try {

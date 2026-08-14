@@ -101,6 +101,10 @@ class FakeRadar {
     return this.snapshot;
   }
 
+  getCurrentSnapshot(): OpportunityRadarSnapshot | null {
+    return this.snapshot;
+  }
+
   async runRadar(): Promise<OpportunityRadarSnapshot> {
     this.runCalls++;
     if (!this.snapshot) this.snapshot = makeSnapshot([makeItem('THYAO', 87, 'CONFIRMED')]);
@@ -281,7 +285,7 @@ describe('TelegramDailyRadarService', () => {
       const service = build();
       await service.runDailyRadar();
       await service.runDailyRadar();
-      expect(radar.runCalls).toBe(1);
+      expect(radar.runCalls).toBe(0);
     });
 
     it('runs a fresh radar when no snapshot exists', async () => {

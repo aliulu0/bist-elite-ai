@@ -7,7 +7,7 @@
 | Sprint | R2-051 |
 | Title | Telegram Daily Opportunity Radar |
 | Goal | Deliver the existing Early Opportunity Radar as a daily Turkish Telegram report through the official Bot API |
-| Status | IMPLEMENTED (code, tests, docs complete) — live delivery pending real Telegram credentials |
+| Status | IMPLEMENTED + PARTIALLY_VERIFIED — real bot token verified live via `getMe`; live delivery pending `TELEGRAM_CHAT_ID` |
 
 ## Non-Negotiable Constraints Honored
 
@@ -63,18 +63,24 @@
 
 | Suite | Result |
 |-------|--------|
-| API `telegram-*` suites (client, formatter, repository, service) | 51 passed |
-| API regression `(radar|early-opportunity|alerts)` | 412 passed / 36 suites |
+| API `telegram-*` suites (client, formatter, repository, service) | 52 passed |
+| API regression `(radar|early-opportunity|alerts)` | 413 passed / 36 suites |
 | Web `sdk.test.ts` + `topbar.test.tsx` | 49 passed |
 | Web `telegram-page.test.tsx` | 4 passed |
 | TypeScript typecheck (API) | clean |
 | TypeScript typecheck (web) | clean |
 
-## Runtime Checks
+## Runtime Checks (live, 2026-08-14)
 
-- Live Telegram delivery **not verified** — no `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID` in the environment
-- Status endpoints honestly report `NOT_CONFIGURED` in this state
-- Prisma `generate` blocked by locked query-engine DLL (running dev servers); new table created via migration; repository falls back to in-memory storage until the DB connects
+- `GET /api/telegram/status` → 200. `getMe` verified against the **real Telegram Bot API**:
+  `authenticated: true`, `botUsername: "BistAiAnaliz_bot"`, `botId: 8902124240`.
+- `TELEGRAM_BOT_TOKEN` present in the environment (46 chars, non-placeholder, masked).
+- `TELEGRAM_CHAT_ID` **not set** → honest `configured: false`, `status: NOT_CONFIGURED`; live delivery cannot be verified yet.
+- `GET /api/telegram/preview` → 200, correct UTF-8 Turkish empty-report message, pre-session market label, 40 symbols scanned (real radar snapshot reused via `RadarService.getCurrentSnapshot()`).
+- `POST /api/telegram/radar/send?dryRun=true` (with `TELEGRAM_ENABLED`+`TELEGRAM_SEND_EMPTY_REPORT` override) → `status: DRY_RUN`, `messagesSent: 1`, **no message IDs** — the exact production message was built but nothing was sent.
+- Radar cold runs were slow due to upstream provider rate limits (Finnhub/AlphaVantage/SerpAPI HTTP 429) — snapshot reuse avoided re-scans for the Telegram preview/send path.
+- Runtime fixes applied after the initial boot: `alerts.module.ts` DI (restored dropped providers), `telegram-client.ts` DI (`@Optional` config + sleep impl), and snapshot-reuse in `obtainSnapshot()`.
+- Prisma `generate` blocked by locked query-engine DLL (running dev servers); repository falls back to in-memory storage until the DB connects.
 
 ## Delivery States
 
@@ -86,9 +92,10 @@
 
 ## Unresolved Limitations
 
-- Live delivery verification requires real credentials
+- Live delivery verification requires `TELEGRAM_CHAT_ID` (bot token present; `getMe` auth verified)
 - Prisma client regeneration blocked by environment (locked DLL); schema is correct and migration is applied
 - Scheduler cooldown key is in-memory (resets on restart)
+- Radar cold scans are slow when upstream providers are rate-limited; Telegram snapshot-reuse mitigates repeat scans
 
 ## Next Sprint
 

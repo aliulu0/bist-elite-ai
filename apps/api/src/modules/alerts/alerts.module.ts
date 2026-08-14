@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { Optional } from '@nestjs/common';
 import { AlertsController } from './alerts.controller';
 import { WatchlistController } from './watchlist.controller';
 import { AlertEngine } from './engine/alert-engine.service';
@@ -18,16 +17,12 @@ import { TriggerEvaluator } from './services/trigger-evaluator.service';
 import { TelegramDailyRadarController } from './telegram-daily-radar.controller';
 import { RadarModule } from '../ai-early-opportunity/radar/radar.module';
 
-const alertServices = [
+const preExistingAlertServices = [
   CooldownEngine,
   DuplicatePrevention,
   AlertHistory,
   AlertMetricsCollector,
   TelegramService,
-  TelegramDailyRadarService,
-  TelegramClient,
-  TelegramMessageFormatter,
-  TelegramDeliveryRepository,
   WebSocketPublisher,
   WatchlistManager,
   TriggerEvaluator,
@@ -38,24 +33,15 @@ const alertServices = [
   controllers: [AlertsController, WatchlistController, TelegramDailyRadarController],
   providers: [
     AlertEngine,
+    ...preExistingAlertServices.map((service) => ({
+      provide: service,
+      useFactory: () => new service(),
+    })),
     TelegramDailyRadarService,
-    TelegramService,
     TelegramClient,
     TelegramMessageFormatter,
     TelegramDeliveryRepository,
-    {
-      provide: WebSocketPublisher,
-      useClass: WebSocketPublisher,
-    },
-    {
-      provide: WatchlistManager,
-      useClass: WatchlistManager,
-    },
-    {
-      provide: TriggerEvaluator,
-      useClass: TriggerEvaluator,
-    },
   ],
-  exports: [AlertEngine, TelegramDailyRadarService, TelegramService],
+  exports: [AlertEngine, TelegramDailyRadarService, TelegramService, ...preExistingAlertServices],
 })
 export class AlertsModule {}

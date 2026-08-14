@@ -1,13 +1,21 @@
 {
-  "generatedAt": "2026-08-14T00:00:00.000Z",
+  "generatedAt": "2026-08-14T13:06:00.000Z",
   "sprint": "R2-051",
   "title": "Telegram Daily Opportunity Radar",
   "status": "IMPLEMENTED",
-  "liveVerification": "NOT_CONFIGURED",
+  "liveVerification": "PARTIALLY_VERIFIED",
   "telegram": {
     "deliveryChannelOnly": true,
     "presentationOnly": true,
     "noFakeData": true,
+    "liveChecks": {
+      "getMeAuthenticated": true,
+      "botUsername": "BistAiAnaliz_bot",
+      "botId": 8902124240,
+      "statusEndpoint": "GET /api/telegram/status -> 200, configured=false, status=NOT_CONFIGURED (TELEGRAM_CHAT_ID missing)",
+      "previewEndpoint": "GET /api/telegram/preview -> 200, UTF-8 Turkish empty-report, 40 symbols scanned (snapshot reused)",
+      "dryRunSend": "POST /api/telegram/radar/send?dryRun=true -> DRY_RUN, messagesSent=1, no message IDs (nothing sent)"
+    },
     "botApi": {
       "getMe": true,
       "sendMessage": true,
@@ -77,22 +85,23 @@
     }
   },
   "credentials": {
-    "botTokenConfigured": false,
+    "botTokenConfigured": true,
     "chatIdConfigured": false
   },
   "tests": {
     "apiTelegramSuites": 4,
-    "apiTelegramTests": 51,
+    "apiTelegramTests": 52,
     "apiRegressionSuites": 36,
-    "apiRegressionTests": 412,
+    "apiRegressionTests": 413,
     "webSdkAndTopbarTests": 49,
     "webTelegramPageTests": 4,
     "apiTypecheck": "PASS",
     "webTypecheck": "PASS"
   },
   "knownLimitations": [
-    "Live delivery pending real TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID",
+    "Live delivery pending TELEGRAM_CHAT_ID (bot token present; getMe auth verified live as BistAiAnaliz_bot)",
     "Prisma generate blocked by locked query-engine DLL; migration applied, repository falls back to in-memory until DB connects",
-    "Scheduler cooldown key is in-memory (resets on restart)"
+    "Scheduler cooldown key is in-memory (resets on restart)",
+    "Radar cold scans slow under upstream provider rate limits; Telegram snapshot-reuse mitigates repeat scans"
   ]
 }
