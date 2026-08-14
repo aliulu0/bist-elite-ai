@@ -1,0 +1,26 @@
+{
+  "generatedAt": "2026-08-14T16:53:00.000Z",
+  "telegram": {
+    "configured": false,
+    "authentication": "PARTIALLY_VERIFIED",
+    "chatIdConfigured": false,
+    "liveSend": "BLOCKED",
+    "deduplication": "NOT_TESTED",
+    "dailyRadar": "CONFIGURATION_CONTROLLED"
+  },
+  "fintables": {
+    "configured": false,
+    "authentication": "NOT_TESTED",
+    "capabilities": {},
+    "symbolsTested": [],
+    "backtestSafe": "NOT_TESTED"
+  },
+  "endToEnd": {
+    "realBistData": "PARTIALLY_VERIFIED",
+    "radar": "VERIFIED",
+    "telegramDelivery": "BLOCKED"
+  },
+  "security": {
+    "secretsExposed": false
+  }
+}
