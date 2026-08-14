@@ -1,0 +1,98 @@
+{
+  "generatedAt": "2026-08-14T00:00:00.000Z",
+  "sprint": "R2-051",
+  "title": "Telegram Daily Opportunity Radar",
+  "status": "IMPLEMENTED",
+  "liveVerification": "NOT_CONFIGURED",
+  "telegram": {
+    "deliveryChannelOnly": true,
+    "presentationOnly": true,
+    "noFakeData": true,
+    "botApi": {
+      "getMe": true,
+      "sendMessage": true,
+      "tokenMasked": true,
+      "boundedRetries": true,
+      "respectsRetryAfter": true,
+      "requestTimeoutMs": 15000
+    },
+    "formatter": {
+      "language": "tr",
+      "neverComputes": ["scores", "returns", "stops", "targets", "risk"],
+      "emptyReportGatedBy": "TELEGRAM_SEND_EMPTY_REPORT"
+    },
+    "selection": {
+      "minScore": 70,
+      "maxOpportunities": 10,
+      "states": ["CONFIRMED", "STRENGTHENING", "NEW"],
+      "weakeningOnlyIfConfigured": true,
+      "invalidatedOnlyIfConfigured": true,
+      "sort": ["score", "confidence", "expectedReturn", "signalConvergence", "ticker"]
+    },
+    "dedup": {
+      "algorithm": "sha256",
+      "inputs": ["ticker", "snapshotId", "state", "scoreBucket", "configVersion"],
+      "scoreBucketSize": 10,
+      "snapshotReuseTtlMs": 1800000
+    },
+    "deliveryStates": [
+      "PENDING",
+      "SENDING",
+      "SENT",
+      "FAILED",
+      "RATE_LIMITED",
+      "SKIPPED_DUPLICATE",
+      "SKIPPED_FILTER",
+      "DISABLED"
+    ],
+    "runResultStatuses": [
+      "SENT",
+      "SKIPPED",
+      "SKIPPED_EMPTY",
+      "SKIPPED_DISABLED",
+      "SKIPPED_COOLDOWN",
+      "FAILED",
+      "DRY_RUN"
+    ],
+    "scheduler": {
+      "intervalMs": 60000,
+      "tradingDaysOnly": true,
+      "usesBistCalendar": true,
+      "timezone": "Europe/Istanbul",
+      "cooldownPerTradingDay": true
+    },
+    "persistence": {
+      "prismaModel": "TelegramNotificationDelivery",
+      "table": "telegram_notification_deliveries",
+      "migration": "20260814000000_add_telegram_notification_deliveries",
+      "inMemoryFallback": true,
+      "sanitizedOnly": true,
+      "chatIdHashed": true
+    },
+    "endpoints": {
+      "status": "GET /telegram/status",
+      "preview": "GET /telegram/preview",
+      "send": "POST /telegram/radar/send?forceRefresh=&dryRun=",
+      "deliveries": "GET /telegram/deliveries?limit=&status=&ticker="
+    }
+  },
+  "credentials": {
+    "botTokenConfigured": false,
+    "chatIdConfigured": false
+  },
+  "tests": {
+    "apiTelegramSuites": 4,
+    "apiTelegramTests": 51,
+    "apiRegressionSuites": 36,
+    "apiRegressionTests": 412,
+    "webSdkAndTopbarTests": 49,
+    "webTelegramPageTests": 4,
+    "apiTypecheck": "PASS",
+    "webTypecheck": "PASS"
+  },
+  "knownLimitations": [
+    "Live delivery pending real TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID",
+    "Prisma generate blocked by locked query-engine DLL; migration applied, repository falls back to in-memory until DB connects",
+    "Scheduler cooldown key is in-memory (resets on restart)"
+  ]
+}

@@ -10,6 +10,7 @@ const routeTitles: Record<string, string> = {
   '/portfolio': 'Portföy Yönetimi',
   '/watchlist': 'Canlı İzleme',
   '/alerts': 'Alarm Merkezi',
+  '/telegram': 'Telegram Radarı',
   '/ai-assistant': 'AI Asistan',
   '/scanner': 'Tarayıcı',
   '/analysis': 'Analiz',

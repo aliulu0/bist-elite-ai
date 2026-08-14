@@ -194,4 +194,32 @@ describe('sdkClient', () => {
     expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('/alerts/alert-1/dismiss'), expect.objectContaining({ method: 'POST' }));
     expect(res).toHaveProperty('message');
   });
+
+  it('telegram status calls correct endpoint', async () => {
+    setupFetch({ configured: true, enabled: false, status: 'NOT_CONFIGURED', sentCount: 0 });
+    const res = await sdkClient.telegram.status();
+    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('/telegram/status'), expect.any(Object));
+    expect(res).toHaveProperty('configured');
+  });
+
+  it('telegram preview calls correct endpoint', async () => {
+    setupFetch({ opportunityCount: 0, formattedMessage: '', snapshot: {} });
+    const res = await sdkClient.telegram.preview();
+    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('/telegram/preview'), expect.any(Object));
+    expect(res).toHaveProperty('opportunityCount');
+  });
+
+  it('telegram send posts to correct endpoint', async () => {
+    setupFetch({ status: 'SENT', opportunities: 2 });
+    const res = await sdkClient.telegram.send({ dryRun: false });
+    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('/telegram/radar/send?dryRun=false'), expect.objectContaining({ method: 'POST' }));
+    expect(res).toHaveProperty('status');
+  });
+
+  it('telegram deliveries calls correct endpoint', async () => {
+    setupFetch({ deliveries: [], total: 0 });
+    const res = await sdkClient.telegram.deliveries({ limit: 50 });
+    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('/telegram/deliveries?limit=50'), expect.any(Object));
+    expect(res).toHaveProperty('deliveries');
+  });
 });

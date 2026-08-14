@@ -14,6 +14,7 @@ const BacktestPage = lazy(() => import('./pages/backtest'));
 const PortfolioPage = lazy(() => import('./pages/portfolio'));
 const WatchlistPage = lazy(() => import('./pages/watchlist'));
 const AlertsPage = lazy(() => import('./pages/alerts'));
+const TelegramPage = lazy(() => import('./pages/telegram'));
 const WorkflowsPage = lazy(() => import('./pages/workflows'));
 const PipelineStatusPage = lazy(() => import('./pages/pipeline-status'));
 const ConfigurationPage = lazy(() => import('./pages/configuration'));
@@ -59,6 +60,7 @@ export function App() {
               <Route path="/portfolio" element={<PortfolioPage />} />
               <Route path="/watchlist" element={<WatchlistPage />} />
               <Route path="/alerts" element={<AlertsPage />} />
+              <Route path="/telegram" element={<TelegramPage />} />
               <Route path="/workflows" element={<WorkflowsPage />} />
               <Route path="/pipeline-status" element={<PipelineStatusPage />} />
               <Route path="/configuration" element={<ConfigurationPage />} />

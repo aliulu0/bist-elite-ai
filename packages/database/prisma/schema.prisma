@@ -1005,3 +1005,31 @@ model SchedulerJobRun {
   @@index([startedAt])
   @@index([completedAt])
 }
+
+// ==========================================================
+// R2-051: TELEGRAM DAILY OPPORTUNITY RADAR — Delivery Log
+// ==========================================================
+
+model TelegramNotificationDelivery {
+  id                    String    @id @default(uuid())
+  fingerprint           String
+  ticker                String?
+  snapshotId            String?
+  messageType           String    @default("daily_radar")
+  status                String    // PENDING|SENDING|SENT|FAILED|RATE_LIMITED|SKIPPED_DUPLICATE|SKIPPED_FILTER|DISABLED
+  telegramMessageId     String?
+  chatIdHash            String?
+  attemptCount          Int       @default(0)
+  lastAttemptAt         DateTime?
+  deliveredAt           DateTime?
+  errorCode             String?
+  errorMessageSanitized String?
+  createdAt             DateTime  @default(now())
+
+  @@map("telegram_notification_deliveries")
+  @@index([fingerprint])
+  @@index([ticker])
+  @@index([status])
+  @@index([snapshotId])
+  @@index([createdAt])
+}

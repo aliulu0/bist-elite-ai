@@ -138,6 +138,21 @@ export const sdkClient = {
   researchIntelligenceProviders: () => sdk.researchIntelligence.getProviders(),
   researchIntelligenceRefresh: () => sdk.researchIntelligence.refresh(),
   earlyOpportunities: (limit = 10) => sdk.earlyOpportunities.list(limit),
+
+  telegram: {
+    status: () => request(`/telegram/status`),
+    preview: () => request(`/telegram/preview`),
+    send: (query?: Record<string, string | boolean>) => {
+      const params = new URLSearchParams();
+      if (query) Object.entries(query).forEach(([k, v]) => params.set(k, String(v)));
+      return request(`/telegram/radar/send${params.toString() ? `?${params}` : ''}`, { method: 'POST' });
+    },
+    deliveries: (query?: Record<string, string | number>) => {
+      const params = new URLSearchParams();
+      if (query) Object.entries(query).forEach(([k, v]) => params.set(k, String(v)));
+      return request(`/telegram/deliveries${params.toString() ? `?${params}` : ''}`);
+    },
+  },
 };
 
 export const sdk = {

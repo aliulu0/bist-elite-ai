@@ -25,6 +25,7 @@ import {
   ListChecks,
   Radar,
   History,
+  Send,
 } from 'lucide-react';
 
 const navigation = [
@@ -35,6 +36,7 @@ const navigation = [
   { key: 'portfolio', label: 'Portföy', href: '/portfolio', icon: Briefcase },
   { key: 'watchlist', label: 'İzleme', href: '/watchlist', icon: Eye },
   { key: 'alerts', label: 'Alarmlar', href: '/alerts', icon: Bell },
+  { key: 'telegram', label: 'Telegram', href: '/telegram', icon: Send },
   { key: 'workflows', label: 'İş Akışları', href: '/workflows', icon: GitBranch },
   { key: 'pipeline-status', label: 'İş Hattı', href: '/pipeline-status', icon: ListChecks },
   { key: 'ai-assistant', label: 'AI Asistan', href: '/ai-assistant', icon: Brain },

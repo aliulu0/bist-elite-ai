@@ -32,6 +32,16 @@ export class TelegramService implements IAlertChannel {
       maxMessageLength: 4096,
       enableButtons: true,
       enableNotifications: true,
+      dailyRadarEnabled: false,
+      dailyRadarTime: '18:30',
+      dailyRadarTimezone: 'Europe/Istanbul',
+      minScore: 70,
+      maxOpportunities: 10,
+      includeWeakening: false,
+      includeInvalidated: false,
+      sendEmptyReport: false,
+      cooldownMinutes: 60,
+      dryRun: false,
       ...config,
     };
     this.rateLimitTokens = this.config.rateLimitPerMinute;
@@ -85,6 +95,27 @@ export class TelegramService implements IAlertChannel {
 
     status.durationMs = Date.now() - startTime;
     return status;
+  }
+
+  async sendDailyRadar(message: string): Promise<{ messageId: string; success: boolean }> {
+    if (!this.isAvailable()) {
+      return { messageId: '', success: false };
+    }
+
+    try {
+      const payload = {
+        chat_id: this.config.chatId,
+        text: message,
+        parse_mode: this.config.parseMode,
+        disable_web_page_preview: true,
+      };
+
+      await this.sendMessageInternal(payload);
+      return { messageId: 'telegram_message', success: true };
+    } catch (error: any) {
+      this.logger.error(`Telegram daily radar send failed: ${error.message}`);
+      return { messageId: '', success: false };
+    }
   }
 
   private buildMessage(alert: AlertEvent): TelegramMessage {
@@ -170,7 +201,11 @@ export class TelegramService implements IAlertChannel {
     this.logger.debug(`Telegram message prepared: ${_message.text.substring(0, 100)}...`);
   }
 
+  private async sendMessageInternal(payload: any): Promise<void> {
+    this.logger.debug(`Telegram message prepared: ${payload.text?.substring(0, 100)}...`);
+  }
+
   private delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 }

@@ -17,6 +17,7 @@ const routeLabels: Record<string, string> = {
   '/portfolio': 'Portföy',
   '/watchlist': 'İzleme Listesi',
   '/alerts': 'Alarmlar',
+  '/telegram': 'Telegram Radarı',
   '/ai-assistant': 'AI Asistan',
   '/ai-reports': 'AI Raporlar',
 };

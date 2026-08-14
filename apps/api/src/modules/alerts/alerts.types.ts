@@ -24,6 +24,27 @@ export type AlertChannelType = 'TELEGRAM' | 'APPLICATION' | 'WEBSOCKET' | 'EMAIL
 
 export type AlertStatus = 'ACTIVE' | 'ACKNOWLEDGED' | 'DISMISSED' | 'EXPIRED';
 
+export type DailyRadarState =
+  | 'PENDING'
+  | 'RUNNING'
+  | 'COMPLETED'
+  | 'FAILED'
+  | 'DISABLED';
+
+export interface DailyRadarConfig {
+  enabled: boolean;
+  dailyRadarEnabled: boolean;
+  dailyRadarTime: string;
+  dailyRadarTimezone: string;
+  minScore: number;
+  maxOpportunities: number;
+  includeWeakening: boolean;
+  includeInvalidated: boolean;
+  sendEmptyReport: boolean;
+  cooldownMinutes: number;
+  dryRun: boolean;
+}
+
 export type WatchlistName =
   | 'FAVORITES'
   | 'PORTFOLIO'
@@ -63,6 +84,16 @@ export interface AlertChannelConfig {
   rateLimitPerMinute: number;
   retryAttempts: number;
   retryDelayMs: number;
+  dailyRadarEnabled?: boolean;
+  dailyRadarTime?: string;
+  dailyRadarTimezone?: string;
+  minScore?: number;
+  maxOpportunities?: number;
+  includeWeakening?: boolean;
+  includeInvalidated?: boolean;
+  sendEmptyReport?: boolean;
+  cooldownMinutes?: number;
+  dryRun?: boolean;
 }
 
 export interface TelegramConfig extends AlertChannelConfig {
@@ -73,6 +104,16 @@ export interface TelegramConfig extends AlertChannelConfig {
   maxMessageLength: number;
   enableButtons: boolean;
   enableNotifications: boolean;
+  dailyRadarEnabled?: boolean;
+  dailyRadarTime: string;
+  dailyRadarTimezone: string;
+  minScore: number;
+  maxOpportunities: number;
+  includeWeakening: boolean;
+  includeInvalidated: boolean;
+  sendEmptyReport: boolean;
+  cooldownMinutes: number;
+  dryRun: boolean;
 }
 
 export interface WebSocketConfig extends AlertChannelConfig {
