@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-08-14T20:30:00.000Z",
+  "telegram": {
+    "configured": true,
+    "authenticated": true,
+    "botUsername": "BistEliteBot",
+    "chatConfigured": true,
+    "chatId": "1010456264",
+    "liveDelivery": "VERIFIED",
+    "deduplication": "VERIFIED",
+    "dailyRadarEnabled": false,
+    "enabled": false
+  },
+  "localhost": {
+    "api": "VERIFIED",
+    "web": "VERIFIED",
+    "apiUrl": "http://localhost:3001",
+    "webUrl": "http://localhost:5173"
+  },
+  "fintables": {
+    "authentication": "NOT_CONFIGURED",
+    "emailPresent": false,
+    "passwordPresent": false,
+    "runtime": "NOT_TESTED"
+  },
+  "providerStatus": {
+    "Yahoo": "PARTIALLY_VERIFIED",
+    "Finnhub": "PARTIALLY_VERIFIED",
+    "Alpha Vantage": "PARTIALLY_VERIFIED",
+    "SerpAPI": "PARTIALLY_VERIFIED",
+    "Fintables": "NOT_CONFIGURED",
+    "KAP": "UNAVAILABLE",
+    "TCMB": "UNAVAILABLE",
+    "MKK": "UNAVAILABLE"
+  },
+  "ui": {
+    "routesVerified": 11,
+    "consoleErrors": 0,
+    "failedRequests": 0,
+    "turkishLabels": true
+  },
+  "build": {
+    "api": "nest build (completed)",
+    "web": "Vite dev server running"
+  },
+  "security": {
+    "secretsExposed": false,
+    "envGitignored": true
+  }
+}
