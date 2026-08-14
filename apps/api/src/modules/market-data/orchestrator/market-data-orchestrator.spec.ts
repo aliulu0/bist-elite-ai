@@ -110,6 +110,7 @@ describe('MarketDataOrchestrator', () => {
       getOrSet: jest.fn(),
       invalidate: jest.fn(),
       clearAll: jest.fn(),
+      getProviderCacheEntries: jest.fn().mockReturnValue(0),
     };
     cacheService = mockCacheService as unknown as MarketDataCacheService;
   });
@@ -970,6 +971,76 @@ describe('MarketDataOrchestrator', () => {
       expect(t1h!.sourceTimeframe).toBe('4h');
       expect(t6m!.status).toBe('UNAVAILABLE');
       expect(t6m!.providers).toEqual([]);
+    });
+  });
+
+  describe('provider request budgeting (R2-050C)', () => {
+    function makeBudgetConfig(limit: number, provider = 'alpha_vantage'): MarketDataConfig {
+      const base = makeConfig();
+      base.providers = {
+        ...base.providers,
+        [provider]: { ...base.providers[provider as keyof MarketDataConfig['providers']], budget: { dailyLimit: limit, windowMs: 60_000 } },
+      };
+      return base;
+    }
+
+    it('skips a provider whose budget is exhausted and falls back to the next', async () => {
+      const p1 = createMockProvider('alpha_vantage', {
+        fetchCompany: jest.fn().mockRejectedValue(new Error('fail')),
+      });
+      const p2 = createMockProvider('finnhub', {
+        fetchCompany: jest.fn().mockResolvedValue(createCompany('THYAO', 'finnhub')),
+      });
+      const config = makeBudgetConfig(1);
+      const orchestrator = new MarketDataOrchestrator(circuitBreaker, cacheService, [p1, p2], config);
+
+      await orchestrator.fetchCompany('THYAO');
+      const result = await orchestrator.fetchCompany('THYAO');
+
+      // First call exhausted alpha_vantage's budget of 1; the second must skip it.
+      expect(result).not.toBeNull();
+      expect(result!.provider).toBe('finnhub');
+      expect(result!.actualProvider).toBe('finnhub');
+      expect(p1.fetchCompany).toHaveBeenCalledTimes(1);
+      expect(p2.fetchCompany).toHaveBeenCalledTimes(2);
+    });
+
+    it('restores budget after the configured window elapses', async () => {
+      const config = makeConfig();
+      config.providers = {
+        ...config.providers,
+        alpha_vantage: { ...config.providers.alpha_vantage, budget: { dailyLimit: 2, windowMs: 5 } },
+      };
+      const p1 = createMockProvider('alpha_vantage', {
+        fetchCompany: jest.fn().mockRejectedValue(new Error('fail')),
+      });
+      const orchestrator = new MarketDataOrchestrator(circuitBreaker, cacheService, [p1], config);
+
+      // Exhaust the 2-request budget via real failure calls.
+      await orchestrator.fetchCompany('THYAO');
+      await orchestrator.fetchCompany('THYAO');
+      let entry = orchestrator.getProviderDashboard().find((d) => d.name === 'alpha_vantage');
+      expect(entry!.budget!.remaining).toBe(0);
+
+      // Wait past the tiny reset window; remaining restores to the limit.
+      await new Promise((resolve) => setTimeout(resolve, 10));
+      entry = orchestrator.getProviderDashboard().find((d) => d.name === 'alpha_vantage');
+      expect(entry!.budget!.remaining).toBe(2);
+    });
+
+    it('exposes budget state in provider dashboard without secrets', () => {
+      const config = makeBudgetConfig(60, 'finnhub');
+      const orchestrator = new MarketDataOrchestrator(circuitBreaker, cacheService, [], config);
+      const p1 = createMockProvider('finnhub');
+      orchestrator.registerProvider(p1);
+
+      const dashboard = orchestrator.getProviderDashboard();
+      const entry = dashboard.find((d) => d.name === 'finnhub');
+      expect(entry).toBeDefined();
+      expect(entry!.budget).toBeDefined();
+      expect(entry!.budget!.provider).toBe('finnhub');
+      expect(entry!.budget!.remaining).toBe(entry!.budget!.limit);
+      expect(JSON.stringify(entry)).not.toContain('apiKey');
     });
   });
 });

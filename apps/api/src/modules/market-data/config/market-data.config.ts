@@ -1,3 +1,8 @@
+export interface ProviderBudgetConfig {
+  dailyLimit: number;
+  windowMs: number;
+}
+
 export interface ProviderConfig {
   enabled: boolean;
   priority: number;
@@ -5,6 +10,7 @@ export interface ProviderConfig {
   retries: number;
   apiKey: string;
   baseUrl: string;
+  budget?: ProviderBudgetConfig;
 }
 
 export interface MarketDataConfig {
@@ -48,6 +54,10 @@ export function getMarketDataConfig(): MarketDataConfig {
         retries: parseInt(process.env.FINNHUB_RETRY_COUNT || '3', 10),
         apiKey: process.env.FINNHUB_API_KEY || '',
         baseUrl: process.env.FINNHUB_BASE_URL || 'https://finnhub.io/api/v1',
+        budget: {
+          dailyLimit: parseInt(process.env.FINNHUB_DAILY_LIMIT || '60', 10),
+          windowMs: 24 * 60 * 60 * 1000,
+        },
       },
       alpha_vantage: {
         enabled: process.env.ALPHA_VANTAGE_ENABLED !== 'false',
@@ -56,6 +66,10 @@ export function getMarketDataConfig(): MarketDataConfig {
         retries: parseInt(process.env.ALPHA_VANTAGE_RETRY_COUNT || '3', 10),
         apiKey: process.env.ALPHA_VANTAGE_API_KEY || '',
         baseUrl: process.env.ALPHA_VANTAGE_BASE_URL || 'https://www.alphavantage.co/query',
+        budget: {
+          dailyLimit: parseInt(process.env.ALPHA_VANTAGE_DAILY_LIMIT || '25', 10),
+          windowMs: 24 * 60 * 60 * 1000,
+        },
       },
       yahoo: {
         enabled: process.env.YAHOO_ENABLED !== 'false',

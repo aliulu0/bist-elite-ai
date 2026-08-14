@@ -128,6 +128,9 @@ export interface MarketDataResult<T> {
   dataQuality?: DataQuality;
   validated?: boolean;
   attemptedProviders?: string[];
+  actualProvider?: string;
+  providerAttempts?: number;
+  freshness?: string;
   incremental?: IncrementalUpdate;
   /**
    * Optional enrichment produced by the existing FinancialDataQualityService

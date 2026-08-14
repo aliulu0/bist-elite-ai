@@ -27,6 +27,17 @@ import { PLATFORM_TIMEFRAMES, PREDICTION_TIMEFRAME_MAPPING } from '../coverage/c
 
 export type ProviderDashboardStatus = 'healthy' | 'degraded' | 'down' | 'unconfigured';
 
+export interface ProviderBudgetEntry {
+  provider: string;
+  capability: string;
+  limit: number;
+  used: number;
+  remaining: number;
+  resetAt: number | null;
+  priority: number;
+  cooldownUntil: number | null;
+}
+
 export interface ProviderDashboardEntry {
   name: string;
   enabled: boolean;
@@ -41,6 +52,7 @@ export interface ProviderDashboardEntry {
   authConfigured: boolean;
   cacheEntries: number;
   coverage: number;
+  budget?: ProviderBudgetEntry;
 }
 
 export interface ProviderConfigurationEntry {
@@ -70,6 +82,7 @@ export class MarketDataOrchestrator {
   private readonly logger = new Logger(MarketDataOrchestrator.name);
   private readonly providers: IUnifiedMarketDataProvider[] = [];
   private readonly providerConfigs: Map<string, ProviderConfig> = new Map();
+  private readonly providerBudgets: Map<string, Map<string, ProviderBudgetEntry>> = new Map();
   private readonly config: MarketDataConfig;
 
   constructor(
@@ -225,6 +238,10 @@ export class MarketDataOrchestrator {
       const status = provider.getStatus();
       const enabled = config?.enabled ?? false;
       const authConfigured = !!config?.apiKey || this.hasPublicEndpoint(provider.name);
+      const latestBudget = this.getProviderBudget(provider.name, 'latestPrice')
+        ?? this.getProviderBudget(provider.name, 'historicalData')
+        ?? this.getProviderBudget(provider.name, 'company')
+        ?? this.configuredBudgetEntry(provider.name, config);
 
       return {
         name: provider.name,
@@ -240,6 +257,7 @@ export class MarketDataOrchestrator {
         authConfigured,
         cacheEntries: this.cacheService.getProviderCacheEntries(provider.name),
         coverage: this.symbolRegistry?.getCoverageForProvider(provider.name as never) ?? 0,
+        budget: latestBudget ? { ...latestBudget } : undefined,
       };
     });
   }
@@ -401,6 +419,12 @@ export class MarketDataOrchestrator {
         continue;
       }
 
+      const budget = this.getProviderBudget(provider.name, 'latestPrice');
+      if (budget && budget.remaining <= 0) {
+        this.logger.debug(`Skipping ${provider.name} (latestPrice budget exhausted)`);
+        continue;
+      }
+
       attemptedProviders.push(provider.name);
 
       try {
@@ -414,6 +438,9 @@ export class MarketDataOrchestrator {
           const dataQuality: DataQuality =
             validated.validationStatus === 'partial' ? 'PARTIAL' : 'VALID';
           this.cacheStore(provider.name, 'latestPrice', symbol, validated, this.config.cache.historicalTtlMs);
+          const actualProvider = provider.name;
+          const fallbackUsed = attemptedProviders.length > 1;
+          const providerAttempts = attemptedProviders.length;
           return {
             data: validated,
             provider: provider.name,
@@ -422,13 +449,17 @@ export class MarketDataOrchestrator {
             validated: !!this.validationService,
             dataQuality,
             attemptedProviders,
-            fallbackUsed: attemptedProviders.length > 1,
+            fallbackUsed,
+            actualProvider,
+            providerAttempts,
+            freshness: validated.timestamp ? 'fresh' : 'stale',
           };
         }
       } catch (error) {
         this.logger.warn(
           `Provider ${provider.name} failed for ${symbol} (latest): ${error instanceof Error ? error.message : String(error)}`,
         );
+        this.recordProviderRequestBudget(provider.name, 'latestPrice', false);
         this.circuitBreaker.recordFailure(provider.name);
       }
     }
@@ -496,6 +527,12 @@ export class MarketDataOrchestrator {
         continue;
       }
 
+      const budget = this.getProviderBudget(provider.name, 'historicalData');
+      if (budget && budget.remaining <= 0) {
+        this.logger.debug(`Skipping ${provider.name} (historicalData budget exhausted)`);
+        continue;
+      }
+
       attemptedProviders.push(provider.name);
 
       try {
@@ -509,6 +546,10 @@ export class MarketDataOrchestrator {
 
           const hasPartial = validated.some((p) => p.validationStatus === 'partial');
           const dataQuality: DataQuality = hasPartial ? 'PARTIAL' : 'VALID';
+          this.recordProviderRequestBudget(provider.name, 'historicalData', true);
+          const actualProvider = provider.name;
+          const fallbackUsed = attemptedProviders.length > 1;
+          const providerAttempts = attemptedProviders.length;
           return {
             data: validated,
             provider: provider.name,
@@ -518,13 +559,17 @@ export class MarketDataOrchestrator {
             validated: !!this.validationService,
             dataQuality,
             attemptedProviders,
-            fallbackUsed: attemptedProviders.length > 1,
+            fallbackUsed,
+            actualProvider,
+            providerAttempts,
+            freshness: validated.some((p) => p.timestamp) ? 'fresh' : 'stale',
           };
         }
       } catch (error) {
         this.logger.warn(
           `Provider ${provider.name} failed for ${symbol} (${timeframe}): ${error instanceof Error ? error.message : String(error)}`,
         );
+        this.recordProviderRequestBudget(provider.name, 'historicalData', false);
         this.circuitBreaker.recordFailure(provider.name);
       }
     }
@@ -591,23 +636,40 @@ export class MarketDataOrchestrator {
         continue;
       }
 
+      const budget = this.getProviderBudget(provider.name, type);
+      if (budget && budget.remaining <= 0) {
+        this.logger.debug(`Skipping ${provider.name} (${type} budget exhausted)`);
+        continue;
+      }
+
       attemptedProviders.push(provider.name);
 
       try {
         const result = await fetcher(provider);
         if (result !== null) {
+          this.recordProviderRequestBudget(provider.name, type, true);
           this.cacheStore(provider.name, type, symbol, result, cacheTtlMs);
           this.logger.debug(`Data fetched for ${symbol} (${type}) from ${provider.name}`);
+          const actualProvider = provider.name;
+          const fallbackUsed = attemptedProviders.length > 1;
+          const providerAttempts = attemptedProviders.length;
           return {
             data: result,
             provider: provider.name,
             cached: false,
             timestamp: new Date().toISOString(),
             attemptedProviders,
-            fallbackUsed: attemptedProviders.length > 1,
+            fallbackUsed,
+            actualProvider,
+            providerAttempts,
+            freshness:
+              typeof result === 'object' && result !== null && 'timestamp' in result
+                ? 'fresh'
+                : 'stale',
           };
         }
       } catch (error) {
+        this.recordProviderRequestBudget(provider.name, type, false);
         this.logger.warn(
           `Provider ${provider.name} failed for ${symbol} (${type}): ${error instanceof Error ? error.message : String(error)}`,
         );
@@ -681,5 +743,93 @@ export class MarketDataOrchestrator {
         baseUrl: '',
       }
     );
+  }
+
+  private getProviderBudget(provider: string, capability: string): ProviderBudgetEntry | null {
+    const providerCaps = this.providerBudgets.get(provider);
+    if (!providerCaps) return null;
+    const budget = providerCaps.get(capability) ?? null;
+    if (!budget) return null;
+    if (budget.resetAt && Date.now() >= budget.resetAt) {
+      budget.used = 0;
+      budget.remaining = budget.limit;
+      budget.cooldownUntil = null;
+      budget.resetAt = null;
+    }
+    return budget;
+  }
+
+  private configuredBudgetEntry(provider: string, config?: ProviderConfig): ProviderBudgetEntry | null {
+    const budgetCfg = config?.budget;
+    if (!budgetCfg || !(budgetCfg.dailyLimit > 0)) return null;
+    return {
+      provider,
+      capability: 'company',
+      limit: budgetCfg.dailyLimit,
+      used: 0,
+      remaining: budgetCfg.dailyLimit,
+      resetAt: budgetCfg.windowMs ? Date.now() + budgetCfg.windowMs : null,
+      priority: config?.priority ?? 99,
+      cooldownUntil: null,
+    };
+  }
+
+  private recordProviderRequestBudget(provider: string, capability: string, success: boolean): void {
+    let providerCaps = this.providerBudgets.get(provider);
+    if (!providerCaps) {
+      providerCaps = new Map<string, ProviderBudgetEntry>();
+      this.providerBudgets.set(provider, providerCaps);
+    }
+
+    let budget = providerCaps.get(capability);
+    if (!budget) {
+      const config = this.getProviderConfig(provider);
+      const budgetCfg = config?.budget;
+      const limit = budgetCfg?.dailyLimit && budgetCfg.dailyLimit > 0 ? budgetCfg.dailyLimit : 1_000_000;
+      budget = {
+        provider,
+        capability,
+        limit,
+        used: 0,
+        remaining: limit,
+        resetAt: budgetCfg?.windowMs ? Date.now() + budgetCfg.windowMs : null,
+        priority: config?.priority ?? 99,
+        cooldownUntil: null,
+      };
+      providerCaps.set(capability, budget);
+    }
+
+    if (success) {
+      budget.used++;
+      budget.remaining = Math.max(0, budget.limit - budget.used);
+    } else {
+      budget.used = Math.min(budget.limit, budget.used + 1);
+      budget.remaining = Math.max(0, budget.limit - budget.used);
+    }
+  }
+
+  private resetProviderBudget(provider: string, capability: string): void {
+    const providerCaps = this.providerBudgets.get(provider);
+    if (!providerCaps) return;
+    const budget = providerCaps.get(capability);
+    if (budget) {
+      budget.used = 0;
+      budget.remaining = budget.limit;
+      budget.resetAt = Date.now();
+      budget.cooldownUntil = null;
+    }
+  }
+
+  private isInCooldown(provider: string, capability: string): boolean {
+    const budget = this.getProviderBudget(provider, capability);
+    if (!budget) return false;
+    if (!budget.cooldownUntil) return false;
+    return Date.now() < budget.cooldownUntil;
+  }
+
+  private markProviderInCooldown(provider: string, capability: string, durationMs: number): void {
+    const budget = this.getProviderBudget(provider, capability);
+    if (!budget) return;
+    budget.cooldownUntil = Date.now() + durationMs;
   }
 }
