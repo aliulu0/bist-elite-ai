@@ -1,0 +1,84 @@
+{
+  "generatedAt": "2026-08-14T22:00:00.000Z",
+  "localhost": {
+    "api": "VERIFIED",
+    "web": "VERIFIED",
+    "apiUrl": "http://localhost:3001",
+    "webUrl": "http://localhost:5173",
+    "routesVerified": 11,
+    "consoleErrors": 0,
+    "failedRequests": 0
+  },
+  "integrations": {
+    "tradingAgents": {
+      "status": "OPTIONAL_NOT_ACTIVATED",
+      "adapterDefined": true,
+      "enabled": false,
+      "timeoutMs": 30000,
+      "gracefulFailure": true
+    },
+    "nofx": {
+      "status": "EVALUATED_CONCEPTS_ONLY",
+      "fullIntegration": false,
+      "adapters": [],
+      "availableConcepts": ["strategy_scoring", "risk_checks", "signal_confirmation", "trade_state_reasoning"]
+    },
+    "aiBerkshire": {
+      "status": "OPTIONAL_INTEGRATION_POINT",
+      "adapterDefined": true,
+      "enabled": false,
+      "outputSection": "AI İkinci Görüş on stock detail page",
+      "outputFields": ["quality", "valuation", "business_strength", "long_term_risk", "contrarian_observations"]
+    },
+    "agentReach": {
+      "status": "RESEARCH_ACCESS_LAYER",
+      "evidenceNormalization": "AIResearchHub",
+      "fullEngine": false,
+      "researchTargets": ["web_pages", "news", "github", "youtube", "reddit", "twitter", "rss", "general_web"],
+      "bistUseCases": ["kap_research", "company_announcements", "management_interviews", "sector_news", "company_news", "macro_commentary", "industry_developments", "investor discussions"]
+    },
+    "vectorbt": {
+      "status": "OPTIONAL_BENCHMARK_ADAPTER",
+      "replacesR2-046": false,
+      "comparisonReport": false,
+      "primaryEngine": "R2-046"
+    }
+  },
+  "providers": {
+    "Yahoo": "PARTIALLY_VERIFIED",
+    "Finnhub": "PARTIALLY_VERIFIED",
+    "Alpha Vantage": "PARTIALLY_VERIFIED",
+    "SerpAPI": "PARTIALLY_VERIFIED",
+    "Fintables": "NOT_ACTIVATED",
+    "KAP": "CORPORATE_DISCLOSURE_SOURCE",
+    "TCMB": "MACRO_DATA_SOURCE",
+    "MKK": "EVALUATED_AVAILABILITY_UNKNOWN"
+  },
+  "telegram": {
+    "authenticated": true,
+    "botUsername": "BistEliteBot",
+    "chatConfigured": true,
+    "liveDelivery": "VERIFIED",
+    "deduplication": "VERIFIED"
+  },
+  "tests": {
+    "telegram52": "52/52 pass",
+    "regression413": "413/413 pass",
+    "typecheckAPI": "pending",
+    "typecheckWeb": "pending"
+  },
+  "security": {
+    "secretsExposed": false,
+    "envGitignored": true,
+    "tokenMasked": true
+  },
+  "knownLimitations": [
+    "Fintables credentials commented out in .env — activate if needed",
+    "TradingAgents/NOFX/AI-Berkshire/Agent-Reach not activated by default (opt-in)",
+    "Telegram scheduler defaults apply (TELEGRAM_ENABLED not set explicitly)",
+    "Provider rate limits possible (429 under load)",
+    "Prisma DLL lock on Windows (harmless to runtime)",
+    "API running without DB/Redis in this session",
+    "VectorBT optional — does not replace R2-046 primary backtest"
+  ]
+}
