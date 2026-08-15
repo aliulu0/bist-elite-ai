@@ -1,0 +1,166 @@
+{
+  "generatedAt": "2026-08-15T16:15:00.000Z",
+  "symbols": [
+    {
+      "ticker": "THYAO",
+      "sources": [
+        {
+          "provider": "Yahoo",
+          "status": "VERIFIED",
+          "price": 305.25,
+          "currency": "TRY",
+          "providerTimestamp": "2026-08-14T06:30:00.000Z",
+          "retrievedAt": "2026-08-15T16:05:50.313Z",
+          "fresh": true
+        }
+      ],
+      "comparison": {
+        "status": "UNVERIFIABLE",
+        "maxDeviationPct": null,
+        "confidence": "MEDIUM"
+      }
+    },
+    {
+      "ticker": "AKBNK",
+      "sources": [
+        {
+          "provider": "Yahoo",
+          "status": "VERIFIED",
+          "price": 68.80000305175781,
+          "currency": "TRY",
+          "providerTimestamp": "2026-08-14T06:30:00.000Z",
+          "retrievedAt": "2026-08-15T16:07:19.723Z",
+          "fresh": true
+        }
+      ],
+      "comparison": {
+        "status": "UNVERIFIABLE",
+        "maxDeviationPct": null,
+        "confidence": "MEDIUM"
+      }
+    },
+    {
+      "ticker": "ASELS",
+      "sources": [
+        {
+          "provider": "Yahoo",
+          "status": "VERIFIED",
+          "price": 387.5,
+          "currency": "TRY",
+          "providerTimestamp": "2026-08-14T06:30:00.000Z",
+          "retrievedAt": "2026-08-15T16:07:19.790Z",
+          "fresh": true
+        }
+      ],
+      "comparison": {
+        "status": "UNVERIFIABLE",
+        "maxDeviationPct": null,
+        "confidence": "MEDIUM"
+      }
+    },
+    {
+      "ticker": "BIMAS",
+      "sources": [
+        {
+          "provider": "Yahoo",
+          "status": "VERIFIED",
+          "price": 374.75,
+          "currency": "TRY",
+          "providerTimestamp": "2026-08-14T06:30:00.000Z",
+          "retrievedAt": "2026-08-15T16:07:19.800Z",
+          "fresh": true
+        }
+      ],
+      "comparison": {
+        "status": "UNVERIFIABLE",
+        "maxDeviationPct": null,
+        "confidence": "MEDIUM"
+      }
+    },
+    {
+      "ticker": "TUPRS",
+      "sources": [
+        {
+          "provider": "Yahoo",
+          "status": "VERIFIED",
+          "price": 361.75,
+          "currency": "TRY",
+          "providerTimestamp": "2026-08-14T06:30:00.000Z",
+          "retrievedAt": "2026-08-15T16:07:19.810Z",
+          "fresh": true
+        }
+      ],
+      "comparison": {
+        "status": "UNVERIFIABLE",
+        "maxDeviationPct": null,
+        "confidence": "MEDIUM"
+      }
+    },
+    {
+      "ticker": "GARAN",
+      "sources": [
+        {
+          "provider": "Yahoo",
+          "status": "VERIFIED",
+          "price": 131,
+          "currency": "TRY",
+          "providerTimestamp": "2026-08-14T06:30:00.000Z",
+          "retrievedAt": "2026-08-15T16:07:19.819Z",
+          "fresh": true
+        }
+      ],
+      "comparison": {
+        "status": "UNVERIFIABLE",
+        "maxDeviationPct": null,
+        "confidence": "MEDIUM"
+      }
+    }
+  ],
+  "research": {
+    "serpapi": {
+      "configured": true,
+      "apiKeyConfigured": true,
+      "totalRequests": 588,
+      "engines": {
+        "google": { "status": "ok", "requests": 588 },
+        "google_finance": { "status": "ok", "requests": 588 },
+        "google_news": { "status": "ok", "requests": 588 },
+        "google_ai_mode": { "status": "ok", "requests": 588 }
+      },
+      "secondaryVerification": true,
+      "primaryPriceProvider": false,
+      "note": "Google Finance is secondary verification source; must NOT become primary market-data provider"
+    },
+    "agentReach": {
+      "installed": true,
+      "version": "npm package agent-reach.adapter",
+      "channels": [
+        "company",
+        "news",
+        "sector",
+        "market",
+        "keyword",
+        "company_website",
+        "investor_relations"
+      ],
+      "totalRequests": 588,
+      "quotaLimit": 100,
+      "quotaUsed": 588,
+      "priceFindings": {
+        "classification": "WEB_RESEARCH_EVIDENCE",
+        "secondaryUnlessValidated": true,
+        "evidenceType": "STRUCTURED_MARKET_DATA_OR_WEB_RESEARCH_EVIDENCE"
+      },
+      "attributionPreserved": true,
+      "evidenceTypes": ["STRUCTURED_MARKET_DATA", "WEB_RESEARCH_EVIDENCE"],
+      "sourceTypes": ["research", "regulatory", "fundamental", "macro"]
+    },
+    "fintables": {
+      "configured": false,
+      "credentials": "not configured in .env",
+      "priority": 1,
+      "enabled": false,
+      "note": "Cannot perform runtime verification without Fintables credentials (FINTABLES_USERNAME/PASSWORD or FINTABLES_API_KEY)"
+    }
+  }
+}
