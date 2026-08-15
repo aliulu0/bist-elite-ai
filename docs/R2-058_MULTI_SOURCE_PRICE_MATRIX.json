@@ -1,0 +1,125 @@
+{
+  "generatedAt": "2026-08-15T19:35:00Z",
+  "symbols": [
+    {
+      "ticker": "THYAO",
+      "sources": [
+        {
+          "provider": "Yahoo",
+          "price": 305.25,
+          "currency": "TRY",
+          "retrievedAt": "2026-08-15T19:17:39.295Z",
+          "fresh": true,
+          "valid": true,
+          "status": "VERIFIED"
+        }
+      ],
+      "consensus": {
+        "price": 305.25,
+        "confidence": 0.55,
+        "agreement": "SINGLE_SOURCE",
+        "materialDiscrepancy": false
+      }
+    },
+    {
+      "ticker": "AKBNK",
+      "sources": [
+        {
+          "provider": "Yahoo",
+          "price": 68.8,
+          "currency": "TRY",
+          "retrievedAt": "2026-08-15T19:17:54.217Z",
+          "fresh": true,
+          "valid": true,
+          "status": "VERIFIED"
+        }
+      ],
+      "consensus": {
+        "price": 68.8,
+        "confidence": 0.55,
+        "agreement": "SINGLE_SOURCE",
+        "materialDiscrepancy": false
+      }
+    },
+    {
+      "ticker": "ASELS",
+      "sources": [
+        {
+          "provider": "Yahoo",
+          "price": 387.5,
+          "currency": "TRY",
+          "retrievedAt": "2026-08-15T19:18:18.770Z",
+          "fresh": true,
+          "valid": true,
+          "status": "VERIFIED"
+        }
+      ],
+      "consensus": {
+        "price": 387.5,
+        "confidence": 0.55,
+        "agreement": "SINGLE_SOURCE",
+        "materialDiscrepancy": false
+      }
+    },
+    {
+      "ticker": "BIMAS",
+      "sources": [
+        {
+          "provider": "Yahoo",
+          "price": 374.75,
+          "currency": "TRY",
+          "retrievedAt": "2026-08-15T19:18:33.811Z",
+          "fresh": true,
+          "valid": true,
+          "status": "VERIFIED"
+        }
+      ],
+      "consensus": {
+        "price": 374.75,
+        "confidence": 0.55,
+        "agreement": "SINGLE_SOURCE",
+        "materialDiscrepancy": false
+      }
+    },
+    {
+      "ticker": "TUPRS",
+      "sources": [
+        {
+          "provider": "Yahoo",
+          "price": 361.75,
+          "currency": "TRY",
+          "retrievedAt": "2026-08-15T19:18:48.774Z",
+          "fresh": true,
+          "valid": true,
+          "status": "VERIFIED"
+        }
+      ],
+      "consensus": {
+        "price": 361.75,
+        "confidence": 0.55,
+        "agreement": "SINGLE_SOURCE",
+        "materialDiscrepancy": false
+      }
+    },
+    {
+      "ticker": "GARAN",
+      "sources": [
+        {
+          "provider": "Yahoo",
+          "price": 131,
+          "currency": "TRY",
+          "retrievedAt": "2026-08-15T19:19:03.803Z",
+          "fresh": true,
+          "valid": true,
+          "status": "VERIFIED"
+        }
+      ],
+      "consensus": {
+        "price": 131,
+        "confidence": 0.55,
+        "agreement": "SINGLE_SOURCE",
+        "materialDiscrepancy": false
+      }
+    }
+  ]
+}
