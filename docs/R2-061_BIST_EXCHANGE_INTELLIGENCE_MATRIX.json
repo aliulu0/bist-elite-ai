@@ -1,0 +1,171 @@
+{
+  "symbol": "THYAO",
+  "providers": {
+    "YAHOO_FINANCE": {
+      "status": "REAL_DATA",
+      "price": 305.25,
+      "currency": "TRY"
+    },
+    "GOOGLE_FINANCE": {
+      "status": "UNAVAILABLE",
+      "price": null,
+      "currency": "TRY"
+    }
+  },
+  "marketIndex": {
+    "bist100": {
+      "value": null,
+      "previousClose": null,
+      "change": null,
+      "changePercent": null,
+      "timestamp": null,
+      "coverage": "PARTIAL",
+      "status": "UNAVAILABLE",
+      "constituentsWithData": 0,
+      "totalConstituents": 100
+    },
+    "bist30": {
+      "value": null,
+      "previousClose": null,
+      "change": null,
+      "changePercent": null,
+      "timestamp": null,
+      "coverage": "PARTIAL",
+      "status": "UNAVAILABLE",
+      "constituentsWithData": 0,
+      "totalConstituents": 30
+    }
+  },
+  "marketBreadth": {
+    "advancers": null,
+    "decliners": null,
+    "unchanged": null,
+    "totalUniverse": null,
+    "coverage": "NONE",
+    "status": "UNAVAILABLE"
+  },
+  "advanceDeclineRatio": {
+    "ratio": null,
+    "advancers": null,
+    "decliners": null,
+    "zeroDecliners": false,
+    "status": "UNAVAILABLE"
+  },
+  "relativeStrength": {
+    "THYAO": {
+      "vsMarket": null,
+      "vsSector": null,
+      "market": "BIST100",
+      "timeframe": "1D",
+      "status": "UNAVAILABLE"
+    },
+    "AKBNK": {
+      "vsMarket": null,
+      "vsSector": null,
+      "market": "BIST100",
+      "timeframe": "1D",
+      "status": "UNAVAILABLE"
+    },
+    "ASELS": {
+      "vsMarket": null,
+      "vsSector": null,
+      "market": "BIST100",
+      "timeframe": "1D",
+      "status": "UNAVAILABLE"
+    },
+    "BIMAS": {
+      "vsMarket": null,
+      "vsSector": null,
+      "market": "BIST100",
+      "timeframe": "1D",
+      "status": "UNAVAILABLE"
+    },
+    "TUPRS": {
+      "vsMarket": null,
+      "vsSector": null,
+      "market": "BIST100",
+      "timeframe": "1D",
+      "status": "UNAVAILABLE"
+    },
+    "GARAN": {
+      "vsMarket": null,
+      "vsSector": null,
+      "market": "BIST100",
+      "timeframe": "1D",
+      "status": "UNAVAILABLE"
+    }
+  },
+  "volumeIntelligence": {
+    "THYAO": {
+      "currentVolume": null,
+      "averageVolume": null,
+      "relativeVolume": null,
+      "volumeSpike": null,
+      "spikeThreshold": 2.0,
+      "status": "UNAVAILABLE"
+    },
+    "AKBNK": {
+      "currentVolume": null,
+      "averageVolume": null,
+      "relativeVolume": null,
+      "volumeSpike": null,
+      "spikeThreshold": 2.0,
+      "status": "UNAVAILABLE"
+    },
+    "ASELS": {
+      "currentVolume": null,
+      "averageVolume": null,
+      "relativeVolume": null,
+      "volumeSpike": null,
+      "spikeThreshold": 2.0,
+      "status": "UNAVAILABLE"
+    },
+    "BIMAS": {
+      "currentVolume": null,
+      "averageVolume": null,
+      "relativeVolume": null,
+      "volumeSpike": null,
+      "spikeThreshold": 2.0,
+      "status": "UNAVAILABLE"
+    },
+    "TUPRS": {
+      "currentVolume": null,
+      "averageVolume": null,
+      "relativeVolume": null,
+      "volumeSpike": null,
+      "spikeThreshold": 2.0,
+      "status": "UNAVAILABLE"
+    },
+    "GARAN": {
+      "currentVolume": null,
+      "averageVolume": null,
+      "relativeVolume": null,
+      "volumeSpike": null,
+      "spikeThreshold": 2.0,
+      "status": "UNAVAILABLE"
+    }
+  },
+  "turnover": {
+    "dailyTurnover": null,
+    "previousDayTurnover": null,
+    "turnoverChangePercent": null,
+    "status": "UNAVAILABLE"
+  },
+  "marketRegime": {
+    "regime": "UNKNOWN",
+    "confidence": "NONE",
+    "supportingIndicators": {
+      "breadth": null,
+      "momentum": null,
+      "trend": null
+    },
+    "explanation": "Insufficient data for regime classification: BIST100 index unavailable, market breadth counts unavailable",
+    "status": "UNAVAILABLE"
+  },
+  "dataQuality": {
+    "freshness": "UNAVAILABLE",
+    "coverage": "0%",
+    "lastRefreshed": null,
+    "sourcesVerified": ["Yahoo Finance"]
+  }
+}
