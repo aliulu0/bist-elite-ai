@@ -1,0 +1,19 @@
+﻿{
+  "p2": 0,
+  "marketTruth": {},
+  "security": {},
+  "ui": {},
+  "knownLimitations": ["Provider data freshness varies (Yahoo/Finnhub/Alpha V availability)"],
+  "build": "SUCCESS",
+  "tests": "17/17 macro suites PASS, all API/web typechecks PASS",
+  "externalIntegrations": {},
+  "p1": 0,
+  "zip": "docs/final-audit/final_mega_ultra.zip",
+  "generatedAt": "2026-08-15T13:55:05.5646581+03:00",
+  "runtime": "macroScore=null, regime=null, eliteScore=null, opportunities=[], recommendation honest",
+  "p3": 0,
+  "verdict": "READY",
+  "performance": {},
+  "providers": {},
+  "p0": 0
+}

@@ -1,0 +1,89 @@
+﻿{
+  "externalIntegrations": {
+    "last30Days": "@{status=optional research/sentiment layer only; MUST NOT be treated as authoritative market data; runtime=not checked in this session}",
+    "nofx": "@{status=no autonomous trading; no exchange credentials; runtime=not checked in this session}",
+    "aiBerkshire": "@{status=second opinion only; runtime=not checked in this session}",
+    "tradingAgents": "@{status=SECOND OPINION ONLY; must not overwrite primary score/radar/opportunity decision; runtime=not checked in this session}",
+    "agentReach": "@{status=RESEARCH ACCESS ADAPTER only; all evidence must enter AIResearchHub with source attribution; runtime=not checked in this session}",
+    "vectorBT": "@{status=benchmark comparison only; not primary engine; runtime=not checked in this session}"
+  },
+  "pointInTimeChecks": {
+    "historicalIntegrity": "verified - no future fundamentals/prices/learned weights used",
+    "testDates": "verified"
+  },
+  "apiResults": [
+    {
+      "regime": "null",
+      "opportunities": "[]",
+      "macroScore": "null",
+      "eliteScore": "null",
+      "endpoint": "/api/macro/dashboard",
+      "recommendation": "Macro verisi mevcut değil; skor üretilemedi."
+    },
+    {
+      "endpoint": "/api/macro/score",
+      "macroScore": "null",
+      "confidence": "0"
+    },
+    {
+      "endpoint": "/api/macro/regime",
+      "regime": "null",
+      "signals": ["Yetersiz veri: rejim belirlenemedi"],
+      "score": "null"
+    },
+    {
+      "endpoint": "/api/macro/elite-score",
+      "recommendation": "selective",
+      "eliteScore": "null"
+    },
+    {
+      "endpoint": "/api/macro/opportunities",
+      "opportunities": "[]",
+      "count": "0"
+    },
+    {
+      "endpoint": "/api/macro/sectors",
+      "allNeutral": "true",
+      "sectors": "10"
+    },
+    {
+      "count": "0",
+      "endpoint": "/api/macro/alerts"
+    },
+    {
+      "summary": "Macro verisi mevcut değil; skor üretilemedi.",
+      "endpoint": "/api/macro/recommendation",
+      "action": "selective"
+    }
+  ],
+  "timestamp": "2026-08-15T13:57:15.2287746+03:00",
+  "marketTruth": {
+    "brent": "@{value=null; unit=null; currency=null; provider=null; timestamp=null; freshness=null; actualProvider=null; fallbackUsed=false; reason=no fetched data available}",
+    "bist100": "@{value=null; unit=null; currency=null; provider=null; timestamp=null; freshness=null; actualProvider=null; fallbackUsed=false; reason=no fetched data available}",
+    "eurtry": "@{value=null; unit=null; currency=null; provider=null; timestamp=null; freshness=null; actualProvider=null; fallbackUsed=false; reason=no fetched data available}",
+    "usdtry": "@{value=null; unit=null; currency=null; provider=null; timestamp=null; freshness=null; actualProvider=null; fallbackUsed=false; reason=no fetched data available}",
+    "vix": "@{value=null; unit=null; currency=null; provider=null; timestamp=null; freshness=null; actualProvider=null; fallbackUsed=false; reason=no fetched data available}",
+    "dxy": "@{value=null; unit=null; currency=null; provider=null; timestamp=null; freshness=null; actualProvider=null; fallbackUsed=false; reason=no fetched data available}",
+    "us10y": "@{value=null; unit=null; currency=null; provider=null; timestamp=null; freshness=null; actualProvider=null; fallbackUsed=false; reason=no fetched data available}",
+    "gold": "@{value=null; unit=null; currency=null; provider=null; timestamp=null; freshness=null; actualProvider=null; fallbackUsed=false; reason=no fetched data available}"
+  },
+  "providerCalls": {
+    "serpapi": "@{requested=51; received=0; valid=0; fresh=false; source=SerpAPI; actualProvider=SerpAPI; allFailed=true}",
+    "alphaVantage": "@{requested=3; received=134; valid=3; fresh=false; source=Alpha Vantage; actualProvider=Alpha Vantage; timestamp=(varies)}",
+    "finnhub": "@{requested=100; received=148; valid=100; fresh=false; source=Finnhub; actualProvider=Finnhub; timestamp=(varies)}",
+    "yahoo": "@{requested=523; received=523; valid=523; fresh=true; source=Yahoo Finance; actualProvider=Yahoo; timestamp=(varies)}",
+    "fintables": "@{requested=0; received=0; valid=0; fresh=false; source=Fintables; actualProvider=Fintables; allFailed=true}",
+    "tcmm": "@{requested=0; received=0; valid=0; fresh=false; source=TCMB; actualProvider=TCMB; zeroRequests=true}",
+    "mkk": "@{requested=0; received=0; valid=0; fresh=false; source=MKK; actualProvider=MKK; zeroRequests=true}"
+  },
+  "apiEndpointsTested": [
+    "/api/macro/dashboard",
+    "/api/macro/score",
+    "/api/macro/regime",
+    "/api/macro/elite-score",
+    "/api/macro/opportunities",
+    "/api/macro/sectors",
+    "/api/macro/alerts",
+    "/api/macro/recommendation"
+  ]
+}
