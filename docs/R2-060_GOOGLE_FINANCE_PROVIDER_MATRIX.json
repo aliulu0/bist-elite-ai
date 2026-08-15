@@ -1,0 +1,116 @@
+[
+  {
+    "symbol": "THYAO",
+    "providers": {
+      "YAHOO_FINANCE": {
+        "status": "REAL_DATA",
+        "price": 305.25,
+        "currency": "TRY"
+      },
+      "GOOGLE_FINANCE": {
+        "status": "UNAVAILABLE",
+        "price": null,
+        "currency": "TRY"
+      }
+    },
+    "marketTruth": {
+      "status": "UNVERIFIABLE_DATA",
+      "confidence": "MEDIUM"
+    }
+  },
+  {
+    "symbol": "AKBNK",
+    "providers": {
+      "YAHOO_FINANCE": {
+        "status": "REAL_DATA",
+        "price": 68.8,
+        "currency": "TRY"
+      },
+      "GOOGLE_FINANCE": {
+        "status": "UNAVAILABLE",
+        "price": null,
+        "currency": "TRY"
+      }
+    },
+    "marketTruth": {
+      "status": "UNVERIFIABLE_DATA",
+      "confidence": "MEDIUM"
+    }
+  },
+  {
+    "symbol": "ASELS",
+    "providers": {
+      "YAHOO_FINANCE": {
+        "status": "REAL_DATA",
+        "price": 387.5,
+        "currency": "TRY"
+      },
+      "GOOGLE_FINANCE": {
+        "status": "UNAVAILABLE",
+        "price": null,
+        "currency": "TRY"
+      }
+    },
+    "marketTruth": {
+      "status": "UNVERIFIABLE_DATA",
+      "confidence": "MEDIUM"
+    }
+  },
+  {
+    "symbol": "BIMAS",
+    "providers": {
+      "YAHOO_FINANCE": {
+        "status": "REAL_DATA",
+        "price": 374.75,
+        "currency": "TRY"
+      },
+      "GOOGLE_FINANCE": {
+        "status": "UNAVAILABLE",
+        "price": null,
+        "currency": "TRY"
+      }
+    },
+    "marketTruth": {
+      "status": "UNVERIFIABLE_DATA",
+      "confidence": "MEDIUM"
+    }
+  },
+  {
+    "symbol": "TUPRS",
+    "providers": {
+      "YAHOO_FINANCE": {
+        "status": "REAL_DATA",
+        "price": 361.75,
+        "currency": "TRY"
+      },
+      "GOOGLE_FINANCE": {
+        "status": "UNAVAILABLE",
+        "price": null,
+        "currency": "TRY"
+      }
+    },
+    "marketTruth": {
+      "status": "UNVERIFIABLE_DATA",
+      "confidence": "MEDIUM"
+    }
+  },
+  {
+    "symbol": "GARAN",
+    "providers": {
+      "YAHOO_FINANCE": {
+        "status": "REAL_DATA",
+        "price": 131.0,
+        "currency": "TRY"
+      },
+      "GOOGLE_FINANCE": {
+        "status": "UNAVAILABLE",
+        "price": null,
+        "currency": "TRY"
+      }
+    },
+    "marketTruth": {
+      "status": "UNVERIFIABLE_DATA",
+      "confidence": "MEDIUM"
+    }
+  }
+]
