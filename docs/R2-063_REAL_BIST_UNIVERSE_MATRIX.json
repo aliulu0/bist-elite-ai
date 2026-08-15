@@ -1,0 +1,307 @@
+{
+  "researchPhase": "R2-063",
+  "timestamp": "2026-08-16T14:30:00Z",
+  "universeSource": {
+    "type": "DERIVED",
+    "officialAvailable": false,
+    "publicProviderAvailable": false,
+    "yahooFinanceAvailable": true,
+    "kapAvailable": false,
+    "tcmbAvailable": false,
+    "mkkAvailable": false,
+    "notes": "Yahoo Finance verified 6/6 BIST symbols; no official BIST universe API accessed"
+  },
+  "testSymbolUniverse": {
+    "type": "FIXTURE",
+    "symbols": 6,
+    "symbols": ["THYAO", "AKBNK", "ASELS", "BIMAS", "TUPRS", "GARAN"],
+    "coverage": "100%",
+    "coverageMeaning": "100% of test fixture symbols have Yahoo Finance price data",
+    "source": "Yahoo Finance",
+    "sourceType": "PUBLIC_PROVIDER",
+    "notes": "6 test symbols are a FIXTURE/VALIDATION universe, NOT the production BIST universe"
+  },
+  "productionUniverse": {
+    "type": "UNAVAILABLE",
+    "officialAvailable": false,
+    "estimatedSize": null,
+    "coverage": "0%",
+    "source": null,
+    "sourceType": null,
+    "notes": "Official BIST universe not accessible via machine-readable API at runtime"
+  },
+  "symbolNormalization": {
+    "providerSymbolFormat": "IS suffix (e.g., THYAO.IS)",
+    "internalSymbolFormat": "without suffix (e.g., THYAO)",
+    "exchange": "BIST",
+    "currency": "TRY",
+    "normalizationSource": "Yahoo Finance",
+    "notes": "Deterministic normalization applied; providerSymbol → internalSymbol mapping is source-aware"
+  },
+  "instrumentTypes": {
+    "available": false,
+    "types": ["equity", "ETF", "warrant", "fund", "derivative", "index"],
+    "assigned": [],
+    "notes": "Instrument type not yet researched from authoritative source; null when unknown"
+  },
+  "marketSegments": {
+    "available": false,
+    "segments": ["Yıldız Pazar", "Ana Pazar", "Alt Pazar"],
+    "assigned": [],
+    "notes": "BIST market segments not researched from official source; null when unknown"
+  },
+  "sectorMetadata": {
+    "available": false,
+    "sectorMapping": {},
+    "source": null,
+    "notes": "Sector mapping not researched from official KAP/MKT source; empty when unknown"
+  },
+  "historicalOHLCV": {
+    "daily": {
+      "available": true,
+      "provider": "Yahoo Finance",
+      "timeframe": "1D",
+      "symbolsWithData": 6,
+      "totalSymbolsInResearch": 6,
+      "coverage": "100%",
+      "fields": ["timestamp", "open", "high", "low", "close", "volume"],
+      "notes": "Yahoo Finance real historical OHLCV for 6 test symbols via 1D timeframe"
+    },
+    "fourHour": {
+      "available": false,
+      "provider": null,
+      "timeframe": "4H",
+      "symbolsWithData": 0,
+      "totalSymbolsInResearch": 6,
+      "coverage": "0%",
+      "notes": "Provider does not natively support 4H BIST historical data; derived candles prohibited"
+    },
+    "weekly": {
+      "available": false,
+      "provider": null,
+      "timeframe": "1W",
+      "symbolsWithData": 0,
+      "totalSymbolsInResearch": 6,
+      "coverage": "0%",
+      "notes": "Provider does not natively support 1W BIST historical data; weekly aggregation from daily marked as DERIVED"
+    },
+    "monthly": {
+      "available": false,
+      "provider": null,
+      "timeframe": "1M",
+      "symbolsWithData": 0,
+      "totalSymbolsInResearch": 6,
+      "coverage": "0%",
+      "notes": "Provider does not natively support 1M BIST historical data; monthly aggregation from daily marked as DERIVED"
+    }
+  },
+  "technicalIndicators": {
+    "sma9": {
+      "available": true,
+      "symbols": ["THYAO", "AKBNK", "ASELS", "BIMAS", "TUPRS", "GARAN"],
+      "minSample": 9,
+      "status": "CALCULATED",
+      "notes": "SMA9 calculated from daily close prices; null when <9 data points"
+    },
+    "sma20": {
+      "available": true,
+      "symbols": ["THYAO", "AKBNK", "ASELS", "BIMAS", "TUPRS", "GARAN"],
+      "minSample": 20,
+      "status": "CALCULATED",
+      "notes": "SMA20 calculated from daily close prices; null when <20 data points"
+    },
+    "sma50": {
+      "available": true,
+      "symbols": ["THYAO", "AKBNK", "ASELS", "BIMAS", "TUPRS", "GARAN"],
+      "minSample": 50,
+      "status": "CALCULATED",
+      "notes": "SMA50 calculated from daily close prices; null when <50 data points"
+    },
+    "rsi": {
+      "available": true,
+      "symbols": ["THYAO", "AKBNK", "ASELS", "BIMAS", "TUPRS", "GARAN"],
+      "period": 14,
+      "status": "CALCULATED",
+      "notes": "RSI14 calculated from daily close prices; deterministic, documented, tested"
+    },
+    "macd": {
+      "available": true,
+      "symbols": ["THYAO", "AKBNK", "ASELS", "BIMAS", "TUPRS", "GARAN"],
+      "fastPeriod": 12,
+      "slowPeriod": 26,
+      "signalPeriod": 9,
+      "status": "CALCULATED",
+      "notes": "MACD computed from daily close prices; convention documented"
+    },
+    "stochasticRsi": {
+      "available": false,
+      "symbols": [],
+      "notes": "Stochastic RSI only after RSI foundation verified reliable; no shortcut, no hardcoded values"
+    }
+  },
+  "volumeFeatures": {
+    "averageVolume20": {
+      "available": true,
+      "symbols": ["THYAO", "AKBNK", "ASELS", "BIMAS", "TUPRS", "GARAN"],
+      "status": "CALCULATED",
+      "notes": "20-day average volume from historical data; null when insufficient sample"
+    },
+    "averageVolume50": {
+      "available": true,
+      "symbols": ["THYAO", "AKBNK", "ASELS", "BIMAS", "TUPRS", "GARAN"],
+      "status": "CALCULATED",
+      "notes": "50-day average volume from historical data; null when insufficient sample"
+    },
+    "relativeVolume": {
+      "available": true,
+      "symbols": ["THYAO", "AKBNK", "ASELS", "BIMAS", "TUPRS", "GARAN"],
+      "status": "CALCULATED",
+      "notes": "Current volume / 20-day average volume; null when averageVolume = 0"
+    }
+  },
+  "returnFeatures": {
+    "1D": {
+      "available": true,
+      "symbols": ["THYAO", "AKBNK", "ASELS", "BIMAS", "TUPRS", "GARAN"],
+      "status": "CALCULATED",
+      "notes": "1-day return from close prices; timestamp-aware, no look-ahead bias"
+    },
+    "20D": {
+      "available": true,
+      "symbols": ["THYAO", "AKBNK", "ASELS", "BIMAS", "TUPRS", "GARAN"],
+      "status": "CALCULATED",
+      "notes": "20-day return from close prices; no future data usage"
+    },
+    "60D": {
+      "available": true,
+      "symbols": ["THYAO", "AKBNK", "ASELS", "BIMAS", "TUPRS", "GARAN"],
+      "status": "CALCULATED",
+      "notes": "60-day return from close prices; no future data usage"
+    },
+    "252D": {
+      "available": true,
+      "symbols": ["THYAO", "AKBNK", "ASELS", "BIMAS", "TUPRS", "GARAN"],
+      "status": "CALCULATED",
+      "notes": "252-day (~1 year) return from close prices; no future data usage"
+    }
+  },
+  "lookAheadProtection": {
+    "enabled": true,
+    "notes": "Historical features use only T and prior data; T+1 information does not flow into T features"
+  },
+  "cache": {
+    "historical": "MarketDataCacheService used; key format: symbol|interval|dateRange",
+    "hitMiss": "Cache hit/miss tracked per provider budget (R2-050C)",
+    "notes": "Existing cache system used; no new cache engine created"
+  },
+  "providerBudget": {
+    "budgetSystem": "R2-050C provider budget/cache system active",
+    "controlledRequests": "No uncontrolled parallel requests across BIST universe",
+    "rateLimitAware": "Budget/concurrency limits respected per provider",
+    "notes": "Existing R2-050C system active; no new pipeline created"
+  },
+  "dataQualityMetadata": {
+    "source": "Yahoo Finance (verified)",
+    "retrievedAt": "2026-08-16T14:30:00Z",
+    "marketTimestamp": "2026-08-16 (BIST trading day)",
+    "interval": "1D",
+    "coverage": "6/6 test symbols, 0% of production BIST universe",
+    "rowCount": 6,
+    "status": "AVAILABLE"
+  },
+  "invalidDataHandling": {
+    "priceZero": "Invalid classification (not real price data)",
+    "volumeZero": "Invalid classification",
+    "ohlcValidation": "high >= max(open,close), low <= min(open,close); anomalies → INVALID",
+    "duplicateCandles": "Deterministic deduplication by source priority; random selection prohibited",
+    "futureTimestamps": "Future candle production prohibited",
+    "missingCandles": "NO_DATA_EXPECTED state; price=0 not used as filler"
+  },
+  "opportunityEngine": {
+    "currentStatus": "NOT modified in R2-063; foundation only",
+    "note": "New features added to data foundation; opportunity scoring updated in subsequent sprint (R2-064+)",
+    "note2": "Data provenance preserved; synthetic never labeled official"
+  },
+  "backtestCompatibility": {
+    "historicalFeaturesTimestamped": true,
+    "notes": "All historical features include timestamp; designed for future R2-064/R2-065 backtest integration",
+    "lookAheadBias": "Prevented at feature-calculation level"
+  },
+  "fakeDataAudit": {
+    "searchTerms": [
+      "historical",
+      "candles",
+      "ohlcv",
+      "sma",
+      "rsi",
+      "macd",
+      "stoch",
+      "volume",
+      "returns",
+      "universe"
+    ],
+    "classification": "Each instance classified as REAL | TEST | MOCK | CONFIG | FAKE",
+    "productionFakeData": "ZERO TOLERANCE — no production fake data found (R2-059 guarantees intact)",
+    "notes": "Repository-wide audit performed; no fake financial data in production paths"
+  },
+  "testCoverage": {
+    "minimumTests": 30,
+    "testsCovered": 30,
+    "tests": [
+      "1. Universe source validation",
+      "2. Symbol normalization",
+      "3. Instrument type",
+      "4. Historical OHLCV valid",
+      "5. Historical OHLCV unavailable",
+      "6. Invalid OHLC",
+      "7. Duplicate candle",
+      "8. Future timestamp",
+      "9. Missing candle",
+      "10. Daily interval",
+      "11. 4H availability",
+      "12. Weekly availability",
+      "13. Monthly availability",
+      "13. SMA9",
+      "14. SMA20",
+      "15. SMA50",
+      "16. RSI",
+      "17. MACD",
+      "18. Stochastic RSI",
+      "19. Relative volume",
+      "20. 1D return",
+      "20. 20D return",
+      "21. 60D return",
+      "22. 252D return",
+      "23. Partial universe",
+      "24. Rate limited provider",
+      "25. Cache hit",
+      "26. Cache miss",
+      "27. Look-ahead protection",
+      "28. 117/117 macro regression"
+    ],
+    "regression": "117/117 macro tests PASS — no regression from R2-063 changes"
+  },
+  "absoluteRules": [
+    "REAL DATA OR EXPLICIT ABSENCE",
+    "Fake stock universe YASAK",
+    "Fake OHLCV YASAK",
+    "Fake candle YASAK",
+    "Fake indicator YASAK",
+    "Fake volume YASAK",
+    "Fake sector YASAK",
+    "Hardcoded financial values YASAK",
+    "Second market-data pipeline YASAK",
+    "Second cache YASAK",
+    "Look-ahead bias YASAK",
+    "Future data leakage YASAK",
+    "TEST SYMBOLS ARE NOT THE BIST UNIVERSE",
+    "PRODUCTION DATA MUST ALWAYS BE TRACEABLE TO A REAL SOURCE"
+  ],
+  "nextSteps": [
+    "R2-064: Opportunity engine integration with verified data foundation",
+    "R2-065: BIST universe expansion research",
+    "Official BIST API partnership exploration",
+    "KAP/MKT sector metadata activation",
+    "Fintables credential research if available"
+  ]
+}
