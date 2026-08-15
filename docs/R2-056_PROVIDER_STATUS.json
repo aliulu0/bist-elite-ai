@@ -1,0 +1,194 @@
+{
+  "generatedAt": "2026-08-15T20:15:00Z",
+  "providers": [
+    {
+      "provider": "yahoo-finance",
+      "role": "MARKET_DATA",
+      "configured": true,
+      "authentication": "VERIFIED",
+      "bistSupport": "VERIFIED",
+      "activeForBist": true,
+      "capabilities": {
+        "latestPrice": true,
+        "historicalData": true,
+        "availableTimeframes": ["1d", "1w", "1m", "3m", "6m", "4h"],
+        "symbolMapping": "THYAO -> THYAO.IS, AKBNK -> AKBNK.IS, ASELS -> ASELS.IS, BIMAS -> BIMAS.IS, TUPRS -> TUPRS.IS, GARAN -> GARAN.IS"
+      },
+      "symbolsTested": ["THYAO", "AKBNK", "ASELS", "BIMAS", "TUPRS", "GARAN"],
+      "priority": 1,
+      "notes": "Real BIST prices verified for all 6 symbols. Primary market-data source."
+    },
+    {
+      "provider": "finnhub",
+      "role": "MARKET_DATA",
+      "configured": true,
+      "authentication": "VERIFIED",
+      "bistSupport": "UNSUPPORTED",
+      "activeForBist": false,
+      "capabilities": {
+        "latestPrice": false,
+        "historicalData": false,
+        "quoteEndpoint": false,
+        "candleEndpoint": false
+      },
+      "symbolsTested": ["THYAO", "AKBNK", "ASELS", "BIMAS", "TUPRS", "GARAN"],
+      "priority": 3,
+      "notes": "US-stock only API. BIST symbols (THYAO, AKBNK, ASELS) return all-zero quotes (c:0, d:0, dp:0). ENDPOINT_UNSUPPORTED for BIST. Adapter preserved for non-BIST use."
+    },
+    {
+      "provider": "alpha-vantage",
+      "role": "MARKET_DATA",
+      "configured": true,
+      "authentication": "VERIFIED",
+      "bistSupport": "UNSUPPORTED",
+      "activeForBist": false,
+      "capabilities": {
+        "latestPrice": false,
+        "globalQuote": false,
+        "fxRate": true,
+        "daily": false,
+        "weekly": false,
+        "monthly": false
+      },
+      "symbolsTested": ["THYAO", "AKBNK", "ASELS", "BIMAS", "TUPRS", "GARAN"],
+      "priority": 7,
+      "notes": "GLOBAL_QUOTE returns empty for BIST symbols. Uses US tickers (AAPL, MSFT) and Forex pairs (USDJTRY, EURJTRY). FX_RATE endpoint returns USD/TRY rate but not BIST price. ENDPOINT_UNSUPPORTED for BIST. Free tier: 25 requests/day."
+    },
+    {
+      "provider": "serpapi",
+      "role": "RESEARCH",
+      "configured": true,
+      "authentication": "VERIFIED",
+      "bistSupport": "UNKNOWN",
+      "activeForBist": false,
+      "capabilities": {
+        "googleSearch": true,
+        "googleNews": true,
+        "googleFinance": false,
+        "marketData": false
+      },
+      "symbolsTested": ["THYAO", "AKBNK", "ASELS", "BIMAS", "TUPRS", "GARAN"],
+      "priority": 2,
+      "notes": "Research layer only. 588 total requests (R2-057), now rate-limited (429). Google Finance not exposed as dedicated market-data route. Used for AIResearchHub → ResearchEvidence → consensus. NOT market data."
+    },
+    {
+      "provider": "fintables",
+      "role": "FUNDAMENTALS",
+      "configured": false,
+      "authentication": "NOT_CONFIGURED",
+      "bistSupport": "UNKNOWN",
+      "activeForBist": false,
+      "capabilities": {
+        "authentication": false,
+        "latestPrice": false,
+        "financials": false
+      },
+      "symbolsTested": [],
+      "priority": 5,
+      "notes": "FINTABLES_USERNAME/PASSWORD commented out in .env. FINTABLES_API_KEY absent. DISABLED until credentials added. Cannot test without valid credentials."
+    },
+    {
+      "provider": "kap",
+      "role": "RESEARCH | MACRO",
+      "configured": true,
+      "authentication": "PUBLIC_ENDPOINT",
+      "bistSupport": "AUTHORITATIVE",
+      "activeForBist": true,
+      "capabilities": {
+        "disclosureAccess": true,
+        "corporateActions": true,
+        "financialStatementAnnouncements": true
+      },
+      "symbolsTested": ["THYAO", "AKBNK", "ASELS", "BIMAS", "TUPRS", "GARAN"],
+      "priority": 3,
+      "notes": "Turkish Capital Markets Board — authoritative for corporate disclosure announcements. Not a real-time price source. Research hierarchy: KAP original → validated research access → SerpAPI search result → Agent-Reach research result."
+    },
+    {
+      "provider": "tcmb",
+      "role": "MACRO",
+      "configured": true,
+      "authentication": "PUBLIC_ENDPOINT",
+      "bistSupport": "AUTHORITATIVE",
+      "activeForBist": true,
+      "capabilities": {
+        "usdTry": true,
+        "eurTry": true,
+        "policyRate": true,
+        "inflationIndicators": true
+      },
+      "symbolsTested": ["USD/TRY", "EUR/TRY", "policy_rate"],
+      "priority": 4,
+      "notes": "Official Turkish Central Bank data — authoritative for macro values (policy rates, USD/TRY, EUR/TRY, inflation). Not a real-time market price source."
+    },
+    {
+      "provider": "mkk",
+      "role": "INSTITUTIONAL",
+      "configured": true,
+      "authentication": "PUBLIC_ENDPOINT",
+      "bistSupport": "UNAVAILABLE",
+      "activeForBist": false,
+      "capabilities": {
+        "ownershipData": false,
+        "investorActivity": false,
+        "shareholding": false
+      },
+      "symbolsTested": [],
+      "priority": 6,
+      "notes": "Insurance Association of Turkey. Public information available but not a market-data source. Classified as UNAVAILABLE for BIST market data. Role: institutional participation data."
+    },
+    {
+      "provider": "agent-reach",
+      "role": "RESEARCH ACCESS",
+      "configured": false,
+      "authentication": "NOT_INSTALLED",
+      "bistSupport": "RESEARCH_LAYER",
+      "activeForBist": false,
+      "capabilities": {
+        "webReading": false,
+        "webSearch": false,
+        "twitterReddit": false,
+        " youtubeRSS": false
+      },
+      "symbolsTested": [],
+      "priority": 8,
+      "notes": "Not installed as node module in repository. Research access layer only (if installed). Must never bypass AIResearchHub → ResearchEvidence → source attribution → evidence quality → timestamp preservation. Price evidence classified as WEB_RESEARCH_EVIDENCE (Tier 3)."
+    }
+  ],
+  "priceConsensus": [
+    {
+      "symbol": "THYAO",
+      "consensus": "UNVERIFIABLE",
+      "confidence": "MEDIUM",
+      "activeProviders": ["yahoo-finance"],
+      "inactiveProviders": ["finnhub", "alpha-vantage", "serpapi", "fintables", "agent-reach"],
+      "notes": "Only Yahoo Finance provides valid price at runtime. Single-source confidence MEDIUM."
+    },
+    {
+      "symbol": "AKBNK",
+      "consensus": "UNVERIFIABLE",
+      "confidence": "MEDIUM",
+      "activeProviders": ["yahoo-finance"],
+      "inactiveProviders": ["finnhub", "alpha-vantage", "serpapi", "fintables", "agent-reach"],
+      "notes": "Only Yahoo Finance provides valid price at runtime. Single-source confidence MEDIUM."
+    },
+    {
+      "symbol": "ASELS",
+      "consensus": "UNVERIFIABLE",
+      "confidence": "MEDIUM",
+      "activeProviders": ["yahoo-finance"],
+      "inactiveProviders": ["finnhub", "alpha-vantage", "serpapi", "fintables", "agent-reach"],
+      "notes": "Only Yahoo Finance provides valid price at runtime. Single-source confidence MEDIUM."
+    }
+  ],
+  "inactiveProviders": [
+    "finnhub - ENDPOINT_UNSUPPORTED for BIST (US-stock API, zeros for BIST symbols)",
+    "alpha-vantage - ENDPOINT_UNSUPPORTED for BIST (US-stock/forex only)",
+    "fintables - DISABLED (no credentials configured)",
+    "agent-reach - Not installed as node module, research layer only",
+    "mkk - UNAVAILABLE for BIST market data"
+  ],
+  "security": {
+    "secretsDetected": false,
+    "notes": "No secrets exposed in artifacts. .env check-ignore verified."
+  }
+}
