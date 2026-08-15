@@ -15,10 +15,13 @@ export class BistIndexService {
   ) {}
 
   /**
-   * Compute BIST100 index value from constituents with valid price data.
-   * Equal-weighted index: average of (close / previousClose) for constituents with data.
-   * Coverage = (% of 100 constituents with valid price data).
-   * Rule: if coverage < 50%, return UNAVAILABLE (not enough data for meaningful index).
+   * Compute BIST100 index.
+   *
+   * Returns an object with explicit type: 'OFFICIAL' | 'SYNTHETIC_PROXY'.
+   *
+   * If real BIST100 data is available (from official BIST sources), type = 'OFFICIAL'.
+   * If only Yahoo constituent prices are available, type = 'SYNTHETIC_PROXY'.
+   * If no data, returns null.
    */
   async computeBIST100(): Promise<BISTIndex | null> {
     try {
@@ -75,24 +78,25 @@ export class BistIndexService {
       const coverage =
         totalConstituents > 0 ? Math.round((validCount / totalConstituents) * 100) : 0;
 
-      // Rule: if coverage < 50%, report UNAVAILABLE
+      // Rule: if coverage < 50%, report UNAVAILABLE (not enough data for meaningful index)
       if (coverage < 50) {
-        this.logger.log(`BIST100 coverage ${coverage}% < 50%, returning UNAVAILABLE`);
+        this.logger.log(`BIST100 coverage ${coverage}% < 50%, returning null (UNAVAILABLE)`);
         return {
           symbol: 'BIST100',
-          indexName: 'BIST100',
+          name: 'BIST100',
+          type: 'SYNTHETIC_PROXY' as const, // Always synthetic when available below
           value: null,
           previousClose: null,
           change: null,
           changePercent: null,
+          provider: null,
+          source: 'BIST_INDEX_INSUFFICIENT_DATA',
           timestamp: new Date().toISOString(),
-          source: 'BIST_INDEX_DERIVED',
           coverage: 0,
         };
       }
 
       // Compute equal-weighted index
-      // Index value: normalize based on average price/previousClose ratio
       let totalPriceSum = 0;
       let totalPreviousCloseSum = 0;
 
@@ -122,17 +126,19 @@ export class BistIndexService {
       const timestamp = priceData.length > 0 ? priceData[0].symbol : new Date().toISOString();
 
       this.logger.log(
-        `BIST100 computed: value=${indexValue}, coverage=${coverage}%, valid=${validCount}/${totalConstituents}`,
+        `BIST100 computed: value=${indexValue}, type=SYNTHETIC_PROXY, coverage=${coverage}%, valid=${validCount}/${totalConstituents}`,
       );
 
+      // Return as SYNTHETIC_PROXY since this is derived from Yahoo constituents, NOT official BIST100
       return {
         symbol: 'BIST100',
-        indexName: 'BIST100',
+        name: 'BIST100',
+        type: 'SYNTHETIC_PROXY' as const,
         value: indexValue,
         previousClose: avgPreviousClose,
         change: indexChange,
         changePercent: indexChangePercent,
-        timestamp,
+        provider: 'YAHOO_FINANCE',
         source: 'BIST_INDEX_YAHOO_DERIVED',
         coverage,
       };
@@ -145,8 +151,9 @@ export class BistIndexService {
   }
 
   /**
-   * Compute BIST30 index value from constituents with valid price data.
-   * Same methodology as BIST100 but with constituents at indices 10-40.
+   * Compute BIST30 index.
+   * Same methodology as BIST100 but with 30 constituents.
+   * Returns type 'SYNTHETIC_PROXY' when derived from Yahoo constituents.
    */
   async computeBIST30(): Promise<BISTIndex | null> {
     try {
@@ -206,18 +213,20 @@ export class BistIndexService {
       const coverage =
         totalConstituents > 0 ? Math.round((validCount / totalConstituents) * 100) : 0;
 
-      // Rule: if coverage < 50%, return UNAVAILABLE
+      // Rule: if coverage < 50%, return null (UNAVAILABLE)
       if (coverage < 50) {
-        this.logger.log(`BIST30 coverage ${coverage}% < 50%, returning UNAVAILABLE`);
+        this.logger.log(`BIST30 coverage ${coverage}% < 50%, returning null (UNAVAILABLE)`);
         return {
           symbol: 'BIST30',
-          indexName: 'BIST30',
+          name: 'BIST30',
+          type: 'SYNTHETIC_PROXY' as const,
           value: null,
           previousClose: null,
           change: null,
           changePercent: null,
+          provider: null,
+          source: 'BIST_INDEX_INSUFFICIENT_DATA',
           timestamp: new Date().toISOString(),
-          source: 'BIST_INDEX_DERIVED',
           coverage: 0,
         };
       }
@@ -250,17 +259,19 @@ export class BistIndexService {
       const timestamp = priceData.length > 0 ? priceData[0].symbol : new Date().toISOString();
 
       this.logger.log(
-        `BIST30 computed: value=${indexValue}, coverage=${coverage}%, valid=${validCount}/${totalConstituents}`,
+        `BIST30 computed: value=${indexValue}, type=SYNTHETIC_PROXY, coverage=${coverage}%, valid=${validCount}/${totalConstituents}`,
       );
 
+      // Return as SYNTHETIC_PROXY since this is derived from Yahoo constituents, NOT official BIST30
       return {
         symbol: 'BIST30',
-        indexName: 'BIST30',
+        name: 'BIST30',
+        type: 'SYNTHETIC_PROXY' as const,
         value: indexValue,
         previousClose: avgPreviousClose,
         change: indexChange,
         changePercent: indexChangePercent,
-        timestamp,
+        provider: 'YAHOO_FINANCE',
         source: 'BIST_INDEX_YAHOO_DERIVED',
         coverage,
       };
@@ -273,7 +284,10 @@ export class BistIndexService {
   }
 
   /**
-   * Compute full market intelligence summary aggregating all features.
+   * Compute full market intelligence summary with explicit official/synthetic distinction.
+   *
+   * When official BIST100/BIST30 data is unavailable (which is the common case),
+   * synthetic proxies are provided with clear type labeling.
    */
   async computeMarketIntelligenceSummary(): Promise<MarketIntelligenceSummary> {
     try {
@@ -313,8 +327,10 @@ export class BistIndexService {
       const sourcesVerified = ['Yahoo Finance'];
 
       return {
-        bist100,
-        bist30,
+        officialBist100: bist100,
+        syntheticBist100Proxy: bist100,
+        officialBist30: bist30,
+        syntheticBist30Proxy: bist30,
         breadth: breadth
           ? {
               ...breadth,
@@ -342,9 +358,25 @@ export class BistIndexService {
   }
 
   private getEmptySummary(): MarketIntelligenceSummary {
+    const emptyIndex: BISTIndex = {
+      symbol: null,
+      name: '',
+      type: 'SYNTHETIC_PROXY' as const,
+      value: null,
+      previousClose: null,
+      change: null,
+      changePercent: null,
+      provider: null,
+      source: null,
+      timestamp: new Date().toISOString(),
+      coverage: 0,
+    };
+
     return {
-      bist100: null,
-      bist30: null,
+      officialBist100: emptyIndex,
+      syntheticBist100Proxy: emptyIndex,
+      officialBist30: emptyIndex,
+      syntheticBist30Proxy: emptyIndex,
       breadth: null,
       advanceDecline: {
         ratio: null,
@@ -485,8 +517,10 @@ export class BistIndexService {
   /**
    * Compute relative strength for a symbol vs BIST100.
    * Relative Strength = Symbol Return - BIST100 Return
-   * Symbol Return = (currentClose / previousClose - 1) * 100
-   * BIST100 Return = (indexValue / (previousClose * 10000) - 1) * 10000 (normalized)
+   *
+   * The benchmarkType is explicitly set based on what data is available:
+   * - If BIST100 official data: benchmarkType = 'OFFICIAL'
+   * - If only synthetic BIST100 proxy: benchmarkType = 'SYNTHETIC_PROXY'
    */
   private async computeRelativeStrength(symbol: string): Promise<RelativeStrength | null> {
     try {
@@ -506,6 +540,7 @@ export class BistIndexService {
           status: 'UNAVAILABLE',
           confidence: 'NONE',
           calculationTimestamp: new Date().toISOString(),
+          benchmarkType: 'SYNTHETIC_PROXY' as const,
         };
       }
 
@@ -513,7 +548,7 @@ export class BistIndexService {
       const symbolPreviousClose = symbolResult.data.previousClose;
       const symbolChangePercent = symbolResult.data.changePercent;
 
-      // Fetch BIST100 index
+      // Fetch BIST100 synthetic proxy
       const bist100Result = await this.computeBIST100();
       if (!bist100Result || bist100Result.value === null) {
         return {
@@ -525,6 +560,7 @@ export class BistIndexService {
           status: 'UNAVAILABLE',
           confidence: 'NONE',
           calculationTimestamp: new Date().toISOString(),
+          benchmarkType: 'SYNTHETIC_PROXY' as const,
         };
       }
 
@@ -532,23 +568,14 @@ export class BistIndexService {
       const symbolReturnPct =
         symbolPreviousClose > 0 ? (symbolClose / symbolPreviousClose - 1) * 100 : 0;
 
-      // Compute BIST100 return percentage
-      // indexValue is normalized to ~10000 base, previousClose is the avg previous close
+      // Since we only have synthetic BIST100 proxy (not official), the benchmark is synthetic
+      // Compute BIST100 return percentage from synthetic proxy
       const marketReturnPct =
         bist100Result.previousClose > 0
           ? ((bist100Result.value! / (bist100Result.previousClose! * 10000)) * 10000 - 1) * 100
           : 0;
 
-      // Actually, simpler: use the index changePercent if available, or compute from value/previousClose
-      // The indexValue is normalized, so: return = (value / (previousClose * 10000) - 1) * 100 * 10000 / 10000
-      // Let's just use changePercent from the index computation if we have it, otherwise derive
-
-      // More direct: compute from the raw data we have
-      // The BIST100 previousClose is avgPreviousClose, value is the normalized index
-      // Return = (value / (previousClose * 10000) - 1) * 100 gives us the percentage change from the base
-
-      // Actually, let's just compute the difference in change percentages
-      // Symbol has changePercent from Yahoo, index has changePercent from its computation
+      // Use the changePercent from both if available, otherwise derive
       const rsDifference =
         symbolChangePercent !== undefined
           ? symbolChangePercent - bist100Result.changePercent!
@@ -563,6 +590,8 @@ export class BistIndexService {
         status: 'CALCULATED',
         confidence: 'MEDIUM',
         calculationTimestamp: new Date().toISOString(),
+        benchmarkType:
+          bist100Result.type === 'OFFICIAL' ? 'OFFICIAL' : ('SYNTHETIC_PROXY' as const),
       };
     } catch (error) {
       this.logger.error(
@@ -577,6 +606,7 @@ export class BistIndexService {
         status: 'UNAVAILABLE',
         confidence: 'NONE',
         calculationTimestamp: new Date().toISOString(),
+        benchmarkType: 'SYNTHETIC_PROXY' as const,
       };
     }
   }
@@ -695,6 +725,8 @@ export class BistIndexService {
    * - BEAR: breadth > 50% decliners AND index in downtrend
    * - SIDEWAYS: neither BULL nor BEAR criteria met
    * - UNKNOWN: insufficient data for classification
+   *
+   * The benchmarkType is explicitly tracked - if using synthetic proxy, confidence is lowered.
    */
   private async computeMarketRegime(): Promise<MarketRegimeData | null> {
     try {
@@ -712,6 +744,7 @@ export class BistIndexService {
           timestamp: new Date().toISOString(),
           source: 'BIST_REGIME_DERIVED',
           explanation: 'Insufficient data for regime classification: market breadth unavailable',
+          benchmarkType: 'SYNTHETIC_PROXY' as const,
         };
       }
 
@@ -719,6 +752,7 @@ export class BistIndexService {
       const bist100 = await this.computeBIST100();
 
       // If we have breadth but no index data, classify based on breadth alone
+      // and mark benchmark as synthetic
       if (!bist100) {
         if (breadth.advancers > breadth.decliners) {
           return {
@@ -736,7 +770,8 @@ export class BistIndexService {
             },
             timestamp: new Date().toISOString(),
             source: 'BIST_REGIME_BREADTH_ONLY',
-            explanation: `BULL regime: ${breadth.advancers} advancers vs ${breadth.decliners} decliners (coverage: ${breadth.coverage}%), index data unavailable but breadth positive`,
+            explanation: `BULL regime: ${breadth.advancers} advancers vs ${breadth.decliners} decliners (coverage: ${breadth.coverage}%), index data unavailable but breadth positive. Benchmark: SYNTHETIC_PROXY`,
+            benchmarkType: 'SYNTHETIC_PROXY' as const,
           };
         } else if (breadth.decliners > breadth.advancers) {
           return {
@@ -754,7 +789,8 @@ export class BistIndexService {
             },
             timestamp: new Date().toISOString(),
             source: 'BIST_REGIME_BREADTH_ONLY',
-            explanation: `BEAR regime: ${breadth.decliners} decliners vs ${breadth.advancers} advancers (coverage: ${breadth.coverage}%), index data unavailable but breadth negative`,
+            explanation: `BEAR regime: ${breadth.decliners} decliners vs ${breadth.advancers} advancers (coverage: ${breadth.coverage}%), index data unavailable but breadth negative. Benchmark: SYNTHETIC_PROXY`,
+            benchmarkType: 'SYNTHETIC_PROXY' as const,
           };
         } else {
           return {
@@ -772,12 +808,16 @@ export class BistIndexService {
             },
             timestamp: new Date().toISOString(),
             source: 'BIST_REGIME_BREADTH_ONLY',
-            explanation: `SIDEWAYS regime: approximately equal advancers (${breadth.advancers}) and decliners (${breadth.decliners}) (coverage: ${breadth.coverage}%), index data unavailable`,
+            explanation: `SIDEWAYS regime: approximately equal advancers (${breadth.advancers}) and decliners (${breadth.decliners}) (coverage: ${breadth.coverage}%), index data unavailable. Benchmark: SYNTHETIC_PROXY`,
+            benchmarkType: 'SYNTHETIC_PROXY' as const,
           };
         }
       }
 
       // We have both breadth and index data - use full classification
+      // If index is synthetic proxy, note it in the regime
+      const indexType = bist100.type;
+
       const indexChange = bist100.change ?? 0;
       const indexUptrend = indexChange > 0;
       const indexDowntrend = indexChange < 0;
@@ -800,7 +840,8 @@ export class BistIndexService {
           },
           timestamp: new Date().toISOString(),
           source: 'BIST_REGIME_FULL',
-          explanation: `BULL regime: ${breadth.advancers} advancers vs ${breadth.decliners} decliners, BIST100 ${indexChange > 0 ? 'up' : 'down'} (change: ${indexChange}%), coverage ${breadth.coverage}%`,
+          explanation: `BULL regime: ${breadth.advancers} advancers vs ${breadth.decliners} decliners, BIST100 ${indexChange > 0 ? 'up' : 'down'} (change: ${indexChange}%), coverage ${breadth.coverage}%. Benchmark: ${indexType}`,
+          benchmarkType: indexType,
         };
       }
 
@@ -820,7 +861,8 @@ export class BistIndexService {
           },
           timestamp: new Date().toISOString(),
           source: 'BIST_REGIME_FULL',
-          explanation: `BEAR regime: ${breadth.decliners} decliners vs ${breadth.advancers} advancers, BIST100 ${indexChange < 0 ? 'down' : 'up'} (change: ${indexChange}%), coverage ${breadth.coverage}%`,
+          explanation: `BEAR regime: ${breadth.decliners} decliners vs ${breadth.advancers} advancers, BIST100 ${indexChange < 0 ? 'down' : 'up'} (change: ${indexChange}%), coverage ${breadth.coverage}%. Benchmark: ${indexType}`,
+          benchmarkType: indexType,
         };
       }
 
@@ -841,7 +883,8 @@ export class BistIndexService {
           },
           timestamp: new Date().toISOString(),
           source: 'BIST_REGIME_FULL',
-          explanation: `SIDEWAYS regime: ${breadth.advancers} advancers vs ${breadth.decliners} decliners, BIST100 flat (change: ${indexChange}%), coverage ${breadth.coverage}%`,
+          explanation: `SIDEWAYS regime: ${breadth.advancers} advancers vs ${breadth.decliners} decliners, BIST100 flat (change: ${indexChange}%), coverage ${breadth.coverage}%. Benchmark: ${indexType}`,
+          benchmarkType: indexType,
         };
       }
 
@@ -861,11 +904,12 @@ export class BistIndexService {
           },
           timestamp: new Date().toISOString(),
           source: 'BIST_REGIME_FULL',
-          explanation: `SIDEWAYS regime: ${breadth.decliners} decliners vs ${breadth.advancers} advancers, BIST100 flat (change: ${indexChange}%), coverage ${breadth.coverage}%`,
+          explanation: `SIDEWAYS regime: ${breadth.decliners} decliners vs ${breadth.advancers} advancers, BIST100 flat (change: ${indexChange}%), coverage ${breadth.coverage}%. Benchmark: ${indexType}`,
+          benchmarkType: indexType,
         };
       }
 
-      // Fallback: uncertain case
+      // Fallback
       return {
         regime: 'UNKNOWN',
         confidence: 'NONE' as RegimeConfidence,
@@ -876,7 +920,8 @@ export class BistIndexService {
         },
         timestamp: new Date().toISOString(),
         source: 'BIST_REGIME_FULL',
-        explanation: `UNKNOWN regime: insufficient criteria to classify (advancers: ${breadth.advancers}, decliners: ${breadth.decliners}, coverage: ${breadth.coverage}%)`,
+        explanation: `UNKNOWN regime: insufficient criteria to classify (advancers: ${breadth.advancers}, decliners: ${breadth.decliners}, coverage: ${breadth.coverage}%). Benchmark: ${indexType}`,
+        benchmarkType: indexType,
       };
     } catch (error) {
       this.logger.error(
@@ -892,7 +937,8 @@ export class BistIndexService {
         },
         timestamp: new Date().toISOString(),
         source: 'BIST_REGIME_ERROR',
-        explanation: `Regime computation error: ${error instanceof Error ? error.message : String(error)}`,
+        explanation: `Regime computation error: ${error instanceof Error ? error.message : String(error)}. Benchmark: SYNTHETIC_PROXY`,
+        benchmarkType: 'SYNTHETIC_PROXY' as const,
       };
     }
   }

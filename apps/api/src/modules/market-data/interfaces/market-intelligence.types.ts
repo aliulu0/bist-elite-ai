@@ -5,16 +5,20 @@ export type DataCoverage = 'FULL' | 'PARTIAL' | 'NONE';
 export type FeatureStatus = 'AVAILABLE' | 'UNAVAILABLE' | 'PARTIAL';
 export type FeatureConfidence = 'HIGH' | 'MEDIUM' | 'LOW' | 'NONE';
 
+export type IndexType = 'OFFICIAL' | 'SYNTHETIC_PROXY';
+
 export interface BISTIndex {
-  symbol: string;
-  indexName: 'BIST100' | 'BIST30';
+  symbol: string | null;
+  name: string;
+  type: IndexType;
   value: number | null;
   previousClose: number | null;
   change: number | null;
   changePercent: number | null;
+  provider: string | null;
+  source: string | null;
   timestamp: string | null;
-  source: string;
-  coverage: number; // percentage of constituents with data (0-100)
+  coverage: number; // percentage of constituents with data (0-100), only meaningful for synthetic
 }
 
 export interface MarketBreadth {
@@ -46,6 +50,7 @@ export interface RelativeStrength {
   status: FeatureStatus;
   confidence: FeatureConfidence;
   calculationTimestamp: string;
+  benchmarkType: IndexType; // OFFICIAL or SYNTHETIC_PROXY
 }
 
 export interface VolumeIntelligence {
@@ -81,11 +86,14 @@ export interface MarketRegimeData {
   timestamp: string;
   source: string;
   explanation: string; // deterministic explanation of regime assignment
+  benchmarkType: IndexType; // OFFICIAL or SYNTHETIC_PROXY
 }
 
 export interface MarketIntelligenceSummary {
-  bist100: BISTIndex | null;
-  bist30: BISTIndex | null;
+  officialBist100: BISTIndex | null;
+  syntheticBist100Proxy: BISTIndex | null;
+  officialBist30: BISTIndex | null;
+  syntheticBist30Proxy: BISTIndex | null;
   breadth: MarketBreadth | null;
   advanceDecline: AdvanceDeclineRatio | null;
   relativeStrength: Record<string, RelativeStrength | null>;

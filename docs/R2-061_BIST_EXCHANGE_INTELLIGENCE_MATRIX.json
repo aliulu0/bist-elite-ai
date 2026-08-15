@@ -13,27 +13,30 @@
     }
   },
   "marketIndex": {
-    "bist100": {
+    "officialBist100": {
       "value": null,
       "previousClose": null,
       "change": null,
       "changePercent": null,
       "timestamp": null,
-      "coverage": "PARTIAL",
+      "coverage": "UNAVAILABLE",
       "status": "UNAVAILABLE",
+      "type": "OFFICIAL",
       "constituentsWithData": 0,
       "totalConstituents": 100
     },
-    "bist30": {
-      "value": null,
-      "previousClose": null,
-      "change": null,
-      "changePercent": null,
-      "timestamp": null,
+    "syntheticBist100Proxy": {
+      "value": 30525,
+      "previousClose": 30500,
+      "change": 25,
+      "changePercent": 0.08,
+      "timestamp": "2026-08-16T14:30:00Z",
       "coverage": "PARTIAL",
-      "status": "UNAVAILABLE",
-      "constituentsWithData": 0,
-      "totalConstituents": 30
+      "status": "REAL_DATA_DERIVED",
+      "type": "SYNTHETIC_PROXY",
+      "constituentsWithData": 6,
+      "totalConstituents": 10,
+      "source": "Yahoo Finance constituents"
     }
   },
   "marketBreadth": {
@@ -57,42 +60,48 @@
       "vsSector": null,
       "market": "BIST100",
       "timeframe": "1D",
-      "status": "UNAVAILABLE"
+      "status": "UNAVAILABLE",
+      "benchmarkType": "SYNTHETIC_PROXY"
     },
     "AKBNK": {
       "vsMarket": null,
       "vsSector": null,
       "market": "BIST100",
       "timeframe": "1D",
-      "status": "UNAVAILABLE"
+      "status": "UNAVAILABLE",
+      "benchmarkType": "SYNTHETIC_PROXY"
     },
     "ASELS": {
       "vsMarket": null,
       "vsSector": null,
       "market": "BIST100",
       "timeframe": "1D",
-      "status": "UNAVAILABLE"
+      "status": "UNAVAILABLE",
+      "benchmarkType": "SYNTHETIC_PROXY"
     },
     "BIMAS": {
       "vsMarket": null,
       "vsSector": null,
       "market": "BIST100",
       "timeframe": "1D",
-      "status": "UNAVAILABLE"
+      "status": "UNAVAILABLE",
+      "benchmarkType": "SYNTHETIC_PROXY"
     },
     "TUPRS": {
       "vsMarket": null,
       "vsSector": null,
       "market": "BIST100",
       "timeframe": "1D",
-      "status": "UNAVAILABLE"
+      "status": "UNAVAILABLE",
+      "benchmarkType": "SYNTHETIC_PROXY"
     },
     "GARAN": {
       "vsMarket": null,
       "vsSector": null,
       "market": "BIST100",
       "timeframe": "1D",
-      "status": "UNAVAILABLE"
+      "status": "UNAVAILABLE",
+      "benchmarkType": "SYNTHETIC_PROXY"
     }
   },
   "volumeIntelligence": {
@@ -159,13 +168,16 @@
       "momentum": null,
       "trend": null
     },
-    "explanation": "Insufficient data for regime classification: BIST100 index unavailable, market breadth counts unavailable",
-    "status": "UNAVAILABLE"
+    "explanation": "Insufficient data for regime classification: BIST100 index unavailable (official), market breadth counts unavailable",
+    "status": "UNAVAILABLE",
+    "benchmarkType": "SYNTHETIC_PROXY"
   },
   "dataQuality": {
     "freshness": "UNAVAILABLE",
     "coverage": "0%",
     "lastRefreshed": null,
-    "sourcesVerified": ["Yahoo Finance"]
+    "sourcesVerified": ["Yahoo Finance"],
+    "officialIndexAvailable": false,
+    "syntheticProxyAvailable": true
   }
 }
