@@ -6,11 +6,7 @@ import { IUnifiedMarketDataProvider } from '../providers/unified/unified-provide
 import { MarketDataConfig } from '../config/market-data.config';
 import { MarketDataValidationService } from '../market-data-validation.service';
 import { MarketDataPoint } from '../interfaces';
-import {
-  Company,
-  FinancialStatement,
-  Disclosure,
-} from '../interfaces/unified-domain.types';
+import { Company, FinancialStatement, Disclosure } from '../interfaces/unified-domain.types';
 
 function createMockProvider(
   name: string,
@@ -72,12 +68,19 @@ function createCompany(symbol: string, source: string): Company {
   };
 }
 
-function makeConfig(overrides: Record<string, { enabled: boolean; priority: number }> = {}): MarketDataConfig {
+function makeConfig(
+  overrides: Record<string, { enabled: boolean; priority: number }> = {},
+): MarketDataConfig {
   return {
     providers: {
-      fintables: { enabled: true, priority: 1, timeout: 15000, retries: 3, apiKey: '', baseUrl: '' },
-      alpha_vantage: { enabled: true, priority: 2, timeout: 15000, retries: 3, apiKey: '', baseUrl: '' },
-      finnhub: { enabled: true, priority: 3, timeout: 15000, retries: 3, apiKey: '', baseUrl: '' },
+      fintables: {
+        enabled: true,
+        priority: 1,
+        timeout: 15000,
+        retries: 3,
+        apiKey: '',
+        baseUrl: '',
+      },
       yahoo: { enabled: true, priority: 4, timeout: 15000, retries: 2, apiKey: '', baseUrl: '' },
       kap: { enabled: true, priority: 5, timeout: 15000, retries: 3, apiKey: '', baseUrl: '' },
       tcmb: { enabled: true, priority: 6, timeout: 15000, retries: 3, apiKey: '', baseUrl: '' },
@@ -118,12 +121,22 @@ describe('MarketDataOrchestrator', () => {
   describe('provider registration', () => {
     it('should register providers on construction', () => {
       const p1 = createMockProvider('fintables');
-      const orchestrator = new MarketDataOrchestrator(circuitBreaker, cacheService, [p1], makeConfig());
+      const orchestrator = new MarketDataOrchestrator(
+        circuitBreaker,
+        cacheService,
+        [p1],
+        makeConfig(),
+      );
       expect(orchestrator.getAvailableProviders()).toContain('fintables');
     });
 
     it('should register providers dynamically', () => {
-      const orchestrator = new MarketDataOrchestrator(circuitBreaker, cacheService, [], makeConfig());
+      const orchestrator = new MarketDataOrchestrator(
+        circuitBreaker,
+        cacheService,
+        [],
+        makeConfig(),
+      );
       const p1 = createMockProvider('fintables');
       orchestrator.registerProvider(p1);
       expect(orchestrator.getAvailableProviders()).toContain('fintables');
@@ -131,11 +144,16 @@ describe('MarketDataOrchestrator', () => {
 
     it('should register multiple providers', () => {
       const p1 = createMockProvider('fintables');
-      const p2 = createMockProvider('finnhub');
-      const orchestrator = new MarketDataOrchestrator(circuitBreaker, cacheService, [p1, p2], makeConfig());
+      const p2 = createMockProvider('serpapi');
+      const orchestrator = new MarketDataOrchestrator(
+        circuitBreaker,
+        cacheService,
+        [p1, p2],
+        makeConfig(),
+      );
       const available = orchestrator.getAvailableProviders();
       expect(available).toContain('fintables');
-      expect(available).toContain('finnhub');
+      expect(available).toContain('serpapi');
     });
   });
 
@@ -144,15 +162,20 @@ describe('MarketDataOrchestrator', () => {
       const p1 = createMockProvider('fintables', {
         fetchCompany: jest.fn().mockResolvedValue(createCompany('THYAO', 'fintables')),
       });
-      const p2 = createMockProvider('finnhub', {
-        fetchCompany: jest.fn().mockResolvedValue(createCompany('THYAO', 'finnhub')),
+      const p2 = createMockProvider('serpapi', {
+        fetchCompany: jest.fn().mockResolvedValue(createCompany('THYAO', 'serpapi')),
       });
       const config = makeConfig({
         fintables: { enabled: true, priority: 1 },
-        finnhub: { enabled: true, priority: 2 },
+        serpapi: { enabled: true, priority: 2 },
       });
 
-      const orchestrator = new MarketDataOrchestrator(circuitBreaker, cacheService, [p2, p1], config);
+      const orchestrator = new MarketDataOrchestrator(
+        circuitBreaker,
+        cacheService,
+        [p2, p1],
+        config,
+      );
       const result = await orchestrator.fetchCompany('THYAO');
 
       expect(result).not.toBeNull();
@@ -160,18 +183,23 @@ describe('MarketDataOrchestrator', () => {
     });
 
     it('should respect priority ordering', async () => {
-      const p1 = createMockProvider('finnhub', {
-        fetchCompany: jest.fn().mockResolvedValue(createCompany('THYAO', 'finnhub')),
+      const p1 = createMockProvider('serpapi', {
+        fetchCompany: jest.fn().mockResolvedValue(createCompany('THYAO', 'serpapi')),
       });
       const p2 = createMockProvider('fintables', {
         fetchCompany: jest.fn().mockResolvedValue(createCompany('THYAO', 'fintables')),
       });
       const config = makeConfig({
         fintables: { enabled: true, priority: 1 },
-        finnhub: { enabled: true, priority: 2 },
+        serpapi: { enabled: true, priority: 2 },
       });
 
-      const orchestrator = new MarketDataOrchestrator(circuitBreaker, cacheService, [p1, p2], config);
+      const orchestrator = new MarketDataOrchestrator(
+        circuitBreaker,
+        cacheService,
+        [p1, p2],
+        config,
+      );
       const result = await orchestrator.fetchCompany('THYAO');
 
       expect(result!.provider).toBe('fintables');
@@ -183,34 +211,44 @@ describe('MarketDataOrchestrator', () => {
       const p1 = createMockProvider('fintables', {
         fetchCompany: jest.fn().mockRejectedValue(new Error('Network error')),
       });
-      const p2 = createMockProvider('finnhub', {
-        fetchCompany: jest.fn().mockResolvedValue(createCompany('THYAO', 'finnhub')),
+      const p2 = createMockProvider('serpapi', {
+        fetchCompany: jest.fn().mockResolvedValue(createCompany('THYAO', 'serpapi')),
       });
       const config = makeConfig({
         fintables: { enabled: true, priority: 1 },
-        finnhub: { enabled: true, priority: 2 },
+        serpapi: { enabled: true, priority: 2 },
       });
 
-      const orchestrator = new MarketDataOrchestrator(circuitBreaker, cacheService, [p1, p2], config);
+      const orchestrator = new MarketDataOrchestrator(
+        circuitBreaker,
+        cacheService,
+        [p1, p2],
+        config,
+      );
       const result = await orchestrator.fetchCompany('THYAO');
 
       expect(result).not.toBeNull();
-      expect(result!.provider).toBe('finnhub');
+      expect(result!.provider).toBe('serpapi');
     });
 
     it('should return null when all providers fail', async () => {
       const p1 = createMockProvider('fintables', {
         fetchCompany: jest.fn().mockRejectedValue(new Error('fail')),
       });
-      const p2 = createMockProvider('finnhub', {
+      const p2 = createMockProvider('serpapi', {
         fetchCompany: jest.fn().mockRejectedValue(new Error('fail')),
       });
       const config = makeConfig({
         fintables: { enabled: true, priority: 1 },
-        finnhub: { enabled: true, priority: 2 },
+        serpapi: { enabled: true, priority: 2 },
       });
 
-      const orchestrator = new MarketDataOrchestrator(circuitBreaker, cacheService, [p1, p2], config);
+      const orchestrator = new MarketDataOrchestrator(
+        circuitBreaker,
+        cacheService,
+        [p1, p2],
+        config,
+      );
       const result = await orchestrator.fetchCompany('THYAO');
 
       expect(result).toBeNull();
@@ -281,23 +319,28 @@ describe('MarketDataOrchestrator', () => {
       const p1 = createMockProvider('fintables', {
         fetchCompany: jest.fn().mockResolvedValue(createCompany('THYAO', 'fintables')),
       });
-      const p2 = createMockProvider('finnhub', {
-        fetchCompany: jest.fn().mockResolvedValue(createCompany('THYAO', 'finnhub')),
+      const p2 = createMockProvider('serpapi', {
+        fetchCompany: jest.fn().mockResolvedValue(createCompany('THYAO', 'serpapi')),
       });
       const config = makeConfig({
         fintables: { enabled: true, priority: 1 },
-        finnhub: { enabled: true, priority: 2 },
+        serpapi: { enabled: true, priority: 2 },
       });
 
       circuitBreaker.recordFailure('fintables');
       circuitBreaker.recordFailure('fintables');
       circuitBreaker.recordFailure('fintables');
 
-      const orchestrator = new MarketDataOrchestrator(circuitBreaker, cacheService, [p1, p2], config);
+      const orchestrator = new MarketDataOrchestrator(
+        circuitBreaker,
+        cacheService,
+        [p1, p2],
+        config,
+      );
       const result = await orchestrator.fetchCompany('THYAO');
 
       expect(result).not.toBeNull();
-      expect(result!.provider).toBe('finnhub');
+      expect(result!.provider).toBe('serpapi');
       expect(p1.fetchCompany).not.toHaveBeenCalled();
     });
 
@@ -350,17 +393,22 @@ describe('MarketDataOrchestrator', () => {
 
     it('should not list disabled providers', () => {
       const p1 = createMockProvider('fintables');
-      const p2 = createMockProvider('finnhub');
+      const p2 = createMockProvider('serpapi');
       const config = makeConfig({
         fintables: { enabled: true, priority: 1 },
-        finnhub: { enabled: false, priority: 2 },
+        serpapi: { enabled: false, priority: 2 },
       });
 
-      const orchestrator = new MarketDataOrchestrator(circuitBreaker, cacheService, [p1, p2], config);
+      const orchestrator = new MarketDataOrchestrator(
+        circuitBreaker,
+        cacheService,
+        [p1, p2],
+        config,
+      );
       const available = orchestrator.getAvailableProviders();
 
       expect(available).toContain('fintables');
-      expect(available).not.toContain('finnhub');
+      expect(available).not.toContain('serpapi');
     });
   });
 
@@ -420,32 +468,42 @@ describe('MarketDataOrchestrator', () => {
       const p1 = createMockProvider('fintables', {
         health: jest.fn().mockResolvedValue(true),
       });
-      const p2 = createMockProvider('finnhub', {
+      const p2 = createMockProvider('serpapi', {
         health: jest.fn().mockResolvedValue(false),
       });
 
-      const orchestrator = new MarketDataOrchestrator(circuitBreaker, cacheService, [p1, p2], makeConfig());
+      const orchestrator = new MarketDataOrchestrator(
+        circuitBreaker,
+        cacheService,
+        [p1, p2],
+        makeConfig(),
+      );
       const health = await orchestrator.getProviderHealth();
 
       expect(health.fintables).toBe(true);
-      expect(health.finnhub).toBe(false);
+      expect(health.serpapi).toBe(false);
     });
   });
 
   describe('configuration loading', () => {
     it('should respect enabled/disabled from config', () => {
       const p1 = createMockProvider('fintables');
-      const p2 = createMockProvider('finnhub');
+      const p2 = createMockProvider('serpapi');
       const config = makeConfig({
         fintables: { enabled: true, priority: 1 },
-        finnhub: { enabled: false, priority: 2 },
+        serpapi: { enabled: false, priority: 2 },
       });
 
-      const orchestrator = new MarketDataOrchestrator(circuitBreaker, cacheService, [p1, p2], config);
+      const orchestrator = new MarketDataOrchestrator(
+        circuitBreaker,
+        cacheService,
+        [p1, p2],
+        config,
+      );
       const available = orchestrator.getAvailableProviders();
 
       expect(available).toContain('fintables');
-      expect(available).not.toContain('finnhub');
+      expect(available).not.toContain('serpapi');
     });
 
     it('should use default config when none provided', () => {
@@ -484,13 +542,23 @@ describe('MarketDataOrchestrator', () => {
 
   describe('empty state', () => {
     it('should return null with no providers', async () => {
-      const orchestrator = new MarketDataOrchestrator(circuitBreaker, cacheService, [], makeConfig());
+      const orchestrator = new MarketDataOrchestrator(
+        circuitBreaker,
+        cacheService,
+        [],
+        makeConfig(),
+      );
       const result = await orchestrator.fetchCompany('THYAO');
       expect(result).toBeNull();
     });
 
     it('should return empty provider list with no providers', () => {
-      const orchestrator = new MarketDataOrchestrator(circuitBreaker, cacheService, [], makeConfig());
+      const orchestrator = new MarketDataOrchestrator(
+        circuitBreaker,
+        cacheService,
+        [],
+        makeConfig(),
+      );
       expect(orchestrator.getAvailableProviders()).toEqual([]);
     });
   });
@@ -498,13 +566,20 @@ describe('MarketDataOrchestrator', () => {
   describe('macro indicator caching', () => {
     it('should cache macro indicators with 30 minute TTL', async () => {
       const macro = [
-        { symbol: 'vix', value: 30, change: 1, changePercent: 3.4, timestamp: new Date().toISOString(), source: 'finnhub' },
+        {
+          symbol: 'vix',
+          value: 30,
+          change: 1,
+          changePercent: 3.4,
+          timestamp: new Date().toISOString(),
+          source: 'serpapi',
+        },
       ];
-      const p1 = createMockProvider('finnhub', {
+      const p1 = createMockProvider('serpapi', {
         getMacroIndicators: jest.fn().mockResolvedValue(macro),
       });
       const config = makeConfig({
-        finnhub: { enabled: true, priority: 1 },
+        serpapi: { enabled: true, priority: 1 },
       });
 
       const orchestrator = new MarketDataOrchestrator(circuitBreaker, cacheService, [p1], config);
@@ -525,12 +600,24 @@ describe('MarketDataOrchestrator', () => {
 
     it('should serve macro indicators from cache when available', async () => {
       const cached = [
-        { symbol: 'dxy', value: 110, change: 0.5, changePercent: 0.45, timestamp: new Date().toISOString(), source: 'finnhub' },
+        {
+          symbol: 'dxy',
+          value: 110,
+          change: 0.5,
+          changePercent: 0.45,
+          timestamp: new Date().toISOString(),
+          source: 'serpapi',
+        },
       ];
       cacheService.get = jest.fn().mockReturnValueOnce(cached);
 
-      const p1 = createMockProvider('finnhub');
-      const orchestrator = new MarketDataOrchestrator(circuitBreaker, cacheService, [p1], makeConfig());
+      const p1 = createMockProvider('serpapi');
+      const orchestrator = new MarketDataOrchestrator(
+        circuitBreaker,
+        cacheService,
+        [p1],
+        makeConfig(),
+      );
       const result = await orchestrator.fetchMacroIndicators();
 
       expect(result).toHaveLength(1);
@@ -590,7 +677,12 @@ describe('MarketDataOrchestrator', () => {
       const yahoo = createMockProvider('yahoo', {
         getLatestPrice: jest.fn().mockResolvedValue(pricePoint),
       });
-      const orchestrator = new MarketDataOrchestrator(circuitBreaker, cacheService, [yahoo], makeConfig());
+      const orchestrator = new MarketDataOrchestrator(
+        circuitBreaker,
+        cacheService,
+        [yahoo],
+        makeConfig(),
+      );
 
       const result = await orchestrator.fetchLatestPrice('THYAO.IS');
 
@@ -607,7 +699,12 @@ describe('MarketDataOrchestrator', () => {
       const mockCache = { get: mockGet, set: jest.fn() } as unknown as MarketDataCacheService;
       const yahoo = createMockProvider('yahoo');
 
-      const orchestrator = new MarketDataOrchestrator(circuitBreaker, mockCache, [yahoo], makeConfig());
+      const orchestrator = new MarketDataOrchestrator(
+        circuitBreaker,
+        mockCache,
+        [yahoo],
+        makeConfig(),
+      );
       const result = await orchestrator.fetchLatestPrice('THYAO.IS');
 
       expect(result).not.toBeNull();
@@ -620,7 +717,12 @@ describe('MarketDataOrchestrator', () => {
       const yahoo = createMockProvider('yahoo', {
         getLatestPrice: jest.fn().mockResolvedValue(null),
       });
-      const orchestrator = new MarketDataOrchestrator(circuitBreaker, cacheService, [yahoo], makeConfig());
+      const orchestrator = new MarketDataOrchestrator(
+        circuitBreaker,
+        cacheService,
+        [yahoo],
+        makeConfig(),
+      );
 
       const result = await orchestrator.fetchLatestPrice('UNKNOWN');
 
@@ -646,7 +748,12 @@ describe('MarketDataOrchestrator', () => {
       const yahoo = createMockProvider('yahoo', {
         getHistoricalData: jest.fn().mockResolvedValue(points),
       });
-      const orchestrator = new MarketDataOrchestrator(circuitBreaker, cacheService, [yahoo], makeConfig());
+      const orchestrator = new MarketDataOrchestrator(
+        circuitBreaker,
+        cacheService,
+        [yahoo],
+        makeConfig(),
+      );
 
       const result = await orchestrator.fetchHistoricalData('THYAO.IS', '1d');
 
@@ -654,14 +761,25 @@ describe('MarketDataOrchestrator', () => {
       expect(result!.data).toHaveLength(1);
       expect(result!.provider).toBe('yahoo');
       expect(result!.cached).toBe(false);
-      expect(cacheService.set).toHaveBeenCalledWith('yahoo', 'historical', 'THYAO.IS|1d', points, expect.any(Number));
+      expect(cacheService.set).toHaveBeenCalledWith(
+        'yahoo',
+        'historical',
+        'THYAO.IS|1d',
+        points,
+        expect.any(Number),
+      );
     });
 
     it('should return null when no provider returns data', async () => {
       const yahoo = createMockProvider('yahoo', {
         getHistoricalData: jest.fn().mockResolvedValue([]),
       });
-      const orchestrator = new MarketDataOrchestrator(circuitBreaker, cacheService, [yahoo], makeConfig());
+      const orchestrator = new MarketDataOrchestrator(
+        circuitBreaker,
+        cacheService,
+        [yahoo],
+        makeConfig(),
+      );
 
       const result = await orchestrator.fetchHistoricalData('UNKNOWN', '1d');
 
@@ -687,7 +805,12 @@ describe('MarketDataOrchestrator', () => {
         set: jest.fn(),
       } as unknown as MarketDataCacheService;
       const yahoo = createMockProvider('yahoo');
-      const orchestrator = new MarketDataOrchestrator(circuitBreaker, mockCache, [yahoo], makeConfig());
+      const orchestrator = new MarketDataOrchestrator(
+        circuitBreaker,
+        mockCache,
+        [yahoo],
+        makeConfig(),
+      );
 
       const result = await orchestrator.fetchHistoricalData('THYAO.IS', '1d');
 
@@ -703,7 +826,12 @@ describe('MarketDataOrchestrator', () => {
       const yahoo = createMockProvider('yahoo', {
         getAvailableTimeframes: jest.fn().mockReturnValue(['4h', '1d', '1w']),
       });
-      const orchestrator = new MarketDataOrchestrator(circuitBreaker, cacheService, [yahoo], makeConfig());
+      const orchestrator = new MarketDataOrchestrator(
+        circuitBreaker,
+        cacheService,
+        [yahoo],
+        makeConfig(),
+      );
 
       expect(orchestrator.getSupportedTimeframes()).toEqual(['4h', '1d', '1w']);
     });
@@ -712,7 +840,12 @@ describe('MarketDataOrchestrator', () => {
       const p1 = createMockProvider('yahoo', {
         getAvailableTimeframes: jest.fn().mockReturnValue([]),
       });
-      const orchestrator = new MarketDataOrchestrator(circuitBreaker, cacheService, [p1], makeConfig());
+      const orchestrator = new MarketDataOrchestrator(
+        circuitBreaker,
+        cacheService,
+        [p1],
+        makeConfig(),
+      );
 
       expect(orchestrator.getSupportedTimeframes()).toEqual(['4h', '1d', '1w', '1m', '3m', '6m']);
     });
@@ -798,7 +931,12 @@ describe('MarketDataOrchestrator', () => {
           lastSuccessTime: 200,
         }),
       });
-      const orchestrator = new MarketDataOrchestrator(circuitBreaker, cacheService, [p1], makeConfig());
+      const orchestrator = new MarketDataOrchestrator(
+        circuitBreaker,
+        cacheService,
+        [p1],
+        makeConfig(),
+      );
 
       const diagnostics = orchestrator.getProviderDiagnostics();
       expect(diagnostics.fintables).toEqual({
@@ -860,7 +998,7 @@ describe('MarketDataOrchestrator', () => {
       const p1 = createMockProvider('fintables', {
         getHistoricalData: jest.fn().mockResolvedValue([bad]),
       });
-      const p2 = createMockProvider('finnhub', {
+      const p2 = createMockProvider('serpapi', {
         getHistoricalData: jest.fn().mockResolvedValue([good]),
       });
       const orchestrator = new MarketDataOrchestrator(
@@ -877,10 +1015,10 @@ describe('MarketDataOrchestrator', () => {
       const result = await orchestrator.fetchHistoricalData('THYAO', '1d');
 
       expect(result).not.toBeNull();
-      expect(result!.provider).toBe('finnhub');
+      expect(result!.provider).toBe('serpapi');
       expect(result!.data).toHaveLength(1);
       expect(result!.fallbackUsed).toBe(true);
-      expect(result!.attemptedProviders).toEqual(['fintables', 'finnhub']);
+      expect(result!.attemptedProviders).toEqual(['fintables', 'serpapi']);
     });
 
     it('should attach metadata to latest price results', async () => {
@@ -888,7 +1026,7 @@ describe('MarketDataOrchestrator', () => {
       const p1 = createMockProvider('fintables', {
         getLatestPrice: jest.fn().mockResolvedValue(null),
       });
-      const p2 = createMockProvider('finnhub', {
+      const p2 = createMockProvider('serpapi', {
         getLatestPrice: jest.fn().mockResolvedValue(point),
       });
       const orchestrator = new MarketDataOrchestrator(
@@ -905,9 +1043,9 @@ describe('MarketDataOrchestrator', () => {
       const result = await orchestrator.fetchLatestPrice('THYAO');
 
       expect(result).not.toBeNull();
-      expect(result!.provider).toBe('finnhub');
+      expect(result!.provider).toBe('serpapi');
       expect(result!.fallbackUsed).toBe(true);
-      expect(result!.attemptedProviders).toEqual(['fintables', 'finnhub']);
+      expect(result!.attemptedProviders).toEqual(['fintables', 'serpapi']);
     });
 
     it('should reject invalid latest price points without caching them', async () => {
@@ -933,20 +1071,25 @@ describe('MarketDataOrchestrator', () => {
     });
 
     it('should expose deterministic provider configuration without secrets', () => {
-      const p1 = createMockProvider('finnhub');
+      const p1 = createMockProvider('serpapi');
       const p2 = createMockProvider('yahoo');
-      const orchestrator = new MarketDataOrchestrator(circuitBreaker, cacheService, [p1, p2], makeConfig());
+      const orchestrator = new MarketDataOrchestrator(
+        circuitBreaker,
+        cacheService,
+        [p1, p2],
+        makeConfig(),
+      );
 
       const configuration = orchestrator.getProviderConfiguration();
-      const finnhub = configuration.find((c) => c.name === 'finnhub');
+      const serpapi = configuration.find((c) => c.name === 'serpapi');
       const yahoo = configuration.find((c) => c.name === 'yahoo');
 
-      expect(finnhub).toEqual(
+      expect(serpapi).toEqual(
         expect.objectContaining({
           enabled: true,
           configured: false,
           authenticated: false,
-          priority: 3,
+          priority: 8,
           public: false,
         }),
       );
@@ -955,10 +1098,15 @@ describe('MarketDataOrchestrator', () => {
     });
 
     it('should classify timeframes as REAL, DERIVED, or UNAVAILABLE', () => {
-      const p1 = createMockProvider('finnhub', {
+      const p1 = createMockProvider('serpapi', {
         getAvailableTimeframes: jest.fn().mockReturnValue(['4h', '1d']),
       });
-      const orchestrator = new MarketDataOrchestrator(circuitBreaker, cacheService, [p1], makeConfig());
+      const orchestrator = new MarketDataOrchestrator(
+        circuitBreaker,
+        cacheService,
+        [p1],
+        makeConfig(),
+      );
 
       const report = orchestrator.getTimeframeStatusReport();
       const t4h = report.find((r) => r.timeframe === '4h');
@@ -966,7 +1114,7 @@ describe('MarketDataOrchestrator', () => {
       const t6m = report.find((r) => r.timeframe === '6m');
 
       expect(t4h!.status).toBe('REAL');
-      expect(t4h!.providers).toContain('finnhub');
+      expect(t4h!.providers).toContain('serpapi');
       expect(t1h!.status).toBe('DERIVED');
       expect(t1h!.sourceTimeframe).toBe('4h');
       expect(t6m!.status).toBe('UNAVAILABLE');
@@ -975,32 +1123,40 @@ describe('MarketDataOrchestrator', () => {
   });
 
   describe('provider request budgeting (R2-050C)', () => {
-    function makeBudgetConfig(limit: number, provider = 'alpha_vantage'): MarketDataConfig {
+    function makeBudgetConfig(limit: number, provider = 'kap'): MarketDataConfig {
       const base = makeConfig();
       base.providers = {
         ...base.providers,
-        [provider]: { ...base.providers[provider as keyof MarketDataConfig['providers']], budget: { dailyLimit: limit, windowMs: 60_000 } },
+        [provider]: {
+          ...base.providers[provider as keyof MarketDataConfig['providers']],
+          budget: { dailyLimit: limit, windowMs: 60_000 },
+        },
       };
       return base;
     }
 
     it('skips a provider whose budget is exhausted and falls back to the next', async () => {
-      const p1 = createMockProvider('alpha_vantage', {
+      const p1 = createMockProvider('kap', {
         fetchCompany: jest.fn().mockRejectedValue(new Error('fail')),
       });
-      const p2 = createMockProvider('finnhub', {
-        fetchCompany: jest.fn().mockResolvedValue(createCompany('THYAO', 'finnhub')),
+      const p2 = createMockProvider('serpapi', {
+        fetchCompany: jest.fn().mockResolvedValue(createCompany('THYAO', 'serpapi')),
       });
       const config = makeBudgetConfig(1);
-      const orchestrator = new MarketDataOrchestrator(circuitBreaker, cacheService, [p1, p2], config);
+      const orchestrator = new MarketDataOrchestrator(
+        circuitBreaker,
+        cacheService,
+        [p1, p2],
+        config,
+      );
 
       await orchestrator.fetchCompany('THYAO');
       const result = await orchestrator.fetchCompany('THYAO');
 
-      // First call exhausted alpha_vantage's budget of 1; the second must skip it.
+      // First call exhausted kap's budget of 1; the second must skip it.
       expect(result).not.toBeNull();
-      expect(result!.provider).toBe('finnhub');
-      expect(result!.actualProvider).toBe('finnhub');
+      expect(result!.provider).toBe('serpapi');
+      expect(result!.actualProvider).toBe('serpapi');
       expect(p1.fetchCompany).toHaveBeenCalledTimes(1);
       expect(p2.fetchCompany).toHaveBeenCalledTimes(2);
     });
@@ -1009,9 +1165,9 @@ describe('MarketDataOrchestrator', () => {
       const config = makeConfig();
       config.providers = {
         ...config.providers,
-        alpha_vantage: { ...config.providers.alpha_vantage, budget: { dailyLimit: 2, windowMs: 5 } },
+        kap: { ...config.providers.kap, budget: { dailyLimit: 2, windowMs: 5 } },
       };
-      const p1 = createMockProvider('alpha_vantage', {
+      const p1 = createMockProvider('kap', {
         fetchCompany: jest.fn().mockRejectedValue(new Error('fail')),
       });
       const orchestrator = new MarketDataOrchestrator(circuitBreaker, cacheService, [p1], config);
@@ -1019,26 +1175,26 @@ describe('MarketDataOrchestrator', () => {
       // Exhaust the 2-request budget via real failure calls.
       await orchestrator.fetchCompany('THYAO');
       await orchestrator.fetchCompany('THYAO');
-      let entry = orchestrator.getProviderDashboard().find((d) => d.name === 'alpha_vantage');
+      let entry = orchestrator.getProviderDashboard().find((d) => d.name === 'kap');
       expect(entry!.budget!.remaining).toBe(0);
 
       // Wait past the tiny reset window; remaining restores to the limit.
       await new Promise((resolve) => setTimeout(resolve, 10));
-      entry = orchestrator.getProviderDashboard().find((d) => d.name === 'alpha_vantage');
+      entry = orchestrator.getProviderDashboard().find((d) => d.name === 'kap');
       expect(entry!.budget!.remaining).toBe(2);
     });
 
     it('exposes budget state in provider dashboard without secrets', () => {
-      const config = makeBudgetConfig(60, 'finnhub');
+      const config = makeBudgetConfig(60, 'serpapi');
       const orchestrator = new MarketDataOrchestrator(circuitBreaker, cacheService, [], config);
-      const p1 = createMockProvider('finnhub');
+      const p1 = createMockProvider('serpapi');
       orchestrator.registerProvider(p1);
 
       const dashboard = orchestrator.getProviderDashboard();
-      const entry = dashboard.find((d) => d.name === 'finnhub');
+      const entry = dashboard.find((d) => d.name === 'serpapi');
       expect(entry).toBeDefined();
       expect(entry!.budget).toBeDefined();
-      expect(entry!.budget!.provider).toBe('finnhub');
+      expect(entry!.budget!.provider).toBe('serpapi');
       expect(entry!.budget!.remaining).toBe(entry!.budget!.limit);
       expect(JSON.stringify(entry)).not.toContain('apiKey');
     });

@@ -52,7 +52,11 @@ function stateOf(points: MarketDataPoint[], provider = 'yahoo'): IncrementalMark
   };
 }
 
-function makeResult<T>(data: T, provider = 'yahoo', extra: Partial<MarketDataResult<T>> = {}): MarketDataResult<T> {
+function makeResult<T>(
+  data: T,
+  provider = 'yahoo',
+  extra: Partial<MarketDataResult<T>> = {},
+): MarketDataResult<T> {
   return { data, provider, cached: false, timestamp: new Date().toISOString(), ...extra };
 }
 
@@ -60,7 +64,9 @@ function makeCache() {
   const store = new Map<string, unknown>();
   return {
     store,
-    get: jest.fn((provider: string, type: string, key: string) => store.get(`${provider}:${type}:${key}`)),
+    get: jest.fn((provider: string, type: string, key: string) =>
+      store.get(`${provider}:${type}:${key}`),
+    ),
     set: jest.fn((provider: string, type: string, key: string, value: unknown) => {
       store.set(`${provider}:${type}:${key}`, value);
       return true;
@@ -190,10 +196,7 @@ describe('HistoricalMarketDataService', () => {
       cache.store.set('any:historicalMeta:SISE|1d', stateOf(stalePoints, 'yahoo'));
 
       const registry = {
-        getActiveSymbols: () => [
-          { canonicalTicker: 'THYAO' },
-          { canonicalTicker: 'SISE' },
-        ],
+        getActiveSymbols: () => [{ canonicalTicker: 'THYAO' }, { canonicalTicker: 'SISE' }],
       };
       build({ registry });
 
@@ -239,17 +242,18 @@ describe('HistoricalMarketDataService', () => {
       cache.store.set('any:historical:THYAO|1d', points);
       cache.store.set('any:historicalMeta:THYAO|1d', stateOf(points));
 
-      const gaps = await service.getGaps('THYAO', '1d', { startDate: '2026-07-01', endDate: '2026-07-31', now: NOW });
+      const gaps = await service.getGaps('THYAO', '1d', {
+        startDate: '2026-07-01',
+        endDate: '2026-07-31',
+        now: NOW,
+      });
 
       expect(gaps.zeroOrNegativePriceCount).toBe(1);
       expect(gaps.invalidVolumeCount).toBe(1);
     });
 
     it('flags large abnormal gaps separately', async () => {
-      const points = [
-        point('2026-07-01T15:00:00.000Z'),
-        point('2026-07-28T15:00:00.000Z'),
-      ];
+      const points = [point('2026-07-01T15:00:00.000Z'), point('2026-07-28T15:00:00.000Z')];
       cache.store.set('any:historical:THYAO|1d', points);
       cache.store.set('any:historicalMeta:THYAO|1d', stateOf(points));
 
@@ -263,7 +267,12 @@ describe('HistoricalMarketDataService', () => {
   describe('BACKFILL', () => {
     it('cold cache: fetches full window as a single range and persists merged data', async () => {
       const timestamps = tradingDayTimestamps(WINDOW.startDate, WINDOW.endDate);
-      orchestrator.fetchHistoricalRange.mockResolvedValue(makeResult(timestamps.map((ts) => point(ts)), 'yahoo'));
+      orchestrator.fetchHistoricalRange.mockResolvedValue(
+        makeResult(
+          timestamps.map((ts) => point(ts)),
+          'yahoo',
+        ),
+      );
 
       const result = await service.backfill('THYAO', '1d', { ...WINDOW, now: NOW });
 
@@ -344,7 +353,10 @@ describe('HistoricalMarketDataService', () => {
 
       let resolveRange!: (v: MarketDataResult<MarketDataPoint[]>) => void;
       orchestrator.fetchHistoricalRange.mockImplementation(
-        () => new Promise((res) => { resolveRange = res; }),
+        () =>
+          new Promise((res) => {
+            resolveRange = res;
+          }),
       );
 
       const p1 = service.backfill('THYAO', '1d', { ...WINDOW, now: NOW });
@@ -413,15 +425,15 @@ describe('HistoricalMarketDataService', () => {
       cache.store.set('any:historical:THYAO|1d', existing);
       cache.store.set('any:historicalMeta:THYAO|1d', stateOf(existing));
       orchestrator.fetchHistoricalRange.mockResolvedValue(
-        makeResult([point(missingTs)], 'finnhub', {
+        makeResult([point(missingTs)], 'serpapi', {
           fallbackUsed: true,
-          attemptedProviders: ['yahoo', 'finnhub'],
+          attemptedProviders: ['yahoo', 'serpapi'],
         }),
       );
 
       const result = await service.backfill('THYAO', '1d', { ...WINDOW, now: NOW });
 
-      expect(result.actualProvider).toBe('finnhub');
+      expect(result.actualProvider).toBe('serpapi');
       expect(result.fallbackUsed).toBe(true);
       expect(result.providerAttempts).toBe(2);
       expect(result.status).toBe('completed');
@@ -446,7 +458,12 @@ describe('HistoricalMarketDataService', () => {
       const disabledCache = { get: jest.fn(() => undefined), set: jest.fn(() => false) };
       build({ cache: disabledCache });
       const timestamps = tradingDayTimestamps(WINDOW.startDate, WINDOW.endDate);
-      orchestrator.fetchHistoricalRange.mockResolvedValue(makeResult(timestamps.map((ts) => point(ts)), 'yahoo'));
+      orchestrator.fetchHistoricalRange.mockResolvedValue(
+        makeResult(
+          timestamps.map((ts) => point(ts)),
+          'yahoo',
+        ),
+      );
 
       const result = await service.backfill('THYAO', '1d', { ...WINDOW, now: NOW });
 
@@ -486,10 +503,7 @@ describe('HistoricalMarketDataService', () => {
     });
 
     it('too few bars -> not usable, "tarihsel veri yetersiz"', async () => {
-      const points = [
-        point('2026-07-01T15:00:00.000Z'),
-        point('2026-07-02T15:00:00.000Z'),
-      ];
+      const points = [point('2026-07-01T15:00:00.000Z'), point('2026-07-02T15:00:00.000Z')];
       cache.store.set('any:historical:THYAO|1d', points);
       cache.store.set('any:historicalMeta:THYAO|1d', stateOf(points));
 
@@ -522,12 +536,19 @@ describe('HistoricalMarketDataService', () => {
     it('1h request backfills against the 4h fetchable cache key', async () => {
       const timestamps = tradingDayTimestamps(WINDOW.startDate, WINDOW.endDate);
       orchestrator.fetchHistoricalRange.mockResolvedValue(
-        makeResult(timestamps.map((ts) => point(ts, { timeframe: '4h' })), 'yahoo'),
+        makeResult(
+          timestamps.map((ts) => point(ts, { timeframe: '4h' })),
+          'yahoo',
+        ),
       );
 
       const result = await service.backfill('THYAO', '1h', { ...WINDOW, now: NOW });
 
-      expect(orchestrator.fetchHistoricalRange).toHaveBeenCalledWith('THYAO', '4h', expect.any(Object));
+      expect(orchestrator.fetchHistoricalRange).toHaveBeenCalledWith(
+        'THYAO',
+        '4h',
+        expect.any(Object),
+      );
       expect(result.status).toBe('completed');
       expect(cache.store.get('any:historical:THYAO|4h')).toBeDefined();
       expect(cache.store.get('any:historical:THYAO|1h')).toBeUndefined();
@@ -547,7 +568,10 @@ describe('HistoricalMarketDataService', () => {
       cache.store.set('any:historical:THYAO|1d', points);
       cache.store.set('any:historicalMeta:THYAO|1d', stateOf(points));
 
-      const history = await service.getValidatedHistory('THYAO', '1d', { startDate: WINDOW.startDate, endDate: WINDOW.endDate });
+      const history = await service.getValidatedHistory('THYAO', '1d', {
+        startDate: WINDOW.startDate,
+        endDate: WINDOW.endDate,
+      });
 
       expect(history).toHaveLength(points.length);
       expect(orchestrator.fetchHistoricalRange).not.toHaveBeenCalled();

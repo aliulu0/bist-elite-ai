@@ -16,8 +16,6 @@ export interface ProviderConfig {
 export interface MarketDataConfig {
   providers: {
     fintables: ProviderConfig;
-    alpha_vantage: ProviderConfig;
-    finnhub: ProviderConfig;
     yahoo: ProviderConfig;
     kap: ProviderConfig;
     tcmb: ProviderConfig;
@@ -46,30 +44,6 @@ export function getMarketDataConfig(): MarketDataConfig {
         retries: parseInt(process.env.FINTABLES_RETRY_COUNT || '3', 10),
         apiKey: process.env.FINTABLES_API_KEY || '',
         baseUrl: process.env.FINTABLES_BASE_URL || 'https://fintables.com/api/v1',
-      },
-      finnhub: {
-        enabled: process.env.FINNHUB_ENABLED !== 'false',
-        priority: parseInt(process.env.FINNHUB_PRIORITY || '3', 10),
-        timeout: parseInt(process.env.FINNHUB_TIMEOUT_MS || '15000', 10),
-        retries: parseInt(process.env.FINNHUB_RETRY_COUNT || '3', 10),
-        apiKey: process.env.FINNHUB_API_KEY || '',
-        baseUrl: process.env.FINNHUB_BASE_URL || 'https://finnhub.io/api/v1',
-        budget: {
-          dailyLimit: parseInt(process.env.FINNHUB_DAILY_LIMIT || '60', 10),
-          windowMs: 24 * 60 * 60 * 1000,
-        },
-      },
-      alpha_vantage: {
-        enabled: process.env.ALPHA_VANTAGE_ENABLED !== 'false',
-        priority: parseInt(process.env.ALPHA_VANTAGE_PRIORITY || '2', 10),
-        timeout: parseInt(process.env.ALPHA_VANTAGE_TIMEOUT_MS || '20000', 10),
-        retries: parseInt(process.env.ALPHA_VANTAGE_RETRY_COUNT || '3', 10),
-        apiKey: process.env.ALPHA_VANTAGE_API_KEY || '',
-        baseUrl: process.env.ALPHA_VANTAGE_BASE_URL || 'https://www.alphavantage.co/query',
-        budget: {
-          dailyLimit: parseInt(process.env.ALPHA_VANTAGE_DAILY_LIMIT || '25', 10),
-          windowMs: 24 * 60 * 60 * 1000,
-        },
       },
       yahoo: {
         enabled: process.env.YAHOO_ENABLED !== 'false',

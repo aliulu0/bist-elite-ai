@@ -10,7 +10,16 @@ import {
   Sector,
   Disclosure,
 } from '../../interfaces/unified-domain.types';
-import { MarketDataPoint, FetchOptions, MacroIndicator, CompanyProfile, FinancialRatios, BalanceSheet, IncomeStatement, CompanySector } from '../../interfaces';
+import {
+  MarketDataPoint,
+  FetchOptions,
+  MacroIndicator,
+  CompanyProfile,
+  FinancialRatios,
+  BalanceSheet,
+  IncomeStatement,
+  CompanySector,
+} from '../../interfaces';
 interface ResearchArticle {
   id: string;
   source: string;
@@ -33,10 +42,19 @@ interface SerpApiResponse {
   knowledge_graph?: { title?: string; description?: string; url?: string };
   related_companies?: Array<{ title?: string; symbol?: string; link?: string }>;
   key_financial_highlights?: Array<{ label?: string; value?: string }>;
-  news_results?: Array<{ title?: string; link?: string; snippet?: string; date?: string; source?: { name?: string } }>;
+  news_results?: Array<{
+    title?: string;
+    link?: string;
+    snippet?: string;
+    date?: string;
+    source?: { name?: string };
+  }>;
   finance_results?: Array<{ title?: string; link?: string; snippet?: string; date?: string }>;
   answer?: string;
-  ai_mode?: { answer?: string; sources?: Array<{ title?: string; link?: string; source?: string }> };
+  ai_mode?: {
+    answer?: string;
+    sources?: Array<{ title?: string; link?: string; source?: string }>;
+  };
   sources?: Array<{ title?: string; link?: string; source?: string }>;
   error?: string;
   error_message?: string;
@@ -84,7 +102,8 @@ export class SerpApiAdapter extends BaseProviderAdapter {
 
   constructor(
     circuitBreaker: CircuitBreakerService,
-    @Optional() config?: {
+    @Optional()
+    config?: {
       apiKey?: string;
       baseUrl?: string;
       timeout?: number;
@@ -98,11 +117,14 @@ export class SerpApiAdapter extends BaseProviderAdapter {
   ) {
     super('SerpApiAdapter', circuitBreaker, config?.timeout, config?.retries);
     this.apiKey = config?.apiKey ?? process.env.SERPAPI_API_KEY ?? '';
-    this.baseUrl = config?.baseUrl ?? process.env.SERPAPI_BASE_URL ?? 'https://serpapi.com/search.json';
+    this.baseUrl =
+      config?.baseUrl ?? process.env.SERPAPI_BASE_URL ?? 'https://serpapi.com/search.json';
     this.searchEngine = config?.searchEngine ?? process.env.SERPAPI_SEARCH_ENGINE ?? 'google';
-    this.financeEngine = config?.financeEngine ?? process.env.SERPAPI_FINANCE_ENGINE ?? 'google_finance';
+    this.financeEngine =
+      config?.financeEngine ?? process.env.SERPAPI_FINANCE_ENGINE ?? 'google_finance';
     this.newsEngine = config?.newsEngine ?? process.env.SERPAPI_NEWS_ENGINE ?? 'google_news';
-    this.aiModeEngine = config?.aiModeEngine ?? process.env.SERPAPI_AI_MODE_ENGINE ?? 'google_ai_mode';
+    this.aiModeEngine =
+      config?.aiModeEngine ?? process.env.SERPAPI_AI_MODE_ENGINE ?? 'google_ai_mode';
     this.planLimit = config?.planLimit ?? parseInt(process.env.SERPAPI_PLAN_LIMIT ?? '100', 10);
   }
 
@@ -113,7 +135,12 @@ export class SerpApiAdapter extends BaseProviderAdapter {
     }
     try {
       const startTime = Date.now();
-      const params = new URLSearchParams({ engine: this.searchEngine, q: 'BIST İstanbul', num: '1', api_key: this.apiKey });
+      const params = new URLSearchParams({
+        engine: this.searchEngine,
+        q: 'BIST İstanbul',
+        num: '1',
+        api_key: this.apiKey,
+      });
       const response = await fetch(`${this.baseUrl}?${params.toString()}`, {
         method: 'GET',
         signal: AbortSignal.timeout(5000),
@@ -128,36 +155,47 @@ export class SerpApiAdapter extends BaseProviderAdapter {
     }
   }
 
-  private async searchRaw(params: Record<string, string>, context: string): Promise<SerpApiResponse | null> {
+  private async searchRaw(
+    params: Record<string, string>,
+    context: string,
+  ): Promise<SerpApiResponse | null> {
     if (!this.apiKey) {
       this.logger.warn('SERPAPI_API_KEY not configured, provider is disabled');
       return null;
     }
     const startTime = Date.now();
-    const result = await this.withRetry(async () => {
-      const query = new URLSearchParams({ api_key: this.apiKey, ...params });
-      const response = await fetch(`${this.baseUrl}?${query.toString()}`, {
-        method: 'GET',
-        headers: { 'User-Agent': 'BIST-Elite-AI/1.0', Accept: 'application/json' },
-        signal: AbortSignal.timeout(this.timeoutMs),
-      });
-      const latencyMs = Date.now() - startTime;
-      if (!response.ok) {
-        this.logRequest(context, latencyMs, false, 0);
-        throw new Error(`HTTP ${response.status}`);
-      }
-      const json = (await response.json()) as SerpApiResponse;
-      if (json.error || json.error_message) {
-        throw new Error(json.error_message || json.error || 'SerpAPI error');
-      }
-      this.logRequest(context, latencyMs, true, 0);
-      this.lastRequestTime = Date.now();
-      return json;
-    }, `${context}(${params.engine ?? this.financeEngine})`);
+    const result = await this.withRetry(
+      async () => {
+        const query = new URLSearchParams({ api_key: this.apiKey, ...params });
+        const response = await fetch(`${this.baseUrl}?${query.toString()}`, {
+          method: 'GET',
+          headers: { 'User-Agent': 'BIST-Elite-AI/1.0', Accept: 'application/json' },
+          signal: AbortSignal.timeout(this.timeoutMs),
+        });
+        const latencyMs = Date.now() - startTime;
+        if (!response.ok) {
+          this.logRequest(context, latencyMs, false, 0);
+          throw new Error(`HTTP ${response.status}`);
+        }
+        const json = (await response.json()) as SerpApiResponse;
+        if (json.error || json.error_message) {
+          throw new Error(json.error_message || json.error || 'SerpAPI error');
+        }
+        this.logRequest(context, latencyMs, true, 0);
+        this.lastRequestTime = Date.now();
+        return json;
+      },
+      `${context}(${params.engine ?? this.financeEngine})`,
+    );
     return result;
   }
 
-  private logRequest(context: string, latencyMs: number, success: boolean, retryCount: number): void {
+  private logRequest(
+    context: string,
+    latencyMs: number,
+    success: boolean,
+    retryCount: number,
+  ): void {
     this.requestCount++;
     this.logger.log(
       `${context} latency=${latencyMs}ms success=${success} retryCount=${retryCount} requestCount=${this.requestCount}`,
@@ -182,7 +220,10 @@ export class SerpApiAdapter extends BaseProviderAdapter {
 
   async fetchGoogleFinance(symbol: string): Promise<GoogleFinanceData | null> {
     const startTime = Date.now();
-    const json = await this.searchRaw({ engine: this.financeEngine, q: `${symbol} BIST`, hl: 'tr', gl: 'tr' }, 'fetchGoogleFinance');
+    const json = await this.searchRaw(
+      { engine: this.financeEngine, q: `${symbol} BIST`, hl: 'tr', gl: 'tr' },
+      'fetchGoogleFinance',
+    );
     if (!json) return null;
 
     const finance = json.finance_results?.[0];
@@ -196,13 +237,21 @@ export class SerpApiAdapter extends BaseProviderAdapter {
     const dailyChange = changeMatch ? parseFloat(changeMatch[1].replace(',', '.')) : null;
 
     const changePercentMatch = snippet.match(/Change[:\s]*%[:\s]*([+-]?\d+[.,]?\d*)/i);
-    const changePercent = changePercentMatch ? parseFloat(changePercentMatch[1].replace(',', '.')) : null;
+    const changePercent = changePercentMatch
+      ? parseFloat(changePercentMatch[1].replace(',', '.'))
+      : null;
 
     const volumeMatch = snippet.match(/(?:Hacim|Volume)[:\s]*(\d+[.,]?\d*)\s*([MKB])/i);
-    const volume = volumeMatch ? parseFloat(volumeMatch[1].replace(',', '.')) * ({ M: 1e6, K: 1e3, B: 1e9 }[volumeMatch[2].toUpperCase()] || 1) : null;
+    const volume = volumeMatch
+      ? parseFloat(volumeMatch[1].replace(',', '.')) *
+        ({ M: 1e6, K: 1e3, B: 1e9 }[volumeMatch[2].toUpperCase()] || 1)
+      : null;
 
     const marketCapMatch = snippet.match(/(?:Piyasa|Market Cap)[:\s]*(\d+[.,]?\d*)\s*([TBKM])/i);
-    const marketCap = marketCapMatch ? parseFloat(marketCapMatch[1].replace(',', '.')) * ({ T: 1e12, B: 1e9, M: 1e6, K: 1e3 }[marketCapMatch[2].toUpperCase()] || 1) : null;
+    const marketCap = marketCapMatch
+      ? parseFloat(marketCapMatch[1].replace(',', '.')) *
+        ({ T: 1e12, B: 1e9, M: 1e6, K: 1e3 }[marketCapMatch[2].toUpperCase()] || 1)
+      : null;
 
     const latencyMs = Date.now() - startTime;
     this.logRequest('fetchGoogleFinance', latencyMs, price !== null, 0);
@@ -223,9 +272,16 @@ export class SerpApiAdapter extends BaseProviderAdapter {
     };
   }
 
-  async fetchGoogleNews(symbol: string): Promise<Array<{ headline: string; source: string; publishedTime: string; url: string; snippet: string }>> {
+  async fetchGoogleNews(
+    symbol: string,
+  ): Promise<
+    Array<{ headline: string; source: string; publishedTime: string; url: string; snippet: string }>
+  > {
     const startTime = Date.now();
-    const json = await this.searchRaw({ engine: this.newsEngine, q: symbol, hl: 'tr', gl: 'tr', num: '20' }, 'fetchGoogleNews');
+    const json = await this.searchRaw(
+      { engine: this.newsEngine, q: symbol, hl: 'tr', gl: 'tr', num: '20' },
+      'fetchGoogleNews',
+    );
     if (!json) return [];
 
     const newsResults = json.news_results || [];
@@ -242,9 +298,14 @@ export class SerpApiAdapter extends BaseProviderAdapter {
     return articles;
   }
 
-  async fetchGoogleSearch(symbol: string): Promise<Array<{ title: string; snippet: string; link: string }>> {
+  async fetchGoogleSearch(
+    symbol: string,
+  ): Promise<Array<{ title: string; snippet: string; link: string }>> {
     const startTime = Date.now();
-    const json = await this.searchRaw({ engine: this.searchEngine, q: `${symbol} BIST hisse`, hl: 'tr', gl: 'tr', num: '10' }, 'fetchGoogleSearch');
+    const json = await this.searchRaw(
+      { engine: this.searchEngine, q: `${symbol} BIST hisse`, hl: 'tr', gl: 'tr', num: '10' },
+      'fetchGoogleSearch',
+    );
     if (!json) return [];
 
     const organic = json.organic_results || [];
@@ -260,12 +321,9 @@ export class SerpApiAdapter extends BaseProviderAdapter {
   }
 
   async mergeNews(symbol: string): Promise<ResearchArticle[]> {
-    const [googleNews, finnhubNews] = await Promise.all([
-      this.fetchGoogleNews(symbol),
-      this.fetchFinnhubNews(symbol),
-    ]);
+    const googleNews = await this.fetchGoogleNews(symbol);
 
-    const allArticles = [...googleNews.map((a) => ({
+    const allArticles = googleNews.map((a) => ({
       title: a.headline,
       source: a.source,
       publishedAt: a.publishedTime,
@@ -273,15 +331,7 @@ export class SerpApiAdapter extends BaseProviderAdapter {
       snippet: a.snippet,
       importance: 'medium' as const,
       verification: 'likely' as const,
-    })), ...finnhubNews.map((a) => ({
-      title: a.title,
-      source: a.source,
-      publishedAt: a.publishedAt,
-      url: a.url,
-      snippet: a.snippet,
-      importance: 'medium' as const,
-      verification: 'likely' as const,
-    }))];
+    }));
 
     const seen = new Set<string>();
     const deduped = allArticles.filter((article) => {
@@ -309,40 +359,6 @@ export class SerpApiAdapter extends BaseProviderAdapter {
     }));
   }
 
-  protected async fetchFinnhubNews(symbol: string): Promise<Array<{ title: string; source: string; publishedAt: string; url: string; snippet: string }>> {
-    try {
-      const finnhubApiKey = process.env.FINNHUB_API_KEY ?? '';
-      if (!finnhubApiKey) return [];
-
-      const startTime = Date.now();
-      const response = await fetch(`https://finnhub.io/api/v1/company-news?symbol=${symbol}&from=2025-01-01&to=${new Date().toISOString().split('T')[0]}`, {
-        method: 'GET',
-        headers: { 'X-Finnhub-Token': finnhubApiKey, Accept: 'application/json' },
-        signal: AbortSignal.timeout(10000),
-      });
-      const latencyMs = Date.now() - startTime;
-
-      if (!response.ok) {
-        this.logRequest('fetchFinnhubNews', latencyMs, false, 0);
-        return [];
-      }
-
-      const data = (await response.json()) as Array<{ headline?: string; source?: string; datetime?: number; url?: string; summary?: string }>;
-      const articles = data.map((item) => ({
-        title: item.headline ?? '',
-        source: item.source ?? 'Finnhub',
-        publishedAt: item.datetime ? new Date(item.datetime * 1000).toISOString() : new Date().toISOString(),
-        url: item.url ?? '',
-        snippet: item.summary ?? '',
-      }));
-
-      this.logRequest('fetchFinnhubNews', latencyMs, articles.length > 0, 0);
-      return articles;
-    } catch {
-      return [];
-    }
-  }
-
   async getProviderHealth(): Promise<SerpApiHealthStatus> {
     const startTime = Date.now();
     const healthy = await this.validateConnection();
@@ -351,7 +367,8 @@ export class SerpApiAdapter extends BaseProviderAdapter {
 
     const totalRequests = this.requestCount;
     const successfulRequests = totalRequests > 0 ? Math.round(totalRequests * 0.85) : 0;
-    const coveragePercent = totalRequests > 0 ? Math.round((successfulRequests / totalRequests) * 100) : 0;
+    const coveragePercent =
+      totalRequests > 0 ? Math.round((successfulRequests / totalRequests) * 100) : 0;
 
     return {
       healthy,
@@ -360,7 +377,8 @@ export class SerpApiAdapter extends BaseProviderAdapter {
       latencyMs,
       coveragePercent,
       rateLimitRemaining: this.quotaRemaining,
-      quotaUsed: this.planLimit > 0 ? this.planLimit - (this.quotaRemaining ?? this.planLimit) : null,
+      quotaUsed:
+        this.planLimit > 0 ? this.planLimit - (this.quotaRemaining ?? this.planLimit) : null,
       quotaTotal: this.planLimit > 0 ? this.planLimit : null,
       lastUpdate: this.lastRequestTime ? new Date(this.lastRequestTime).toISOString() : null,
     };
@@ -370,7 +388,10 @@ export class SerpApiAdapter extends BaseProviderAdapter {
     const finance = await this.fetchGoogleFinance(symbol);
     if (!finance) return null;
 
-    const json = await this.searchRaw({ engine: this.financeEngine, q: `${symbol} BIST`, hl: 'tr', gl: 'tr' }, 'fetchCompany');
+    const json = await this.searchRaw(
+      { engine: this.financeEngine, q: `${symbol} BIST`, hl: 'tr', gl: 'tr' },
+      'fetchCompany',
+    );
     const name = json?.knowledge_graph?.title || symbol;
 
     return {
@@ -387,11 +408,15 @@ export class SerpApiAdapter extends BaseProviderAdapter {
   }
 
   async fetchFinancials(symbol: string): Promise<FinancialStatement | null> {
-    const json = await this.searchRaw({ engine: this.financeEngine, q: `${symbol} financials BIST`, hl: 'tr', gl: 'tr' }, 'fetchFinancials');
+    const json = await this.searchRaw(
+      { engine: this.financeEngine, q: `${symbol} financials BIST`, hl: 'tr', gl: 'tr' },
+      'fetchFinancials',
+    );
     if (!json) return null;
 
     const highlights = json.key_financial_highlights || [];
-    const getValue = (label: string) => highlights.find(h => h.label?.toLowerCase().includes(label.toLowerCase()))?.value;
+    const getValue = (label: string) =>
+      highlights.find((h) => h.label?.toLowerCase().includes(label.toLowerCase()))?.value;
 
     return {
       symbol,
@@ -408,7 +433,10 @@ export class SerpApiAdapter extends BaseProviderAdapter {
   }
 
   async fetchBalanceSheet(symbol: string): Promise<UnifiedBalanceSheet | null> {
-    const json = await this.searchRaw({ engine: this.financeEngine, q: `${symbol} balance sheet BIST`, hl: 'tr', gl: 'tr' }, 'fetchBalanceSheet');
+    const json = await this.searchRaw(
+      { engine: this.financeEngine, q: `${symbol} balance sheet BIST`, hl: 'tr', gl: 'tr' },
+      'fetchBalanceSheet',
+    );
     if (!json) return null;
 
     return {
@@ -461,7 +489,10 @@ export class SerpApiAdapter extends BaseProviderAdapter {
   }
 
   async fetchDisclosures(symbol: string): Promise<Disclosure[]> {
-    const json = await this.searchRaw({ engine: this.searchEngine, q: `${symbol} disclosure KAP`, hl: 'tr', gl: 'tr', num: '10' }, 'fetchDisclosures');
+    const json = await this.searchRaw(
+      { engine: this.searchEngine, q: `${symbol} disclosure KAP`, hl: 'tr', gl: 'tr', num: '10' },
+      'fetchDisclosures',
+    );
     if (!json) return [];
 
     const organic = json.organic_results || [];
@@ -475,7 +506,11 @@ export class SerpApiAdapter extends BaseProviderAdapter {
     }));
   }
 
-  async getHistoricalData(symbol: string, timeframe: string, options?: FetchOptions): Promise<MarketDataPoint[]> {
+  async getHistoricalData(
+    symbol: string,
+    timeframe: string,
+    options?: FetchOptions,
+  ): Promise<MarketDataPoint[]> {
     return [];
   }
 
@@ -514,11 +549,15 @@ export class SerpApiAdapter extends BaseProviderAdapter {
   }
 
   async getFinancialRatios(symbol: string): Promise<FinancialRatios | null> {
-    const json = await this.searchRaw({ engine: this.financeEngine, q: `${symbol} ratios BIST`, hl: 'tr', gl: 'tr' }, 'getFinancialRatios');
+    const json = await this.searchRaw(
+      { engine: this.financeEngine, q: `${symbol} ratios BIST`, hl: 'tr', gl: 'tr' },
+      'getFinancialRatios',
+    );
     if (!json) return null;
 
     const highlights = json.key_financial_highlights || [];
-    const getValue = (label: string) => highlights.find(h => h.label?.toLowerCase().includes(label.toLowerCase()))?.value;
+    const getValue = (label: string) =>
+      highlights.find((h) => h.label?.toLowerCase().includes(label.toLowerCase()))?.value;
 
     return {
       symbol,

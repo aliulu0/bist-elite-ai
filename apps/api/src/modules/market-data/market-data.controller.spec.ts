@@ -164,9 +164,7 @@ describe('MarketDataController', () => {
 
     it('should throw NotFoundException when incremental latest price has no data', async () => {
       mockLatestPriceIncrementalService.getLatestPriceIncremental.mockResolvedValue(null);
-      await expect(controller.getLatestPrice('THYAO.IS', '1d')).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(controller.getLatestPrice('THYAO.IS', '1d')).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -293,7 +291,10 @@ describe('MarketDataController', () => {
     it('should return provider statuses', async () => {
       const result = await controller.getProviders();
       expect(result.success).toBe(true);
-      expect(result.data).toEqual([{ name: 'fintables', healthy: true }, { name: 'yahoo', healthy: true }]);
+      expect(result.data).toEqual([
+        { name: 'fintables', healthy: true },
+        { name: 'yahoo', healthy: true },
+      ]);
       expect(result.timestamp).toBeDefined();
     });
 
@@ -338,21 +339,21 @@ describe('MarketDataController', () => {
     it('should return provider configuration entries with timestamp', () => {
       mockOrchestrator.getProviderConfiguration.mockReturnValue([
         {
-          name: 'finnhub',
+          name: 'yahoo',
           enabled: true,
           configured: false,
           authenticated: false,
           priority: 10,
           timeoutMs: 15000,
           retries: 3,
-          baseUrlHost: 'finnhub.io',
+          baseUrlHost: 'query1.finance.yahoo.com',
           public: false,
         },
       ]);
       const result = controller.getProviderConfiguration();
       expect(result.success).toBe(true);
       expect(result.data).toHaveLength(1);
-      expect(result.data[0].name).toBe('finnhub');
+      expect(result.data[0].name).toBe('yahoo');
       expect(result.data[0]).not.toHaveProperty('apiKey');
       expect(result.timestamp).toBeDefined();
     });

@@ -23,16 +23,16 @@ describe('SymbolRegistryService', () => {
     }
   });
 
-  it('should map every active symbol to yahoo and alpha_vantage tickers', () => {
+  it('should map every active symbol to yahoo and fintables tickers', () => {
     for (const entry of service.getActiveSymbols()) {
       expect(entry.providers.yahoo).toBe(`${entry.canonicalTicker}.IS`);
-      expect(entry.providers.alpha_vantage).toBe(`${entry.canonicalTicker}.IST`);
+      expect(entry.providers.fintables).toBe(entry.canonicalTicker);
     }
   });
 
   it('should resolve canonical ticker from provider ticker', () => {
     expect(service.getCanonicalTicker('yahoo', 'ASELS.IS')).toBe('ASELS');
-    expect(service.getCanonicalTicker('alpha_vantage', 'ASELS.IST')).toBe('ASELS');
+    expect(service.getCanonicalTicker('fintables', 'ASELS')).toBe('ASELS');
     expect(service.getCanonicalTicker('yahoo', 'BIMAS.IS')).toBe('BIMAS');
   });
 

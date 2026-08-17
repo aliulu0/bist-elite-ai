@@ -7,9 +7,20 @@ import {
   ProviderHealthSnapshot,
   ProviderHealthResult,
 } from './provider-health-monitor.types';
-import { ProviderHealthConfig, DEFAULT_PROVIDER_HEALTH_CONFIG } from './provider-health-monitor.config';
+import {
+  ProviderHealthConfig,
+  DEFAULT_PROVIDER_HEALTH_CONFIG,
+} from './provider-health-monitor.config';
 
-const ALL_PROVIDERS: ProviderName[] = ['yahoo_finance', 'fintables', 'investing', 'google_discovery', 'finnhub', 'kap', 'mkk', 'tcmb', 'alpha_vantage'];
+const ALL_PROVIDERS: ProviderName[] = [
+  'yahoo_finance',
+  'fintables',
+  'investing',
+  'google_discovery',
+  'kap',
+  'mkk',
+  'tcmb',
+];
 
 @Injectable()
 export class ProviderHealthMonitorEngine {
@@ -34,7 +45,13 @@ export class ProviderHealthMonitorEngine {
     }
   }
 
-  recordRequest(provider: ProviderName, latencyMs: number, success: boolean, isTimeout = false, error?: string): void {
+  recordRequest(
+    provider: ProviderName,
+    latencyMs: number,
+    success: boolean,
+    isTimeout = false,
+    error?: string,
+  ): void {
     if (!this.requests.has(provider)) {
       this.requests.set(provider, []);
       this.consecutiveFailures.set(provider, 0);
@@ -99,7 +116,11 @@ export class ProviderHealthMonitorEngine {
     const p99 = this.percentile(latencies, 99);
 
     const status = this.evaluateStatus(successRate, p95);
-    const reliabilityScore = this.computeReliability(successRate, p95, this.consecutiveFailures.get(provider) ?? 0);
+    const reliabilityScore = this.computeReliability(
+      successRate,
+      p95,
+      this.consecutiveFailures.get(provider) ?? 0,
+    );
 
     const uptimeStart = history[0].timestamp;
     const uptime = Date.now() - uptimeStart;
@@ -196,7 +217,11 @@ export class ProviderHealthMonitorEngine {
     return 'healthy';
   }
 
-  private computeReliability(successRate: number, p95Latency: number, consecutiveFailures: number): number {
+  private computeReliability(
+    successRate: number,
+    p95Latency: number,
+    consecutiveFailures: number,
+  ): number {
     let score = successRate;
 
     if (p95Latency > 0) {

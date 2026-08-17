@@ -5,8 +5,6 @@ import { MarketDataValidationService } from '../market-data-validation.service';
 import { MarketDataOrchestrator } from '../orchestrator/market-data-orchestrator';
 import { MarketDataConfig, getMarketDataConfig } from '../config/market-data.config';
 import { FintablesUnifiedAdapter } from '../providers/unified/fintables-unified.adapter';
-import { AlphaVantageAdapter } from '../providers/unified/alpha-vantage.adapter';
-import { FinnhubAdapter } from '../providers/unified/finnhub.adapter';
 import { SerpApiAdapter } from '../providers/unified/serpapi.adapter';
 import { YahooUnifiedAdapter } from '../providers/unified/yahoo-unified.adapter';
 import { KAPAdapter } from '../providers/unified/kap.adapter';
@@ -66,7 +64,11 @@ async function probePrice(
 function buildOrchestrator(
   adapters: IUnifiedMarketDataProvider[],
   config?: MarketDataConfig,
-): { orchestrator: MarketDataOrchestrator; cacheService: MarketDataCacheService; circuitBreaker: CircuitBreakerService } {
+): {
+  orchestrator: MarketDataOrchestrator;
+  cacheService: MarketDataCacheService;
+  circuitBreaker: CircuitBreakerService;
+} {
   const circuitBreaker = new CircuitBreakerService();
   const cacheService = new MarketDataCacheService(new CacheService());
   const validationService = new MarketDataValidationService();
@@ -86,18 +88,12 @@ function buildOrchestrator(
 }
 
 function priceAdapters(circuitBreaker: CircuitBreakerService): IUnifiedMarketDataProvider[] {
-  return [
-    new FinnhubAdapter(circuitBreaker),
-    new AlphaVantageAdapter(circuitBreaker),
-    new YahooUnifiedAdapter(circuitBreaker, new YahooFinanceProvider()),
-  ];
+  return [new YahooUnifiedAdapter(circuitBreaker, new YahooFinanceProvider())];
 }
 
 function allAdapters(circuitBreaker: CircuitBreakerService): IUnifiedMarketDataProvider[] {
   return [
     new FintablesUnifiedAdapter(circuitBreaker),
-    new AlphaVantageAdapter(circuitBreaker),
-    new FinnhubAdapter(circuitBreaker),
     new SerpApiAdapter(circuitBreaker),
     new YahooUnifiedAdapter(circuitBreaker, new YahooFinanceProvider()),
     new KAPAdapter(circuitBreaker),
@@ -126,7 +122,11 @@ class FailFastProvider extends BaseProviderAdapter {
     return this.fail();
   }
 
-  async getHistoricalData(symbol: string, timeframe: string, options?: FetchOptions): Promise<MarketDataPoint[]> {
+  async getHistoricalData(
+    symbol: string,
+    timeframe: string,
+    options?: FetchOptions,
+  ): Promise<MarketDataPoint[]> {
     return this.fail();
   }
 
@@ -170,7 +170,9 @@ class FailFastProvider extends BaseProviderAdapter {
     return null;
   }
 
-  async getFinancialRatios(symbol: string): Promise<import('../interfaces').FinancialRatios | null> {
+  async getFinancialRatios(
+    symbol: string,
+  ): Promise<import('../interfaces').FinancialRatios | null> {
     return null;
   }
 
@@ -178,7 +180,9 @@ class FailFastProvider extends BaseProviderAdapter {
     return null;
   }
 
-  async getIncomeStatement(symbol: string): Promise<import('../interfaces').IncomeStatement | null> {
+  async getIncomeStatement(
+    symbol: string,
+  ): Promise<import('../interfaces').IncomeStatement | null> {
     return null;
   }
 
@@ -231,9 +235,9 @@ describeOrSkip('Real Provider Runtime Validation (SMOKE)', () => {
 
     it('lists every registered provider with a complete config entry', () => {
       const configuration = orchestrator.getProviderConfiguration();
-      expect(configuration.length).toBeGreaterThanOrEqual(8);
+      expect(configuration.length).toBeGreaterThanOrEqual(6);
       const names = configuration.map((c) => c.name);
-      for (const provider of ['fintables', 'alpha_vantage', 'finnhub', 'serpapi', 'yahoo', 'kap', 'tcmb', 'mkk']) {
+      for (const provider of ['fintables', 'serpapi', 'yahoo', 'kap', 'tcmb', 'mkk']) {
         expect(names).toContain(provider);
       }
       for (const entry of configuration) {
@@ -248,7 +252,7 @@ describeOrSkip('Real Provider Runtime Validation (SMOKE)', () => {
 
     it('exposes provider status and a timeframe report without network calls', async () => {
       const status = await orchestrator.getProviderStatus();
-      expect(status.length).toBeGreaterThanOrEqual(8);
+      expect(status.length).toBeGreaterThanOrEqual(6);
       for (const entry of status) {
         expect(typeof entry.connected).toBe('boolean');
         expect(entry.circuitState).toMatch(/^(CLOSED|OPEN|HALF_OPEN)$/);
@@ -272,14 +276,23 @@ describeOrSkip('Real Provider Runtime Validation (SMOKE)', () => {
     const adapters = allAdapters(circuitBreaker);
 
     it('classifies every provider outcome into a known failure category or data', async () => {
-      const probes: Array<{ label: string; outcome: ProbeOutcome; detail: string; candleCount: number }> = [];
+      const probes: Array<{
+        label: string;
+        outcome: ProbeOutcome;
+        detail: string;
+        candleCount: number;
+      }> = [];
 
       for (const adapter of adapters) {
-        const isPriceProvider = ['finnhub', 'alpha_vantage', 'yahoo', 'fintables'].includes(adapter.name);
+        const isPriceProvider = ['yahoo', 'fintables'].includes(adapter.name);
 
         if (isPriceProvider) {
-          const latest = await probePrice(`${adapter.name}::latest`, () => adapter.getLatestPrice('THYAO'));
-          const history = await probePrice(`${adapter.name}::1d`, () => adapter.getHistoricalData('THYAO', '1d'));
+          const latest = await probePrice(`${adapter.name}::latest`, () =>
+            adapter.getLatestPrice('THYAO'),
+          );
+          const history = await probePrice(`${adapter.name}::1d`, () =>
+            adapter.getHistoricalData('THYAO', '1d'),
+          );
           probes.push(latest, history);
         } else {
           probes.push({
@@ -293,7 +306,9 @@ describeOrSkip('Real Provider Runtime Validation (SMOKE)', () => {
 
       for (const probe of probes) {
         // eslint-disable-next-line no-console
-        console.log(`[smoke] ${probe.label}: ${probe.outcome}${probe.candleCount ? ` candles=${probe.candleCount}` : ''}`);
+        console.log(
+          `[smoke] ${probe.label}: ${probe.outcome}${probe.candleCount ? ` candles=${probe.candleCount}` : ''}`,
+        );
         if (probe.outcome.startsWith('ERROR:')) {
           const category = probe.outcome.replace('ERROR:', '');
           expect(FAILURE_CATEGORIES).toContain(category);
@@ -302,7 +317,7 @@ describeOrSkip('Real Provider Runtime Validation (SMOKE)', () => {
 
       const latestOutcomes = probes.filter((p) => p.label.endsWith('::latest'));
       const served = latestOutcomes.some((p) => p.outcome === 'DATA');
-      // Real-data gate: at least one price provider (finnhub/alpha_vantage/yahoo)
+      // Real-data gate: at least one price provider (yahoo)
       // must return a quote for THYAO, otherwise the runtime is not usable.
       expect(served).toBe(true);
     });
@@ -314,8 +329,12 @@ describeOrSkip('Real Provider Runtime Validation (SMOKE)', () => {
       expect(classifier.classify({ status: 429 }).category).toBe('RATE_LIMIT');
       expect(classifier.classify({ status: 503 }).category).toBe('PROVIDER_ERROR');
       expect(classifier.classify({ status: 400 }).category).toBe('INVALID_RESPONSE');
-      expect(classifier.classify(new Error('fetch failed'))).toMatchObject({ category: 'NETWORK_ERROR' });
-      expect(classifier.classify(new Error('Timeout after 15000ms'))).toMatchObject({ category: 'TIMEOUT' });
+      expect(classifier.classify(new Error('fetch failed'))).toMatchObject({
+        category: 'NETWORK_ERROR',
+      });
+      expect(classifier.classify(new Error('Timeout after 15000ms'))).toMatchObject({
+        category: 'TIMEOUT',
+      });
       expect(classifier.isRetryable('AUTHENTICATION_ERROR')).toBe(false);
       expect(classifier.isRetryable('NETWORK_ERROR')).toBe(true);
       expect(classifier.isRetryable('RATE_LIMIT')).toBe(true);
@@ -390,7 +409,9 @@ describeOrSkip('Real Provider Runtime Validation (SMOKE)', () => {
   // ---------------------------------------------------------------------------
   describe('cache reuse (real CacheService)', () => {
     it('serves the second fetch for the same symbol+timeframe from cache', async () => {
-      const { orchestrator, cacheService } = buildOrchestrator(priceAdapters(new CircuitBreakerService()));
+      const { orchestrator, cacheService } = buildOrchestrator(
+        priceAdapters(new CircuitBreakerService()),
+      );
       const symbol = SAMPLE[0];
 
       const first = await orchestrator.fetchHistoricalData(symbol, '1d');
@@ -432,7 +453,10 @@ describeOrSkip('Real Provider Runtime Validation (SMOKE)', () => {
   describe('fallback with real providers', () => {
     it('falls back to a working provider when the primary fails', async () => {
       const { orchestrator } = buildOrchestrator(
-        [new FailFastProvider(new CircuitBreakerService()), ...priceAdapters(new CircuitBreakerService())],
+        [
+          new FailFastProvider(new CircuitBreakerService()),
+          ...priceAdapters(new CircuitBreakerService()),
+        ],
         configWithFailFast(true, true),
       );
 
@@ -492,7 +516,9 @@ describeOrSkip('Real Provider Runtime Validation (SMOKE)', () => {
       const ageMs = Date.now() - timestamps[timestamps.length - 1];
       const ageDays = ageMs / (24 * 60 * 60 * 1000);
       // eslint-disable-next-line no-console
-      console.log(`[smoke] ${SAMPLE[0]} 1d: bars=${points.length} latestAgeDays=${ageDays.toFixed(1)}`);
+      console.log(
+        `[smoke] ${SAMPLE[0]} 1d: bars=${points.length} latestAgeDays=${ageDays.toFixed(1)}`,
+      );
       // Long Turkish holidays can pause trading for ~9 days; 14 days is safe.
       expect(ageDays).toBeLessThanOrEqual(14);
     });
@@ -503,7 +529,9 @@ describeOrSkip('Real Provider Runtime Validation (SMOKE)', () => {
   // ---------------------------------------------------------------------------
   describe('health and diagnostics after real traffic', () => {
     it('records per-provider request metrics and diagnostics', async () => {
-      const { orchestrator, circuitBreaker } = buildOrchestrator(priceAdapters(new CircuitBreakerService()));
+      const { orchestrator, circuitBreaker } = buildOrchestrator(
+        priceAdapters(new CircuitBreakerService()),
+      );
       await orchestrator.fetchHistoricalData(SAMPLE[0], '1d');
 
       const status = await orchestrator.getProviderStatus();
@@ -513,7 +541,7 @@ describeOrSkip('Real Provider Runtime Validation (SMOKE)', () => {
       expect(serving!.successfulRequests).toBeGreaterThanOrEqual(1);
 
       const diagnostics = orchestrator.getProviderDiagnostics();
-      for (const provider of ['finnhub', 'alpha_vantage', 'yahoo']) {
+      for (const provider of ['yahoo']) {
         expect(diagnostics[provider]).toBeDefined();
         expect('lastErrorCategory' in diagnostics[provider]).toBe(true);
       }

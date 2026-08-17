@@ -1,22 +1,13 @@
 export const BIST_EXCHANGE = 'BIST';
 
-export type BistProviderName =
-  | 'yahoo'
-  | 'fintables'
-  | 'finnhub'
-  | 'kap'
-  | 'tcmb'
-  | 'mkk'
-  | 'alpha_vantage';
+export type BistProviderName = 'yahoo' | 'fintables' | 'kap' | 'tcmb' | 'mkk';
 
 export interface SymbolProviderMapping {
   yahoo?: string;
   fintables?: string;
-  finnhub?: string;
   kap?: string;
   tcmb?: string;
   mkk?: string;
-  alpha_vantage?: string;
 }
 
 export interface BistSymbolEntry {

@@ -4,10 +4,10 @@ import { OpportunityHistoryEntry } from './opportunity-detection.types';
 
 function baseMetadata(): AggregationMetadata {
   return {
-    providersQueried: ['fintables', 'finnhub'],
-    providersUsed: ['fintables', 'finnhub'],
+    providersQueried: ['fintables', 'yahoo'],
+    providersUsed: ['fintables', 'yahoo'],
     providersFailed: [],
-    providerConfidence: { fintables: 90, finnhub: 70 },
+    providerConfidence: { fintables: 90, yahoo: 70 },
     qualityScore: 85,
     lastUpdated: new Date().toISOString(),
     cacheStatus: 'miss',
@@ -74,18 +74,64 @@ export function buildStrongAnalysis(): AnalysisResult {
     overallScore: 82,
     confidenceScore: 85,
     signal: 'STRONG_BUY',
-    strengths: ['Strong technical', 'Volume expansion', 'Sector strength improving', 'Cash flow positive', 'Debt decreasing'],
+    strengths: [
+      'Strong technical',
+      'Volume expansion',
+      'Sector strength improving',
+      'Cash flow positive',
+      'Debt decreasing',
+    ],
     moduleResults: [
-      buildModuleResult({ module: 'technical', score: 85, confidence: 90, strengths: ['Strong technical'] }),
-      buildModuleResult({ module: 'fundamental', score: 80, confidence: 85, strengths: ['Strong fundamentals'] }),
-      buildModuleResult({ module: 'financialHealth', score: 78, confidence: 80, strengths: ['Good health'] }),
-      buildModuleResult({ module: 'growth', score: 75, confidence: 80, strengths: ['Growth accelerating'] }),
-      buildModuleResult({ module: 'momentum', score: 82, confidence: 85, strengths: ['Momentum strong'] }),
+      buildModuleResult({
+        module: 'technical',
+        score: 85,
+        confidence: 90,
+        strengths: ['Strong technical'],
+      }),
+      buildModuleResult({
+        module: 'fundamental',
+        score: 80,
+        confidence: 85,
+        strengths: ['Strong fundamentals'],
+      }),
+      buildModuleResult({
+        module: 'financialHealth',
+        score: 78,
+        confidence: 80,
+        strengths: ['Good health'],
+      }),
+      buildModuleResult({
+        module: 'growth',
+        score: 75,
+        confidence: 80,
+        strengths: ['Growth accelerating'],
+      }),
+      buildModuleResult({
+        module: 'momentum',
+        score: 82,
+        confidence: 85,
+        strengths: ['Momentum strong'],
+      }),
       buildModuleResult({ module: 'risk', score: 78, confidence: 80, strengths: ['Low risk'] }),
-      buildModuleResult({ module: 'liquidity', score: 75, confidence: 75, strengths: ['Good liquidity'] }),
+      buildModuleResult({
+        module: 'liquidity',
+        score: 75,
+        confidence: 75,
+        strengths: ['Good liquidity'],
+      }),
       buildModuleResult({ module: 'volatility', score: 70, confidence: 70 }),
-      buildModuleResult({ module: 'trend', score: 80, confidence: 80, strengths: ['Strong uptrend'] }),
-      buildModuleResult({ module: 'valuation', score: 76, confidence: 80, strengths: ['Undervalued'] }),
+      buildModuleResult({
+        module: 'trend',
+        score: 80,
+        confidence: 80,
+        strengths: ['Strong uptrend'],
+      }),
+      buildModuleResult({
+        module: 'valuation',
+        score: 76,
+        confidence: 80,
+        strengths: ['Undervalued'],
+      }),
     ],
   });
 }
@@ -113,7 +159,10 @@ export function buildWeakAnalysis(): AnalysisResult {
   });
 }
 
-export function buildHistory(count: number = 3, scoreStart: number = 60): OpportunityHistoryEntry[] {
+export function buildHistory(
+  count: number = 3,
+  scoreStart: number = 60,
+): OpportunityHistoryEntry[] {
   return Array.from({ length: count }, (_, i) => ({
     timestamp: new Date(Date.now() - (count - i) * 60 * 60 * 1000).toISOString(),
     score: scoreStart + i * 2,

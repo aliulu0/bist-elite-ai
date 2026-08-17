@@ -25,5 +25,5 @@ export const DEFAULT_PROVIDER_HEALTH_CONFIG: ProviderHealthConfig = {
     unhealthyLatencyP95Ms: 5000,
     maxConsecutiveFailures: 5,
   },
-  providers: ['yahoo_finance', 'fintables', 'investing', 'google_discovery', 'finnhub', 'kap', 'mkk', 'tcmb', 'alpha_vantage'],
+  providers: ['yahoo_finance', 'fintables', 'investing', 'google_discovery', 'kap', 'mkk', 'tcmb'],
 };

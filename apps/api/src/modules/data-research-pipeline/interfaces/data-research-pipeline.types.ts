@@ -2,8 +2,6 @@ import { ProviderDashboardEntry } from '../../market-data/orchestrator/market-da
 
 export type DataProviderName =
   | 'fintables'
-  | 'finnhub'
-  | 'alpha-vantage'
   | 'yahoo'
   | 'kap'
   | 'tcmb'
@@ -11,7 +9,6 @@ export type DataProviderName =
   | 'serpapi'
   | 'google-news'
   | 'google-search'
-  | 'finnhub-news'
   | 'agent-reach'
   | 'yahoo-finance'
   | 'chatgpt'
@@ -197,11 +194,14 @@ export interface DataResearchPipelineConfig {
     validateHistory: boolean;
     minHistoryPoints: number;
   };
-  freshnessThresholdsByCategory: Record<DataProviderCategory, {
-    freshSeconds: number;
-    acceptableSeconds: number;
-    staleSeconds: number;
-  }>;
+  freshnessThresholdsByCategory: Record<
+    DataProviderCategory,
+    {
+      freshSeconds: number;
+      acceptableSeconds: number;
+      staleSeconds: number;
+    }
+  >;
 }
 
 export interface DataHealthReport {
@@ -284,57 +284,77 @@ export interface VectorBTAdapterReport {
 }
 
 export const DEFAULT_FRESHNESS_THRESHOLDS = {
-  FRESH_SECONDS: 300,      // 5 minutes
+  FRESH_SECONDS: 300, // 5 minutes
   ACCEPTABLE_SECONDS: 1800, // 30 minutes
-  STALE_SECONDS: 7200,     // 2 hours
+  STALE_SECONDS: 7200, // 2 hours
 };
 
 export const DEFAULT_SOURCE_QUALITY_TIERS: Record<DataProviderName, SourceQualityTier> = {
-  'fintables': 'TIER_1',
-  'finnhub': 'TIER_2',
-  'alpha-vantage': 'TIER_2',
-  'yahoo': 'TIER_2',
-  'kap': 'TIER_1',
-  'tcmb': 'TIER_1',
-  'mkk': 'TIER_1',
-  'serpapi': 'TIER_3',
+  fintables: 'TIER_1',
+  yahoo: 'TIER_2',
+  kap: 'TIER_1',
+  tcmb: 'TIER_1',
+  mkk: 'TIER_1',
+  serpapi: 'TIER_3',
   'google-news': 'TIER_3',
   'google-search': 'TIER_3',
-  'finnhub-news': 'TIER_3',
   'agent-reach': 'TIER_3',
   'yahoo-finance': 'TIER_2',
-  'chatgpt': 'TIER_3',
-  'gemini': 'TIER_3',
-  'perplexity': 'TIER_3',
-  'grok': 'TIER_3',
+  chatgpt: 'TIER_3',
+  gemini: 'TIER_3',
+  perplexity: 'TIER_3',
+  grok: 'TIER_3',
 };
 
-export const FRESHNESS_THRESHOLDS_BY_CATEGORY: Record<DataProviderCategory, { freshSeconds: number; acceptableSeconds: number; staleSeconds: number }> = {
+export const FRESHNESS_THRESHOLDS_BY_CATEGORY: Record<
+  DataProviderCategory,
+  { freshSeconds: number; acceptableSeconds: number; staleSeconds: number }
+> = {
   'market-data': { freshSeconds: 60, acceptableSeconds: 300, staleSeconds: 1800 },
-  'fundamental': { freshSeconds: 3600, acceptableSeconds: 86400, staleSeconds: 604800 },
-  'news': { freshSeconds: 300, acceptableSeconds: 1800, staleSeconds: 7200 },
-  'search': { freshSeconds: 300, acceptableSeconds: 1800, staleSeconds: 7200 },
-  'research': { freshSeconds: 1800, acceptableSeconds: 3600, staleSeconds: 86400 },
-  'macro': { freshSeconds: 3600, acceptableSeconds: 86400, staleSeconds: 604800 },
-  'regulatory': { freshSeconds: 300, acceptableSeconds: 1800, staleSeconds: 7200 },
-  'technical': { freshSeconds: 60, acceptableSeconds: 300, staleSeconds: 1800 },
+  fundamental: { freshSeconds: 3600, acceptableSeconds: 86400, staleSeconds: 604800 },
+  news: { freshSeconds: 300, acceptableSeconds: 1800, staleSeconds: 7200 },
+  search: { freshSeconds: 300, acceptableSeconds: 1800, staleSeconds: 7200 },
+  research: { freshSeconds: 1800, acceptableSeconds: 3600, staleSeconds: 86400 },
+  macro: { freshSeconds: 3600, acceptableSeconds: 86400, staleSeconds: 604800 },
+  regulatory: { freshSeconds: 300, acceptableSeconds: 1800, staleSeconds: 7200 },
+  technical: { freshSeconds: 60, acceptableSeconds: 300, staleSeconds: 1800 },
 };
 
 export const STORY_TYPE_KEYWORDS: Record<StoryType, string[]> = {
-  'NEW_CONTRACT': ['yeni sözleşme', 'sözleşme imzalandı', 'new contract', 'contract signed'],
-  'MAJOR_INVESTMENT': ['büyük yatırım', 'büyük yatırım', 'major investment', 'investment announced'],
-  'CAPACITY_EXPANSION': ['kapasite genişletme', 'kapasite artırılıyor', 'capacity expansion', 'expanding capacity'],
-  'NEW_FACILITY': ['yeni tesis', 'yeni fabrika', 'new facility', 'new plant'],
-  'EXPORT_AGREEMENT': ['ihracat anlaşması', 'ihracat sözleşmesi', 'export agreement', 'export deal'],
-  'STRATEGIC_PARTNERSHIP': ['stratejik ortaklık', 'stratejik işbirliği', 'strategic partnership', 'strategic alliance'],
-  'ACQUISITION': ['satın alma', 'devralma', 'acquisition', 'acquired'],
-  'PRODUCT_LAUNCH': ['ürün lansmanı', 'yeni ürün', 'product launch', 'new product'],
-  'REGULATORY_CHANGE': ['düzenleme değişikliği', 'yasa değişikliği', 'regulatory change', 'regulation change'],
-  'SECTOR_TAILWIND': ['sektör rüzgarı', 'sektörde büyüme', 'sector tailwind', 'sector growth'],
-  'MAJOR_ORDER': ['büyük sipariş', 'büyük tedarik', 'major order', 'large order'],
-  'EARNINGS_INFLECTION': ['kazanç kırılımı', 'karlılık değişimi', 'earnings inflection', 'earnings turn'],
-  'MANAGEMENT_ACTION': ['yönetim kararı', 'yönetim kurulu', 'management action', 'board decision'],
-  'OTHER': ['diğer', 'other'],
+  NEW_CONTRACT: ['yeni sözleşme', 'sözleşme imzalandı', 'new contract', 'contract signed'],
+  MAJOR_INVESTMENT: ['büyük yatırım', 'büyük yatırım', 'major investment', 'investment announced'],
+  CAPACITY_EXPANSION: [
+    'kapasite genişletme',
+    'kapasite artırılıyor',
+    'capacity expansion',
+    'expanding capacity',
+  ],
+  NEW_FACILITY: ['yeni tesis', 'yeni fabrika', 'new facility', 'new plant'],
+  EXPORT_AGREEMENT: ['ihracat anlaşması', 'ihracat sözleşmesi', 'export agreement', 'export deal'],
+  STRATEGIC_PARTNERSHIP: [
+    'stratejik ortaklık',
+    'stratejik işbirliği',
+    'strategic partnership',
+    'strategic alliance',
+  ],
+  ACQUISITION: ['satın alma', 'devralma', 'acquisition', 'acquired'],
+  PRODUCT_LAUNCH: ['ürün lansmanı', 'yeni ürün', 'product launch', 'new product'],
+  REGULATORY_CHANGE: [
+    'düzenleme değişikliği',
+    'yasa değişikliği',
+    'regulatory change',
+    'regulation change',
+  ],
+  SECTOR_TAILWIND: ['sektör rüzgarı', 'sektörde büyüme', 'sector tailwind', 'sector growth'],
+  MAJOR_ORDER: ['büyük sipariş', 'büyük tedarik', 'major order', 'large order'],
+  EARNINGS_INFLECTION: [
+    'kazanç kırılımı',
+    'karlılık değişimi',
+    'earnings inflection',
+    'earnings turn',
+  ],
+  MANAGEMENT_ACTION: ['yönetim kararı', 'yönetim kurulu', 'management action', 'board decision'],
+  OTHER: ['diğer', 'other'],
 };
 
 export const DATA_QUALITY_CHECK_DEFAULTS = {

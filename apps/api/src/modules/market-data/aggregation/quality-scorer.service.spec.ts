@@ -22,7 +22,14 @@ describe('QualityScorer', () => {
   describe('single provider', () => {
     it('should score reasonably for single healthy provider', () => {
       const contributions: ProviderContribution[] = [
-        { provider: 'fintables', priority: 1, healthy: true, latencyMs: 200, fieldsReturned: 7, fieldsExpected: 7 },
+        {
+          provider: 'fintables',
+          priority: 1,
+          healthy: true,
+          latencyMs: 200,
+          fieldsReturned: 7,
+          fieldsExpected: 7,
+        },
       ];
       const score = scorer.calculate(contributions, {
         validationWarnings: [],
@@ -37,47 +44,110 @@ describe('QualityScorer', () => {
   describe('multiple providers', () => {
     it('should score higher with more providers returning complete data', () => {
       const twoProviders: ProviderContribution[] = [
-        { provider: 'fintables', priority: 1, healthy: true, latencyMs: 200, fieldsReturned: 7, fieldsExpected: 7 },
-        { provider: 'finnhub', priority: 2, healthy: true, latencyMs: 300, fieldsReturned: 7, fieldsExpected: 7 },
+        {
+          provider: 'fintables',
+          priority: 1,
+          healthy: true,
+          latencyMs: 200,
+          fieldsReturned: 7,
+          fieldsExpected: 7,
+        },
+        {
+          provider: 'yahoo',
+          priority: 2,
+          healthy: true,
+          latencyMs: 300,
+          fieldsReturned: 7,
+          fieldsExpected: 7,
+        },
       ];
       const threeProviders: ProviderContribution[] = [
-        { provider: 'fintables', priority: 1, healthy: true, latencyMs: 200, fieldsReturned: 7, fieldsExpected: 7 },
-        { provider: 'finnhub', priority: 2, healthy: true, latencyMs: 300, fieldsReturned: 7, fieldsExpected: 7 },
-        { provider: 'kap', priority: 3, healthy: true, latencyMs: 400, fieldsReturned: 7, fieldsExpected: 7 },
+        {
+          provider: 'fintables',
+          priority: 1,
+          healthy: true,
+          latencyMs: 200,
+          fieldsReturned: 7,
+          fieldsExpected: 7,
+        },
+        {
+          provider: 'yahoo',
+          priority: 2,
+          healthy: true,
+          latencyMs: 300,
+          fieldsReturned: 7,
+          fieldsExpected: 7,
+        },
+        {
+          provider: 'kap',
+          priority: 3,
+          healthy: true,
+          latencyMs: 400,
+          fieldsReturned: 7,
+          fieldsExpected: 7,
+        },
       ];
 
       const score2 = scorer.calculate(twoProviders, {
         validationWarnings: [],
         conflictCount: 0,
-        providersQueried: ['fintables', 'finnhub'],
+        providersQueried: ['fintables', 'yahoo'],
       });
       const score3 = scorer.calculate(threeProviders, {
         validationWarnings: [],
         conflictCount: 0,
-        providersQueried: ['fintables', 'finnhub', 'kap'],
+        providersQueried: ['fintables', 'yahoo', 'kap'],
       });
       expect(score3).toBeGreaterThanOrEqual(score2);
     });
 
     it('should score higher with healthy providers', () => {
       const healthy: ProviderContribution[] = [
-        { provider: 'fintables', priority: 1, healthy: true, latencyMs: 200, fieldsReturned: 7, fieldsExpected: 7 },
-        { provider: 'finnhub', priority: 2, healthy: true, latencyMs: 300, fieldsReturned: 7, fieldsExpected: 7 },
+        {
+          provider: 'fintables',
+          priority: 1,
+          healthy: true,
+          latencyMs: 200,
+          fieldsReturned: 7,
+          fieldsExpected: 7,
+        },
+        {
+          provider: 'yahoo',
+          priority: 2,
+          healthy: true,
+          latencyMs: 300,
+          fieldsReturned: 7,
+          fieldsExpected: 7,
+        },
       ];
       const unhealthy: ProviderContribution[] = [
-        { provider: 'fintables', priority: 1, healthy: true, latencyMs: 200, fieldsReturned: 7, fieldsExpected: 7 },
-        { provider: 'finnhub', priority: 2, healthy: false, latencyMs: 300, fieldsReturned: 7, fieldsExpected: 7 },
+        {
+          provider: 'fintables',
+          priority: 1,
+          healthy: true,
+          latencyMs: 200,
+          fieldsReturned: 7,
+          fieldsExpected: 7,
+        },
+        {
+          provider: 'yahoo',
+          priority: 2,
+          healthy: false,
+          latencyMs: 300,
+          fieldsReturned: 7,
+          fieldsExpected: 7,
+        },
       ];
 
       const scoreHealthy = scorer.calculate(healthy, {
         validationWarnings: [],
         conflictCount: 0,
-        providersQueried: ['fintables', 'finnhub'],
+        providersQueried: ['fintables', 'yahoo'],
       });
       const scoreUnhealthy = scorer.calculate(unhealthy, {
         validationWarnings: [],
         conflictCount: 0,
-        providersQueried: ['fintables', 'finnhub'],
+        providersQueried: ['fintables', 'yahoo'],
       });
       expect(scoreHealthy).toBeGreaterThan(scoreUnhealthy);
     });
@@ -86,23 +156,51 @@ describe('QualityScorer', () => {
   describe('field completeness', () => {
     it('should score higher with more complete data', () => {
       const complete: ProviderContribution[] = [
-        { provider: 'fintables', priority: 1, healthy: true, latencyMs: 200, fieldsReturned: 7, fieldsExpected: 7 },
-        { provider: 'finnhub', priority: 2, healthy: true, latencyMs: 300, fieldsReturned: 7, fieldsExpected: 7 },
+        {
+          provider: 'fintables',
+          priority: 1,
+          healthy: true,
+          latencyMs: 200,
+          fieldsReturned: 7,
+          fieldsExpected: 7,
+        },
+        {
+          provider: 'yahoo',
+          priority: 2,
+          healthy: true,
+          latencyMs: 300,
+          fieldsReturned: 7,
+          fieldsExpected: 7,
+        },
       ];
       const incomplete: ProviderContribution[] = [
-        { provider: 'fintables', priority: 1, healthy: true, latencyMs: 200, fieldsReturned: 3, fieldsExpected: 7 },
-        { provider: 'finnhub', priority: 2, healthy: true, latencyMs: 300, fieldsReturned: 3, fieldsExpected: 7 },
+        {
+          provider: 'fintables',
+          priority: 1,
+          healthy: true,
+          latencyMs: 200,
+          fieldsReturned: 3,
+          fieldsExpected: 7,
+        },
+        {
+          provider: 'yahoo',
+          priority: 2,
+          healthy: true,
+          latencyMs: 300,
+          fieldsReturned: 3,
+          fieldsExpected: 7,
+        },
       ];
 
       const scoreComplete = scorer.calculate(complete, {
         validationWarnings: [],
         conflictCount: 0,
-        providersQueried: ['fintables', 'finnhub'],
+        providersQueried: ['fintables', 'yahoo'],
       });
       const scoreIncomplete = scorer.calculate(incomplete, {
         validationWarnings: [],
         conflictCount: 0,
-        providersQueried: ['fintables', 'finnhub'],
+        providersQueried: ['fintables', 'yahoo'],
       });
       expect(scoreComplete).toBeGreaterThan(scoreIncomplete);
     });
@@ -111,38 +209,80 @@ describe('QualityScorer', () => {
   describe('validation warnings', () => {
     it('should penalize error warnings more than info warnings', () => {
       const contributions: ProviderContribution[] = [
-        { provider: 'fintables', priority: 1, healthy: true, latencyMs: 200, fieldsReturned: 7, fieldsExpected: 7 },
-        { provider: 'finnhub', priority: 2, healthy: true, latencyMs: 300, fieldsReturned: 7, fieldsExpected: 7 },
+        {
+          provider: 'fintables',
+          priority: 1,
+          healthy: true,
+          latencyMs: 200,
+          fieldsReturned: 7,
+          fieldsExpected: 7,
+        },
+        {
+          provider: 'yahoo',
+          priority: 2,
+          healthy: true,
+          latencyMs: 300,
+          fieldsReturned: 7,
+          fieldsExpected: 7,
+        },
       ];
 
       const scoreWithErrors = scorer.calculate(contributions, {
-        validationWarnings: [{ field: 'marketCap', message: 'Negative market cap', severity: 'error', provider: 'fintables' }],
+        validationWarnings: [
+          {
+            field: 'marketCap',
+            message: 'Negative market cap',
+            severity: 'error',
+            provider: 'fintables',
+          },
+        ],
         conflictCount: 0,
-        providersQueried: ['fintables', 'finnhub'],
+        providersQueried: ['fintables', 'yahoo'],
       });
       const scoreWithInfo = scorer.calculate(contributions, {
-        validationWarnings: [{ field: 'sector', message: 'Sector is Unknown', severity: 'info', provider: 'fintables' }],
+        validationWarnings: [
+          {
+            field: 'sector',
+            message: 'Sector is Unknown',
+            severity: 'info',
+            provider: 'fintables',
+          },
+        ],
         conflictCount: 0,
-        providersQueried: ['fintables', 'finnhub'],
+        providersQueried: ['fintables', 'yahoo'],
       });
       expect(scoreWithInfo).toBeGreaterThan(scoreWithErrors);
     });
 
     it('should penalize conflicts', () => {
       const contributions: ProviderContribution[] = [
-        { provider: 'fintables', priority: 1, healthy: true, latencyMs: 200, fieldsReturned: 7, fieldsExpected: 7 },
-        { provider: 'finnhub', priority: 2, healthy: true, latencyMs: 300, fieldsReturned: 7, fieldsExpected: 7 },
+        {
+          provider: 'fintables',
+          priority: 1,
+          healthy: true,
+          latencyMs: 200,
+          fieldsReturned: 7,
+          fieldsExpected: 7,
+        },
+        {
+          provider: 'yahoo',
+          priority: 2,
+          healthy: true,
+          latencyMs: 300,
+          fieldsReturned: 7,
+          fieldsExpected: 7,
+        },
       ];
 
       const scoreNoConflicts = scorer.calculate(contributions, {
         validationWarnings: [],
         conflictCount: 0,
-        providersQueried: ['fintables', 'finnhub'],
+        providersQueried: ['fintables', 'yahoo'],
       });
       const scoreWithConflicts = scorer.calculate(contributions, {
         validationWarnings: [],
         conflictCount: 5,
-        providersQueried: ['fintables', 'finnhub'],
+        providersQueried: ['fintables', 'yahoo'],
       });
       expect(scoreNoConflicts).toBeGreaterThan(scoreWithConflicts);
     });
@@ -151,21 +291,49 @@ describe('QualityScorer', () => {
   describe('score bounds', () => {
     it('should never exceed 100', () => {
       const contributions: ProviderContribution[] = [
-        { provider: 'fintables', priority: 1, healthy: true, latencyMs: 10, fieldsReturned: 7, fieldsExpected: 7 },
-        { provider: 'finnhub', priority: 2, healthy: true, latencyMs: 10, fieldsReturned: 7, fieldsExpected: 7 },
-        { provider: 'kap', priority: 3, healthy: true, latencyMs: 10, fieldsReturned: 7, fieldsExpected: 7 },
+        {
+          provider: 'fintables',
+          priority: 1,
+          healthy: true,
+          latencyMs: 10,
+          fieldsReturned: 7,
+          fieldsExpected: 7,
+        },
+        {
+          provider: 'yahoo',
+          priority: 2,
+          healthy: true,
+          latencyMs: 10,
+          fieldsReturned: 7,
+          fieldsExpected: 7,
+        },
+        {
+          provider: 'kap',
+          priority: 3,
+          healthy: true,
+          latencyMs: 10,
+          fieldsReturned: 7,
+          fieldsExpected: 7,
+        },
       ];
       const score = scorer.calculate(contributions, {
         validationWarnings: [],
         conflictCount: 0,
-        providersQueried: ['fintables', 'finnhub', 'kap'],
+        providersQueried: ['fintables', 'yahoo', 'kap'],
       });
       expect(score).toBeLessThanOrEqual(100);
     });
 
     it('should never go below 0', () => {
       const contributions: ProviderContribution[] = [
-        { provider: 'fintables', priority: 99, healthy: false, latencyMs: 10000, fieldsReturned: 0, fieldsExpected: 7 },
+        {
+          provider: 'fintables',
+          priority: 99,
+          healthy: false,
+          latencyMs: 10000,
+          fieldsReturned: 0,
+          fieldsExpected: 7,
+        },
       ];
       const warnings: ValidationWarning[] = Array(20).fill({
         field: 'test',

@@ -1,5 +1,10 @@
 import { ResearchArticle, ResearchImportance } from '../research/interfaces/research.types';
-import { Company, FinancialStatement, Disclosure, MarketDataResult } from '../market-data/interfaces/unified-domain.types';
+import {
+  Company,
+  FinancialStatement,
+  Disclosure,
+  MarketDataResult,
+} from '../market-data/interfaces/unified-domain.types';
 import { MacroIndicator } from '../market-data/interfaces/macro-indicator.types';
 
 export { ResearchImportance };
@@ -12,7 +17,6 @@ export type AiProviderName =
   | 'serpapi'
   | 'google-news'
   | 'google-search'
-  | 'finnhub-news'
   | 'yahoo-finance'
   | 'kap'
   | 'tcmb'

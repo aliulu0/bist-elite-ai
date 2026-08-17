@@ -36,7 +36,7 @@ export class DataResearchPipelineController {
   @Get('freshness/:provider')
   @Public()
   @ApiOperation({ summary: 'Get freshness for specific provider' })
-  @ApiParam({ name: 'provider', description: 'Provider name (e.g., fintables, yahoo, finnhub)' })
+  @ApiParam({ name: 'provider', description: 'Provider name (e.g., fintables, yahoo, kap)' })
   async getFreshnessForProvider(@Param('provider') provider: string) {
     return this.pipeline.getFreshnessForProvider(provider);
   }
@@ -69,10 +69,7 @@ export class DataResearchPipelineController {
   @ApiOperation({ summary: 'Get data quality report for ticker' })
   @ApiParam({ name: 'ticker', description: 'BIST ticker symbol' })
   @ApiQuery({ name: 'timeframe', required: false, description: 'Timeframe (default: 1d)' })
-  async getDataQuality(
-    @Param('ticker') ticker: string,
-    @Query('timeframe') timeframe = '1d',
-  ) {
+  async getDataQuality(@Param('ticker') ticker: string, @Query('timeframe') timeframe = '1d') {
     return this.pipeline.getDataQuality(ticker, timeframe);
   }
 

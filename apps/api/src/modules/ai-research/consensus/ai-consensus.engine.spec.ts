@@ -92,7 +92,12 @@ describe('AIConsensusEngine', () => {
     it('builds a consensus with summaries, agreement, confidence and score', () => {
       const results = [
         makeResult('google-news', [
-          makeItem({ provider: 'google-news', contentHash: 'n1', official: true, qualityScore: 0.9 }),
+          makeItem({
+            provider: 'google-news',
+            contentHash: 'n1',
+            official: true,
+            qualityScore: 0.9,
+          }),
         ]),
         makeResult('serpapi', [
           makeItem({ provider: 'serpapi', contentHash: 'n2', official: false, qualityScore: 0.8 }),
@@ -124,8 +129,12 @@ describe('AIConsensusEngine', () => {
 
     it('sets ai provider summaries from results', () => {
       const results = [
-        makeResult('chatgpt', [makeItem({ provider: 'chatgpt', contentHash: 'c1' })], { summary: 'ChatGPT özet' }),
-        makeResult('google-news', [makeItem({ provider: 'google-news', contentHash: 'g1' })], { summary: 'Google özet' }),
+        makeResult('chatgpt', [makeItem({ provider: 'chatgpt', contentHash: 'c1' })], {
+          summary: 'ChatGPT özet',
+        }),
+        makeResult('google-news', [makeItem({ provider: 'google-news', contentHash: 'g1' })], {
+          summary: 'Google özet',
+        }),
       ];
 
       const consensus = engine.calculate('THYAO.IS', results, 8);
@@ -137,10 +146,18 @@ describe('AIConsensusEngine', () => {
     it('detects sentiment divergence conflicts', () => {
       const results = [
         makeResult('google-news', [
-          makeItem({ provider: 'google-news', contentHash: 'p1', sentiment: { score: 0.8, label: 'positive' } }),
+          makeItem({
+            provider: 'google-news',
+            contentHash: 'p1',
+            sentiment: { score: 0.8, label: 'positive' },
+          }),
         ]),
         makeResult('kap', [
-          makeItem({ provider: 'kap', contentHash: 'n1', sentiment: { score: -0.8, label: 'negative' } }),
+          makeItem({
+            provider: 'kap',
+            contentHash: 'n1',
+            sentiment: { score: -0.8, label: 'negative' },
+          }),
         ]),
       ];
 
@@ -150,7 +167,7 @@ describe('AIConsensusEngine', () => {
     });
 
     it('detects provider error conflicts', () => {
-      const results = [makeResult('finnhub-news', [], { status: 'error', error: 'timeout' })];
+      const results = [makeResult('google-news', [], { status: 'error', error: 'timeout' })];
 
       const consensus = engine.calculate('THYAO.IS', results, 8);
 

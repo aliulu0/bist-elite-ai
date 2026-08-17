@@ -68,7 +68,11 @@ describe('VerificationRuleEngine', () => {
       const sources = [
         makeSource({ provider: 'kap', source: 'KAP', url: 'https://kap.org.tr/1' }),
         makeSource({ provider: 'tcmb', source: 'TCMB', url: 'https://tcmb.gov.tr/1' }),
-        makeSource({ provider: 'yahoo-finance', source: 'Yahoo Finance', url: 'https://yahoo.com/1' }),
+        makeSource({
+          provider: 'yahoo-finance',
+          source: 'Yahoo Finance',
+          url: 'https://yahoo.com/1',
+        }),
         makeSource({ provider: 'serpapi', source: 'SerpAPI Search', url: 'https://serpapi.com/1' }),
       ];
 
@@ -84,7 +88,9 @@ describe('VerificationRuleEngine', () => {
     });
 
     it('treats company IR markers as official', () => {
-      const sources = [makeSource({ provider: 'google-search', source: 'Company Investor Relations' })];
+      const sources = [
+        makeSource({ provider: 'google-search', source: 'Company Investor Relations' }),
+      ];
 
       const evidence = engine.normalize(sources);
 
@@ -99,8 +105,13 @@ describe('VerificationRuleEngine', () => {
     });
 
     it('scores high-weight trusted evidence higher than low-weight', () => {
-      const trusted = engine.normalize([makeSource({ provider: 'kap', source: 'KAP' }), makeSource({ provider: 'tcmb', source: 'TCMB' })]);
-      const weak = engine.normalize([makeSource({ provider: 'serpapi', source: 'SerpAPI Search' })]);
+      const trusted = engine.normalize([
+        makeSource({ provider: 'kap', source: 'KAP' }),
+        makeSource({ provider: 'tcmb', source: 'TCMB' }),
+      ]);
+      const weak = engine.normalize([
+        makeSource({ provider: 'serpapi', source: 'SerpAPI Search' }),
+      ]);
 
       const trustedScore = engine.computeEvidenceScore(trusted);
       const weakScore = engine.computeEvidenceScore(weak);
@@ -151,8 +162,16 @@ describe('VerificationRuleEngine', () => {
         researchSources: [
           makeSource({ provider: 'kap', source: 'KAP', url: 'https://kap.org.tr/1' }),
           makeSource({ provider: 'tcmb', source: 'TCMB', url: 'https://tcmb.gov.tr/1' }),
-          makeSource({ provider: 'finnhub-news', source: 'Finnhub', url: 'https://finnhub.io/1' }),
-          makeSource({ provider: 'yahoo-finance', source: 'Yahoo Finance', url: 'https://yahoo.com/1' }),
+          makeSource({
+            provider: 'google-news',
+            source: 'Google News',
+            url: 'https://news.google.com/1',
+          }),
+          makeSource({
+            provider: 'yahoo-finance',
+            source: 'Yahoo Finance',
+            url: 'https://yahoo.com/1',
+          }),
         ],
       });
 

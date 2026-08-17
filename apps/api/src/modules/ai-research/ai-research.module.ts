@@ -10,7 +10,6 @@ import { AI_RESEARCH_PROVIDERS_TOKEN } from './providers/ai-provider.interface';
 import { GoogleNewsProvider } from './providers/google-news.provider';
 import { SerpApiProvider } from './providers/serpapi.provider';
 import { GoogleSearchProvider } from './providers/google-search.provider';
-import { FinnhubNewsProvider } from './providers/finnhub-news.provider';
 import { YahooFinanceProvider } from './providers/yahoo-finance.provider';
 import { KapProvider } from './providers/kap.provider';
 import { TcmbProvider } from './providers/tcmb.provider';
@@ -31,7 +30,6 @@ import { GrokProvider } from './providers/grok.provider';
     GoogleNewsProvider,
     SerpApiProvider,
     GoogleSearchProvider,
-    FinnhubNewsProvider,
     YahooFinanceProvider,
     KapProvider,
     TcmbProvider,
@@ -50,7 +48,6 @@ import { GrokProvider } from './providers/grok.provider';
         serpApi: SerpApiProvider,
         googleNews: GoogleNewsProvider,
         googleSearch: GoogleSearchProvider,
-        finnhubNews: FinnhubNewsProvider,
         yahooFinance: YahooFinanceProvider,
         kap: KapProvider,
         tcmb: TcmbProvider,
@@ -63,7 +60,6 @@ import { GrokProvider } from './providers/grok.provider';
         serpApi,
         googleNews,
         googleSearch,
-        finnhubNews,
         yahooFinance,
         kap,
         tcmb,
@@ -77,7 +73,6 @@ import { GrokProvider } from './providers/grok.provider';
         SerpApiProvider,
         GoogleNewsProvider,
         GoogleSearchProvider,
-        FinnhubNewsProvider,
         YahooFinanceProvider,
         KapProvider,
         TcmbProvider,

@@ -7,11 +7,10 @@ import { PersistenceService } from '../../persistence/persistence.service';
 
 const PROVIDER_NAME_MAP: Record<string, ProviderName> = {
   'yahoo-finance': 'yahoo_finance',
-  'fintables': 'fintables',
-  'finnhub': 'finnhub',
-  'kap': 'kap',
-  'mkk': 'mkk',
-  'tcmb': 'tcmb',
+  fintables: 'fintables',
+  kap: 'kap',
+  mkk: 'mkk',
+  tcmb: 'tcmb',
 };
 
 @Injectable()
@@ -59,7 +58,13 @@ export class ProviderHealthCheckJob implements IJob {
           results[provider.name] = { healthy: false, latencyMs };
 
           if (providerMonitorName) {
-            this.healthMonitor.recordRequest(providerMonitorName, latencyMs, false, false, errorMsg);
+            this.healthMonitor.recordRequest(
+              providerMonitorName,
+              latencyMs,
+              false,
+              false,
+              errorMsg,
+            );
           }
 
           unhealthyCount++;
@@ -72,13 +77,13 @@ export class ProviderHealthCheckJob implements IJob {
       if (this.persistenceService) {
         const snapshot = this.healthMonitor.getSnapshot();
         this.persistenceService.saveProviderHealth({ snapshot }).catch((err) => {
-          this.logger.warn(`Failed to persist provider health: ${err instanceof Error ? err.message : String(err)}`);
+          this.logger.warn(
+            `Failed to persist provider health: ${err instanceof Error ? err.message : String(err)}`,
+          );
         });
       }
 
-      this.logger.log(
-        `ProviderHealthCheck completed: ${healthyCount}/${totalChecked} healthy`,
-      );
+      this.logger.log(`ProviderHealthCheck completed: ${healthyCount}/${totalChecked} healthy`);
 
       return {
         success: true,

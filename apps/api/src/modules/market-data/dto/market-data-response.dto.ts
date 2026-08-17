@@ -260,7 +260,7 @@ export class TimeframesResponseDto {
 }
 
 export class ProviderConfigurationDto {
-  @ApiProperty({ example: 'finnhub' })
+  @ApiProperty({ example: 'yahoo' })
   name!: string;
 
   @ApiProperty({ example: true })
@@ -281,7 +281,7 @@ export class ProviderConfigurationDto {
   @ApiProperty({ example: 3 })
   retries!: number;
 
-  @ApiProperty({ example: 'finnhub.io' })
+  @ApiProperty({ example: 'query1.finance.yahoo.com' })
   baseUrlHost!: string;
 
   @ApiProperty({ example: false })

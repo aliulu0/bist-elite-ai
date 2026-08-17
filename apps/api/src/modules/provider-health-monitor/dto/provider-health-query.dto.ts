@@ -2,7 +2,15 @@ import { IsIn, IsString, IsNotEmpty, IsOptional, IsInt, Min } from 'class-valida
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-const VALID_PROVIDERS = ['yahoo_finance', 'fintables', 'investing', 'google_discovery', 'finnhub', 'kap', 'mkk', 'tcmb', 'alpha_vantage'] as const;
+const VALID_PROVIDERS = [
+  'yahoo_finance',
+  'fintables',
+  'investing',
+  'google_discovery',
+  'kap',
+  'mkk',
+  'tcmb',
+] as const;
 
 export class ProviderParamDto {
   @ApiProperty({

@@ -2,7 +2,9 @@ import { MarketDataCacheService } from './market-data-cache.service';
 import { CacheService } from '../../../common/cache/cache.service';
 
 describe('MarketDataCacheService', () => {
-  let cache: jest.Mocked<Pick<CacheService, 'get' | 'set' | 'getOrSet' | 'delete' | 'clear' | 'getKeys'>>;
+  let cache: jest.Mocked<
+    Pick<CacheService, 'get' | 'set' | 'getOrSet' | 'delete' | 'clear' | 'getKeys'>
+  >;
   let service: MarketDataCacheService;
 
   beforeEach(() => {
@@ -13,13 +15,20 @@ describe('MarketDataCacheService', () => {
       delete: jest.fn(),
       clear: jest.fn(),
       getKeys: jest.fn(),
-    } as jest.Mocked<Pick<CacheService, 'get' | 'set' | 'getOrSet' | 'delete' | 'clear' | 'getKeys'>>;
+    } as jest.Mocked<
+      Pick<CacheService, 'get' | 'set' | 'getOrSet' | 'delete' | 'clear' | 'getKeys'>
+    >;
     service = new MarketDataCacheService(cache as unknown as CacheService);
   });
 
   it('writes provider:type:symbol keys into the marketData namespace', () => {
     service.set('yahoo', 'historical', 'THYAO|1d', [{ close: 1 }], 1000);
-    expect(cache.set).toHaveBeenCalledWith('yahoo:historical:THYAO|1d', [{ close: 1 }], 1000, 'marketData');
+    expect(cache.set).toHaveBeenCalledWith(
+      'yahoo:historical:THYAO|1d',
+      [{ close: 1 }],
+      1000,
+      'marketData',
+    );
   });
 
   it('reads with the exact same key shape it writes', () => {
@@ -28,11 +37,21 @@ describe('MarketDataCacheService', () => {
   });
 
   it('applies a type-specific TTL when none is provided', () => {
-    service.set('finnhub', 'company', 'THYAO', { name: 'THYAO' });
-    expect(cache.set).toHaveBeenCalledWith('finnhub:company:THYAO', { name: 'THYAO' }, 12 * 60 * 60 * 1000, 'marketData');
+    service.set('yahoo', 'company', 'THYAO', { name: 'THYAO' });
+    expect(cache.set).toHaveBeenCalledWith(
+      'yahoo:company:THYAO',
+      { name: 'THYAO' },
+      12 * 60 * 60 * 1000,
+      'marketData',
+    );
 
-    service.set('finnhub', 'historical', 'THYAO|1d', []);
-    expect(cache.set).toHaveBeenCalledWith('finnhub:historical:THYAO|1d', [], 24 * 60 * 60 * 1000, 'marketData');
+    service.set('yahoo', 'historical', 'THYAO|1d', []);
+    expect(cache.set).toHaveBeenCalledWith(
+      'yahoo:historical:THYAO|1d',
+      [],
+      24 * 60 * 60 * 1000,
+      'marketData',
+    );
   });
 
   it('returns undefined on a miss and passes through a hit unchanged', () => {

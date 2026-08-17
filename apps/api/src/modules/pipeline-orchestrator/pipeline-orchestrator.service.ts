@@ -38,14 +38,53 @@ import { Timeframe } from '../indicators/indicator.types';
 import { PipelineGateway } from '../websocket-gateway/websocket-gateway';
 
 const BIST_SYMBOLS = [
-  'AKBNK', 'GARAN', 'ISCTR', 'YKBNK', 'HALKB', 'VAKBN',
-  'EREGL', 'KRDMD', 'SISE', 'SASA', 'TUPRS', 'PETKM',
-  'THYAO', 'PGSUS', 'CLEBI', 'BIMAS', 'MGROS', 'BIZIM',
-  'KOZAL', 'KOZAA', 'ALARK', 'DOAS', 'TOASO', 'FROTO',
-  'TTKOM', 'TCELL', 'ASELS', 'OTKAR', 'TRAK', 'SOKM',
-  'GUBRF', 'HEKTS', 'AKSA', 'BRSAN', 'ISMEN', 'KCHOL',
-  'SAHOL', 'TTRAK', 'VESTL', 'ZOREN', 'TRCAS', 'ENJSA',
-  'ODAS', 'TKFEN', 'TSKB', 'ALBRK', 'SKBNK',
+  'AKBNK',
+  'GARAN',
+  'ISCTR',
+  'YKBNK',
+  'HALKB',
+  'VAKBN',
+  'EREGL',
+  'KRDMD',
+  'SISE',
+  'SASA',
+  'TUPRS',
+  'PETKM',
+  'THYAO',
+  'PGSUS',
+  'CLEBI',
+  'BIMAS',
+  'MGROS',
+  'BIZIM',
+  'KOZAL',
+  'KOZAA',
+  'ALARK',
+  'DOAS',
+  'TOASO',
+  'FROTO',
+  'TTKOM',
+  'TCELL',
+  'ASELS',
+  'OTKAR',
+  'TRAK',
+  'SOKM',
+  'GUBRF',
+  'HEKTS',
+  'AKSA',
+  'BRSAN',
+  'ISMEN',
+  'KCHOL',
+  'SAHOL',
+  'TTRAK',
+  'VESTL',
+  'ZOREN',
+  'TRCAS',
+  'ENJSA',
+  'ODAS',
+  'TKFEN',
+  'TSKB',
+  'ALBRK',
+  'SKBNK',
 ];
 
 interface PipelineRunState {
@@ -143,17 +182,44 @@ export class PipelineOrchestratorService {
   }
 
   private registerStepHandlers(): void {
-    const stepHandlers: Record<string, (step: string, workflow: WorkflowInstance) => Promise<Record<string, unknown>>> = {
-      fetch_market_data: async (step, wf) => this.executeStep('fetch_market_data', wf, () => this.fetchMarketData(wf, this.getOrCreateWorkflowState(wf))),
-      normalize: async (step, wf) => this.executeStep('normalize', wf, () => this.normalize(wf, this.getOrCreateWorkflowState(wf))),
-      aggregate: async (step, wf) => this.executeStep('aggregate', wf, () => this.aggregate(wf, this.getOrCreateWorkflowState(wf))),
-      ai_analysis: async (step, wf) => this.executeStep('ai_analysis', wf, () => this.aiAnalysis(wf, this.getOrCreateWorkflowState(wf))),
-      opportunity_detection: async (step, wf) => this.executeStep('opportunity_detection', wf, () => this.opportunityDetection(wf, this.getOrCreateWorkflowState(wf))),
-      scanner: async (step, wf) => this.executeStep('scanner', wf, () => this.scanner(wf, this.getOrCreateWorkflowState(wf))),
-      ranking: async (step, wf) => this.executeStep('ranking', wf, () => this.ranking(wf, this.getOrCreateWorkflowState(wf))),
-      alerts: async (step, wf) => this.executeStep('alerts', wf, () => this.alerts(wf, this.getOrCreateWorkflowState(wf))),
-      portfolio_refresh: async (step, wf) => this.executeStep('portfolio_refresh', wf, () => this.portfolioRefresh(wf, this.getOrCreateWorkflowState(wf))),
-      macro_refresh: async (step, wf) => this.executeStep('macro_refresh', wf, () => this.macroRefresh(wf, this.getOrCreateWorkflowState(wf))),
+    const stepHandlers: Record<
+      string,
+      (step: string, workflow: WorkflowInstance) => Promise<Record<string, unknown>>
+    > = {
+      fetch_market_data: async (step, wf) =>
+        this.executeStep('fetch_market_data', wf, () =>
+          this.fetchMarketData(wf, this.getOrCreateWorkflowState(wf)),
+        ),
+      normalize: async (step, wf) =>
+        this.executeStep('normalize', wf, () =>
+          this.normalize(wf, this.getOrCreateWorkflowState(wf)),
+        ),
+      aggregate: async (step, wf) =>
+        this.executeStep('aggregate', wf, () =>
+          this.aggregate(wf, this.getOrCreateWorkflowState(wf)),
+        ),
+      ai_analysis: async (step, wf) =>
+        this.executeStep('ai_analysis', wf, () =>
+          this.aiAnalysis(wf, this.getOrCreateWorkflowState(wf)),
+        ),
+      opportunity_detection: async (step, wf) =>
+        this.executeStep('opportunity_detection', wf, () =>
+          this.opportunityDetection(wf, this.getOrCreateWorkflowState(wf)),
+        ),
+      scanner: async (step, wf) =>
+        this.executeStep('scanner', wf, () => this.scanner(wf, this.getOrCreateWorkflowState(wf))),
+      ranking: async (step, wf) =>
+        this.executeStep('ranking', wf, () => this.ranking(wf, this.getOrCreateWorkflowState(wf))),
+      alerts: async (step, wf) =>
+        this.executeStep('alerts', wf, () => this.alerts(wf, this.getOrCreateWorkflowState(wf))),
+      portfolio_refresh: async (step, wf) =>
+        this.executeStep('portfolio_refresh', wf, () =>
+          this.portfolioRefresh(wf, this.getOrCreateWorkflowState(wf)),
+        ),
+      macro_refresh: async (step, wf) =>
+        this.executeStep('macro_refresh', wf, () =>
+          this.macroRefresh(wf, this.getOrCreateWorkflowState(wf)),
+        ),
     };
 
     for (const [stepName, handler] of Object.entries(stepHandlers)) {
@@ -176,7 +242,9 @@ export class PipelineOrchestratorService {
     } catch (error) {
       const duration = Date.now() - start;
       this.stepDurationsMs[stepName] = duration;
-      this.logger.warn(`Pipeline step ${stepName} failed after ${duration}ms: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.warn(
+        `Pipeline step ${stepName} failed after ${duration}ms: ${error instanceof Error ? error.message : String(error)}`,
+      );
       throw error;
     }
   }
@@ -197,9 +265,16 @@ export class PipelineOrchestratorService {
     };
 
     const pipelineSteps = [
-      'fetch_market_data', 'normalize', 'aggregate', 'ai_analysis',
-      'opportunity_detection', 'scanner', 'ranking',
-      'alerts', 'portfolio_refresh', 'macro_refresh',
+      'fetch_market_data',
+      'normalize',
+      'aggregate',
+      'ai_analysis',
+      'opportunity_detection',
+      'scanner',
+      'ranking',
+      'alerts',
+      'portfolio_refresh',
+      'macro_refresh',
     ];
 
     const start = Date.now();
@@ -229,7 +304,11 @@ export class PipelineOrchestratorService {
         record.durationMs = Date.now() - new Date(record.startedAt).getTime();
         record.error = error instanceof Error ? error.message : String(error);
         context.metadata[stepName] = { error: record.error };
-        this.gateway?.emitPipelineStep(stepName, { status: 'failed', error: record.error, durationMs: record.durationMs });
+        this.gateway?.emitPipelineStep(stepName, {
+          status: 'failed',
+          error: record.error,
+          durationMs: record.durationMs,
+        });
       }
 
       context.steps.push(record);
@@ -242,13 +321,20 @@ export class PipelineOrchestratorService {
     this.lastStepNames = context.steps.map((s) => s.name);
     this.lastRunMetadata = metadata || {};
     this.lastProviderAvgLatencyMs = state.providerLatencies.length
-      ? Math.round(state.providerLatencies.reduce((sum, l) => sum + l, 0) / state.providerLatencies.length)
+      ? Math.round(
+          state.providerLatencies.reduce((sum, l) => sum + l, 0) / state.providerLatencies.length,
+        )
       : 0;
     this.totalProviderFailures =
-      typeof metadata?.providerFailures === 'number' ? metadata.providerFailures : state.providerFailures;
-    this.lastSchedulerDurationMs = typeof metadata?.schedulerDurationMs === 'number' ? metadata.schedulerDurationMs : 0;
-    this.lastDashboardRefreshMs = typeof metadata?.dashboardRefreshMs === 'number' ? metadata.dashboardRefreshMs : 0;
-    this.lastCircuitBreakerStatus = (metadata?.circuitBreakerStatus as Record<string, string>) ?? {};
+      typeof metadata?.providerFailures === 'number'
+        ? metadata.providerFailures
+        : state.providerFailures;
+    this.lastSchedulerDurationMs =
+      typeof metadata?.schedulerDurationMs === 'number' ? metadata.schedulerDurationMs : 0;
+    this.lastDashboardRefreshMs =
+      typeof metadata?.dashboardRefreshMs === 'number' ? metadata.dashboardRefreshMs : 0;
+    this.lastCircuitBreakerStatus =
+      (metadata?.circuitBreakerStatus as Record<string, string>) ?? {};
 
     this.gateway?.emitPipelineRun({
       status: this.failedSteps === 0 ? 'completed' : 'partial',
@@ -267,27 +353,50 @@ export class PipelineOrchestratorService {
   ): Promise<Record<string, unknown>> {
     const wf = null as unknown as WorkflowInstance;
     switch (stepName) {
-      case 'fetch_market_data': return this.fetchMarketData(wf, state);
-      case 'normalize': return this.normalize(wf, state);
-      case 'aggregate': return this.aggregate(wf, state);
-      case 'ai_analysis': return this.aiAnalysis(wf, state);
-      case 'opportunity_detection': return this.opportunityDetection(wf, state);
-      case 'scanner': return this.scanner(wf, state);
-      case 'ranking': return this.ranking(wf, state);
-      case 'alerts': return this.alerts(wf, state);
-      case 'portfolio_refresh': return this.portfolioRefresh(wf, state);
-      case 'macro_refresh': return this.macroRefresh(wf, state);
-      default: throw new Error(`Unknown pipeline step: ${stepName}`);
+      case 'fetch_market_data':
+        return this.fetchMarketData(wf, state);
+      case 'normalize':
+        return this.normalize(wf, state);
+      case 'aggregate':
+        return this.aggregate(wf, state);
+      case 'ai_analysis':
+        return this.aiAnalysis(wf, state);
+      case 'opportunity_detection':
+        return this.opportunityDetection(wf, state);
+      case 'scanner':
+        return this.scanner(wf, state);
+      case 'ranking':
+        return this.ranking(wf, state);
+      case 'alerts':
+        return this.alerts(wf, state);
+      case 'portfolio_refresh':
+        return this.portfolioRefresh(wf, state);
+      case 'macro_refresh':
+        return this.macroRefresh(wf, state);
+      default:
+        throw new Error(`Unknown pipeline step: ${stepName}`);
     }
   }
 
-  private async fetchMarketData(wf: WorkflowInstance, state: PipelineRunState): Promise<Record<string, unknown>> {
+  private async fetchMarketData(
+    wf: WorkflowInstance,
+    state: PipelineRunState,
+  ): Promise<Record<string, unknown>> {
     this.logger.log('Step: fetch_market_data');
     if (!this.marketDataService) {
-      return { status: 'fallback_no_service', symbolsFetched: 0, successCount: 0, failCount: 0, providers: ['fintables', 'finnhub'], timestamp: new Date().toISOString() };
+      return {
+        status: 'fallback_no_service',
+        symbolsFetched: 0,
+        successCount: 0,
+        failCount: 0,
+        providers: ['fintables', 'yahoo'],
+        timestamp: new Date().toISOString(),
+      };
     }
 
-    const symbolsToFetch = [...new Set(wf?.symbol ? [wf.symbol] : (state.symbol ? [state.symbol] : BIST_SYMBOLS))];
+    const symbolsToFetch = [
+      ...new Set(wf?.symbol ? [wf.symbol] : state.symbol ? [state.symbol] : BIST_SYMBOLS),
+    ];
     const timeframe = state.timeframe;
     const points: MarketDataPoint[] = [];
     const latencies: number[] = [];
@@ -306,7 +415,9 @@ export class PipelineOrchestratorService {
           successCount++;
         } catch (err) {
           failCount++;
-          this.logger.warn(`Failed to fetch market data for ${symbol}: ${err instanceof Error ? err.message : String(err)}`);
+          this.logger.warn(
+            `Failed to fetch market data for ${symbol}: ${err instanceof Error ? err.message : String(err)}`,
+          );
         }
       }),
     );
@@ -317,7 +428,7 @@ export class PipelineOrchestratorService {
     state.providerFailures = failCount;
 
     this.gateway?.emitProviderStatus({
-      providers: ['fintables', 'finnhub'],
+      providers: ['fintables', 'yahoo'],
       healthyProviders: successCount > 0 ? ['fintables'] : [],
       successCount,
       failCount,
@@ -328,18 +439,29 @@ export class PipelineOrchestratorService {
       successCount,
       failCount,
       pointsFetched: points.length,
-      providers: ['fintables', 'finnhub'],
-      avgLatencyMs: latencies.length ? Math.round(latencies.reduce((sum, l) => sum + l, 0) / latencies.length) : 0,
-      status: successCount > 0 ? 'completed' : (failCount > 0 ? 'failed' : 'no_data'),
+      providers: ['fintables', 'yahoo'],
+      avgLatencyMs: latencies.length
+        ? Math.round(latencies.reduce((sum, l) => sum + l, 0) / latencies.length)
+        : 0,
+      status: successCount > 0 ? 'completed' : failCount > 0 ? 'failed' : 'no_data',
       timestamp: new Date().toISOString(),
     };
   }
 
-  private async normalize(wf: WorkflowInstance, state: PipelineRunState): Promise<Record<string, unknown>> {
+  private async normalize(
+    wf: WorkflowInstance,
+    state: PipelineRunState,
+  ): Promise<Record<string, unknown>> {
     this.logger.log('Step: normalize');
     const raw = state.normalized;
     if (raw.length === 0) {
-      return { status: 'completed', pointsNormalized: 0, validCount: 0, invalidCount: 0, message: 'No market data to normalize' };
+      return {
+        status: 'completed',
+        pointsNormalized: 0,
+        validCount: 0,
+        invalidCount: 0,
+        message: 'No market data to normalize',
+      };
     }
 
     let validCount = 0;
@@ -349,12 +471,18 @@ export class PipelineOrchestratorService {
       const cleaned: MarketDataPoint = { ...point };
       if (this.marketDataValidationService) {
         const result = this.marketDataValidationService.validateDataPoint(cleaned);
-        cleaned.validationStatus = result.isValid ? 'valid' : (result.errors.length > 0 ? 'invalid' : 'partial');
-        if (result.isValid) validCount++; else invalidCount++;
+        cleaned.validationStatus = result.isValid
+          ? 'valid'
+          : result.errors.length > 0
+            ? 'invalid'
+            : 'partial';
+        if (result.isValid) validCount++;
+        else invalidCount++;
         warningCount += result.warnings.length;
       } else {
         cleaned.validationStatus = cleaned.validationStatus || 'valid';
-        if (cleaned.validationStatus === 'valid') validCount++; else invalidCount++;
+        if (cleaned.validationStatus === 'valid') validCount++;
+        else invalidCount++;
       }
       return cleaned;
     });
@@ -377,18 +505,26 @@ export class PipelineOrchestratorService {
     };
   }
 
-  private async aggregate(wf: WorkflowInstance, state: PipelineRunState): Promise<Record<string, unknown>> {
+  private async aggregate(
+    wf: WorkflowInstance,
+    state: PipelineRunState,
+  ): Promise<Record<string, unknown>> {
     this.logger.log('Step: aggregate');
     if (!this.aggregationEngine) {
       return { status: 'fallback_no_service', aggregatedSymbols: 0, avgQualityScore: 85 };
     }
 
-    const targetSymbols = state.bySymbol.size > 0
-      ? Array.from(state.bySymbol.keys())
-      : [state.symbol || wf?.symbol].filter(Boolean) as string[];
+    const targetSymbols =
+      state.bySymbol.size > 0
+        ? Array.from(state.bySymbol.keys())
+        : ([state.symbol || wf?.symbol].filter(Boolean) as string[]);
 
     if (targetSymbols.length === 0) {
-      return { status: 'completed', aggregatedSymbols: 0, message: 'No fetched symbols to aggregate' };
+      return {
+        status: 'completed',
+        aggregatedSymbols: 0,
+        message: 'No fetched symbols to aggregate',
+      };
     }
 
     const targets = targetSymbols.slice(0, 20);
@@ -411,15 +547,20 @@ export class PipelineOrchestratorService {
             state.providerLatencies.push(Date.now() - startedAt);
           }
         } catch (err) {
-          state.aggregated.push({ symbol, error: err instanceof Error ? err.message : String(err) });
+          state.aggregated.push({
+            symbol,
+            error: err instanceof Error ? err.message : String(err),
+          });
           failedCount++;
-          this.logger.warn(`Aggregation failed for ${symbol}: ${err instanceof Error ? err.message : String(err)}`);
+          this.logger.warn(
+            `Aggregation failed for ${symbol}: ${err instanceof Error ? err.message : String(err)}`,
+          );
         }
       }),
     );
 
     return {
-      status: aggregatedCount > 0 ? 'completed' : (failedCount > 0 ? 'failed' : 'no_data'),
+      status: aggregatedCount > 0 ? 'completed' : failedCount > 0 ? 'failed' : 'no_data',
       aggregatedSymbols: aggregatedCount,
       failedSymbols: failedCount,
       totalRequested: targets.length,
@@ -435,16 +576,22 @@ export class PipelineOrchestratorService {
     return { company: entry.company };
   }
 
-  private async aiAnalysis(wf: WorkflowInstance, state: PipelineRunState): Promise<Record<string, unknown>> {
+  private async aiAnalysis(
+    wf: WorkflowInstance,
+    state: PipelineRunState,
+  ): Promise<Record<string, unknown>> {
     this.logger.log('Step: ai_analysis');
     if (!this.aiAnalysisPipeline && !this.analysisService) {
       return { status: 'fallback_no_service', stocksAnalyzed: 0 };
     }
 
     const aggregatedSymbols = state.aggregated.filter((a) => a.company).map((a) => a.symbol);
-    const symbolsToAnalyze = aggregatedSymbols.length > 0
-      ? aggregatedSymbols
-      : (state.symbol ? [state.symbol] : BIST_SYMBOLS.slice(0, 10));
+    const symbolsToAnalyze =
+      aggregatedSymbols.length > 0
+        ? aggregatedSymbols
+        : state.symbol
+          ? [state.symbol]
+          : BIST_SYMBOLS.slice(0, 10);
 
     let analyzed = 0;
     let failed = 0;
@@ -458,13 +605,18 @@ export class PipelineOrchestratorService {
             const result = await this.aiAnalysisPipeline!.analyze(input);
             results.push(result);
           } else if (this.analysisService) {
-            const pipelineResult = await this.analysisService!.analyzeSymbol(symbol, state.timeframe);
+            const pipelineResult = await this.analysisService!.analyzeSymbol(
+              symbol,
+              state.timeframe,
+            );
             results.push(this.buildAnalysisResultFromPipeline(symbol, pipelineResult));
           }
           analyzed++;
         } catch (err) {
           failed++;
-          this.logger.warn(`AI analysis failed for ${symbol}: ${err instanceof Error ? err.message : String(err)}`);
+          this.logger.warn(
+            `AI analysis failed for ${symbol}: ${err instanceof Error ? err.message : String(err)}`,
+          );
         }
       }),
     );
@@ -472,7 +624,7 @@ export class PipelineOrchestratorService {
     state.analysisResults = results;
 
     return {
-      status: analyzed > 0 ? 'completed' : (failed > 0 ? 'failed' : 'no_data'),
+      status: analyzed > 0 ? 'completed' : failed > 0 ? 'failed' : 'no_data',
       stocksAnalyzed: analyzed,
       stocksFailed: failed,
       totalRequested: symbolsToAnalyze.length,
@@ -480,7 +632,10 @@ export class PipelineOrchestratorService {
     };
   }
 
-  private async opportunityDetection(wf: WorkflowInstance, state: PipelineRunState): Promise<Record<string, unknown>> {
+  private async opportunityDetection(
+    wf: WorkflowInstance,
+    state: PipelineRunState,
+  ): Promise<Record<string, unknown>> {
     this.logger.log('Step: opportunity_detection');
     if (!this.opportunityDetectionEngine) {
       return { status: 'fallback_no_service', opportunitiesDetected: 0 };
@@ -492,7 +647,9 @@ export class PipelineOrchestratorService {
         const opportunity = this.opportunityDetectionEngine!.detect(result);
         if (opportunity) opportunities.push(opportunity);
       } catch (err) {
-        this.logger.warn(`Opportunity detection failed for ${result.symbol}: ${err instanceof Error ? err.message : String(err)}`);
+        this.logger.warn(
+          `Opportunity detection failed for ${result.symbol}: ${err instanceof Error ? err.message : String(err)}`,
+        );
       }
     }
 
@@ -506,7 +663,10 @@ export class PipelineOrchestratorService {
     };
   }
 
-  private async scanner(wf: WorkflowInstance, state: PipelineRunState): Promise<Record<string, unknown>> {
+  private async scanner(
+    wf: WorkflowInstance,
+    state: PipelineRunState,
+  ): Promise<Record<string, unknown>> {
     this.logger.log('Step: scanner');
     if (!this.scannerEngine) {
       return { status: 'fallback_no_service', candidates: 0 };
@@ -523,11 +683,18 @@ export class PipelineOrchestratorService {
         timestamp: new Date().toISOString(),
       };
     } catch (err) {
-      return { status: 'failed', error: err instanceof Error ? err.message : String(err), timestamp: new Date().toISOString() };
+      return {
+        status: 'failed',
+        error: err instanceof Error ? err.message : String(err),
+        timestamp: new Date().toISOString(),
+      };
     }
   }
 
-  private async ranking(wf: WorkflowInstance, state: PipelineRunState): Promise<Record<string, unknown>> {
+  private async ranking(
+    wf: WorkflowInstance,
+    state: PipelineRunState,
+  ): Promise<Record<string, unknown>> {
     this.logger.log('Step: ranking');
     if (!this.rankingEngine) {
       return { status: 'fallback_no_service', ranked: 0 };
@@ -554,11 +721,18 @@ export class PipelineOrchestratorService {
         timestamp: new Date().toISOString(),
       };
     } catch (err) {
-      return { status: 'failed', error: err instanceof Error ? err.message : String(err), timestamp: new Date().toISOString() };
+      return {
+        status: 'failed',
+        error: err instanceof Error ? err.message : String(err),
+        timestamp: new Date().toISOString(),
+      };
     }
   }
 
-  private async alerts(wf: WorkflowInstance, state: PipelineRunState): Promise<Record<string, unknown>> {
+  private async alerts(
+    wf: WorkflowInstance,
+    state: PipelineRunState,
+  ): Promise<Record<string, unknown>> {
     this.logger.log('Step: alerts');
     if (!this.alertEngine) {
       return { status: 'fallback_no_service', alertsGenerated: 0 };
@@ -569,7 +743,12 @@ export class PipelineOrchestratorService {
       state.alerts = alertEvents;
       this.gateway?.emitAlertUpdate({
         alertCount: alertEvents.length,
-        alerts: alertEvents.map((a) => ({ id: a.id, symbol: a.symbol, type: a.type, priority: a.priority })),
+        alerts: alertEvents.map((a) => ({
+          id: a.id,
+          symbol: a.symbol,
+          type: a.type,
+          priority: a.priority,
+        })),
       });
       return {
         status: 'completed',
@@ -578,11 +757,18 @@ export class PipelineOrchestratorService {
         timestamp: new Date().toISOString(),
       };
     } catch (err) {
-      return { status: 'failed', error: err instanceof Error ? err.message : String(err), timestamp: new Date().toISOString() };
+      return {
+        status: 'failed',
+        error: err instanceof Error ? err.message : String(err),
+        timestamp: new Date().toISOString(),
+      };
     }
   }
 
-  private async portfolioRefresh(wf: WorkflowInstance, state: PipelineRunState): Promise<Record<string, unknown>> {
+  private async portfolioRefresh(
+    wf: WorkflowInstance,
+    state: PipelineRunState,
+  ): Promise<Record<string, unknown>> {
     this.logger.log('Step: portfolio_refresh');
     if (!this.portfolioEngine) {
       return { status: 'fallback_no_service', portfoliosRefreshed: 0 };
@@ -617,11 +803,18 @@ export class PipelineOrchestratorService {
         timestamp: new Date().toISOString(),
       };
     } catch (err) {
-      return { status: 'failed', error: err instanceof Error ? err.message : String(err), timestamp: new Date().toISOString() };
+      return {
+        status: 'failed',
+        error: err instanceof Error ? err.message : String(err),
+        timestamp: new Date().toISOString(),
+      };
     }
   }
 
-  private async macroRefresh(wf: WorkflowInstance, state: PipelineRunState): Promise<Record<string, unknown>> {
+  private async macroRefresh(
+    wf: WorkflowInstance,
+    state: PipelineRunState,
+  ): Promise<Record<string, unknown>> {
     this.logger.log('Step: macro_refresh');
     this.macroUpdateTimestamp = new Date().toISOString();
 
@@ -644,7 +837,10 @@ export class PipelineOrchestratorService {
       };
       state.macroSnapshot = this.lastMacroData;
 
-      this.gateway?.emitMacroUpdate({ ...this.lastMacroData, timestamp: this.macroUpdateTimestamp });
+      this.gateway?.emitMacroUpdate({
+        ...this.lastMacroData,
+        timestamp: this.macroUpdateTimestamp,
+      });
 
       return {
         status: 'completed',
@@ -663,14 +859,21 @@ export class PipelineOrchestratorService {
   private ratingToSignal(rating?: string): AiAnalysisSignal {
     switch (rating) {
       case 'AAA':
-      case 'AA': return 'STRONG_BUY';
+      case 'AA':
+        return 'STRONG_BUY';
       case 'A':
-      case 'BBB': return 'BUY';
-      case 'BB': return 'ACCUMULATE';
-      case 'B': return 'NEUTRAL';
-      case 'C': return 'REDUCE';
-      case 'D': return 'SELL';
-      default: return 'NEUTRAL';
+      case 'BBB':
+        return 'BUY';
+      case 'BB':
+        return 'ACCUMULATE';
+      case 'B':
+        return 'NEUTRAL';
+      case 'C':
+        return 'REDUCE';
+      case 'D':
+        return 'SELL';
+      default:
+        return 'NEUTRAL';
     }
   }
 
@@ -692,26 +895,65 @@ export class PipelineOrchestratorService {
       });
     };
 
-    pushModule('technical', r.technicalScore?.score ?? 50, r.technicalScore?.confidence ?? 50, r.technicalSummary?.summary ?? 'Technical analysis');
-    pushModule('momentum', r.technicalScore?.score ?? 50, r.technicalScore?.confidence ?? 50, r.technicalSummary?.summary ?? 'Momentum analysis');
+    pushModule(
+      'technical',
+      r.technicalScore?.score ?? 50,
+      r.technicalScore?.confidence ?? 50,
+      r.technicalSummary?.summary ?? 'Technical analysis',
+    );
+    pushModule(
+      'momentum',
+      r.technicalScore?.score ?? 50,
+      r.technicalScore?.confidence ?? 50,
+      r.technicalSummary?.summary ?? 'Momentum analysis',
+    );
     pushModule('trend', this.trendScore(r), 50, r.marketStructure?.trend ?? 'Trend analysis');
-    pushModule('fundamental', r.financialScore?.score ?? 50, r.financialScore?.confidence ?? 50, r.financialSummary?.summary ?? 'Fundamental analysis');
-    pushModule('growth', r.financialScore?.score ?? 50, r.financialScore?.confidence ?? 50, r.financialSummary?.summary ?? 'Growth analysis');
+    pushModule(
+      'fundamental',
+      r.financialScore?.score ?? 50,
+      r.financialScore?.confidence ?? 50,
+      r.financialSummary?.summary ?? 'Fundamental analysis',
+    );
+    pushModule(
+      'growth',
+      r.financialScore?.score ?? 50,
+      r.financialScore?.confidence ?? 50,
+      r.financialSummary?.summary ?? 'Growth analysis',
+    );
     pushModule('valuation', r.opportunity?.opportunityScore ?? 50, 50, 'Valuation analysis');
-    pushModule('liquidity', r.financialScore?.score ?? 50, r.financialScore?.confidence ?? 50, 'Liquidity analysis');
-    pushModule('risk', r.financialScore?.score ?? 50, r.financialScore?.confidence ?? 50, 'Risk analysis');
+    pushModule(
+      'liquidity',
+      r.financialScore?.score ?? 50,
+      r.financialScore?.confidence ?? 50,
+      'Liquidity analysis',
+    );
+    pushModule(
+      'risk',
+      r.financialScore?.score ?? 50,
+      r.financialScore?.confidence ?? 50,
+      'Risk analysis',
+    );
     pushModule('volatility', 50, 50, 'Volatility analysis');
-    pushModule('financialHealth', r.financialScore?.score ?? 50, r.financialScore?.confidence ?? 50, r.financialSummary?.summary ?? 'Financial health analysis');
+    pushModule(
+      'financialHealth',
+      r.financialScore?.score ?? 50,
+      r.financialScore?.confidence ?? 50,
+      r.financialSummary?.summary ?? 'Financial health analysis',
+    );
 
     return modules;
   }
 
   private trendScore(r: PipelineAnalysisResult): number {
     switch (r.marketStructure?.trend) {
-      case 'uptrend': return 75;
-      case 'downtrend': return 30;
-      case 'sideways': return 50;
-      default: return 50;
+      case 'uptrend':
+        return 75;
+      case 'downtrend':
+        return 30;
+      case 'sideways':
+        return 50;
+      default:
+        return 50;
     }
   }
 
@@ -720,10 +962,14 @@ export class PipelineOrchestratorService {
     const add = (name: string, value: number | string, description: string, module: string) => {
       metrics.push({ name, value, description, module });
     };
-    if (typeof r.eliteScore?.eliteScore === 'number') add('eliteScore', r.eliteScore.eliteScore, 'Elite composite score', 'elite');
-    if (typeof r.technicalScore?.score === 'number') add('technicalScore', r.technicalScore.score, 'Technical score', 'technical');
-    if (typeof r.financialScore?.score === 'number') add('financialScore', r.financialScore.score, 'Financial score', 'fundamental');
-    if (typeof r.opportunity?.opportunityScore === 'number') add('opportunityScore', r.opportunity.opportunityScore, 'Opportunity score', 'opportunity');
+    if (typeof r.eliteScore?.eliteScore === 'number')
+      add('eliteScore', r.eliteScore.eliteScore, 'Elite composite score', 'elite');
+    if (typeof r.technicalScore?.score === 'number')
+      add('technicalScore', r.technicalScore.score, 'Technical score', 'technical');
+    if (typeof r.financialScore?.score === 'number')
+      add('financialScore', r.financialScore.score, 'Financial score', 'fundamental');
+    if (typeof r.opportunity?.opportunityScore === 'number')
+      add('opportunityScore', r.opportunity.opportunityScore, 'Opportunity score', 'opportunity');
     if (r.eliteScore?.rating) add('rating', r.eliteScore.rating, 'Elite rating', 'elite');
     return metrics;
   }
@@ -732,8 +978,12 @@ export class PipelineOrchestratorService {
     return Array.from(new Set(items.filter(Boolean))).slice(0, limit);
   }
 
-  private buildAnalysisResultFromPipeline(symbol: string, r: PipelineAnalysisResult): AiAnalysisResult {
-    const eliteScore = r.eliteScore?.eliteScore ?? r.opportunity?.opportunityScore ?? r.technicalScore?.score ?? 50;
+  private buildAnalysisResultFromPipeline(
+    symbol: string,
+    r: PipelineAnalysisResult,
+  ): AiAnalysisResult {
+    const eliteScore =
+      r.eliteScore?.eliteScore ?? r.opportunity?.opportunityScore ?? r.technicalScore?.score ?? 50;
     const confidence = r.eliteScore?.confidence ?? r.technicalScore?.confidence ?? 50;
     const signal = this.ratingToSignal(r.eliteScore?.rating);
 
@@ -743,21 +993,28 @@ export class PipelineOrchestratorService {
       confidenceScore: confidence,
       signal,
       recommendation: signal,
-      strengths: this.takeUnique([
-        ...(r.technicalSummary?.strengths ?? []),
-        ...(r.financialSummary?.strengths ?? []),
-        ...(r.eliteScore?.summary ? [r.eliteScore.summary] : []),
-      ], 5),
-      weaknesses: this.takeUnique([
-        ...(r.technicalSummary?.weaknesses ?? []),
-        ...(r.financialSummary?.weaknesses ?? []),
-      ], 5),
-      risks: this.takeUnique([
-        ...(r.technicalSummary?.risks ?? []),
-        ...(r.financialSummary?.risks ?? []),
-      ], 5),
+      strengths: this.takeUnique(
+        [
+          ...(r.technicalSummary?.strengths ?? []),
+          ...(r.financialSummary?.strengths ?? []),
+          ...(r.eliteScore?.summary ? [r.eliteScore.summary] : []),
+        ],
+        5,
+      ),
+      weaknesses: this.takeUnique(
+        [...(r.technicalSummary?.weaknesses ?? []), ...(r.financialSummary?.weaknesses ?? [])],
+        5,
+      ),
+      risks: this.takeUnique(
+        [...(r.technicalSummary?.risks ?? []), ...(r.financialSummary?.risks ?? [])],
+        5,
+      ),
       warnings: [],
-      explanation: [r.eliteScore?.summary, r.technicalSummary?.overallOpinion, r.financialSummary?.overallOpinion]
+      explanation: [
+        r.eliteScore?.summary,
+        r.technicalSummary?.overallOpinion,
+        r.financialSummary?.overallOpinion,
+      ]
         .filter(Boolean)
         .join(' ')
         .trim(),
@@ -767,7 +1024,7 @@ export class PipelineOrchestratorService {
         providersUsed: [],
         providersFailed: [],
         providerConfidence: {},
-        qualityScore: r.metadata?.aggregationQuality as number ?? 70,
+        qualityScore: (r.metadata?.aggregationQuality as number) ?? 70,
         lastUpdated: new Date().toISOString(),
         cacheStatus: 'miss',
         aggregationDurationMs: 0,

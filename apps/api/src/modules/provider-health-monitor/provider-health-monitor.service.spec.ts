@@ -15,7 +15,12 @@ function makeService(engine?: ProviderHealthMonitorEngine) {
   return { service, engine: eng };
 }
 
-function seedRequests(engine: ProviderHealthMonitorEngine, provider: ProviderName, count: number, success = true) {
+function seedRequests(
+  engine: ProviderHealthMonitorEngine,
+  provider: ProviderName,
+  count: number,
+  success = true,
+) {
   for (let i = 0; i < count; i++) {
     engine.recordRequest(provider, 100 + i, success);
   }
@@ -40,11 +45,11 @@ describe('ProviderHealthMonitorService', () => {
       expect(snapshot).toHaveProperty('timestamp');
     });
 
-    it('should return 9 providers by default', () => {
+    it('should return 7 providers by default', () => {
       const { service } = makeService();
       const snapshot = service.getSnapshot();
-      expect(snapshot.totalProviders).toBe(9);
-      expect(snapshot.providers).toHaveLength(9);
+      expect(snapshot.totalProviders).toBe(7);
+      expect(snapshot.providers).toHaveLength(7);
     });
 
     it('should default to healthy overall status', () => {
@@ -106,7 +111,12 @@ describe('ProviderHealthMonitorService', () => {
 
     it('should handle all provider names', () => {
       const { service } = makeService();
-      const providers: ProviderName[] = ['yahoo_finance', 'fintables', 'investing', 'google_discovery'];
+      const providers: ProviderName[] = [
+        'yahoo_finance',
+        'fintables',
+        'investing',
+        'google_discovery',
+      ];
       for (const p of providers) {
         const state = service.getProviderState(p);
         expect(state.provider).toBe(p);

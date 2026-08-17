@@ -32,10 +32,10 @@ function buildMockInput(overrides?: Partial<PipelineInput>): PipelineInput {
       source: 'fintables',
     },
     metadata: {
-      providersQueried: ['fintables', 'finnhub'],
-      providersUsed: ['fintables', 'finnhub'],
+      providersQueried: ['fintables', 'yahoo'],
+      providersUsed: ['fintables', 'yahoo'],
       providersFailed: [],
-      providerConfidence: { fintables: 90, finnhub: 70 },
+      providerConfidence: { fintables: 90, yahoo: 70 },
       qualityScore: 85,
       lastUpdated: new Date().toISOString(),
       cacheStatus: 'miss',
@@ -97,7 +97,9 @@ describe('AiAnalysisPipeline', () => {
     }).compile();
 
     pipeline = module.get(AiAnalysisPipeline);
-    mockTechnicalHandler = module.get(TechnicalAnalysisHandler) as jest.Mocked<TechnicalAnalysisHandler>;
+    mockTechnicalHandler = module.get(
+      TechnicalAnalysisHandler,
+    ) as jest.Mocked<TechnicalAnalysisHandler>;
   });
 
   describe('analyze', () => {
@@ -138,7 +140,15 @@ describe('AiAnalysisPipeline', () => {
 
     it('should produce a valid signal', async () => {
       const result = await pipeline.analyze(buildMockInput());
-      const validSignals = ['STRONG_BUY', 'BUY', 'ACCUMULATE', 'NEUTRAL', 'REDUCE', 'SELL', 'STRONG_SELL'];
+      const validSignals = [
+        'STRONG_BUY',
+        'BUY',
+        'ACCUMULATE',
+        'NEUTRAL',
+        'REDUCE',
+        'SELL',
+        'STRONG_SELL',
+      ];
       expect(validSignals).toContain(result.signal);
     });
 
@@ -194,14 +204,190 @@ describe('AiAnalysisPipeline', () => {
               }),
             },
           },
-          { provide: FinancialHealthHandler, useValue: { name: 'financialHealth', weight: 1, enabled: true, analyze: jest.fn().mockResolvedValue({ module: 'financialHealth', score: 70, confidence: 80, signals: [], strengths: [], weaknesses: [], risks: [], warnings: [], metrics: {}, explanation: '', metadata: {} }) } },
-          { provide: GrowthAnalysisHandler, useValue: { name: 'growth', weight: 1, enabled: true, analyze: jest.fn().mockResolvedValue({ module: 'growth', score: 70, confidence: 80, signals: [], strengths: [], weaknesses: [], risks: [], warnings: [], metrics: {}, explanation: '', metadata: {} }) } },
-          { provide: MomentumAnalysisHandler, useValue: { name: 'momentum', weight: 1, enabled: true, analyze: jest.fn().mockResolvedValue({ module: 'momentum', score: 70, confidence: 80, signals: [], strengths: [], weaknesses: [], risks: [], warnings: [], metrics: {}, explanation: '', metadata: {} }) } },
-          { provide: RiskAnalysisHandler, useValue: { name: 'risk', weight: 1, enabled: true, analyze: jest.fn().mockResolvedValue({ module: 'risk', score: 70, confidence: 80, signals: [], strengths: [], weaknesses: [], risks: [], warnings: [], metrics: {}, explanation: '', metadata: {} }) } },
-          { provide: LiquidityAnalysisHandler, useValue: { name: 'liquidity', weight: 1, enabled: true, analyze: jest.fn().mockResolvedValue({ module: 'liquidity', score: 70, confidence: 80, signals: [], strengths: [], weaknesses: [], risks: [], warnings: [], metrics: {}, explanation: '', metadata: {} }) } },
-          { provide: VolatilityAnalysisHandler, useValue: { name: 'volatility', weight: 1, enabled: true, analyze: jest.fn().mockResolvedValue({ module: 'volatility', score: 70, confidence: 80, signals: [], strengths: [], weaknesses: [], risks: [], warnings: [], metrics: {}, explanation: '', metadata: {} }) } },
-          { provide: TrendAnalysisHandler, useValue: { name: 'trend', weight: 1, enabled: true, analyze: jest.fn().mockResolvedValue({ module: 'trend', score: 70, confidence: 80, signals: [], strengths: [], weaknesses: [], risks: [], warnings: [], metrics: {}, explanation: '', metadata: {} }) } },
-          { provide: ValuationAnalysisHandler, useValue: { name: 'valuation', weight: 1, enabled: true, analyze: jest.fn().mockResolvedValue({ module: 'valuation', score: 70, confidence: 80, signals: [], strengths: [], weaknesses: [], risks: [], warnings: [], metrics: {}, explanation: '', metadata: {} }) } },
+          {
+            provide: FinancialHealthHandler,
+            useValue: {
+              name: 'financialHealth',
+              weight: 1,
+              enabled: true,
+              analyze: jest
+                .fn()
+                .mockResolvedValue({
+                  module: 'financialHealth',
+                  score: 70,
+                  confidence: 80,
+                  signals: [],
+                  strengths: [],
+                  weaknesses: [],
+                  risks: [],
+                  warnings: [],
+                  metrics: {},
+                  explanation: '',
+                  metadata: {},
+                }),
+            },
+          },
+          {
+            provide: GrowthAnalysisHandler,
+            useValue: {
+              name: 'growth',
+              weight: 1,
+              enabled: true,
+              analyze: jest
+                .fn()
+                .mockResolvedValue({
+                  module: 'growth',
+                  score: 70,
+                  confidence: 80,
+                  signals: [],
+                  strengths: [],
+                  weaknesses: [],
+                  risks: [],
+                  warnings: [],
+                  metrics: {},
+                  explanation: '',
+                  metadata: {},
+                }),
+            },
+          },
+          {
+            provide: MomentumAnalysisHandler,
+            useValue: {
+              name: 'momentum',
+              weight: 1,
+              enabled: true,
+              analyze: jest
+                .fn()
+                .mockResolvedValue({
+                  module: 'momentum',
+                  score: 70,
+                  confidence: 80,
+                  signals: [],
+                  strengths: [],
+                  weaknesses: [],
+                  risks: [],
+                  warnings: [],
+                  metrics: {},
+                  explanation: '',
+                  metadata: {},
+                }),
+            },
+          },
+          {
+            provide: RiskAnalysisHandler,
+            useValue: {
+              name: 'risk',
+              weight: 1,
+              enabled: true,
+              analyze: jest
+                .fn()
+                .mockResolvedValue({
+                  module: 'risk',
+                  score: 70,
+                  confidence: 80,
+                  signals: [],
+                  strengths: [],
+                  weaknesses: [],
+                  risks: [],
+                  warnings: [],
+                  metrics: {},
+                  explanation: '',
+                  metadata: {},
+                }),
+            },
+          },
+          {
+            provide: LiquidityAnalysisHandler,
+            useValue: {
+              name: 'liquidity',
+              weight: 1,
+              enabled: true,
+              analyze: jest
+                .fn()
+                .mockResolvedValue({
+                  module: 'liquidity',
+                  score: 70,
+                  confidence: 80,
+                  signals: [],
+                  strengths: [],
+                  weaknesses: [],
+                  risks: [],
+                  warnings: [],
+                  metrics: {},
+                  explanation: '',
+                  metadata: {},
+                }),
+            },
+          },
+          {
+            provide: VolatilityAnalysisHandler,
+            useValue: {
+              name: 'volatility',
+              weight: 1,
+              enabled: true,
+              analyze: jest
+                .fn()
+                .mockResolvedValue({
+                  module: 'volatility',
+                  score: 70,
+                  confidence: 80,
+                  signals: [],
+                  strengths: [],
+                  weaknesses: [],
+                  risks: [],
+                  warnings: [],
+                  metrics: {},
+                  explanation: '',
+                  metadata: {},
+                }),
+            },
+          },
+          {
+            provide: TrendAnalysisHandler,
+            useValue: {
+              name: 'trend',
+              weight: 1,
+              enabled: true,
+              analyze: jest
+                .fn()
+                .mockResolvedValue({
+                  module: 'trend',
+                  score: 70,
+                  confidence: 80,
+                  signals: [],
+                  strengths: [],
+                  weaknesses: [],
+                  risks: [],
+                  warnings: [],
+                  metrics: {},
+                  explanation: '',
+                  metadata: {},
+                }),
+            },
+          },
+          {
+            provide: ValuationAnalysisHandler,
+            useValue: {
+              name: 'valuation',
+              weight: 1,
+              enabled: true,
+              analyze: jest
+                .fn()
+                .mockResolvedValue({
+                  module: 'valuation',
+                  score: 70,
+                  confidence: 80,
+                  signals: [],
+                  strengths: [],
+                  weaknesses: [],
+                  risks: [],
+                  warnings: [],
+                  metrics: {},
+                  explanation: '',
+                  metadata: {},
+                }),
+            },
+          },
           ScoreAggregator,
           ConfidenceCalculator,
           SignalGenerator,
@@ -224,16 +410,96 @@ describe('AiAnalysisPipeline', () => {
       const module: TestingModule = await Test.createTestingModule({
         providers: [
           AiAnalysisPipeline,
-          { provide: TechnicalAnalysisHandler, useValue: { name: 'technical', weight: 1, enabled: true, analyze: jest.fn().mockRejectedValue(new Error('fail')) } },
-          { provide: FundamentalAnalysisHandler, useValue: { name: 'fundamental', weight: 1, enabled: true, analyze: jest.fn().mockRejectedValue(new Error('fail')) } },
-          { provide: FinancialHealthHandler, useValue: { name: 'financialHealth', weight: 1, enabled: true, analyze: jest.fn().mockRejectedValue(new Error('fail')) } },
-          { provide: GrowthAnalysisHandler, useValue: { name: 'growth', weight: 1, enabled: true, analyze: jest.fn().mockRejectedValue(new Error('fail')) } },
-          { provide: MomentumAnalysisHandler, useValue: { name: 'momentum', weight: 1, enabled: true, analyze: jest.fn().mockRejectedValue(new Error('fail')) } },
-          { provide: RiskAnalysisHandler, useValue: { name: 'risk', weight: 1, enabled: true, analyze: jest.fn().mockRejectedValue(new Error('fail')) } },
-          { provide: LiquidityAnalysisHandler, useValue: { name: 'liquidity', weight: 1, enabled: true, analyze: jest.fn().mockRejectedValue(new Error('fail')) } },
-          { provide: VolatilityAnalysisHandler, useValue: { name: 'volatility', weight: 1, enabled: true, analyze: jest.fn().mockRejectedValue(new Error('fail')) } },
-          { provide: TrendAnalysisHandler, useValue: { name: 'trend', weight: 1, enabled: true, analyze: jest.fn().mockRejectedValue(new Error('fail')) } },
-          { provide: ValuationAnalysisHandler, useValue: { name: 'valuation', weight: 1, enabled: true, analyze: jest.fn().mockRejectedValue(new Error('fail')) } },
+          {
+            provide: TechnicalAnalysisHandler,
+            useValue: {
+              name: 'technical',
+              weight: 1,
+              enabled: true,
+              analyze: jest.fn().mockRejectedValue(new Error('fail')),
+            },
+          },
+          {
+            provide: FundamentalAnalysisHandler,
+            useValue: {
+              name: 'fundamental',
+              weight: 1,
+              enabled: true,
+              analyze: jest.fn().mockRejectedValue(new Error('fail')),
+            },
+          },
+          {
+            provide: FinancialHealthHandler,
+            useValue: {
+              name: 'financialHealth',
+              weight: 1,
+              enabled: true,
+              analyze: jest.fn().mockRejectedValue(new Error('fail')),
+            },
+          },
+          {
+            provide: GrowthAnalysisHandler,
+            useValue: {
+              name: 'growth',
+              weight: 1,
+              enabled: true,
+              analyze: jest.fn().mockRejectedValue(new Error('fail')),
+            },
+          },
+          {
+            provide: MomentumAnalysisHandler,
+            useValue: {
+              name: 'momentum',
+              weight: 1,
+              enabled: true,
+              analyze: jest.fn().mockRejectedValue(new Error('fail')),
+            },
+          },
+          {
+            provide: RiskAnalysisHandler,
+            useValue: {
+              name: 'risk',
+              weight: 1,
+              enabled: true,
+              analyze: jest.fn().mockRejectedValue(new Error('fail')),
+            },
+          },
+          {
+            provide: LiquidityAnalysisHandler,
+            useValue: {
+              name: 'liquidity',
+              weight: 1,
+              enabled: true,
+              analyze: jest.fn().mockRejectedValue(new Error('fail')),
+            },
+          },
+          {
+            provide: VolatilityAnalysisHandler,
+            useValue: {
+              name: 'volatility',
+              weight: 1,
+              enabled: true,
+              analyze: jest.fn().mockRejectedValue(new Error('fail')),
+            },
+          },
+          {
+            provide: TrendAnalysisHandler,
+            useValue: {
+              name: 'trend',
+              weight: 1,
+              enabled: true,
+              analyze: jest.fn().mockRejectedValue(new Error('fail')),
+            },
+          },
+          {
+            provide: ValuationAnalysisHandler,
+            useValue: {
+              name: 'valuation',
+              weight: 1,
+              enabled: true,
+              analyze: jest.fn().mockRejectedValue(new Error('fail')),
+            },
+          },
           ScoreAggregator,
           ConfidenceCalculator,
           SignalGenerator,

@@ -165,7 +165,7 @@ describe('MarketDataService', () => {
       const orchestrator = {
         fetchHistoricalData: jest.fn().mockResolvedValue({
           data: [point],
-          provider: 'finnhub',
+          provider: 'yahoo',
           cached: false,
           timestamp: new Date().toISOString(),
         }),

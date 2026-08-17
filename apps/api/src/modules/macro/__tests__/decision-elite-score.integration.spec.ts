@@ -14,10 +14,38 @@ function buildPipeline(providerStatus: any[] = []) {
   const orchestrator = {
     fetchTcmbInterestDecisions: jest.fn().mockResolvedValue(DECISIONS),
     fetchMacroIndicators: jest.fn().mockResolvedValue([
-      { symbol: 'vix', value: 30, change: 2, changePercent: 7.1, timestamp: new Date().toISOString(), source: 'finnhub' },
-      { symbol: 'dxy', value: 110, change: 1, changePercent: 0.9, timestamp: new Date().toISOString(), source: 'finnhub' },
-      { symbol: 'us10y', value: 6.0, change: 0.1, changePercent: 1.7, timestamp: new Date().toISOString(), source: 'finnhub' },
-      { symbol: 'us2y', value: 4.8, change: 0.05, changePercent: 1.0, timestamp: new Date().toISOString(), source: 'finnhub' },
+      {
+        symbol: 'vix',
+        value: 30,
+        change: 2,
+        changePercent: 7.1,
+        timestamp: new Date().toISOString(),
+        source: 'tcmb',
+      },
+      {
+        symbol: 'dxy',
+        value: 110,
+        change: 1,
+        changePercent: 0.9,
+        timestamp: new Date().toISOString(),
+        source: 'tcmb',
+      },
+      {
+        symbol: 'us10y',
+        value: 6.0,
+        change: 0.1,
+        changePercent: 1.7,
+        timestamp: new Date().toISOString(),
+        source: 'tcmb',
+      },
+      {
+        symbol: 'us2y',
+        value: 4.8,
+        change: 0.05,
+        changePercent: 1.0,
+        timestamp: new Date().toISOString(),
+        source: 'tcmb',
+      },
     ]),
     getProviderStatus: jest.fn().mockResolvedValue(providerStatus),
   } as any;
@@ -78,7 +106,11 @@ describe('TCMB decision flow integration', () => {
 
     const observability = await elite.getObservability();
     expect(observability.providers).toHaveLength(1);
-    expect(observability.providers[0]).toMatchObject({ name: 'tcmb', connected: true, enabled: true });
+    expect(observability.providers[0]).toMatchObject({
+      name: 'tcmb',
+      connected: true,
+      enabled: true,
+    });
     expect(typeof observability.providers[0].lastSuccessAgeMs).toBe('number');
   });
 });

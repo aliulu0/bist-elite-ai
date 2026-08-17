@@ -1,4 +1,5 @@
-export type ProviderName = 'yahoo_finance' | 'fintables' | 'investing' | 'google_discovery' | 'finnhub' | 'kap' | 'mkk' | 'tcmb' | 'alpha_vantage';
+export type ProviderName =
+  'yahoo_finance' | 'fintables' | 'investing' | 'google_discovery' | 'kap' | 'mkk' | 'tcmb';
 
 export type ProviderStatus = 'healthy' | 'degraded' | 'unhealthy' | 'unknown';
 

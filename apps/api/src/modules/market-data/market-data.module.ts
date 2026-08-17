@@ -1,4 +1,4 @@
-﻿import { Module, forwardRef } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { MarketDataService, DATA_PROVIDER } from './market-data.service';
 import { MarketDataValidationService } from './market-data-validation.service';
 import { MarketDataProviderRegistry } from './market-data.provider-registry';
@@ -12,12 +12,10 @@ import { CircuitBreakerService } from './circuit-breaker/circuit-breaker.service
 import { MarketDataCacheService } from './cache/market-data-cache.service';
 import { MarketDataOrchestrator } from './orchestrator/market-data-orchestrator';
 import { FintablesUnifiedAdapter } from './providers/unified/fintables-unified.adapter';
-import { FinnhubAdapter } from './providers/unified/finnhub.adapter';
 import { SerpApiAdapter } from './providers/unified/serpapi.adapter';
 import { KAPAdapter } from './providers/unified/kap.adapter';
 import { MKKAdapter } from './providers/unified/mkk.adapter';
 import { TCMBAdapter } from './providers/unified/tcmb.adapter';
-import { AlphaVantageAdapter } from './providers/unified/alpha-vantage.adapter';
 import { YahooUnifiedAdapter } from './providers/unified/yahoo-unified.adapter';
 import { AggregationModule } from './aggregation/aggregation.module';
 import { AggregationEngine } from './aggregation/aggregation-engine.service';
@@ -77,8 +75,6 @@ const unifiedProviders = [
       validationService: MarketDataValidationService,
     ) => {
       const fintables = new FintablesUnifiedAdapter(circuitBreaker);
-      const alphaVantage = new AlphaVantageAdapter(circuitBreaker);
-      const finnhub = new FinnhubAdapter(circuitBreaker);
       const serpApi = new SerpApiAdapter(circuitBreaker);
       const yahooUnified = new YahooUnifiedAdapter(circuitBreaker, yahoo);
       const kap = new KAPAdapter(circuitBreaker);
@@ -88,16 +84,7 @@ const unifiedProviders = [
       const orchestrator = new MarketDataOrchestrator(
         circuitBreaker,
         cacheService,
-        [
-          fintables,
-          alphaVantage,
-          finnhub,
-          serpApi,
-          yahooUnified,
-          kap,
-          tcmb,
-          mkk,
-        ],
+        [fintables, serpApi, yahooUnified, kap, tcmb, mkk],
         undefined,
         symbolRegistry,
         normalizer,
@@ -121,7 +108,12 @@ const unifiedProviders = [
 ];
 
 @Module({
-  imports: [ProviderHealthMonitorModule, CacheModule, CircuitBreakerModule, forwardRef(() => AggregationModule)],
+  imports: [
+    ProviderHealthMonitorModule,
+    CacheModule,
+    CircuitBreakerModule,
+    forwardRef(() => AggregationModule),
+  ],
   controllers: [MarketDataController],
   providers: [
     ...legacyProviders,

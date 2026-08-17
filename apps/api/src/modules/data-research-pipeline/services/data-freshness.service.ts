@@ -47,13 +47,16 @@ export class DataFreshnessService {
     return report.freshness.find((f: DataFreshnessInfo) => f.source === providerName) ?? null;
   }
 
-  async getFreshnessForTickers(tickers: string[], timeframe: string): Promise<Map<string, DataFreshnessInfo[]>> {
+  async getFreshnessForTickers(
+    tickers: string[],
+    timeframe: string,
+  ): Promise<Map<string, DataFreshnessInfo[]>> {
     const result = new Map<string, DataFreshnessInfo[]>();
     const report = await this.getFreshnessReport();
-    
+
     for (const ticker of tickers) {
-      const relevant = report.freshness.filter((f: DataFreshnessInfo) => 
-        f.source === 'yahoo' || f.source === 'fintables' || f.source === 'finnhub'
+      const relevant = report.freshness.filter(
+        (f: DataFreshnessInfo) => f.source === 'yahoo' || f.source === 'fintables',
       );
       result.set(ticker, relevant);
     }
@@ -76,7 +79,7 @@ export class DataFreshnessService {
     const lastSync = await this.getLastSyncForProvider(providerName);
     const timestamp = await this.getDataTimestamp(providerName);
     const now = Date.now();
-    
+
     let ageSeconds: number | null = null;
     let timestampValue: string | null = null;
 
@@ -98,7 +101,10 @@ export class DataFreshnessService {
     };
   }
 
-  private classifyFreshness(ageSeconds: number | null, threshold: { freshSeconds: number; acceptableSeconds: number; staleSeconds: number }): DataFreshnessInfo['freshnessState'] {
+  private classifyFreshness(
+    ageSeconds: number | null,
+    threshold: { freshSeconds: number; acceptableSeconds: number; staleSeconds: number },
+  ): DataFreshnessInfo['freshnessState'] {
     if (ageSeconds === null) return 'UNAVAILABLE';
     if (ageSeconds <= threshold.freshSeconds) return 'FRESH';
     if (ageSeconds <= threshold.acceptableSeconds) return 'ACCEPTABLE';
@@ -106,15 +112,21 @@ export class DataFreshnessService {
     return 'UNAVAILABLE';
   }
 
-  private computeOverallFreshness(freshness: DataFreshnessInfo[]): DataFreshnessInfo['freshnessState'] {
-    const states = freshness.map(f => f.freshnessState);
-    if (states.some(s => s === 'UNAVAILABLE')) return 'UNAVAILABLE';
-    if (states.some(s => s === 'STALE')) return 'STALE';
-    if (states.some(s => s === 'ACCEPTABLE')) return 'ACCEPTABLE';
+  private computeOverallFreshness(
+    freshness: DataFreshnessInfo[],
+  ): DataFreshnessInfo['freshnessState'] {
+    const states = freshness.map((f) => f.freshnessState);
+    if (states.some((s) => s === 'UNAVAILABLE')) return 'UNAVAILABLE';
+    if (states.some((s) => s === 'STALE')) return 'STALE';
+    if (states.some((s) => s === 'ACCEPTABLE')) return 'ACCEPTABLE';
     return 'FRESH';
   }
 
-  private getFreshnessThreshold(providerName: string): { freshSeconds: number; acceptableSeconds: number; staleSeconds: number } {
+  private getFreshnessThreshold(providerName: string): {
+    freshSeconds: number;
+    acceptableSeconds: number;
+    staleSeconds: number;
+  } {
     const category = this.inferCategory(providerName);
     return {
       freshSeconds: 60,
@@ -125,30 +137,29 @@ export class DataFreshnessService {
 
   private inferCategory(providerName: string): string {
     const categories: Record<string, string> = {
-      'fintables': 'fundamental',
-      'finnhub': 'market-data',
-      'alpha-vantage': 'fundamental',
-      'yahoo': 'market-data',
-      'kap': 'regulatory',
-      'tcmb': 'macro',
-      'mkk': 'fundamental',
-      'serpapi': 'search',
+      fintables: 'fundamental',
+      yahoo: 'market-data',
+      kap: 'regulatory',
+      tcmb: 'macro',
+      mkk: 'fundamental',
+      serpapi: 'search',
       'google-news': 'news',
       'google-search': 'search',
-      'finnhub-news': 'news',
       'agent-reach': 'research',
       'yahoo-finance': 'market-data',
-      'chatgpt': 'research',
-      'gemini': 'research',
-      'perplexity': 'research',
-      'grok': 'research',
+      chatgpt: 'research',
+      gemini: 'research',
+      perplexity: 'research',
+      grok: 'research',
     };
     return categories[providerName] ?? 'market-data';
   }
 
   private async getLastSyncForProvider(providerName: string): Promise<string | null> {
     const statuses = await this.orchestrator.getProviderStatus();
-    const status = statuses.find((s: { name: string; lastHealthCheck: string | null }) => s.name === providerName);
+    const status = statuses.find(
+      (s: { name: string; lastHealthCheck: string | null }) => s.name === providerName,
+    );
     return status?.lastHealthCheck ?? null;
   }
 

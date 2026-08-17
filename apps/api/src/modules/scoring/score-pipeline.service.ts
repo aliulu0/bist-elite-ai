@@ -73,7 +73,13 @@ export class ScorePipeline {
       Math.min(
         100,
         Math.round(
-          dataCompleteness * 100 * providerCoverage * verificationConfidence * catalystConfidence * freshnessFactor * (1 - conflictPenalty),
+          dataCompleteness *
+            100 *
+            providerCoverage *
+            verificationConfidence *
+            catalystConfidence *
+            freshnessFactor *
+            (1 - conflictPenalty),
         ),
       ),
     );
@@ -90,7 +96,7 @@ export class ScorePipeline {
 
   private computeProviderCoverage(coverage?: ProviderCoverage): number {
     if (!coverage) return 0.8;
-    const total = 8;
+    const total = 6;
     const active = Object.values(coverage).filter(Boolean).length;
     return active / total;
   }

@@ -31,7 +31,7 @@ describe('AggregationEngine', () => {
 
   beforeEach(() => {
     mockOrchestrator = {
-      getAvailableProviders: jest.fn().mockReturnValue(['fintables', 'finnhub']),
+      getAvailableProviders: jest.fn().mockReturnValue(['fintables', 'yahoo']),
       fetchCompany: jest.fn(),
       fetchFinancials: jest.fn(),
       fetchBalanceSheet: jest.fn(),
@@ -114,7 +114,12 @@ describe('AggregationEngine', () => {
     });
 
     it('should return null when no data returned', async () => {
-      mockOrchestrator.fetchCompany.mockResolvedValue({ data: null, provider: 'fintables', cached: false, timestamp: new Date().toISOString() } as any);
+      mockOrchestrator.fetchCompany.mockResolvedValue({
+        data: null,
+        provider: 'fintables',
+        cached: false,
+        timestamp: new Date().toISOString(),
+      } as any);
 
       const result = await engine.aggregateCompany('THYAO');
       expect(result).toBeNull();
@@ -140,10 +145,23 @@ describe('AggregationEngine', () => {
       const companyB = { ...mockCompany, name: 'Turkish Airlines' };
 
       mockOrchestrator.fetchCompany
-        .mockResolvedValueOnce({ data: companyA, provider: 'fintables', cached: false, timestamp: new Date().toISOString() })
-        .mockResolvedValueOnce({ data: companyB, provider: 'finnhub', cached: false, timestamp: new Date().toISOString() });
+        .mockResolvedValueOnce({
+          data: companyA,
+          provider: 'fintables',
+          cached: false,
+          timestamp: new Date().toISOString(),
+        })
+        .mockResolvedValueOnce({
+          data: companyB,
+          provider: 'yahoo',
+          cached: false,
+          timestamp: new Date().toISOString(),
+        });
 
-      mockConflictResolver.resolve.mockReturnValue({ value: 'Turkish Airlines', resolution: 'highest_priority' });
+      mockConflictResolver.resolve.mockReturnValue({
+        value: 'Turkish Airlines',
+        resolution: 'highest_priority',
+      });
       mockConflictResolver.buildConflictRecord.mockReturnValue({
         field: 'name',
         values: [],
@@ -154,17 +172,22 @@ describe('AggregationEngine', () => {
       const result = await engine.aggregateCompany('THYAO');
       expect(result).not.toBeNull();
       expect(result!.metadata.providersUsed).toContain('fintables');
-      expect(result!.metadata.providersUsed).toContain('finnhub');
+      expect(result!.metadata.providersUsed).toContain('yahoo');
     });
 
     it('should handle provider failure gracefully', async () => {
       mockOrchestrator.fetchCompany
-        .mockResolvedValueOnce({ data: mockCompany, provider: 'fintables', cached: false, timestamp: new Date().toISOString() })
+        .mockResolvedValueOnce({
+          data: mockCompany,
+          provider: 'fintables',
+          cached: false,
+          timestamp: new Date().toISOString(),
+        })
         .mockRejectedValueOnce(new Error('Network error'));
 
       const result = await engine.aggregateCompany('THYAO');
       expect(result).not.toBeNull();
-      expect(result!.metadata.providersFailed).toContain('finnhub');
+      expect(result!.metadata.providersFailed).toContain('yahoo');
     });
 
     it('should include validation warnings from data validator', async () => {
@@ -233,8 +256,22 @@ describe('AggregationEngine', () => {
 
   describe('aggregateDisclosures', () => {
     const mockDisclosures = [
-      { title: 'Important Notice', date: '2026-01-01', source: 'kap', url: 'http://example.com', symbol: 'THYAO', category: 'general' },
-      { title: 'Financial Report', date: '2026-01-02', source: 'kap', url: 'http://example.com', symbol: 'THYAO', category: 'financial' },
+      {
+        title: 'Important Notice',
+        date: '2026-01-01',
+        source: 'kap',
+        url: 'http://example.com',
+        symbol: 'THYAO',
+        category: 'general',
+      },
+      {
+        title: 'Financial Report',
+        date: '2026-01-02',
+        source: 'kap',
+        url: 'http://example.com',
+        symbol: 'THYAO',
+        category: 'financial',
+      },
     ];
 
     it('should return cached result when available', async () => {
@@ -262,18 +299,20 @@ describe('AggregationEngine', () => {
     });
 
     it('should fetch and deduplicate disclosures', async () => {
-      mockDataValidator.deduplicateDisclosures.mockImplementation((disclosures: Array<{ title: string; date: string; source: string }>) => {
-        const seen = new Set<string>();
-        const unique: Array<{ title: string; date: string; source: string }> = [];
-        for (const d of disclosures) {
-          const key = `${d.title}:${d.date}`;
-          if (!seen.has(key)) {
-            seen.add(key);
-            unique.push(d);
+      mockDataValidator.deduplicateDisclosures.mockImplementation(
+        (disclosures: Array<{ title: string; date: string; source: string }>) => {
+          const seen = new Set<string>();
+          const unique: Array<{ title: string; date: string; source: string }> = [];
+          for (const d of disclosures) {
+            const key = `${d.title}:${d.date}`;
+            if (!seen.has(key)) {
+              seen.add(key);
+              unique.push(d);
+            }
           }
-        }
-        return unique;
-      });
+          return unique;
+        },
+      );
 
       mockOrchestrator.fetchDisclosures.mockResolvedValue({
         data: mockDisclosures,
@@ -307,7 +346,7 @@ describe('AggregationEngine', () => {
       const result = await engine.aggregateDisclosures('THYAO');
       expect(result).not.toBeNull();
       expect(result!.metadata.providersFailed).toContain('fintables');
-      expect(result!.metadata.providersFailed).toContain('finnhub');
+      expect(result!.metadata.providersFailed).toContain('yahoo');
     });
 
     it('should cache result with 15 minute TTL', async () => {
@@ -331,16 +370,26 @@ describe('AggregationEngine', () => {
 
   describe('circuit breaker integration', () => {
     it('should mark unhealthy providers in metadata', async () => {
-      mockCircuitBreaker.isCircuitOpen.mockImplementation((name: string) => name === 'finnhub');
+      mockCircuitBreaker.isCircuitOpen.mockImplementation((name: string) => name === 'yahoo');
 
       mockOrchestrator.fetchCompany
-        .mockResolvedValueOnce({ data: mockCompany, provider: 'fintables', cached: false, timestamp: new Date().toISOString() })
-        .mockResolvedValueOnce({ data: mockCompany, provider: 'finnhub', cached: false, timestamp: new Date().toISOString() });
+        .mockResolvedValueOnce({
+          data: mockCompany,
+          provider: 'fintables',
+          cached: false,
+          timestamp: new Date().toISOString(),
+        })
+        .mockResolvedValueOnce({
+          data: mockCompany,
+          provider: 'yahoo',
+          cached: false,
+          timestamp: new Date().toISOString(),
+        });
 
       const result = await engine.aggregateCompany('THYAO');
       expect(result).not.toBeNull();
       expect(result!.metadata.providerConfidence['fintables']).toBeGreaterThan(
-        result!.metadata.providerConfidence['finnhub'],
+        result!.metadata.providerConfidence['yahoo'],
       );
     });
   });
@@ -351,15 +400,33 @@ describe('AggregationEngine', () => {
       const companyB = { ...mockCompany, marketCap: 600000000 };
 
       mockOrchestrator.fetchCompany
-        .mockResolvedValueOnce({ data: companyA, provider: 'fintables', cached: false, timestamp: new Date().toISOString() })
-        .mockResolvedValueOnce({ data: companyB, provider: 'finnhub', cached: false, timestamp: new Date().toISOString() });
+        .mockResolvedValueOnce({
+          data: companyA,
+          provider: 'fintables',
+          cached: false,
+          timestamp: new Date().toISOString(),
+        })
+        .mockResolvedValueOnce({
+          data: companyB,
+          provider: 'yahoo',
+          cached: false,
+          timestamp: new Date().toISOString(),
+        });
 
-      mockConflictResolver.resolveNumeric.mockReturnValue({ value: 550000000, resolution: 'average' });
+      mockConflictResolver.resolveNumeric.mockReturnValue({
+        value: 550000000,
+        resolution: 'average',
+      });
       mockConflictResolver.buildConflictRecord.mockReturnValue({
         field: 'marketCap',
         values: [
-          { provider: 'fintables', value: 500000000, priority: 1, timestamp: '2026-01-01T00:00:00Z' },
-          { provider: 'finnhub', value: 600000000, priority: 2, timestamp: '2026-01-01T00:00:00Z' },
+          {
+            provider: 'fintables',
+            value: 500000000,
+            priority: 1,
+            timestamp: '2026-01-01T00:00:00Z',
+          },
+          { provider: 'yahoo', value: 600000000, priority: 2, timestamp: '2026-01-01T00:00:00Z' },
         ],
         resolution: 'average',
         chosenValue: 550000000,

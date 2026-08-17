@@ -1,0 +1,125 @@
+{
+  "version": "R2-072-v1.0",
+  "generatedAt": "2026-08-17T13:00:00Z",
+  "runtimeProbeAt": "2026-08-17T12:51:00Z",
+  "description": "Machine-readable provider matrix after R2-072 removal of Finnhub and Alpha Vantage from the production architecture. Yahoo Finance is the single PRIMARY BIST price provider. Removed providers are recorded for history only and must never be used as BIST runtime market data.",
+  "providerHierarchy": {
+    "primary": {
+      "yahoo": {
+        "priority": 4,
+        "role": "PRIMARY",
+        "bistEvidence": "VERIFIED_10_OF_10_TRY_2026-08-17"
+      }
+    },
+    "research": {
+      "serpapi": {
+        "priority": 8,
+        "role": "RESEARCH",
+        "note": "google_search/google_news only; google_finance does not resolve BIST .IS"
+      },
+      "agent-reach": {
+        "role": "RESEARCH",
+        "note": "research evidence only; never direct market data"
+      }
+    },
+    "disclosure": { "kap": { "priority": 5, "role": "DISCLOSURE" } },
+    "macro": { "tcmb": { "priority": 6, "role": "MACRO", "note": "FX/macro indicators only" } },
+    "optional": {
+      "fintables": {
+        "priority": 1,
+        "role": "OPTIONAL",
+        "note": "not configured; future fundamentals source"
+      }
+    }
+  },
+  "configPriorities": {
+    "fintables": 1,
+    "yahoo": 4,
+    "kap": 5,
+    "tcmb": 6,
+    "mkk": 7,
+    "serpapi": 8
+  },
+  "removedProviders": {
+    "finnhub": {
+      "status": "UNUSABLE_FOR_BIST_RUNTIME",
+      "reason": "AUTH_FAILED (2026-08-17): key has no BIST access",
+      "productionCode": "REMOVED",
+      "tests": "UPDATED",
+      "webUi": "REMOVED (replaced by Investing)",
+      "envExample": "REMOVED",
+      "historicalDocsOnly": true
+    },
+    "alpha_vantage": {
+      "status": "UNUSABLE_FOR_BIST_RUNTIME",
+      "reason": "NO_QUOTE / RATE_LIMITED (2026-08-17): free tier cannot serve BIST .IS",
+      "productionCode": "REMOVED",
+      "tests": "UPDATED",
+      "webUi": "REMOVED",
+      "envExample": "REMOVED",
+      "historicalDocsOnly": true
+    }
+  },
+  "runtimeVerification": {
+    "method": "standalone probe hitting query1.finance.yahoo.com chart endpoint",
+    "gate": "Yahoo must serve live TRY quotes for at least half the sample",
+    "sample": [
+      "THYAO",
+      "AKBNK",
+      "ASELS",
+      "GARAN",
+      "BIMAS",
+      "KCHOL",
+      "EREGL",
+      "SAHOL",
+      "ISCTR",
+      "TUPRS"
+    ],
+    "servedWithCurrencyTRY": 10,
+    "totalProbed": 10,
+    "quotes": [
+      {
+        "symbol": "THYAO",
+        "price": 301.25,
+        "currency": "TRY",
+        "timestamp": "2026-08-17T12:51:07Z"
+      },
+      { "symbol": "AKBNK", "price": 68.5, "currency": "TRY", "timestamp": "2026-08-17T12:51:07Z" },
+      { "symbol": "ASELS", "price": 382, "currency": "TRY", "timestamp": "2026-08-17T12:51:08Z" },
+      {
+        "symbol": "GARAN",
+        "price": 129.60000610351562,
+        "currency": "TRY",
+        "timestamp": "2026-08-17T12:51:05Z"
+      },
+      { "symbol": "BIMAS", "price": 379, "currency": "TRY", "timestamp": "2026-08-17T12:51:08Z" },
+      {
+        "symbol": "KCHOL",
+        "price": 203.10000610351562,
+        "currency": "TRY",
+        "timestamp": "2026-08-17T12:51:00Z"
+      },
+      {
+        "symbol": "EREGL",
+        "price": 37.720001220703125,
+        "currency": "TRY",
+        "timestamp": "2026-08-17T12:51:09Z"
+      },
+      { "symbol": "SAHOL", "price": 88.5, "currency": "TRY", "timestamp": "2026-08-17T12:51:06Z" },
+      {
+        "symbol": "ISCTR",
+        "price": 12.479999542236328,
+        "currency": "TRY",
+        "timestamp": "2026-08-17T12:51:09Z"
+      },
+      { "symbol": "TUPRS", "price": 364, "currency": "TRY", "timestamp": "2026-08-17T12:51:10Z" }
+    ]
+  },
+  "regression": {
+    "apiTypecheck": "PASSED",
+    "webTypecheck": "PASSED",
+    "affectedModules": "1241 passed / 1 skipped",
+    "fullApiSuite": "350 passed / 1 failed (pre-existing flaky error-handling.integration.spec.ts under parallel load; passes in isolation)",
+    "webVitest": "pre-existing broken env (no vitest config); unrelated to R2-072"
+  }
+}

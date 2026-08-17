@@ -19,9 +19,14 @@ const FRESH_NOW = new Date('2026-08-10T12:00:00.000Z').getTime();
 function makeConfig(): MarketDataConfig {
   return {
     providers: {
-      fintables: { enabled: true, priority: 1, timeout: 15000, retries: 3, apiKey: 'x', baseUrl: '' },
-      alpha_vantage: { enabled: true, priority: 2, timeout: 15000, retries: 3, apiKey: 'x', baseUrl: '' },
-      finnhub: { enabled: true, priority: 3, timeout: 15000, retries: 3, apiKey: 'x', baseUrl: '' },
+      fintables: {
+        enabled: true,
+        priority: 1,
+        timeout: 15000,
+        retries: 3,
+        apiKey: 'x',
+        baseUrl: '',
+      },
       yahoo: { enabled: true, priority: 4, timeout: 15000, retries: 2, apiKey: 'x', baseUrl: '' },
       kap: { enabled: true, priority: 5, timeout: 15000, retries: 3, apiKey: 'x', baseUrl: '' },
       tcmb: { enabled: true, priority: 6, timeout: 15000, retries: 3, apiKey: 'x', baseUrl: '' },
@@ -114,7 +119,12 @@ describe('IncrementalMarketDataService integration (real orchestrator + cache)',
       deduplicator,
       validationService,
     );
-    service = new IncrementalMarketDataService(orchestrator, cacheService, validationService, normalizer);
+    service = new IncrementalMarketDataService(
+      orchestrator,
+      cacheService,
+      validationService,
+      normalizer,
+    );
   });
 
   afterEach(() => {
@@ -122,8 +132,28 @@ describe('IncrementalMarketDataService integration (real orchestrator + cache)',
   });
 
   const freshCandles = (): MarketDataPoint[] => [
-    { symbol: 'THYAO', timeframe: '1d', open: 400, high: 420, low: 395, close: 410, volume: 5_000_000, timestamp: '2026-08-09T00:00:00.000Z', validationStatus: 'valid' },
-    { symbol: 'THYAO', timeframe: '1d', open: 410, high: 430, low: 405, close: 425, volume: 6_000_000, timestamp: '2026-08-10T00:00:00.000Z', validationStatus: 'valid' },
+    {
+      symbol: 'THYAO',
+      timeframe: '1d',
+      open: 400,
+      high: 420,
+      low: 395,
+      close: 410,
+      volume: 5_000_000,
+      timestamp: '2026-08-09T00:00:00.000Z',
+      validationStatus: 'valid',
+    },
+    {
+      symbol: 'THYAO',
+      timeframe: '1d',
+      open: 410,
+      high: 430,
+      low: 405,
+      close: 425,
+      volume: 6_000_000,
+      timestamp: '2026-08-10T00:00:00.000Z',
+      validationStatus: 'valid',
+    },
   ];
 
   it('ZERO DUPLICATION: two sequential requests produce exactly ONE provider fetch', async () => {
@@ -162,7 +192,17 @@ describe('IncrementalMarketDataService integration (real orchestrator + cache)',
     jest.setSystemTime(new Date(FRESH_NOW + 25 * 3_600_000));
 
     const newCandles: MarketDataPoint[] = [
-      { symbol: 'THYAO', timeframe: '1d', open: 425, high: 440, low: 418, close: 435, volume: 7_000_000, timestamp: '2026-08-12T00:00:00.000Z', validationStatus: 'valid' },
+      {
+        symbol: 'THYAO',
+        timeframe: '1d',
+        open: 425,
+        high: 440,
+        low: 418,
+        close: 435,
+        volume: 7_000_000,
+        timestamp: '2026-08-12T00:00:00.000Z',
+        validationStatus: 'valid',
+      },
     ];
     yahoo.getHistoricalData.mockResolvedValue(newCandles);
 
@@ -180,8 +220,28 @@ describe('IncrementalMarketDataService integration (real orchestrator + cache)',
   it('1h normalization: a 1h request reuses the shared 4h cache (one provider fetch for 1h + 4h)', async () => {
     // Last candle 2h before "now" (TR 15:00) -> fresh (4h staleThreshold = 6h).
     const recentCandles: MarketDataPoint[] = [
-      { symbol: 'THYAO', timeframe: '4h', open: 400, high: 420, low: 395, close: 410, volume: 5_000_000, timestamp: '2026-08-10T08:00:00.000Z', validationStatus: 'valid' },
-      { symbol: 'THYAO', timeframe: '4h', open: 410, high: 430, low: 405, close: 425, volume: 6_000_000, timestamp: '2026-08-10T10:00:00.000Z', validationStatus: 'valid' },
+      {
+        symbol: 'THYAO',
+        timeframe: '4h',
+        open: 400,
+        high: 420,
+        low: 395,
+        close: 410,
+        volume: 5_000_000,
+        timestamp: '2026-08-10T08:00:00.000Z',
+        validationStatus: 'valid',
+      },
+      {
+        symbol: 'THYAO',
+        timeframe: '4h',
+        open: 410,
+        high: 430,
+        low: 405,
+        close: 425,
+        volume: 6_000_000,
+        timestamp: '2026-08-10T10:00:00.000Z',
+        validationStatus: 'valid',
+      },
     ];
     yahoo.getHistoricalData.mockResolvedValue(recentCandles);
 
@@ -220,31 +280,36 @@ describe('IncrementalMarketDataService integration (real orchestrator + cache)',
     expect(yahoo.getHistoricalData).toHaveBeenCalledTimes(1);
   });
 
-  it('provider fallback: incremental fetch falls back from finnhub to yahoo', async () => {
-    const finnhub = {
+  it('provider fallback: incremental fetch falls back from fintables to yahoo', async () => {
+    const fintables = {
       ...createYahooProvider(),
-      name: 'finnhub',
-      getHistoricalData: jest.fn().mockRejectedValue(new Error('finnhub down')),
+      name: 'fintables',
+      getHistoricalData: jest.fn().mockRejectedValue(new Error('fintables down')),
       getAvailableTimeframes: jest.fn().mockReturnValue(['4h', '1d', '1w', '1m', '3m', '6m']),
     };
     yahoo.getHistoricalData.mockResolvedValue(freshCandles());
-    // finnhub (priority 3) is tried before yahoo (priority 4) in makeConfig.
+    // fintables (priority 1) is tried before yahoo (priority 4) in makeConfig.
     const fbOrchestrator = new MarketDataOrchestrator(
       circuitBreaker,
       cacheService,
-      [finnhub, yahoo],
+      [fintables, yahoo],
       makeConfig(),
       undefined,
       normalizer,
       deduplicator,
       validationService,
     );
-    const fbService = new IncrementalMarketDataService(fbOrchestrator, cacheService, validationService, normalizer);
+    const fbService = new IncrementalMarketDataService(
+      fbOrchestrator,
+      cacheService,
+      validationService,
+      normalizer,
+    );
 
     const result = await fbService.fetchHistoricalData('THYAO.IS', '1d');
 
     expect(result).not.toBeNull();
-    expect(finnhub.getHistoricalData).toHaveBeenCalledTimes(1);
+    expect(fintables.getHistoricalData).toHaveBeenCalledTimes(1);
     expect(yahoo.getHistoricalData).toHaveBeenCalledTimes(1);
     expect(result!.incremental.providerUsed).toBe('yahoo');
     expect(result!.data).toHaveLength(2);

@@ -1,7 +1,6 @@
 import { BistSymbolEntry, BIST_EXCHANGE } from './symbol-registry.types';
 
 const is = (ticker: string) => `${ticker}.IS`;
-const ist = (ticker: string) => `${ticker}.IST`;
 
 export const BIST_SYMBOLS: BistSymbolEntry[] = [
   {
@@ -11,7 +10,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRAAKBNK91N4',
     active: true,
-    providers: { yahoo: is('AKBNK'), alpha_vantage: ist('AKBNK'), finnhub: is('AKBNK'), fintables: 'AKBNK', kap: 'AKBNK', tcmb: 'AKBNK', mkk: 'AKBNK' },
+    providers: {
+      yahoo: is('AKBNK'),
+      fintables: 'AKBNK',
+      kap: 'AKBNK',
+      tcmb: 'AKBNK',
+      mkk: 'AKBNK',
+    },
   },
   {
     canonicalTicker: 'GARAN',
@@ -20,7 +25,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     sector: 'Financials',
     isin: 'TRAGARAN91N1',
     active: true,
-    providers: { yahoo: is('GARAN'), alpha_vantage: ist('GARAN'), finnhub: is('GARAN'), fintables: 'GARAN', kap: 'GARAN', tcmb: 'GARAN', mkk: 'GARAN' },
+    providers: {
+      yahoo: is('GARAN'),
+      fintables: 'GARAN',
+      kap: 'GARAN',
+      tcmb: 'GARAN',
+      mkk: 'GARAN',
+    },
   },
   {
     canonicalTicker: 'ISCTR',
@@ -29,7 +40,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRAISCTR91N1',
     active: true,
-    providers: { yahoo: is('ISCTR'), alpha_vantage: ist('ISCTR'), finnhub: is('ISCTR'), fintables: 'ISCTR', kap: 'ISCTR', tcmb: 'ISCTR', mkk: 'ISCTR' },
+    providers: {
+      yahoo: is('ISCTR'),
+      fintables: 'ISCTR',
+      kap: 'ISCTR',
+      tcmb: 'ISCTR',
+      mkk: 'ISCTR',
+    },
   },
   {
     canonicalTicker: 'YKBNK',
@@ -38,7 +55,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRAYKBNK91N7',
     active: true,
-    providers: { yahoo: is('YKBNK'), alpha_vantage: ist('YKBNK'), finnhub: is('YKBNK'), fintables: 'YKBNK', kap: 'YKBNK', tcmb: 'YKBNK', mkk: 'YKBNK' },
+    providers: {
+      yahoo: is('YKBNK'),
+      fintables: 'YKBNK',
+      kap: 'YKBNK',
+      tcmb: 'YKBNK',
+      mkk: 'YKBNK',
+    },
   },
   {
     canonicalTicker: 'HALKB',
@@ -47,7 +70,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRAHALKB91H1',
     active: true,
-    providers: { yahoo: is('HALKB'), alpha_vantage: ist('HALKB'), finnhub: is('HALKB'), fintables: 'HALKB', kap: 'HALKB', tcmb: 'HALKB', mkk: 'HALKB' },
+    providers: {
+      yahoo: is('HALKB'),
+      fintables: 'HALKB',
+      kap: 'HALKB',
+      tcmb: 'HALKB',
+      mkk: 'HALKB',
+    },
   },
   {
     canonicalTicker: 'VAKBN',
@@ -56,7 +85,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRAVAKBN91M7',
     active: true,
-    providers: { yahoo: is('VAKBN'), alpha_vantage: ist('VAKBN'), finnhub: is('VAKBN'), fintables: 'VAKBN', kap: 'VAKBN', tcmb: 'VAKBN', mkk: 'VAKBN' },
+    providers: {
+      yahoo: is('VAKBN'),
+      fintables: 'VAKBN',
+      kap: 'VAKBN',
+      tcmb: 'VAKBN',
+      mkk: 'VAKBN',
+    },
   },
   {
     canonicalTicker: 'TSKB',
@@ -65,7 +100,7 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRATSKB91N6',
     active: true,
-    providers: { yahoo: is('TSKB'), alpha_vantage: ist('TSKB'), finnhub: is('TSKB'), fintables: 'TSKB', kap: 'TSKB', tcmb: 'TSKB', mkk: 'TSKB' },
+    providers: { yahoo: is('TSKB'), fintables: 'TSKB', kap: 'TSKB', tcmb: 'TSKB', mkk: 'TSKB' },
   },
   {
     canonicalTicker: 'SKBNK',
@@ -74,7 +109,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRASKBNK91N8',
     active: true,
-    providers: { yahoo: is('SKBNK'), alpha_vantage: ist('SKBNK'), finnhub: is('SKBNK'), fintables: 'SKBNK', kap: 'SKBNK', tcmb: 'SKBNK', mkk: 'SKBNK' },
+    providers: {
+      yahoo: is('SKBNK'),
+      fintables: 'SKBNK',
+      kap: 'SKBNK',
+      tcmb: 'SKBNK',
+      mkk: 'SKBNK',
+    },
   },
   {
     canonicalTicker: 'ALBRK',
@@ -83,7 +124,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TREALBK00011',
     active: true,
-    providers: { yahoo: is('ALBRK'), alpha_vantage: ist('ALBRK'), finnhub: is('ALBRK'), fintables: 'ALBRK', kap: 'ALBRK', tcmb: 'ALBRK', mkk: 'ALBRK' },
+    providers: {
+      yahoo: is('ALBRK'),
+      fintables: 'ALBRK',
+      kap: 'ALBRK',
+      tcmb: 'ALBRK',
+      mkk: 'ALBRK',
+    },
   },
   {
     canonicalTicker: 'ISMEN',
@@ -92,7 +139,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: null,
     active: true,
-    providers: { yahoo: is('ISMEN'), alpha_vantage: ist('ISMEN'), finnhub: is('ISMEN'), fintables: 'ISMEN', kap: 'ISMEN', tcmb: 'ISMEN', mkk: 'ISMEN' },
+    providers: {
+      yahoo: is('ISMEN'),
+      fintables: 'ISMEN',
+      kap: 'ISMEN',
+      tcmb: 'ISMEN',
+      mkk: 'ISMEN',
+    },
   },
   {
     canonicalTicker: 'KCHOL',
@@ -101,7 +154,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRAKCHOL91Q8',
     active: true,
-    providers: { yahoo: is('KCHOL'), alpha_vantage: ist('KCHOL'), finnhub: is('KCHOL'), fintables: 'KCHOL', kap: 'KCHOL', tcmb: 'KCHOL', mkk: 'KCHOL' },
+    providers: {
+      yahoo: is('KCHOL'),
+      fintables: 'KCHOL',
+      kap: 'KCHOL',
+      tcmb: 'KCHOL',
+      mkk: 'KCHOL',
+    },
   },
   {
     canonicalTicker: 'SAHOL',
@@ -110,7 +169,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRASAHOL91Q5',
     active: true,
-    providers: { yahoo: is('SAHOL'), alpha_vantage: ist('SAHOL'), finnhub: is('SAHOL'), fintables: 'SAHOL', kap: 'SAHOL', tcmb: 'SAHOL', mkk: 'SAHOL' },
+    providers: {
+      yahoo: is('SAHOL'),
+      fintables: 'SAHOL',
+      kap: 'SAHOL',
+      tcmb: 'SAHOL',
+      mkk: 'SAHOL',
+    },
   },
   {
     canonicalTicker: 'ALARK',
@@ -119,7 +184,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRAALARK91Q0',
     active: true,
-    providers: { yahoo: is('ALARK'), alpha_vantage: ist('ALARK'), finnhub: is('ALARK'), fintables: 'ALARK', kap: 'ALARK', tcmb: 'ALARK', mkk: 'ALARK' },
+    providers: {
+      yahoo: is('ALARK'),
+      fintables: 'ALARK',
+      kap: 'ALARK',
+      tcmb: 'ALARK',
+      mkk: 'ALARK',
+    },
   },
   {
     canonicalTicker: 'BRLSM',
@@ -128,7 +199,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: null,
     active: true,
-    providers: { yahoo: is('BRLSM'), alpha_vantage: ist('BRLSM'), finnhub: is('BRLSM'), fintables: 'BRLSM', kap: 'BRLSM', tcmb: 'BRLSM', mkk: 'BRLSM' },
+    providers: {
+      yahoo: is('BRLSM'),
+      fintables: 'BRLSM',
+      kap: 'BRLSM',
+      tcmb: 'BRLSM',
+      mkk: 'BRLSM',
+    },
   },
   {
     canonicalTicker: 'THYAO',
@@ -137,7 +214,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRATHYAO91M5',
     active: true,
-    providers: { yahoo: is('THYAO'), alpha_vantage: ist('THYAO'), finnhub: is('THYAO'), fintables: 'THYAO', kap: 'THYAO', tcmb: 'THYAO', mkk: 'THYAO' },
+    providers: {
+      yahoo: is('THYAO'),
+      fintables: 'THYAO',
+      kap: 'THYAO',
+      tcmb: 'THYAO',
+      mkk: 'THYAO',
+    },
   },
   {
     canonicalTicker: 'PGSUS',
@@ -146,7 +229,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRAPGSUS91Q0',
     active: true,
-    providers: { yahoo: is('PGSUS'), alpha_vantage: ist('PGSUS'), finnhub: is('PGSUS'), fintables: 'PGSUS', kap: 'PGSUS', tcmb: 'PGSUS', mkk: 'PGSUS' },
+    providers: {
+      yahoo: is('PGSUS'),
+      fintables: 'PGSUS',
+      kap: 'PGSUS',
+      tcmb: 'PGSUS',
+      mkk: 'PGSUS',
+    },
   },
   {
     canonicalTicker: 'CLEBI',
@@ -155,7 +244,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRACLEBI91M5',
     active: true,
-    providers: { yahoo: is('CLEBI'), alpha_vantage: ist('CLEBI'), finnhub: is('CLEBI'), fintables: 'CLEBI', kap: 'CLEBI', tcmb: 'CLEBI', mkk: 'CLEBI' },
+    providers: {
+      yahoo: is('CLEBI'),
+      fintables: 'CLEBI',
+      kap: 'CLEBI',
+      tcmb: 'CLEBI',
+      mkk: 'CLEBI',
+    },
   },
   {
     canonicalTicker: 'TAVHL',
@@ -164,7 +259,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRETAVH00018',
     active: true,
-    providers: { yahoo: is('TAVHL'), alpha_vantage: ist('TAVHL'), finnhub: is('TAVHL'), fintables: 'TAVHL', kap: 'TAVHL', tcmb: 'TAVHL', mkk: 'TAVHL' },
+    providers: {
+      yahoo: is('TAVHL'),
+      fintables: 'TAVHL',
+      kap: 'TAVHL',
+      tcmb: 'TAVHL',
+      mkk: 'TAVHL',
+    },
   },
   {
     canonicalTicker: 'TKFEN',
@@ -173,7 +274,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRETKHO00012',
     active: true,
-    providers: { yahoo: is('TKFEN'), alpha_vantage: ist('TKFEN'), finnhub: is('TKFEN'), fintables: 'TKFEN', kap: 'TKFEN', tcmb: 'TKFEN', mkk: 'TKFEN' },
+    providers: {
+      yahoo: is('TKFEN'),
+      fintables: 'TKFEN',
+      kap: 'TKFEN',
+      tcmb: 'TKFEN',
+      mkk: 'TKFEN',
+    },
   },
   {
     canonicalTicker: 'BRSAN',
@@ -182,7 +289,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: null,
     active: true,
-    providers: { yahoo: is('BRSAN'), alpha_vantage: ist('BRSAN'), finnhub: is('BRSAN'), fintables: 'BRSAN', kap: 'BRSAN', tcmb: 'BRSAN', mkk: 'BRSAN' },
+    providers: {
+      yahoo: is('BRSAN'),
+      fintables: 'BRSAN',
+      kap: 'BRSAN',
+      tcmb: 'BRSAN',
+      mkk: 'BRSAN',
+    },
   },
   {
     canonicalTicker: 'EREGL',
@@ -191,7 +304,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRAEREGL91Q3',
     active: true,
-    providers: { yahoo: is('EREGL'), alpha_vantage: ist('EREGL'), finnhub: is('EREGL'), fintables: 'EREGL', kap: 'EREGL', tcmb: 'EREGL', mkk: 'EREGL' },
+    providers: {
+      yahoo: is('EREGL'),
+      fintables: 'EREGL',
+      kap: 'EREGL',
+      tcmb: 'EREGL',
+      mkk: 'EREGL',
+    },
   },
   {
     canonicalTicker: 'KRDMD',
@@ -200,7 +319,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: null,
     active: true,
-    providers: { yahoo: is('KRDMD'), alpha_vantage: ist('KRDMD'), finnhub: is('KRDMD'), fintables: 'KRDMD', kap: 'KRDMD', tcmb: 'KRDMD', mkk: 'KRDMD' },
+    providers: {
+      yahoo: is('KRDMD'),
+      fintables: 'KRDMD',
+      kap: 'KRDMD',
+      tcmb: 'KRDMD',
+      mkk: 'KRDMD',
+    },
   },
   {
     canonicalTicker: 'SISE',
@@ -209,7 +334,7 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRASISE91Q9',
     active: true,
-    providers: { yahoo: is('SISE'), alpha_vantage: ist('SISE'), finnhub: is('SISE'), fintables: 'SISE', kap: 'SISE', tcmb: 'SISE', mkk: 'SISE' },
+    providers: { yahoo: is('SISE'), fintables: 'SISE', kap: 'SISE', tcmb: 'SISE', mkk: 'SISE' },
   },
   {
     canonicalTicker: 'SASA',
@@ -218,7 +343,7 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: null,
     active: true,
-    providers: { yahoo: is('SASA'), alpha_vantage: ist('SASA'), finnhub: is('SASA'), fintables: 'SASA', kap: 'SASA', tcmb: 'SASA', mkk: 'SASA' },
+    providers: { yahoo: is('SASA'), fintables: 'SASA', kap: 'SASA', tcmb: 'SASA', mkk: 'SASA' },
   },
   {
     canonicalTicker: 'PETKM',
@@ -227,7 +352,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRAPETKM91Q7',
     active: true,
-    providers: { yahoo: is('PETKM'), alpha_vantage: ist('PETKM'), finnhub: is('PETKM'), fintables: 'PETKM', kap: 'PETKM', tcmb: 'PETKM', mkk: 'PETKM' },
+    providers: {
+      yahoo: is('PETKM'),
+      fintables: 'PETKM',
+      kap: 'PETKM',
+      tcmb: 'PETKM',
+      mkk: 'PETKM',
+    },
   },
   {
     canonicalTicker: 'KOZAL',
@@ -236,7 +367,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRAKOZAL91P6',
     active: true,
-    providers: { yahoo: is('KOZAL'), alpha_vantage: ist('KOZAL'), finnhub: is('KOZAL'), fintables: 'KOZAL', kap: 'KOZAL', tcmb: 'KOZAL', mkk: 'KOZAL' },
+    providers: {
+      yahoo: is('KOZAL'),
+      fintables: 'KOZAL',
+      kap: 'KOZAL',
+      tcmb: 'KOZAL',
+      mkk: 'KOZAL',
+    },
   },
   {
     canonicalTicker: 'KOZAA',
@@ -245,7 +382,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TREKOZA00014',
     active: true,
-    providers: { yahoo: is('KOZAA'), alpha_vantage: ist('KOZAA'), finnhub: is('KOZAA'), fintables: 'KOZAA', kap: 'KOZAA', tcmb: 'KOZAA', mkk: 'KOZAA' },
+    providers: {
+      yahoo: is('KOZAA'),
+      fintables: 'KOZAA',
+      kap: 'KOZAA',
+      tcmb: 'KOZAA',
+      mkk: 'KOZAA',
+    },
   },
   {
     canonicalTicker: 'GUBRF',
@@ -254,7 +397,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRAGUBRF91Q7',
     active: true,
-    providers: { yahoo: is('GUBRF'), alpha_vantage: ist('GUBRF'), finnhub: is('GUBRF'), fintables: 'GUBRF', kap: 'GUBRF', tcmb: 'GUBRF', mkk: 'GUBRF' },
+    providers: {
+      yahoo: is('GUBRF'),
+      fintables: 'GUBRF',
+      kap: 'GUBRF',
+      tcmb: 'GUBRF',
+      mkk: 'GUBRF',
+    },
   },
   {
     canonicalTicker: 'HEKTS',
@@ -263,7 +412,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRAHEKTS91Q6',
     active: true,
-    providers: { yahoo: is('HEKTS'), alpha_vantage: ist('HEKTS'), finnhub: is('HEKTS'), fintables: 'HEKTS', kap: 'HEKTS', tcmb: 'HEKTS', mkk: 'HEKTS' },
+    providers: {
+      yahoo: is('HEKTS'),
+      fintables: 'HEKTS',
+      kap: 'HEKTS',
+      tcmb: 'HEKTS',
+      mkk: 'HEKTS',
+    },
   },
   {
     canonicalTicker: 'AKSA',
@@ -272,7 +427,7 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRAAKSAW91E1',
     active: true,
-    providers: { yahoo: is('AKSA'), alpha_vantage: ist('AKSA'), finnhub: is('AKSA'), fintables: 'AKSA', kap: 'AKSA', tcmb: 'AKSA', mkk: 'AKSA' },
+    providers: { yahoo: is('AKSA'), fintables: 'AKSA', kap: 'AKSA', tcmb: 'AKSA', mkk: 'AKSA' },
   },
   {
     canonicalTicker: 'TUPRS',
@@ -281,7 +436,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRATUPRS91Q8',
     active: true,
-    providers: { yahoo: is('TUPRS'), alpha_vantage: ist('TUPRS'), finnhub: is('TUPRS'), fintables: 'TUPRS', kap: 'TUPRS', tcmb: 'TUPRS', mkk: 'TUPRS' },
+    providers: {
+      yahoo: is('TUPRS'),
+      fintables: 'TUPRS',
+      kap: 'TUPRS',
+      tcmb: 'TUPRS',
+      mkk: 'TUPRS',
+    },
   },
   {
     canonicalTicker: 'BIMAS',
@@ -290,7 +451,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TREBIMM00018',
     active: true,
-    providers: { yahoo: is('BIMAS'), alpha_vantage: ist('BIMAS'), finnhub: is('BIMAS'), fintables: 'BIMAS', kap: 'BIMAS', tcmb: 'BIMAS', mkk: 'BIMAS' },
+    providers: {
+      yahoo: is('BIMAS'),
+      fintables: 'BIMAS',
+      kap: 'BIMAS',
+      tcmb: 'BIMAS',
+      mkk: 'BIMAS',
+    },
   },
   {
     canonicalTicker: 'MGROS',
@@ -299,7 +466,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TREMGRO00011',
     active: true,
-    providers: { yahoo: is('MGROS'), alpha_vantage: ist('MGROS'), finnhub: is('MGROS'), fintables: 'MGROS', kap: 'MGROS', tcmb: 'MGROS', mkk: 'MGROS' },
+    providers: {
+      yahoo: is('MGROS'),
+      fintables: 'MGROS',
+      kap: 'MGROS',
+      tcmb: 'MGROS',
+      mkk: 'MGROS',
+    },
   },
   {
     canonicalTicker: 'BIZIM',
@@ -308,7 +481,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TREBIZIM00013',
     active: true,
-    providers: { yahoo: is('BIZIM'), alpha_vantage: ist('BIZIM'), finnhub: is('BIZIM'), fintables: 'BIZIM', kap: 'BIZIM', tcmb: 'BIZIM', mkk: 'BIZIM' },
+    providers: {
+      yahoo: is('BIZIM'),
+      fintables: 'BIZIM',
+      kap: 'BIZIM',
+      tcmb: 'BIZIM',
+      mkk: 'BIZIM',
+    },
   },
   {
     canonicalTicker: 'SOKM',
@@ -317,7 +496,7 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRESOKM00022',
     active: true,
-    providers: { yahoo: is('SOKM'), alpha_vantage: ist('SOKM'), finnhub: is('SOKM'), fintables: 'SOKM', kap: 'SOKM', tcmb: 'SOKM', mkk: 'SOKM' },
+    providers: { yahoo: is('SOKM'), fintables: 'SOKM', kap: 'SOKM', tcmb: 'SOKM', mkk: 'SOKM' },
   },
   {
     canonicalTicker: 'DOAS',
@@ -326,7 +505,7 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRADOAS91R9',
     active: true,
-    providers: { yahoo: is('DOAS'), alpha_vantage: ist('DOAS'), finnhub: is('DOAS'), fintables: 'DOAS', kap: 'DOAS', tcmb: 'DOAS', mkk: 'DOAS' },
+    providers: { yahoo: is('DOAS'), fintables: 'DOAS', kap: 'DOAS', tcmb: 'DOAS', mkk: 'DOAS' },
   },
   {
     canonicalTicker: 'TOASO',
@@ -335,7 +514,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRATOASO91Q3',
     active: true,
-    providers: { yahoo: is('TOASO'), alpha_vantage: ist('TOASO'), finnhub: is('TOASO'), fintables: 'TOASO', kap: 'TOASO', tcmb: 'TOASO', mkk: 'TOASO' },
+    providers: {
+      yahoo: is('TOASO'),
+      fintables: 'TOASO',
+      kap: 'TOASO',
+      tcmb: 'TOASO',
+      mkk: 'TOASO',
+    },
   },
   {
     canonicalTicker: 'FROTO',
@@ -344,7 +529,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRAFROTO91Q4',
     active: true,
-    providers: { yahoo: is('FROTO'), alpha_vantage: ist('FROTO'), finnhub: is('FROTO'), fintables: 'FROTO', kap: 'FROTO', tcmb: 'FROTO', mkk: 'FROTO' },
+    providers: {
+      yahoo: is('FROTO'),
+      fintables: 'FROTO',
+      kap: 'FROTO',
+      tcmb: 'FROTO',
+      mkk: 'FROTO',
+    },
   },
   {
     canonicalTicker: 'OTKAR',
@@ -353,7 +544,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRAOTKAR91Q2',
     active: true,
-    providers: { yahoo: is('OTKAR'), alpha_vantage: ist('OTKAR'), finnhub: is('OTKAR'), fintables: 'OTKAR', kap: 'OTKAR', tcmb: 'OTKAR', mkk: 'OTKAR' },
+    providers: {
+      yahoo: is('OTKAR'),
+      fintables: 'OTKAR',
+      kap: 'OTKAR',
+      tcmb: 'OTKAR',
+      mkk: 'OTKAR',
+    },
   },
   {
     canonicalTicker: 'TTRAK',
@@ -362,7 +559,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRATTRAK91M5',
     active: true,
-    providers: { yahoo: is('TTRAK'), alpha_vantage: ist('TTRAK'), finnhub: is('TTRAK'), fintables: 'TTRAK', kap: 'TTRAK', tcmb: 'TTRAK', mkk: 'TTRAK' },
+    providers: {
+      yahoo: is('TTRAK'),
+      fintables: 'TTRAK',
+      kap: 'TTRAK',
+      tcmb: 'TTRAK',
+      mkk: 'TTRAK',
+    },
   },
   {
     canonicalTicker: 'TRAK',
@@ -372,7 +575,7 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     isin: null,
     active: false,
     delistedAt: '2023-05-02',
-    providers: { yahoo: is('TRAK'), alpha_vantage: ist('TRAK'), finnhub: is('TRAK'), fintables: 'TRAK', kap: 'TRAK', tcmb: 'TRAK', mkk: 'TRAK' },
+    providers: { yahoo: is('TRAK'), fintables: 'TRAK', kap: 'TRAK', tcmb: 'TRAK', mkk: 'TRAK' },
   },
   {
     canonicalTicker: 'VESTL',
@@ -381,7 +584,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRAVESTL91M4',
     active: true,
-    providers: { yahoo: is('VESTL'), alpha_vantage: ist('VESTL'), finnhub: is('VESTL'), fintables: 'VESTL', kap: 'VESTL', tcmb: 'VESTL', mkk: 'VESTL' },
+    providers: {
+      yahoo: is('VESTL'),
+      fintables: 'VESTL',
+      kap: 'VESTL',
+      tcmb: 'VESTL',
+      mkk: 'VESTL',
+    },
   },
   {
     canonicalTicker: 'ARCLK',
@@ -390,7 +599,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRAARCLK91H1',
     active: true,
-    providers: { yahoo: is('ARCLK'), alpha_vantage: ist('ARCLK'), finnhub: is('ARCLK'), fintables: 'ARCLK', kap: 'ARCLK', tcmb: 'ARCLK', mkk: 'ARCLK' },
+    providers: {
+      yahoo: is('ARCLK'),
+      fintables: 'ARCLK',
+      kap: 'ARCLK',
+      tcmb: 'ARCLK',
+      mkk: 'ARCLK',
+    },
   },
   {
     canonicalTicker: 'TTKOM',
@@ -399,7 +614,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRATTKOM91T5',
     active: true,
-    providers: { yahoo: is('TTKOM'), alpha_vantage: ist('TTKOM'), finnhub: is('TTKOM'), fintables: 'TTKOM', kap: 'TTKOM', tcmb: 'TTKOM', mkk: 'TTKOM' },
+    providers: {
+      yahoo: is('TTKOM'),
+      fintables: 'TTKOM',
+      kap: 'TTKOM',
+      tcmb: 'TTKOM',
+      mkk: 'TTKOM',
+    },
   },
   {
     canonicalTicker: 'TCELL',
@@ -408,7 +629,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRATCELL91Q1',
     active: true,
-    providers: { yahoo: is('TCELL'), alpha_vantage: ist('TCELL'), finnhub: is('TCELL'), fintables: 'TCELL', kap: 'TCELL', tcmb: 'TCELL', mkk: 'TCELL' },
+    providers: {
+      yahoo: is('TCELL'),
+      fintables: 'TCELL',
+      kap: 'TCELL',
+      tcmb: 'TCELL',
+      mkk: 'TCELL',
+    },
   },
   {
     canonicalTicker: 'ASELS',
@@ -417,7 +644,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRAASELS91Q1',
     active: true,
-    providers: { yahoo: is('ASELS'), alpha_vantage: ist('ASELS'), finnhub: is('ASELS'), fintables: 'ASELS', kap: 'ASELS', tcmb: 'ASELS', mkk: 'ASELS' },
+    providers: {
+      yahoo: is('ASELS'),
+      fintables: 'ASELS',
+      kap: 'ASELS',
+      tcmb: 'ASELS',
+      mkk: 'ASELS',
+    },
   },
   {
     canonicalTicker: 'KONTR',
@@ -426,7 +659,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: null,
     active: true,
-    providers: { yahoo: is('KONTR'), alpha_vantage: ist('KONTR'), finnhub: is('KONTR'), fintables: 'KONTR', kap: 'KONTR', tcmb: 'KONTR', mkk: 'KONTR' },
+    providers: {
+      yahoo: is('KONTR'),
+      fintables: 'KONTR',
+      kap: 'KONTR',
+      tcmb: 'KONTR',
+      mkk: 'KONTR',
+    },
   },
   {
     canonicalTicker: 'EKGYO',
@@ -435,7 +674,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRAGEKGY91Q0',
     active: true,
-    providers: { yahoo: is('EKGYO'), alpha_vantage: ist('EKGYO'), finnhub: is('EKGYO'), fintables: 'EKGYO', kap: 'EKGYO', tcmb: 'EKGYO', mkk: 'EKGYO' },
+    providers: {
+      yahoo: is('EKGYO'),
+      fintables: 'EKGYO',
+      kap: 'EKGYO',
+      tcmb: 'EKGYO',
+      mkk: 'EKGYO',
+    },
   },
   {
     canonicalTicker: 'ZOREN',
@@ -444,7 +689,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRAZOREN91T3',
     active: true,
-    providers: { yahoo: is('ZOREN'), alpha_vantage: ist('ZOREN'), finnhub: is('ZOREN'), fintables: 'ZOREN', kap: 'ZOREN', tcmb: 'ZOREN', mkk: 'ZOREN' },
+    providers: {
+      yahoo: is('ZOREN'),
+      fintables: 'ZOREN',
+      kap: 'ZOREN',
+      tcmb: 'ZOREN',
+      mkk: 'ZOREN',
+    },
   },
   {
     canonicalTicker: 'TRCAS',
@@ -453,7 +704,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: null,
     active: true,
-    providers: { yahoo: is('TRCAS'), alpha_vantage: ist('TRCAS'), finnhub: is('TRCAS'), fintables: 'TRCAS', kap: 'TRCAS', tcmb: 'TRCAS', mkk: 'TRCAS' },
+    providers: {
+      yahoo: is('TRCAS'),
+      fintables: 'TRCAS',
+      kap: 'TRCAS',
+      tcmb: 'TRCAS',
+      mkk: 'TRCAS',
+    },
   },
   {
     canonicalTicker: 'ENJSA',
@@ -462,7 +719,13 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TREENSA00014',
     active: true,
-    providers: { yahoo: is('ENJSA'), alpha_vantage: ist('ENJSA'), finnhub: is('ENJSA'), fintables: 'ENJSA', kap: 'ENJSA', tcmb: 'ENJSA', mkk: 'ENJSA' },
+    providers: {
+      yahoo: is('ENJSA'),
+      fintables: 'ENJSA',
+      kap: 'ENJSA',
+      tcmb: 'ENJSA',
+      mkk: 'ENJSA',
+    },
   },
   {
     canonicalTicker: 'ODAS',
@@ -471,7 +734,7 @@ export const BIST_SYMBOLS: BistSymbolEntry[] = [
     exchange: BIST_EXCHANGE,
     isin: 'TRAODAS91Q4',
     active: true,
-    providers: { yahoo: is('ODAS'), alpha_vantage: ist('ODAS'), finnhub: is('ODAS'), fintables: 'ODAS', kap: 'ODAS', tcmb: 'ODAS', mkk: 'ODAS' },
+    providers: { yahoo: is('ODAS'), fintables: 'ODAS', kap: 'ODAS', tcmb: 'ODAS', mkk: 'ODAS' },
   },
 ];
 
@@ -479,6 +742,6 @@ export const BIST_SYMBOL_MAP: Map<string, BistSymbolEntry> = new Map(
   BIST_SYMBOLS.map((entry) => [entry.canonicalTicker, entry]),
 );
 
-export const BIST_ACTIVE_SYMBOLS: string[] = BIST_SYMBOLS.filter(
-  (entry) => entry.active,
-).map((entry) => entry.canonicalTicker);
+export const BIST_ACTIVE_SYMBOLS: string[] = BIST_SYMBOLS.filter((entry) => entry.active).map(
+  (entry) => entry.canonicalTicker,
+);

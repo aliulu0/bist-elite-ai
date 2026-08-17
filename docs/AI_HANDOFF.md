@@ -1,6 +1,7 @@
 # AI_HANDOFF.md
 
 # BIST ELITE AI
+
 ## AI Session Handoff Document
 
 Last Updated: 2026-08-11
@@ -98,43 +99,43 @@ Telegram + Dashboard
 
 # COMPLETED SPRINTS
 
-| Sprint | Status |
-|--------|--------|
-| R2-001 Production Data Activation | ✅ COMPLETE |
-| R2-002 Professional Dashboard | ✅ COMPLETE |
-| R2-003 Research Intelligence Layer | ✅ COMPLETE |
-| R2-004 SerpAPI Integration (R2-004C) | ✅ COMPLETE |
-| R2-005 Agent Reach Research Engine | ✅ COMPLETE |
-| R2-006 Verification Intelligence Layer | ✅ COMPLETE |
-| R2-007 Catalyst Intelligence Engine | ✅ COMPLETE |
-| R2-008 Consensus Intelligence Engine | ✅ COMPLETE |
-| R2-009 638+ BIST Symbol Registry | ✅ COMPLETE |
-| R2-010 Fintables Integration | ✅ COMPLETE |
-| R2-011 TradingView Integration | ⚠ Not Implemented (out of scope) |
-| R2-019 Portfolio Optimization Engine | ✅ COMPLETE |
-| R2-020 Backtesting Engine | ✅ COMPLETE |
-| R2-021 AI Research Hub | ✅ COMPLETE |
-| R2-022 Verification AI | ✅ COMPLETE |
-| R2-023 Catalyst Detection Engine | ✅ COMPLETE |
-| R2-024 Smart Money Engine | ✅ COMPLETE |
-| R2-025 Prediction Engine | ✅ COMPLETE |
-| R2-026 Early Opportunity Engine | ✅ COMPLETE |
-| R2-027 Early Opportunity Intelligence Engine (CORE) | ✅ COMPLETE |
-| R2-028 Multi-Timeframe Opportunity Intelligence | ✅ COMPLETE |
-| R2-029 Elite Dashboard & AI Screener | ✅ COMPLETE |
-| R2-030 Portfolio Intelligence Engine & Dashboard | ✅ COMPLETE |
-| R2-031 Data Research Pipeline | ✅ COMPLETE |
-| R2-033 Real Market Data Pipeline (Hardened) | ✅ COMPLETE |
-| R2-034 Real Provider Runtime Validation | ✅ COMPLETE |
-| R2-037 Financial Data Quality & Opportunity Validation | ✅ COMPLETE |
-| R2-038 Early Signal Scanner | ✅ COMPLETE |
-| R2-039 Stabilization & Pre-Pipeline Integrity | ✅ COMPLETE |
-| R2-040 Incremental Real Market Data Pipeline | ✅ COMPLETE |
-| R2-041 Real-Time / Latest-Price Incremental Pipeline | ✅ COMPLETE |
-| R2-042 Real Analysis Pipeline Integration & Single-Request Optimization | ✅ COMPLETE |
-| R2-043 Indicator Cache & Advanced Deduplication Engine | ✅ COMPLETE |
-| R2-044 Historical Market Data Backfill & Validation Engine | ✅ COMPLETE |
-| R2-045 Early Opportunity Decision & Signal Convergence | ✅ COMPLETE |
+| Sprint                                                                  | Status                           |
+| ----------------------------------------------------------------------- | -------------------------------- |
+| R2-001 Production Data Activation                                       | ✅ COMPLETE                      |
+| R2-002 Professional Dashboard                                           | ✅ COMPLETE                      |
+| R2-003 Research Intelligence Layer                                      | ✅ COMPLETE                      |
+| R2-004 SerpAPI Integration (R2-004C)                                    | ✅ COMPLETE                      |
+| R2-005 Agent Reach Research Engine                                      | ✅ COMPLETE                      |
+| R2-006 Verification Intelligence Layer                                  | ✅ COMPLETE                      |
+| R2-007 Catalyst Intelligence Engine                                     | ✅ COMPLETE                      |
+| R2-008 Consensus Intelligence Engine                                    | ✅ COMPLETE                      |
+| R2-009 638+ BIST Symbol Registry                                        | ✅ COMPLETE                      |
+| R2-010 Fintables Integration                                            | ✅ COMPLETE                      |
+| R2-011 TradingView Integration                                          | ⚠ Not Implemented (out of scope) |
+| R2-019 Portfolio Optimization Engine                                    | ✅ COMPLETE                      |
+| R2-020 Backtesting Engine                                               | ✅ COMPLETE                      |
+| R2-021 AI Research Hub                                                  | ✅ COMPLETE                      |
+| R2-022 Verification AI                                                  | ✅ COMPLETE                      |
+| R2-023 Catalyst Detection Engine                                        | ✅ COMPLETE                      |
+| R2-024 Smart Money Engine                                               | ✅ COMPLETE                      |
+| R2-025 Prediction Engine                                                | ✅ COMPLETE                      |
+| R2-026 Early Opportunity Engine                                         | ✅ COMPLETE                      |
+| R2-027 Early Opportunity Intelligence Engine (CORE)                     | ✅ COMPLETE                      |
+| R2-028 Multi-Timeframe Opportunity Intelligence                         | ✅ COMPLETE                      |
+| R2-029 Elite Dashboard & AI Screener                                    | ✅ COMPLETE                      |
+| R2-030 Portfolio Intelligence Engine & Dashboard                        | ✅ COMPLETE                      |
+| R2-031 Data Research Pipeline                                           | ✅ COMPLETE                      |
+| R2-033 Real Market Data Pipeline (Hardened)                             | ✅ COMPLETE                      |
+| R2-034 Real Provider Runtime Validation                                 | ✅ COMPLETE                      |
+| R2-037 Financial Data Quality & Opportunity Validation                  | ✅ COMPLETE                      |
+| R2-038 Early Signal Scanner                                             | ✅ COMPLETE                      |
+| R2-039 Stabilization & Pre-Pipeline Integrity                           | ✅ COMPLETE                      |
+| R2-040 Incremental Real Market Data Pipeline                            | ✅ COMPLETE                      |
+| R2-041 Real-Time / Latest-Price Incremental Pipeline                    | ✅ COMPLETE                      |
+| R2-042 Real Analysis Pipeline Integration & Single-Request Optimization | ✅ COMPLETE                      |
+| R2-043 Indicator Cache & Advanced Deduplication Engine                  | ✅ COMPLETE                      |
+| R2-044 Historical Market Data Backfill & Validation Engine              | ✅ COMPLETE                      |
+| R2-045 Early Opportunity Decision & Signal Convergence                  | ✅ COMPLETE                      |
 
 ---
 
@@ -207,7 +208,7 @@ Completed: 2026-08-10. Extended the incremental market-data system to latest-pri
   2. **Fresh cache hit** — age < TTL → return cached, ZERO provider calls
   3. **Stale cache refresh** — age ≥ TTL → orchestrator fetch → validate → update cache → return fresh
   4. **Provider failure + stale fallback** — provider fails, cached exists → return stale-but-valid (dataFreshness: stale), never destroy valid cache
-  4b. **Provider failure + no cache** — return null
+     4b. **Provider failure + no cache** — return null
   5. **Cache disabled** — fetch provider directly, no cache read/write
 - **Timeframe-aware TTL**: 1h/2h→60s, 4h→120s, 1d→300s, 1w→600s, 1m→900s, 3m→1800s, 6m→3600s
 - **Cache namespace**: `latestPrice`, key: `symbol:timeframe` (e.g., `THYAO.IS:1d`)
@@ -252,127 +253,129 @@ API: REST + WebSocket
 
 # CURRENT PROVIDERS
 
-| Provider | Status | Module |
-|----------|--------|--------|
-| Yahoo Finance | ✅ Active | apps/api/src/modules/market-data/providers/unified/yahoo-unified.adapter.ts |
-| Alpha Vantage | ✅ Active | apps/api/src/modules/market-data/providers/unified/alpha-vantage.adapter.ts |
-| Finnhub | ✅ Active | apps/api/src/modules/market-data/providers/unified/finnhub.adapter.ts |
-| SerpAPI | ✅ Active (R2-004C) | apps/api/src/modules/market-data/providers/unified/serpapi.adapter.ts |
-| TCMB | ✅ Active | apps/api/src/modules/market-data/providers/unified/tcmb.adapter.ts |
-| KAP | ✅ Active | apps/api/src/modules/market-data/providers/unified/kap.adapter.ts |
-| MKK | ✅ Active | apps/api/src/modules/market-data/providers/unified/mkk.adapter.ts |
-| Fintables | ✅ Active | apps/api/src/modules/market-data/providers/unified/fintables-unified.adapter.ts |
-| Agent Reach | ✅ Active | apps/api/src/modules/research/providers/agent-reach.provider.ts |
+> R2-072: Finnhub and Alpha Vantage REMOVED from the runtime (verified unusable
+> for BIST: Finnhub AUTH_FAILED, Alpha Vantage NO_QUOTE/RATE_LIMITED).
+
+| Provider      | Status                        | Module                                                                          |
+| ------------- | ----------------------------- | ------------------------------------------------------------------------------- |
+| Yahoo Finance | ✅ Active (PRIMARY)           | apps/api/src/modules/market-data/providers/unified/yahoo-unified.adapter.ts     |
+| SerpAPI       | ✅ Active (R2-004C, RESEARCH) | apps/api/src/modules/market-data/providers/unified/serpapi.adapter.ts           |
+| TCMB          | ✅ Active                     | apps/api/src/modules/market-data/providers/unified/tcmb.adapter.ts              |
+| KAP           | ✅ Active                     | apps/api/src/modules/market-data/providers/unified/kap.adapter.ts               |
+| MKK           | ✅ Active                     | apps/api/src/modules/market-data/providers/unified/mkk.adapter.ts               |
+| Fintables     | ✅ Active                     | apps/api/src/modules/market-data/providers/unified/fintables-unified.adapter.ts |
+| Agent Reach   | ✅ Active                     | apps/api/src/modules/research/providers/agent-reach.provider.ts                 |
 
 ---
 
 # CURRENT AI ENGINES
 
-| Engine | Status | Module |
-|--------|--------|--------|
-| Analyst Engine | ✅ Complete | apps/api/src/modules/analyst/ |
-| Elite Score Engine | ✅ Complete | apps/api/src/modules/ai-elite-score/ |
-| Decision Engine | ✅ Complete | apps/api/src/modules/decision/ |
-| Opportunity Engine | ✅ Complete | apps/api/src/modules/ai-opportunity/ |
-| Opportunity Center | ✅ Complete | apps/api/src/modules/opportunity-center/ |
-| Scanner Engine | ✅ Complete | apps/api/src/modules/scanner/ |
-| Research Intelligence | ✅ Complete | apps/api/src/modules/research/ |
-| Verification Engine | ✅ Complete | apps/api/src/modules/research/verification-engine.service.ts |
-| Catalyst Engine | ✅ Complete | apps/api/src/modules/research/catalyst-engine.service.ts |
-| Analysis Pipeline | ✅ Complete | apps/api/src/modules/ai-analysis/ |
-| Tomorrow Engine | ✅ Complete | apps/api/src/modules/tomorrow/ |
-| Entry Zone Engine | ✅ Complete | apps/api/src/modules/entry/ |
-| Portfolio Optimization | ✅ Complete | apps/api/src/modules/weight-optimizer/ |
-| Backtesting Engine | ✅ Complete | apps/api/src/modules/backtest/ |
-| AI Research Hub | ✅ Complete | apps/api/src/modules/ai-research/ |
-| Verification AI | ✅ Complete | apps/api/src/modules/verification-ai/ |
-| Catalyst Detection Engine | ✅ Complete | apps/api/src/modules/catalyst/ |
-| Smart Money Engine | ✅ Complete | apps/api/src/modules/smart-money/ |
-| Prediction Engine | ✅ Complete | apps/api/src/modules/prediction/ |
+| Engine                    | Status      | Module                                                       |
+| ------------------------- | ----------- | ------------------------------------------------------------ |
+| Analyst Engine            | ✅ Complete | apps/api/src/modules/analyst/                                |
+| Elite Score Engine        | ✅ Complete | apps/api/src/modules/ai-elite-score/                         |
+| Decision Engine           | ✅ Complete | apps/api/src/modules/decision/                               |
+| Opportunity Engine        | ✅ Complete | apps/api/src/modules/ai-opportunity/                         |
+| Opportunity Center        | ✅ Complete | apps/api/src/modules/opportunity-center/                     |
+| Scanner Engine            | ✅ Complete | apps/api/src/modules/scanner/                                |
+| Research Intelligence     | ✅ Complete | apps/api/src/modules/research/                               |
+| Verification Engine       | ✅ Complete | apps/api/src/modules/research/verification-engine.service.ts |
+| Catalyst Engine           | ✅ Complete | apps/api/src/modules/research/catalyst-engine.service.ts     |
+| Analysis Pipeline         | ✅ Complete | apps/api/src/modules/ai-analysis/                            |
+| Tomorrow Engine           | ✅ Complete | apps/api/src/modules/tomorrow/                               |
+| Entry Zone Engine         | ✅ Complete | apps/api/src/modules/entry/                                  |
+| Portfolio Optimization    | ✅ Complete | apps/api/src/modules/weight-optimizer/                       |
+| Backtesting Engine        | ✅ Complete | apps/api/src/modules/backtest/                               |
+| AI Research Hub           | ✅ Complete | apps/api/src/modules/ai-research/                            |
+| Verification AI           | ✅ Complete | apps/api/src/modules/verification-ai/                        |
+| Catalyst Detection Engine | ✅ Complete | apps/api/src/modules/catalyst/                               |
+| Smart Money Engine        | ✅ Complete | apps/api/src/modules/smart-money/                            |
+| Prediction Engine         | ✅ Complete | apps/api/src/modules/prediction/                             |
 
 ---
 
 # CURRENT REGISTRIES
 
-| Registry | Status | Module |
-|----------|--------|--------|
-| Symbol Registry (638+) | ✅ Complete | apps/api/src/modules/market-data/symbol-registry/ |
-| Analyst Registry | ✅ Complete | apps/api/src/modules/analyst/analyst.registry.ts |
-| Elite Score Registry | ✅ Complete | apps/api/src/modules/ai-elite-score/elite-score.registry.ts |
-| Opportunity Registry | ✅ Complete | apps/api/src/modules/ai-opportunity/opportunity-registry.service.ts |
-| Decision Registry | ✅ Complete | apps/api/src/modules/decision/decision-registry.service.ts |
-| Tomorrow Registry | ✅ Complete | apps/api/src/modules/tomorrow/tomorrow.registry.ts |
-| Entry Registry | ✅ Complete | apps/api/src/modules/entry/ |
+| Registry                    | Status      | Module                                                                 |
+| --------------------------- | ----------- | ---------------------------------------------------------------------- |
+| Symbol Registry (638+)      | ✅ Complete | apps/api/src/modules/market-data/symbol-registry/                      |
+| Analyst Registry            | ✅ Complete | apps/api/src/modules/analyst/analyst.registry.ts                       |
+| Elite Score Registry        | ✅ Complete | apps/api/src/modules/ai-elite-score/elite-score.registry.ts            |
+| Opportunity Registry        | ✅ Complete | apps/api/src/modules/ai-opportunity/opportunity-registry.service.ts    |
+| Decision Registry           | ✅ Complete | apps/api/src/modules/decision/decision-registry.service.ts             |
+| Tomorrow Registry           | ✅ Complete | apps/api/src/modules/tomorrow/tomorrow.registry.ts                     |
+| Entry Registry              | ✅ Complete | apps/api/src/modules/entry/                                            |
 | Opportunity Center Registry | ✅ Complete | apps/api/src/modules/opportunity-center/opportunity-center.registry.ts |
-| AI Consensus Registry | ✅ Complete | apps/api/src/modules/ai-research/ai-consensus.registry.ts |
-| AI Provider Registry | ✅ Complete | apps/api/src/modules/ai-research/ai-provider-registry.ts |
-| Verification Registry | ✅ Complete | apps/api/src/modules/verification-ai/verification-registry.ts |
-| Catalyst Registry | ✅ Complete | apps/api/src/modules/catalyst/catalyst-registry.ts |
-| Smart Money Registry | ✅ Complete | apps/api/src/modules/smart-money/smart-money-registry.ts |
-| Prediction Registry | ✅ Complete | apps/api/src/modules/prediction/prediction-registry.ts |
+| AI Consensus Registry       | ✅ Complete | apps/api/src/modules/ai-research/ai-consensus.registry.ts              |
+| AI Provider Registry        | ✅ Complete | apps/api/src/modules/ai-research/ai-provider-registry.ts               |
+| Verification Registry       | ✅ Complete | apps/api/src/modules/verification-ai/verification-registry.ts          |
+| Catalyst Registry           | ✅ Complete | apps/api/src/modules/catalyst/catalyst-registry.ts                     |
+| Smart Money Registry        | ✅ Complete | apps/api/src/modules/smart-money/smart-money-registry.ts               |
+| Prediction Registry         | ✅ Complete | apps/api/src/modules/prediction/prediction-registry.ts                 |
 
 ---
 
 # CURRENT APIs
 
-| API | Status | Module |
-|-----|--------|--------|
-| Analyst API | ✅ Complete | apps/api/src/modules/analyst/analyst.controller.ts |
-| Elite Score API | ✅ Complete | apps/api/src/modules/ai-elite-score/elite-score.controller.ts |
-| Decision API | ✅ Complete | apps/api/src/modules/decision/decision.controller.ts |
-| Opportunity API | ✅ Complete | apps/api/src/modules/ai-opportunity/opportunity.controller.ts |
+| API                    | Status      | Module                                                                   |
+| ---------------------- | ----------- | ------------------------------------------------------------------------ |
+| Analyst API            | ✅ Complete | apps/api/src/modules/analyst/analyst.controller.ts                       |
+| Elite Score API        | ✅ Complete | apps/api/src/modules/ai-elite-score/elite-score.controller.ts            |
+| Decision API           | ✅ Complete | apps/api/src/modules/decision/decision.controller.ts                     |
+| Opportunity API        | ✅ Complete | apps/api/src/modules/ai-opportunity/opportunity.controller.ts            |
 | Opportunity Center API | ✅ Complete | apps/api/src/modules/opportunity-center/opportunity-center.controller.ts |
-| Scanner API | ✅ Complete | apps/api/src/modules/scanner/scanner.controller.ts |
-| Market Data API | ✅ Complete | apps/api/src/modules/market-data/market-data.controller.ts |
-| Research API | ✅ Complete | apps/api/src/modules/research/research.controller.ts |
-| AI Assistant API | ✅ Complete | apps/api/src/modules/ai-assistant/ai-assistant.controller.ts |
-| Health API | ✅ Complete | apps/api/src/health.controller.ts |
-| Portfolio API | ✅ Complete | apps/api/src/modules/portfolio/ |
-| Backtest API | ✅ Complete | apps/api/src/modules/backtest/ |
-| Weight Optimizer API | ✅ Complete | apps/api/src/modules/weight-optimizer/ |
-| AI Research Hub API | ✅ Complete | apps/api/src/modules/ai-research/ai-research.controller.ts |
-| Verification AI API | ✅ Complete | apps/api/src/modules/verification-ai/verification-ai.controller.ts |
-| Catalyst API | ✅ Complete | apps/api/src/modules/catalyst/catalyst.controller.ts |
-| Smart Money API | ✅ Complete | apps/api/src/modules/smart-money/smart-money.controller.ts |
-| Prediction API | ✅ Complete | apps/api/src/modules/prediction/prediction.controller.ts |
+| Scanner API            | ✅ Complete | apps/api/src/modules/scanner/scanner.controller.ts                       |
+| Market Data API        | ✅ Complete | apps/api/src/modules/market-data/market-data.controller.ts               |
+| Research API           | ✅ Complete | apps/api/src/modules/research/research.controller.ts                     |
+| AI Assistant API       | ✅ Complete | apps/api/src/modules/ai-assistant/ai-assistant.controller.ts             |
+| Health API             | ✅ Complete | apps/api/src/health.controller.ts                                        |
+| Portfolio API          | ✅ Complete | apps/api/src/modules/portfolio/                                          |
+| Backtest API           | ✅ Complete | apps/api/src/modules/backtest/                                           |
+| Weight Optimizer API   | ✅ Complete | apps/api/src/modules/weight-optimizer/                                   |
+| AI Research Hub API    | ✅ Complete | apps/api/src/modules/ai-research/ai-research.controller.ts               |
+| Verification AI API    | ✅ Complete | apps/api/src/modules/verification-ai/verification-ai.controller.ts       |
+| Catalyst API           | ✅ Complete | apps/api/src/modules/catalyst/catalyst.controller.ts                     |
+| Smart Money API        | ✅ Complete | apps/api/src/modules/smart-money/smart-money.controller.ts               |
+| Prediction API         | ✅ Complete | apps/api/src/modules/prediction/prediction.controller.ts                 |
 
 ---
 
 # CURRENT DASHBOARD
 
-| Page | Status | File |
-|------|--------|------|
-| Dashboard | ✅ Complete | apps/web/src/pages/dashboard.tsx |
-| Scanner | ✅ Complete | apps/web/src/pages/scanner.tsx |
-| Analysis | ✅ Complete | apps/web/src/pages/analysis.tsx |
-| Backtest | ✅ Complete | apps/web/src/pages/backtest.tsx |
-| Portfolio | ✅ Complete | apps/web/src/pages/portfolio.tsx |
-| Watchlist | ✅ Complete | apps/web/src/pages/watchlist.tsx |
-| Alerts | ✅ Complete | apps/web/src/pages/alerts.tsx |
-| Workflows | ✅ Complete | apps/web/src/pages/workflows.tsx |
-| Pipeline Status | ✅ Complete | apps/web/src/pages/pipeline-status.tsx |
-| Providers | ✅ Complete | apps/web/src/pages/providers.tsx |
-| Performance | ✅ Complete | apps/web/src/pages/performance.tsx |
-| Diagnostics | ✅ Complete | apps/web/src/pages/diagnostics.tsx |
-| Audit | ✅ Complete | apps/web/src/pages/audit.tsx |
-| AI Assistant | ✅ Complete | apps/web/src/pages/ai-assistant.tsx |
-| AI Reports | ✅ Complete | apps/web/src/pages/ai-reports.tsx |
+| Page                  | Status      | File                                         |
+| --------------------- | ----------- | -------------------------------------------- |
+| Dashboard             | ✅ Complete | apps/web/src/pages/dashboard.tsx             |
+| Scanner               | ✅ Complete | apps/web/src/pages/scanner.tsx               |
+| Analysis              | ✅ Complete | apps/web/src/pages/analysis.tsx              |
+| Backtest              | ✅ Complete | apps/web/src/pages/backtest.tsx              |
+| Portfolio             | ✅ Complete | apps/web/src/pages/portfolio.tsx             |
+| Watchlist             | ✅ Complete | apps/web/src/pages/watchlist.tsx             |
+| Alerts                | ✅ Complete | apps/web/src/pages/alerts.tsx                |
+| Workflows             | ✅ Complete | apps/web/src/pages/workflows.tsx             |
+| Pipeline Status       | ✅ Complete | apps/web/src/pages/pipeline-status.tsx       |
+| Providers             | ✅ Complete | apps/web/src/pages/providers.tsx             |
+| Performance           | ✅ Complete | apps/web/src/pages/performance.tsx           |
+| Diagnostics           | ✅ Complete | apps/web/src/pages/diagnostics.tsx           |
+| Audit                 | ✅ Complete | apps/web/src/pages/audit.tsx                 |
+| AI Assistant          | ✅ Complete | apps/web/src/pages/ai-assistant.tsx          |
+| AI Reports            | ✅ Complete | apps/web/src/pages/ai-reports.tsx            |
 | Research Intelligence | ✅ Complete | apps/web/src/pages/research-intelligence.tsx |
-| Settings | ✅ Complete | apps/web/src/pages/settings.tsx |
+| Settings              | ✅ Complete | apps/web/src/pages/settings.tsx              |
 
 ---
 
 # CURRENT TESTS
 
-| Test Suite | Status | Details |
-|------------|--------|---------|
+| Test Suite        | Status               | Details                                                                                                                                                                                                                                                                                                                                                             |
+| ----------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Backend API Tests | ✅ 5378/5383 passing | +73 early-opportunity + 104 financial-rules + 71 portfolio-intelligence new tests (R2-037); R2-033: market-data now 23 suites / 391 tests GREEN; 6 remaining pre-existing failure suites (scheduler job-count drift, compression/cache timeouts, performance-validator, provider-health-monitor) — market-data.controller fixed via H2 reroute through orchestrator |
-| Frontend Tests | ✅ 1902/1902 passing | Vitest + Testing Library |
-| Build | ✅ GREEN | `turbo build` passed (all 5 packages) |
-| Typecheck | ✅ GREEN | No type errors |
-| Test Coverage | ~99% | API + web suites |
+| Frontend Tests    | ✅ 1902/1902 passing | Vitest + Testing Library                                                                                                                                                                                                                                                                                                                                            |
+| Build             | ✅ GREEN             | `turbo build` passed (all 5 packages)                                                                                                                                                                                                                                                                                                                               |
+| Typecheck         | ✅ GREEN             | No type errors                                                                                                                                                                                                                                                                                                                                                      |
+| Test Coverage     | ~99%                 | API + web suites                                                                                                                                                                                                                                                                                                                                                    |
 
 This session fixed 4 suites broken by the auth/websocket/serpapi changes:
+
 - websocket-gateway.spec.ts, pipeline-orchestrator.integration.spec.ts, health-endpoints.integration.spec.ts, market-data-orchestrator.spec.ts
 
 ---
@@ -388,19 +391,21 @@ This session fixed 4 suites broken by the auth/websocket/serpapi changes:
 7. **R2-021 AI Research Hub**: ✅ Complete (aggregation layer, 12 providers, 40 tests)
 8. **R2-022 Verification AI**: ✅ Complete (verification layer, 4 suites / 30 tests)
 9. **R2-023 Catalyst Detection Engine**: ✅ Complete (catalyst-scoring layer, 4 suites / 28 tests)
-11. **R2-024 Smart Money Engine**: ✅ Complete (institutional accumulation/distribution, 5 suites / 52 tests)
-12. **R2-025 Prediction Engine**: ✅ Complete (multi-timeframe probability model, 5 suites / 32 tests)
-13. **Production Docker**: Uses development settings, not production-ready
-12. **Scheduler job (marketOpenScan)**: Fails and gets disabled after 2 consecutive failures
-13. **No graceful degradation**: If one provider fails, no automatic fallback to another provider in the analysis pipeline — partially addressed by R2-033 (validation gate + attemptedProviders trace in the orchestrator)
+10. **R2-024 Smart Money Engine**: ✅ Complete (institutional accumulation/distribution, 5 suites / 52 tests)
+11. **R2-025 Prediction Engine**: ✅ Complete (multi-timeframe probability model, 5 suites / 32 tests)
+12. **Production Docker**: Uses development settings, not production-ready
+13. **Scheduler job (marketOpenScan)**: Fails and gets disabled after 2 consecutive failures
+14. **No graceful degradation**: If one provider fails, no automatic fallback to another provider in the analysis pipeline — partially addressed by R2-033 (validation gate + attemptedProviders trace in the orchestrator)
 
 ✅ RESOLVED THIS SESSION (R2-033 Real Market Data Pipeline):
+
 - R2-033.1 Finnhub fidelity: mislabeled monthly candles eliminated (resolution map + unsupported → [])
 - R2-033.2 Validation gate: MarketDataValidationService runs inside the orchestrator; invalid candles filtered, all-invalid falls through the provider chain
 - R2-033.3 Observability: GET /market-data/providers/configuration (deterministic, no secrets) + /timeframes REAL/DERIVED/UNAVAILABLE details
 - R2-033.4 Unified consumers: MarketDataService delegates to the orchestrator (single validated pipeline for prediction/backtest/analyst/entry/scanner/scheduler)
 
 ✅ RESOLVED THIS SESSION (R2-019.1 Production Hardening):
+
 - C4 Prisma migration drift closed: `20260806145537_add_f11_persistence_and_telemetry_models` (6 tables) created + applied alongside `20240101000000_init`; schema↔migration fully aligned (35 models = 35 tables)
 - C1 WebSocket gateway: Bearer/API-key handshake auth + CORS restricted to `CORS_ORIGINS`
 - C2 Authentication: real JWT (HMAC-SHA256) + API-key validation, global `AuthGuard`, `env-validator` force-fails boot on dev/weak `JWT_SECRET` in production; `AuthModule` imports `ConfigModule`

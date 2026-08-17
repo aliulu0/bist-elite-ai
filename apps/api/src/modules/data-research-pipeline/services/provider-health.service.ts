@@ -43,12 +43,30 @@ export class ProviderHealthService {
 
   async getDataHealthReport(): Promise<DataHealthReport> {
     const providers = await this.getProviderHealth();
-    const healthy = providers.filter(p => p.enabled && p.configured && p.circuitState === 'CLOSED' && p.dataFreshness.freshnessState === 'FRESH').length;
-    const degraded = providers.filter(p => p.enabled && p.configured && (p.circuitState === 'HALF_OPEN' || p.dataFreshness.freshnessState === 'ACCEPTABLE')).length;
-    const unavailable = providers.filter(p => !p.enabled || !p.configured || p.circuitState === 'OPEN' || p.dataFreshness.freshnessState === 'UNAVAILABLE').length;
-    const missingApiKeys = providers.filter(p => p.enabled && !p.configured).length;
+    const healthy = providers.filter(
+      (p) =>
+        p.enabled &&
+        p.configured &&
+        p.circuitState === 'CLOSED' &&
+        p.dataFreshness.freshnessState === 'FRESH',
+    ).length;
+    const degraded = providers.filter(
+      (p) =>
+        p.enabled &&
+        p.configured &&
+        (p.circuitState === 'HALF_OPEN' || p.dataFreshness.freshnessState === 'ACCEPTABLE'),
+    ).length;
+    const unavailable = providers.filter(
+      (p) =>
+        !p.enabled ||
+        !p.configured ||
+        p.circuitState === 'OPEN' ||
+        p.dataFreshness.freshnessState === 'UNAVAILABLE',
+    ).length;
+    const missingApiKeys = providers.filter((p) => p.enabled && !p.configured).length;
 
-    const overallHealth: DataHealthReport['overallHealth'] = unavailable > 0 ? 'CRITICAL' : degraded > 0 ? 'DEGRADED' : 'HEALTHY';
+    const overallHealth: DataHealthReport['overallHealth'] =
+      unavailable > 0 ? 'CRITICAL' : degraded > 0 ? 'DEGRADED' : 'HEALTHY';
 
     return {
       providers,
@@ -66,7 +84,7 @@ export class ProviderHealthService {
 
   async getProviderFreshness(providerName?: DataProviderName): Promise<DataFreshnessReport> {
     const cached = this.cache.get<DataFreshnessReport>('freshness-report', CACHE_NAMESPACE);
-    if (cached && (!providerName || cached.freshness.some(f => f.source === providerName))) {
+    if (cached && (!providerName || cached.freshness.some((f) => f.source === providerName))) {
       return cached;
     }
 
@@ -100,8 +118,8 @@ export class ProviderHealthService {
     const providerStatuses = await this.orchestrator.getProviderStatus();
     const freshnessMap = await this.buildFreshnessMap();
 
-    return dashboardEntries.map(entry => {
-      const status = providerStatuses.find(s => s.name === entry.name);
+    return dashboardEntries.map((entry) => {
+      const status = providerStatuses.find((s) => s.name === entry.name);
       const freshness = freshnessMap.get(entry.name);
 
       return {
@@ -145,7 +163,11 @@ export class ProviderHealthService {
     return results;
   }
 
-  private async calculateFreshness(providerName: string, config: any, threshold: { freshSeconds: number; acceptableSeconds: number; staleSeconds: number }): Promise<DataFreshnessInfo> {
+  private async calculateFreshness(
+    providerName: string,
+    config: any,
+    threshold: { freshSeconds: number; acceptableSeconds: number; staleSeconds: number },
+  ): Promise<DataFreshnessInfo> {
     const lastSync = await this.getLastSyncForProvider(providerName);
     const timestamp = await this.getDataTimestamp(providerName);
     const now = Date.now();
@@ -171,7 +193,10 @@ export class ProviderHealthService {
     };
   }
 
-  private classifyFreshness(ageSeconds: number | null, threshold: { freshSeconds: number; acceptableSeconds: number; staleSeconds: number }): FreshnessState {
+  private classifyFreshness(
+    ageSeconds: number | null,
+    threshold: { freshSeconds: number; acceptableSeconds: number; staleSeconds: number },
+  ): FreshnessState {
     if (ageSeconds === null) return 'UNAVAILABLE';
     if (ageSeconds <= threshold.freshSeconds) return 'FRESH';
     if (ageSeconds <= threshold.acceptableSeconds) return 'ACCEPTABLE';
@@ -180,10 +205,10 @@ export class ProviderHealthService {
   }
 
   private computeOverallFreshness(freshness: DataFreshnessInfo[]): FreshnessState {
-    const states = freshness.map(f => f.freshnessState);
-    if (states.some(s => s === 'UNAVAILABLE')) return 'UNAVAILABLE';
-    if (states.some(s => s === 'STALE')) return 'STALE';
-    if (states.some(s => s === 'ACCEPTABLE')) return 'ACCEPTABLE';
+    const states = freshness.map((f) => f.freshnessState);
+    if (states.some((s) => s === 'UNAVAILABLE')) return 'UNAVAILABLE';
+    if (states.some((s) => s === 'STALE')) return 'STALE';
+    if (states.some((s) => s === 'ACCEPTABLE')) return 'ACCEPTABLE';
     return 'FRESH';
   }
 
@@ -202,37 +227,40 @@ export class ProviderHealthService {
     return (this.config.providers as Record<string, any>)[providerName] ?? {};
   }
 
-  private getFreshnessThreshold(providerName: string): { freshSeconds: number; acceptableSeconds: number; staleSeconds: number } {
+  private getFreshnessThreshold(providerName: string): {
+    freshSeconds: number;
+    acceptableSeconds: number;
+    staleSeconds: number;
+  } {
     const category = this.inferCategory(providerName);
     return FRESHNESS_THRESHOLDS_BY_CATEGORY[category] ?? DEFAULT_FRESHNESS_THRESHOLDS;
   }
 
   private inferCategory(providerName: string): DataProviderCategory {
     const categories: Record<string, DataProviderCategory> = {
-      'fintables': 'fundamental',
-      'finnhub': 'market-data',
-      'alpha-vantage': 'fundamental',
-      'yahoo': 'market-data',
-      'kap': 'regulatory',
-      'tcmb': 'macro',
-      'mkk': 'fundamental',
-      'serpapi': 'search',
+      fintables: 'fundamental',
+      yahoo: 'market-data',
+      kap: 'regulatory',
+      tcmb: 'macro',
+      mkk: 'fundamental',
+      serpapi: 'search',
       'google-news': 'news',
       'google-search': 'search',
-      'finnhub-news': 'news',
       'agent-reach': 'research',
       'yahoo-finance': 'market-data',
-      'chatgpt': 'research',
-      'gemini': 'research',
-      'perplexity': 'research',
-      'grok': 'research',
+      chatgpt: 'research',
+      gemini: 'research',
+      perplexity: 'research',
+      grok: 'research',
     };
     return categories[providerName] ?? 'market-data';
   }
 
   private async getLastSyncForProvider(providerName: string): Promise<string | null> {
     const statuses = await this.orchestrator.getProviderStatus();
-    const status = statuses.find((s: { name: string; lastHealthCheck: string | null }) => s.name === providerName);
+    const status = statuses.find(
+      (s: { name: string; lastHealthCheck: string | null }) => s.name === providerName,
+    );
     return status?.lastHealthCheck ?? null;
   }
 
@@ -254,12 +282,12 @@ export class ProviderHealthService {
 
   private getTierDescription(tier: string): string {
     const descriptions: Record<string, string> = {
-      'TIER_1': 'Official, authoritative sources (regulatory filings, central bank data, exchange data)',
-      'TIER_2': 'Established financial data vendors with verified data',
-      'TIER_3': 'Third-party aggregators, search APIs, web-scraped sources',
-      'UNKNOWN': 'Unclassified source',
+      TIER_1:
+        'Official, authoritative sources (regulatory filings, central bank data, exchange data)',
+      TIER_2: 'Established financial data vendors with verified data',
+      TIER_3: 'Third-party aggregators, search APIs, web-scraped sources',
+      UNKNOWN: 'Unclassified source',
     };
     return descriptions[tier] ?? 'Unknown tier';
   }
-
 }

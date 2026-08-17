@@ -14,15 +14,30 @@ describe('ConflictResolver', () => {
 
     it('should return single source', () => {
       const result = resolver.resolve('name', [
-        { provider: 'fintables', value: 'Turkish Airlines', priority: 1, timestamp: '2026-01-01T00:00:00Z' },
+        {
+          provider: 'fintables',
+          value: 'Turkish Airlines',
+          priority: 1,
+          timestamp: '2026-01-01T00:00:00Z',
+        },
       ]);
       expect(result).toEqual({ value: 'Turkish Airlines', resolution: 'single_source' });
     });
 
     it('should use majority vote when available', () => {
       const result = resolver.resolve('sector', [
-        { provider: 'fintables', value: 'Aviation', priority: 1, timestamp: '2026-01-01T00:00:00Z' },
-        { provider: 'finnhub', value: 'Transportation', priority: 2, timestamp: '2026-01-01T00:00:00Z' },
+        {
+          provider: 'fintables',
+          value: 'Aviation',
+          priority: 1,
+          timestamp: '2026-01-01T00:00:00Z',
+        },
+        {
+          provider: 'yahoo',
+          value: 'Transportation',
+          priority: 2,
+          timestamp: '2026-01-01T00:00:00Z',
+        },
         { provider: 'kap', value: 'Aviation', priority: 3, timestamp: '2026-01-01T00:00:00Z' },
       ]);
       expect(result).not.toBeNull();
@@ -32,8 +47,18 @@ describe('ConflictResolver', () => {
 
     it('should prefer latest timestamp when no majority', () => {
       const result = resolver.resolve('name', [
-        { provider: 'fintables', value: 'THY A.O.', priority: 1, timestamp: '2026-01-01T00:00:00Z' },
-        { provider: 'finnhub', value: 'Turk Hava Yollari', priority: 2, timestamp: '2026-06-01T00:00:00Z' },
+        {
+          provider: 'fintables',
+          value: 'THY A.O.',
+          priority: 1,
+          timestamp: '2026-01-01T00:00:00Z',
+        },
+        {
+          provider: 'yahoo',
+          value: 'Turk Hava Yollari',
+          priority: 2,
+          timestamp: '2026-06-01T00:00:00Z',
+        },
       ]);
       expect(result).not.toBeNull();
       expect(result!.value).toBe('Turk Hava Yollari');
@@ -43,7 +68,7 @@ describe('ConflictResolver', () => {
     it('should skip null/undefined/empty values', () => {
       const result = resolver.resolve('name', [
         { provider: 'fintables', value: null, priority: 1, timestamp: '2026-01-01T00:00:00Z' },
-        { provider: 'finnhub', value: undefined, priority: 2, timestamp: '2026-01-01T00:00:00Z' },
+        { provider: 'yahoo', value: undefined, priority: 2, timestamp: '2026-01-01T00:00:00Z' },
         { provider: 'kap', value: '', priority: 3, timestamp: '2026-01-01T00:00:00Z' },
       ]);
       expect(result).toBeNull();
@@ -52,7 +77,12 @@ describe('ConflictResolver', () => {
     it('should fall back to earliest timestamp when timestamps are equal', () => {
       const result = resolver.resolve('name', [
         { provider: 'kap', value: 'KAP Value', priority: 3, timestamp: '2026-01-01T00:00:00Z' },
-        { provider: 'fintables', value: 'Fintables Value', priority: 1, timestamp: '2026-01-01T00:00:00Z' },
+        {
+          provider: 'fintables',
+          value: 'Fintables Value',
+          priority: 1,
+          timestamp: '2026-01-01T00:00:00Z',
+        },
       ]);
       expect(result).not.toBeNull();
       expect(result!.value).toBe('KAP Value');
@@ -75,7 +105,7 @@ describe('ConflictResolver', () => {
     it('should average numeric values when no majority', () => {
       const result = resolver.resolveNumeric('revenue', [
         { provider: 'fintables', value: 100, priority: 1, timestamp: '2026-01-01T00:00:00Z' },
-        { provider: 'finnhub', value: 200, priority: 2, timestamp: '2026-01-01T00:00:00Z' },
+        { provider: 'yahoo', value: 200, priority: 2, timestamp: '2026-01-01T00:00:00Z' },
       ]);
       expect(result).not.toBeNull();
       expect(result!.value).toBe(150);
@@ -85,7 +115,7 @@ describe('ConflictResolver', () => {
     it('should use majority for numeric values', () => {
       const result = resolver.resolveNumeric('revenue', [
         { provider: 'fintables', value: 100, priority: 1, timestamp: '2026-01-01T00:00:00Z' },
-        { provider: 'finnhub', value: 200, priority: 2, timestamp: '2026-01-01T00:00:00Z' },
+        { provider: 'yahoo', value: 200, priority: 2, timestamp: '2026-01-01T00:00:00Z' },
         { provider: 'kap', value: 100, priority: 3, timestamp: '2026-01-01T00:00:00Z' },
       ]);
       expect(result).not.toBeNull();
@@ -96,7 +126,7 @@ describe('ConflictResolver', () => {
     it('should ignore NaN values', () => {
       const result = resolver.resolveNumeric('revenue', [
         { provider: 'fintables', value: NaN, priority: 1, timestamp: '2026-01-01T00:00:00Z' },
-        { provider: 'finnhub', value: 100, priority: 2, timestamp: '2026-01-01T00:00:00Z' },
+        { provider: 'yahoo', value: 100, priority: 2, timestamp: '2026-01-01T00:00:00Z' },
       ]);
       expect(result).not.toBeNull();
       expect(result!.value).toBe(100);
@@ -105,7 +135,7 @@ describe('ConflictResolver', () => {
     it('should round averages to 2 decimal places', () => {
       const result = resolver.resolveNumeric('revenue', [
         { provider: 'fintables', value: 100, priority: 1, timestamp: '2026-01-01T00:00:00Z' },
-        { provider: 'finnhub', value: 101, priority: 2, timestamp: '2026-01-01T00:00:00Z' },
+        { provider: 'yahoo', value: 101, priority: 2, timestamp: '2026-01-01T00:00:00Z' },
       ]);
       expect(result).not.toBeNull();
       expect(result!.value).toBe(100.5);
@@ -129,13 +159,19 @@ describe('ConflictResolver', () => {
       const result = resolver.resolveList('disclosures', [
         {
           provider: 'fintables',
-          items: [{ title: 'Item 1', date: '2026-01-01' }, { title: 'Item 2', date: '2026-01-02' }],
+          items: [
+            { title: 'Item 1', date: '2026-01-01' },
+            { title: 'Item 2', date: '2026-01-02' },
+          ],
           priority: 1,
           timestamp: '2026-01-01T00:00:00Z',
         },
         {
-          provider: 'finnhub',
-          items: [{ title: 'Item 2', date: '2026-01-02' }, { title: 'Item 3', date: '2026-01-03' }],
+          provider: 'yahoo',
+          items: [
+            { title: 'Item 2', date: '2026-01-02' },
+            { title: 'Item 3', date: '2026-01-03' },
+          ],
           priority: 2,
           timestamp: '2026-01-01T00:00:00Z',
         },
@@ -167,7 +203,7 @@ describe('ConflictResolver', () => {
     it('should build a conflict record', () => {
       const sources = [
         { provider: 'fintables', value: 'Value A', priority: 1, timestamp: '2026-01-01T00:00:00Z' },
-        { provider: 'finnhub', value: 'Value B', priority: 2, timestamp: '2026-01-01T00:00:00Z' },
+        { provider: 'yahoo', value: 'Value B', priority: 2, timestamp: '2026-01-01T00:00:00Z' },
       ];
       const record = resolver.buildConflictRecord('name', sources, 'Value A', 'highest_priority');
       expect(record.field).toBe('name');

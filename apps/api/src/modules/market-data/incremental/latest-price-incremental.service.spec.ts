@@ -95,7 +95,12 @@ describe('LatestPriceIncrementalService', () => {
       expect(result!.sourceTimeframe).toBe('1d');
       expect(result!.dataFreshness).toBe('fresh');
       expect(orchestrator.fetchLatestPrice).toHaveBeenCalledWith('THYAO.IS', false);
-      expect(cache.set).toHaveBeenCalledWith(cacheKey, expect.any(Object), getLatestPriceTtl('1d'), LATEST_PRICE_NAMESPACE);
+      expect(cache.set).toHaveBeenCalledWith(
+        cacheKey,
+        expect.any(Object),
+        getLatestPriceTtl('1d'),
+        LATEST_PRICE_NAMESPACE,
+      );
     });
 
     it('CASE 2 - Fresh cache hit: returns cached state, ZERO provider calls', async () => {
@@ -149,7 +154,12 @@ describe('LatestPriceIncrementalService', () => {
       expect(result!.price).toBe(105);
       expect(result!.dataFreshness).toBe('fresh');
       expect(orchestrator.fetchLatestPrice).toHaveBeenCalledWith('THYAO.IS', false);
-      expect(cache.set).toHaveBeenCalledWith(cacheKey, expect.any(Object), getLatestPriceTtl('1d'), LATEST_PRICE_NAMESPACE);
+      expect(cache.set).toHaveBeenCalledWith(
+        cacheKey,
+        expect.any(Object),
+        getLatestPriceTtl('1d'),
+        LATEST_PRICE_NAMESPACE,
+      );
     });
 
     it('CASE 4 - Provider failure with stale fallback: orchestrator fails, returns stale-but-valid cached state', async () => {
@@ -193,7 +203,9 @@ describe('LatestPriceIncrementalService', () => {
       orchestrator.fetchLatestPrice.mockResolvedValue(createOrchestratorResult(mockDataPoint));
       jest.spyOn(validationService, 'validateDataPoints').mockReturnValue([mockDataPoint]);
 
-      const result = await service.getLatestPriceIncremental('THYAO', '1d', { cacheEnabled: false });
+      const result = await service.getLatestPriceIncremental('THYAO', '1d', {
+        cacheEnabled: false,
+      });
 
       expect(result).not.toBeNull();
       expect(result!.price).toBe(105);
@@ -246,12 +258,14 @@ describe('LatestPriceIncrementalService', () => {
 
     it('Provider metadata preserved in returned state', async () => {
       (cache.get as jest.Mock).mockReturnValue(undefined);
-      orchestrator.fetchLatestPrice.mockResolvedValue(createOrchestratorResult(mockDataPoint, 'finnhub'));
+      orchestrator.fetchLatestPrice.mockResolvedValue(
+        createOrchestratorResult(mockDataPoint, 'yahoo'),
+      );
       jest.spyOn(validationService, 'validateDataPoints').mockReturnValue([mockDataPoint]);
 
       const result = await service.getLatestPriceIncremental('THYAO', '1d');
 
-      expect(result!.provider).toBe('finnhub');
+      expect(result!.provider).toBe('yahoo');
     });
 
     it('Source timeframe preserved from provider response', async () => {
@@ -277,13 +291,23 @@ describe('LatestPriceIncrementalService', () => {
       jest.spyOn(validationService, 'validateDataPoints').mockReturnValue([mockDataPoint]);
 
       await service.getLatestPriceIncremental('THYAO', '1h');
-      expect(cache.set).toHaveBeenCalledWith('THYAO.IS:4h', expect.any(Object), expect.any(Number), LATEST_PRICE_NAMESPACE);
+      expect(cache.set).toHaveBeenCalledWith(
+        'THYAO.IS:4h',
+        expect.any(Object),
+        expect.any(Number),
+        LATEST_PRICE_NAMESPACE,
+      );
 
       jest.clearAllMocks();
       (cache.get as jest.Mock).mockReturnValue(undefined);
 
       await service.getLatestPriceIncremental('THYAO', '2h');
-      expect(cache.set).toHaveBeenCalledWith('THYAO.IS:4h', expect.any(Object), expect.any(Number), LATEST_PRICE_NAMESPACE);
+      expect(cache.set).toHaveBeenCalledWith(
+        'THYAO.IS:4h',
+        expect.any(Object),
+        expect.any(Number),
+        LATEST_PRICE_NAMESPACE,
+      );
     });
 
     it('1d, 1w, 1m, 3m, 6m use native timeframe', async () => {
@@ -291,11 +315,20 @@ describe('LatestPriceIncrementalService', () => {
       for (const tf of tfs) {
         jest.clearAllMocks();
         (cache.get as jest.Mock).mockReturnValue(undefined);
-        orchestrator.fetchLatestPrice.mockResolvedValue(createOrchestratorResult({ ...mockDataPoint, timeframe: tf as any }));
-        jest.spyOn(validationService, 'validateDataPoints').mockReturnValue([{ ...mockDataPoint, timeframe: tf as any }]);
+        orchestrator.fetchLatestPrice.mockResolvedValue(
+          createOrchestratorResult({ ...mockDataPoint, timeframe: tf as any }),
+        );
+        jest
+          .spyOn(validationService, 'validateDataPoints')
+          .mockReturnValue([{ ...mockDataPoint, timeframe: tf as any }]);
 
         await service.getLatestPriceIncremental('THYAO', tf);
-        expect(cache.set).toHaveBeenCalledWith(`THYAO.IS:${tf}`, expect.any(Object), expect.any(Number), LATEST_PRICE_NAMESPACE);
+        expect(cache.set).toHaveBeenCalledWith(
+          `THYAO.IS:${tf}`,
+          expect.any(Object),
+          expect.any(Number),
+          LATEST_PRICE_NAMESPACE,
+        );
       }
     });
   });
@@ -314,7 +347,9 @@ describe('LatestPriceIncrementalService', () => {
     });
 
     it('getStaleProviderMessage returns Turkish fallback message', () => {
-      expect(service.getStaleProviderMessage()).toBe('Provider yanıt vermedi, son geçerli veri kullanılıyor.');
+      expect(service.getStaleProviderMessage()).toBe(
+        'Provider yanıt vermedi, son geçerli veri kullanılıyor.',
+      );
     });
 
     it('getLastUpdateMessage formats Turkish locale', () => {

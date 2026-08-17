@@ -13,8 +13,7 @@ export const TRUSTED_SOURCE_RANKS: TrustedSourceRank[] = [
   { provider: 'tcmb', rank: 3, weight: 85, label: 'TCMB' },
   { provider: 'mkk', rank: 4, weight: 80, label: 'MKK' },
   { provider: 'yahoo-finance', rank: 5, weight: 70, label: 'Yahoo Finance' },
-  { provider: 'finnhub-news', rank: 6, weight: 60, label: 'Finnhub' },
-  { provider: 'google-news', rank: 7, weight: 50, label: 'SerpAPI Google News' },
+  { provider: 'google-news', rank: 6, weight: 50, label: 'SerpAPI Google News' },
   { provider: 'serpapi', rank: 8, weight: 40, label: 'SerpAPI Search' },
   { provider: 'google-search', rank: 8, weight: 40, label: 'SerpAPI Search' },
 ];

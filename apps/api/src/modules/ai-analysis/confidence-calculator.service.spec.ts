@@ -17,10 +17,10 @@ function buildMockInput(overrides?: Partial<PipelineInput>): PipelineInput {
       source: 'fintables',
     },
     metadata: {
-      providersQueried: ['fintables', 'finnhub'],
-      providersUsed: ['fintables', 'finnhub'],
+      providersQueried: ['fintables', 'yahoo'],
+      providersUsed: ['fintables', 'yahoo'],
       providersFailed: [],
-      providerConfidence: { fintables: 90, finnhub: 70 },
+      providerConfidence: { fintables: 90, yahoo: 70 },
       qualityScore: 85,
       lastUpdated: new Date().toISOString(),
       cacheStatus: 'miss',
@@ -55,8 +55,32 @@ describe('ConfidenceCalculator', () => {
     it('should calculate confidence based on module results', () => {
       const input = buildMockInput();
       const moduleResults: ModuleResult[] = [
-        { module: 'technical', score: 80, confidence: 90, signals: [], strengths: [], weaknesses: [], risks: [], warnings: [], metrics: {}, explanation: '', metadata: {} },
-        { module: 'fundamental', score: 70, confidence: 80, signals: [], strengths: [], weaknesses: [], risks: [], warnings: [], metrics: {}, explanation: '', metadata: {} },
+        {
+          module: 'technical',
+          score: 80,
+          confidence: 90,
+          signals: [],
+          strengths: [],
+          weaknesses: [],
+          risks: [],
+          warnings: [],
+          metrics: {},
+          explanation: '',
+          metadata: {},
+        },
+        {
+          module: 'fundamental',
+          score: 70,
+          confidence: 80,
+          signals: [],
+          strengths: [],
+          weaknesses: [],
+          risks: [],
+          warnings: [],
+          metrics: {},
+          explanation: '',
+          metadata: {},
+        },
       ];
       const score = calculator.calculate(moduleResults, input);
       expect(score).toBeGreaterThan(0);
@@ -66,17 +90,45 @@ describe('ConfidenceCalculator', () => {
     it('should be different from overall score', () => {
       const input = buildMockInput();
       const moduleResults: ModuleResult[] = [
-        { module: 'technical', score: 80, confidence: 90, signals: [], strengths: [], weaknesses: [], risks: [], warnings: [], metrics: {}, explanation: '', metadata: {} },
+        {
+          module: 'technical',
+          score: 80,
+          confidence: 90,
+          signals: [],
+          strengths: [],
+          weaknesses: [],
+          risks: [],
+          warnings: [],
+          metrics: {},
+          explanation: '',
+          metadata: {},
+        },
       ];
       const confidence = calculator.calculate(moduleResults, input);
       expect(confidence).not.toBe(80);
     });
 
     it('should penalize missing data', () => {
-      const inputWithNoFinancials = buildMockInput({ incomeStatement: undefined, balanceSheet: undefined, cashFlow: undefined });
+      const inputWithNoFinancials = buildMockInput({
+        incomeStatement: undefined,
+        balanceSheet: undefined,
+        cashFlow: undefined,
+      });
       const inputWithData = buildMockInput();
       const moduleResults: ModuleResult[] = [
-        { module: 'technical', score: 80, confidence: 90, signals: [], strengths: [], weaknesses: [], risks: [], warnings: [], metrics: {}, explanation: '', metadata: {} },
+        {
+          module: 'technical',
+          score: 80,
+          confidence: 90,
+          signals: [],
+          strengths: [],
+          weaknesses: [],
+          risks: [],
+          warnings: [],
+          metrics: {},
+          explanation: '',
+          metadata: {},
+        },
       ];
 
       const scoreWithout = calculator.calculate(moduleResults, inputWithNoFinancials);

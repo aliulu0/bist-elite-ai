@@ -2,25 +2,53 @@ import { SerpApiAdapter } from './serpapi.adapter';
 import { CircuitBreakerService } from '../../circuit-breaker/circuit-breaker.service';
 
 const SERPAPI_FINANCE_RESPONSE = {
-  search_metadata: { status: 'Success', total_time_taken: 0.5, engine: 'google_finance', id: 'test' },
+  search_metadata: {
+    status: 'Success',
+    total_time_taken: 0.5,
+    engine: 'google_finance',
+    id: 'test',
+  },
   knowledge_graph: { title: 'THYAO', description: 'Turkish Airlines - BIST' },
   finance_results: [
-    { title: 'THYAO', link: 'https://www.google.com/finance/quote/THYAO:IST', snippet: 'Price 250.50 TRY · Daily Change +3.50 · Change % +1.42% · Volume 50M · Market Cap 123B' },
+    {
+      title: 'THYAO',
+      link: 'https://www.google.com/finance/quote/THYAO:IST',
+      snippet:
+        'Price 250.50 TRY · Daily Change +3.50 · Change % +1.42% · Volume 50M · Market Cap 123B',
+    },
   ],
   organic_results: [
-    { title: 'THYAO - Google Finance', link: 'https://www.google.com/finance/quote/THYAO:IST', snippet: 'Turkish Airlines stock price' },
+    {
+      title: 'THYAO - Google Finance',
+      link: 'https://www.google.com/finance/quote/THYAO:IST',
+      snippet: 'Turkish Airlines stock price',
+    },
   ],
 };
 
 const SERPAPI_FINANCE_NO_PRICE = {
-  search_metadata: { status: 'Success', total_time_taken: 0.3, engine: 'google_finance', id: 'test2' },
+  search_metadata: {
+    status: 'Success',
+    total_time_taken: 0.3,
+    engine: 'google_finance',
+    id: 'test2',
+  },
   organic_results: [
-    { title: 'THYAO', link: 'https://www.google.com/finance/quote/THYAO:IST', snippet: 'Turkish Airlines' },
+    {
+      title: 'THYAO',
+      link: 'https://www.google.com/finance/quote/THYAO:IST',
+      snippet: 'Turkish Airlines',
+    },
   ],
 };
 
 const SERPAPI_FINANCIALS_RESPONSE = {
-  search_metadata: { status: 'Success', total_time_taken: 0.4, engine: 'google_finance', id: 'test3' },
+  search_metadata: {
+    status: 'Success',
+    total_time_taken: 0.4,
+    engine: 'google_finance',
+    id: 'test3',
+  },
   key_financial_highlights: [
     { label: 'Revenue', value: '50 B' },
     { label: 'Net Income', value: '5 B' },
@@ -32,22 +60,46 @@ const SERPAPI_FINANCIALS_RESPONSE = {
 };
 
 const SERPAPI_BALANCE_SHEET_RESPONSE = {
-  search_metadata: { status: 'Success', total_time_taken: 0.4, engine: 'google_finance', id: 'test4' },
+  search_metadata: {
+    status: 'Success',
+    total_time_taken: 0.4,
+    engine: 'google_finance',
+    id: 'test4',
+  },
   organic_results: [
-    { title: 'THYAO Balance Sheet', link: 'https://example.com', snippet: 'Total Assets 200B, Total Debt 80B, Equity 120B' },
+    {
+      title: 'THYAO Balance Sheet',
+      link: 'https://example.com',
+      snippet: 'Total Assets 200B, Total Debt 80B, Equity 120B',
+    },
   ],
 };
 
 const SERPAPI_DISCLOSURES_RESPONSE = {
   search_metadata: { status: 'Success', total_time_taken: 0.3, engine: 'google', id: 'test5' },
   organic_results: [
-    { title: 'THYAO İlan: Yıllık Rapor', link: 'https://www.kap.org.tr/...', snippet: 'Yıllık rapor', date: '2026-03-15' },
-    { title: 'THYAO İlan: Çeyrek Rapor', link: 'https://www.kap.org.tr/...', snippet: 'Çeyrek rapor', date: '2026-06-15' },
+    {
+      title: 'THYAO İlan: Yıllık Rapor',
+      link: 'https://www.kap.org.tr/...',
+      snippet: 'Yıllık rapor',
+      date: '2026-03-15',
+    },
+    {
+      title: 'THYAO İlan: Çeyrek Rapor',
+      link: 'https://www.kap.org.tr/...',
+      snippet: 'Çeyrek rapor',
+      date: '2026-06-15',
+    },
   ],
 };
 
 const SERPAPI_ERROR_RESPONSE = {
-  search_metadata: { status: 'Error', total_time_taken: 0.1, engine: 'google_finance', id: 'test6' },
+  search_metadata: {
+    status: 'Error',
+    total_time_taken: 0.1,
+    engine: 'google_finance',
+    id: 'test6',
+  },
   error: 'rate_limit_exceeded',
   error_message: 'API rate limit reached',
 };
@@ -270,7 +322,12 @@ describe('SerpApiAdapter', () => {
   describe('getFinancialRatios', () => {
     it('should parse ratio highlights into FinancialRatios', async () => {
       const ratioResponse = {
-        search_metadata: { status: 'Success', total_time_taken: 0.4, engine: 'google_finance', id: 'test7' },
+        search_metadata: {
+          status: 'Success',
+          total_time_taken: 0.4,
+          engine: 'google_finance',
+          id: 'test7',
+        },
         key_financial_highlights: [
           { label: 'P/B', value: '2.5' },
           { label: 'EV/EBITDA', value: '8.3' },
@@ -355,9 +412,19 @@ describe('SerpApiAdapter', () => {
   describe('fetchGoogleFinance', () => {
     it('should parse all finance fields from SerpAPI response', async () => {
       const response = {
-        search_metadata: { status: 'Success', total_time_taken: 0.5, engine: 'google_finance', id: 'test' },
+        search_metadata: {
+          status: 'Success',
+          total_time_taken: 0.5,
+          engine: 'google_finance',
+          id: 'test',
+        },
         finance_results: [
-          { title: 'THYAO', link: 'https://www.google.com/finance/quote/THYAO:IST', snippet: 'Price 250.50 TRY · Daily Change +3.50 · Change % +1.42% · Volume 50M · Market Cap 123B' },
+          {
+            title: 'THYAO',
+            link: 'https://www.google.com/finance/quote/THYAO:IST',
+            snippet:
+              'Price 250.50 TRY · Daily Change +3.50 · Change % +1.42% · Volume 50M · Market Cap 123B',
+          },
         ],
       };
       fetchMock.mockResolvedValueOnce({
@@ -383,8 +450,15 @@ describe('SerpApiAdapter', () => {
 
     it('should return null when no price data found', async () => {
       const response = {
-        search_metadata: { status: 'Success', total_time_taken: 0.3, engine: 'google_finance', id: 'test2' },
-        organic_results: [{ title: 'THYAO', link: 'https://example.com', snippet: 'Turkish Airlines' }],
+        search_metadata: {
+          status: 'Success',
+          total_time_taken: 0.3,
+          engine: 'google_finance',
+          id: 'test2',
+        },
+        organic_results: [
+          { title: 'THYAO', link: 'https://example.com', snippet: 'Turkish Airlines' },
+        ],
       };
       fetchMock.mockResolvedValueOnce({
         ok: true,
@@ -399,10 +473,26 @@ describe('SerpApiAdapter', () => {
   describe('fetchGoogleNews', () => {
     it('should parse news results from SerpAPI response', async () => {
       const response = {
-        search_metadata: { status: 'Success', total_time_taken: 0.3, engine: 'google_news', id: 'test' },
+        search_metadata: {
+          status: 'Success',
+          total_time_taken: 0.3,
+          engine: 'google_news',
+          id: 'test',
+        },
         news_results: [
-          { title: 'THYAO Q1 Earnings', link: 'https://example.com/1', snippet: 'Strong earnings', date: '2026-04-01', source: { name: 'Bloomberg' } },
-          { title: 'THYAO Hakkında', link: 'https://example.com/2', snippet: 'Haber metni', date: '2026-04-02' },
+          {
+            title: 'THYAO Q1 Earnings',
+            link: 'https://example.com/1',
+            snippet: 'Strong earnings',
+            date: '2026-04-01',
+            source: { name: 'Bloomberg' },
+          },
+          {
+            title: 'THYAO Hakkında',
+            link: 'https://example.com/2',
+            snippet: 'Haber metni',
+            date: '2026-04-02',
+          },
         ],
       };
       fetchMock.mockResolvedValueOnce({
@@ -429,7 +519,11 @@ describe('SerpApiAdapter', () => {
       const response = {
         search_metadata: { status: 'Success', total_time_taken: 0.3, engine: 'google', id: 'test' },
         organic_results: [
-          { title: 'THYAO Hisse Fiyatı', link: 'https://example.com/1', snippet: 'THYAO hisse fiyat bilgisi' },
+          {
+            title: 'THYAO Hisse Fiyatı',
+            link: 'https://example.com/1',
+            snippet: 'THYAO hisse fiyat bilgisi',
+          },
           { title: 'THYAO BIST', link: 'https://example.com/2', snippet: 'THYAO BIST hisse' },
         ],
       };
@@ -446,33 +540,49 @@ describe('SerpApiAdapter', () => {
   });
 
   describe('mergeNews', () => {
-    it('should merge and deduplicate Google News and Finnhub News', async () => {
-      process.env.FINNHUB_API_KEY = 'test-key';
+    it('should merge and deduplicate Google News articles', async () => {
       const googleNews = [
-        { headline: 'THYAO Q1 Earnings', source: 'Bloomberg', publishedTime: '2026-04-02T10:00:00Z', url: 'https://example.com/1', snippet: 'Strong earnings' },
+        {
+          headline: 'THYAO Q1 Earnings',
+          source: 'Bloomberg',
+          publishedTime: '2026-04-02T10:00:00Z',
+          url: 'https://example.com/1',
+          snippet: 'Strong earnings',
+        },
+        {
+          headline: 'THYAO Q1 Earnings',
+          source: 'Reuters',
+          publishedTime: '2026-04-02T09:00:00Z',
+          url: 'https://example.com/2',
+          snippet: 'Same story',
+        },
+        {
+          headline: 'THYAO New Contract',
+          source: 'Reuters',
+          publishedTime: '2026-04-01T08:00:00Z',
+          url: 'https://example.com/3',
+          snippet: 'New contract',
+        },
       ];
 
-      fetchMock.mockImplementation((url: string) => {
-        if (url.includes('finnhub.io')) {
-          return Promise.resolve({
-            ok: true,
-            json: jest.fn().mockResolvedValue([
-              { headline: 'THYAO Q1 Earnings', source: 'Finnhub', datetime: Math.floor(new Date('2026-04-02T09:00:00Z').getTime() / 1000), url: 'https://example.com/2', summary: 'Same story' },
-              { headline: 'THYAO New Contract', source: 'Reuters', datetime: Math.floor(new Date('2026-04-01T08:00:00Z').getTime() / 1000), url: 'https://example.com/3', summary: 'New contract' },
-            ]),
-          } as unknown as Response);
-        }
-        return Promise.resolve({
-          ok: true,
-          json: jest.fn().mockResolvedValue({ search_metadata: { status: 'Success' }, news_results: googleNews.map(a => ({ title: a.headline, link: a.url, snippet: a.snippet, date: a.publishedTime, source: { name: a.source } })) }),
-        } as unknown as Response);
-      });
+      fetchMock.mockResolvedValue({
+        ok: true,
+        json: jest.fn().mockResolvedValue({
+          search_metadata: { status: 'Success' },
+          news_results: googleNews.map((a) => ({
+            title: a.headline,
+            link: a.url,
+            snippet: a.snippet,
+            date: a.publishedTime,
+            source: { name: a.source },
+          })),
+        }),
+      } as unknown as Response);
 
       const merged = await adapter.mergeNews('THYAO');
       expect(merged).toHaveLength(2);
       expect(merged[0].title).toBe('THYAO Q1 Earnings');
       expect(merged[1].title).toBe('THYAO New Contract');
-      delete process.env.FINNHUB_API_KEY;
     });
 
     it('should return empty array when both sources fail', async () => {

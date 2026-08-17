@@ -18,11 +18,17 @@ import {
 import { PROVIDER_NAMES } from '@/components/providers/provider-types';
 import { cn } from '@/lib/utils';
 
-const TAB_PANELS: Record<string, React.FC<{ snapshot: ReturnType<typeof useProvidersStore.getState>['snapshot']; selectedProvider: string | null }>> = {
+const TAB_PANELS: Record<
+  string,
+  React.FC<{
+    snapshot: ReturnType<typeof useProvidersStore.getState>['snapshot'];
+    selectedProvider: string | null;
+  }>
+> = {
   overview: ProviderOverview,
 };
 
-const REQUIRED_PROVIDER_NAMES = ['Yahoo', 'Finnhub', 'Fintables', 'TCMB', 'KAP', 'MKK'];
+const REQUIRED_PROVIDER_NAMES = ['Yahoo', 'Investing', 'Fintables', 'TCMB', 'KAP', 'MKK'];
 
 export default function ProvidersPage() {
   const activeTab = useProvidersStore((s) => s.activeTab);
@@ -74,25 +80,29 @@ export default function ProvidersPage() {
   }, [snapshot]);
 
   const isOverview = activeTab === 'overview';
-  const providerName = activeTab !== 'overview' ? (PROVIDER_NAMES[activeTab] || null) : null;
+  const providerName = activeTab !== 'overview' ? PROVIDER_NAMES[activeTab] || null : null;
   const providers = REQUIRED_PROVIDER_NAMES.map((name) => {
-    const matched = (snapshot?.providers ?? EMPTY_SNAPSHOT.providers).find((provider) => provider.name.toLowerCase().includes(name.toLowerCase()));
-    return matched ?? {
-      name,
-      status: 'UNKNOWN' as const,
-      latencyMs: 0,
-      successRate: 0,
-      errorRate: 0,
-      reliabilityScore: 0,
-      consecutiveFailures: 0,
-      totalRequests: 0,
-      failedRequests: 0,
-      timeoutCount: 0,
-      lastSuccessAt: null,
-      lastFailureAt: null,
-      lastRecoveryAt: null,
-      recoveryTimeMs: null,
-    };
+    const matched = (snapshot?.providers ?? EMPTY_SNAPSHOT.providers).find((provider) =>
+      provider.name.toLowerCase().includes(name.toLowerCase()),
+    );
+    return (
+      matched ?? {
+        name,
+        status: 'UNKNOWN' as const,
+        latencyMs: 0,
+        successRate: 0,
+        errorRate: 0,
+        reliabilityScore: 0,
+        consecutiveFailures: 0,
+        totalRequests: 0,
+        failedRequests: 0,
+        timeoutCount: 0,
+        lastSuccessAt: null,
+        lastFailureAt: null,
+        lastRecoveryAt: null,
+        recoveryTimeMs: null,
+      }
+    );
   });
 
   return (
@@ -105,9 +115,7 @@ export default function ProvidersPage() {
         lastRefresh={useProvidersStore.getState().lastRefresh}
       />
 
-      {error && (
-        <ErrorCard message={error} onRetry={fetchData} />
-      )}
+      {error && <ErrorCard message={error} onRetry={fetchData} />}
 
       <ProviderSummary snapshot={snapshot} />
       <ProviderTabs />
@@ -116,29 +124,65 @@ export default function ProvidersPage() {
         <div className="mb-4 flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold">Sağlayıcı Monitörü</h2>
-            <p className="text-sm text-muted-foreground">Her piyasa veri sağlayıcısı için sağlık, gecikme, önbellek, devre kesici ve senkronizasyon durumu.</p>
+            <p className="text-sm text-muted-foreground">
+              Her piyasa veri sağlayıcısı için sağlık, gecikme, önbellek, devre kesici ve
+              senkronizasyon durumu.
+            </p>
           </div>
-          <span className="text-xs text-muted-foreground">Öncelik sırası: Yahoo, Finnhub, Fintables, TCMB, KAP, MKK</span>
+          <span className="text-xs text-muted-foreground">
+            Öncelik sırası: Yahoo, Investing, Fintables, TCMB, KAP, MKK
+          </span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[860px] text-sm">
             <thead>
               <tr className="border-b text-left text-xs uppercase tracking-wide text-muted-foreground">
-                {['Sağlayıcı', 'Durum', 'Gecikme', 'Sağlık', 'Önbellek', 'Devre Kesici', 'Son Senk.', 'Öncelik'].map((column) => (
-                  <th key={column} className="px-3 py-2 font-medium">{column}</th>
+                {[
+                  'Sağlayıcı',
+                  'Durum',
+                  'Gecikme',
+                  'Sağlık',
+                  'Önbellek',
+                  'Devre Kesici',
+                  'Son Senk.',
+                  'Öncelik',
+                ].map((column) => (
+                  <th key={column} className="px-3 py-2 font-medium">
+                    {column}
+                  </th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {providers.map((provider, index) => {
-                const circuitBreaker = provider.consecutiveFailures > 2 ? 'Açık' : provider.consecutiveFailures > 0 ? 'Yarı açık' : 'Kapalı';
+                const circuitBreaker =
+                  provider.consecutiveFailures > 2
+                    ? 'Açık'
+                    : provider.consecutiveFailures > 0
+                      ? 'Yarı açık'
+                      : 'Kapalı';
                 const cacheStatus = provider.totalRequests > 0 ? 'Sıcak' : 'Soğuk';
-                const lastSync = provider.lastSuccessAt ?? provider.lastFailureAt ?? provider.lastRecoveryAt ?? 'Senkron yok';
+                const lastSync =
+                  provider.lastSuccessAt ??
+                  provider.lastFailureAt ??
+                  provider.lastRecoveryAt ??
+                  'Senkron yok';
                 return (
                   <tr key={provider.name} className="border-b transition-colors hover:bg-muted/40">
                     <td className="px-3 py-3 font-medium">{provider.name}</td>
                     <td className="px-3 py-3">
-                      <span className={cn('rounded border px-2 py-0.5 text-xs', provider.status === 'HEALTHY' ? 'border-success/40 bg-success/10 text-success' : provider.status === 'DEGRADED' ? 'border-warning/40 bg-warning/10 text-warning' : provider.status === 'UNKNOWN' ? 'border-muted bg-muted text-muted-foreground' : 'border-destructive/40 bg-destructive/10 text-destructive')}>
+                      <span
+                        className={cn(
+                          'rounded border px-2 py-0.5 text-xs',
+                          provider.status === 'HEALTHY'
+                            ? 'border-success/40 bg-success/10 text-success'
+                            : provider.status === 'DEGRADED'
+                              ? 'border-warning/40 bg-warning/10 text-warning'
+                              : provider.status === 'UNKNOWN'
+                                ? 'border-muted bg-muted text-muted-foreground'
+                                : 'border-destructive/40 bg-destructive/10 text-destructive',
+                        )}
+                      >
                         {provider.status}
                       </span>
                     </td>
@@ -146,7 +190,11 @@ export default function ProvidersPage() {
                     <td className="px-3 py-3 font-mono">{provider.reliabilityScore.toFixed(0)}%</td>
                     <td className="px-3 py-3">{cacheStatus}</td>
                     <td className="px-3 py-3">{circuitBreaker}</td>
-                    <td className="px-3 py-3 font-mono text-xs">{lastSync === 'Senkron yok' ? lastSync : new Date(lastSync).toLocaleString('tr-TR')}</td>
+                    <td className="px-3 py-3 font-mono text-xs">
+                      {lastSync === 'Senkron yok'
+                        ? lastSync
+                        : new Date(lastSync).toLocaleString('tr-TR')}
+                    </td>
                     <td className="px-3 py-3 font-mono">P{index + 1}</td>
                   </tr>
                 );

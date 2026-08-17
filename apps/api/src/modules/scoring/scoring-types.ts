@@ -150,12 +150,10 @@ export interface IndicatorSnapshot {
 export interface ProviderCoverage {
   yahoo: boolean;
   fintables: boolean;
-  finnhub: boolean;
   serpApi: boolean;
   kap: boolean;
   tcmb: boolean;
   mkk: boolean;
-  alphaVantage: boolean;
 }
 
 export interface DataFreshness {
