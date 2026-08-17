@@ -57,22 +57,38 @@ export class LatestPriceResponseDto {
   @ApiPropertyOptional({ example: 2.33, description: 'Change percent' })
   changePercent?: number;
 
-  @ApiPropertyOptional({ example: 'yahoo', description: 'Provider that produced this data (cache for a cache hit)' })
+  @ApiPropertyOptional({
+    example: 'yahoo',
+    description: 'Provider that produced this data (cache for a cache hit)',
+  })
   provider?: string;
 
-  @ApiPropertyOptional({ example: '1d', nullable: true, description: 'Source timeframe the data was fetched at' })
+  @ApiPropertyOptional({
+    example: '1d',
+    nullable: true,
+    description: 'Source timeframe the data was fetched at',
+  })
   sourceTimeframe?: string | null;
 
-  @ApiPropertyOptional({ enum: ['fresh', 'stale', 'no-data'], description: 'Freshness of the latest price' })
+  @ApiPropertyOptional({
+    enum: ['fresh', 'stale', 'no-data'],
+    description: 'Freshness of the latest price',
+  })
   dataFreshness?: 'fresh' | 'stale' | 'no-data';
 
   @ApiPropertyOptional({ example: true, description: 'Whether the response was served from cache' })
   cached?: boolean;
 
-  @ApiPropertyOptional({ example: '2025-01-15T12:00:00.000Z', description: 'Last time this state was successfully updated' })
+  @ApiPropertyOptional({
+    example: '2025-01-15T12:00:00.000Z',
+    description: 'Last time this state was successfully updated',
+  })
   lastSuccessfulUpdate?: string | null;
 
-  @ApiPropertyOptional({ example: 'Veri güncel.', description: 'Human-readable Turkish freshness message' })
+  @ApiPropertyOptional({
+    example: 'Veri güncel.',
+    description: 'Human-readable Turkish freshness message',
+  })
   freshnessMessage?: string;
 }
 
@@ -126,10 +142,16 @@ export class IncrementalUpdateDto {
   @ApiPropertyOptional({ example: true, description: 'Served from cache without a provider call' })
   cacheHit?: boolean;
 
-  @ApiPropertyOptional({ example: true, description: 'Whether new bars were merged since the last cache write' })
+  @ApiPropertyOptional({
+    example: true,
+    description: 'Whether new bars were merged since the last cache write',
+  })
   incrementalUpdate?: boolean;
 
-  @ApiPropertyOptional({ example: 'yahoo', description: 'Provider used for the latest fetch (null if cache served it)' })
+  @ApiPropertyOptional({
+    example: 'yahoo',
+    description: 'Provider used for the latest fetch (null if cache served it)',
+  })
   providerUsed?: string | null;
 
   @ApiPropertyOptional({ example: 30, description: 'Bar count before this request' })
@@ -141,16 +163,28 @@ export class IncrementalUpdateDto {
   @ApiPropertyOptional({ example: 31, description: 'Bar count after merge' })
   mergedBarCount?: number;
 
-  @ApiPropertyOptional({ example: '2026-08-09T10:00:00.000Z', description: 'Last cached bar timestamp' })
+  @ApiPropertyOptional({
+    example: '2026-08-09T10:00:00.000Z',
+    description: 'Last cached bar timestamp',
+  })
   lastCachedTimestamp?: string | null;
 
-  @ApiPropertyOptional({ example: '2026-08-10T10:00:00.000Z', description: 'Latest bar timestamp in the returned series' })
+  @ApiPropertyOptional({
+    example: '2026-08-10T10:00:00.000Z',
+    description: 'Latest bar timestamp in the returned series',
+  })
   latestTimestamp?: string | null;
 
-  @ApiPropertyOptional({ enum: ['fresh', 'stale', 'no-data'], description: 'Freshness of the returned series' })
+  @ApiPropertyOptional({
+    enum: ['fresh', 'stale', 'no-data'],
+    description: 'Freshness of the returned series',
+  })
   dataFreshness?: 'fresh' | 'stale' | 'no-data';
 
-  @ApiPropertyOptional({ enum: ['validated', 'unvalidated', 'invalid', 'none'], description: 'Validation status of the series' })
+  @ApiPropertyOptional({
+    enum: ['validated', 'unvalidated', 'invalid', 'none'],
+    description: 'Validation status of the series',
+  })
   validationStatus?: 'validated' | 'unvalidated' | 'invalid' | 'none';
 
   @ApiPropertyOptional({ example: true, description: 'Explicit stale flag (stale-but-valid data)' })
@@ -173,13 +207,21 @@ export class HistoryResponseDto {
   @ApiProperty({ example: 100 })
   total!: number;
 
-  @ApiPropertyOptional({ example: 'yahoo', description: 'Provider that produced this result (cache for a cache hit)' })
+  @ApiPropertyOptional({
+    example: 'yahoo',
+    description: 'Provider that produced this result (cache for a cache hit)',
+  })
   provider?: string;
 
   @ApiPropertyOptional({ example: false, description: 'Whether the data was served from cache' })
   cached?: boolean;
 
-  @ApiPropertyOptional({ example: '4h', nullable: true, description: 'Fetchable timeframe the result was sourced from (set when the requested timeframe was normalised)' })
+  @ApiPropertyOptional({
+    example: '4h',
+    nullable: true,
+    description:
+      'Fetchable timeframe the result was sourced from (set when the requested timeframe was normalised)',
+  })
   sourceTimeframe?: string | null;
 
   @ApiPropertyOptional({ type: IncrementalUpdateDto, description: 'Incremental update metadata' })
@@ -282,6 +324,106 @@ export class ErrorResponseDto {
 
   @ApiProperty({ example: 'Symbol is required' })
   error!: string;
+
+  @ApiProperty({ example: '2025-01-15T12:00:00.000Z' })
+  timestamp!: string;
+
+  constructor(error: string, statusCode?: number) {
+    this.error = error;
+    this.success =
+      statusCode === 400 || statusCode === 404 || statusCode === 409 || statusCode === 422;
+    this.timestamp = new Date().toISOString();
+    if (statusCode) {
+      // statusCode is available at runtime but not in the type
+    }
+  }
+}
+
+export class SourceSnapshot {
+  @ApiProperty({ example: 'yahoo-finance' })
+  provider!: string;
+
+  @ApiProperty({ example: 'THYAO.IS' })
+  providerSymbol!: string;
+
+  @ApiProperty({ example: 305.25, nullable: true })
+  price!: number | null;
+
+  @ApiProperty({ example: 'TRY', nullable: true })
+  currency!: string | null;
+
+  @ApiProperty({ example: '2025-01-15T12:00:00.000Z', nullable: true })
+  timestamp!: string | null;
+
+  @ApiProperty({ example: '12', nullable: true })
+  freshness?: string | null;
+
+  @ApiProperty({ example: 'valid', nullable: true })
+  validationStatus!: string | null;
+
+  @ApiProperty({ example: 'yahoo_finance', nullable: true })
+  source!: string | null;
+}
+
+export class TruthConflict {
+  @ApiProperty({ example: true })
+  detected!: boolean;
+
+  @ApiProperty({ example: 0.05 })
+  maxDifference!: number | null;
+
+  @ApiProperty({ example: 0.016 })
+  maxDifferencePercent!: number | null;
+
+  @ApiProperty({ example: ['yahoo-finance', 'serpapi'] })
+  contributingSources!: string[];
+}
+
+export class TruthData {
+  @ApiProperty({ example: 'THYAO' })
+  ticker!: string;
+
+  @ApiProperty({ example: 305.25, nullable: true })
+  consensusPrice!: number | null;
+
+  @ApiProperty({ example: 'TRY', nullable: true })
+  consensusCurrency!: string | null;
+
+  @ApiProperty({
+    enum: [
+      'SINGLE_SOURCE_VERIFIED',
+      'MULTI_SOURCE_CONFIRMED',
+      'MULTI_SOURCE_CONFIRMED_RESEARCH_SUPPORTED',
+      'PRICE_CONFLICT',
+      'UNAVAILABLE',
+      'SINGLE_SOURCE_UNAVAILABLE',
+    ],
+    example: 'SINGLE_SOURCE_VERIFIED',
+  })
+  status!: string;
+
+  @ApiProperty({ enum: ['HIGH', 'MEDIUM', 'LOW', 'NONE'], example: 'HIGH' })
+  confidence!: string;
+
+  @ApiProperty({ description: 'Provider price snapshots' })
+  sources!: SourceSnapshot[];
+
+  @ApiPropertyOptional({ description: 'Conflict details if detected' })
+  conflict?: TruthConflict;
+
+  @ApiProperty({ enum: ['FRESH', 'STALE', 'UNKNOWN'], example: 'FRESH' })
+  freshness!: string;
+
+  @ApiProperty({ example: '2025-01-15T12:00:00.000Z' })
+  generatedAt!: string;
+}
+
+export class TruthResponseDto {
+  @ApiProperty({ example: true })
+  success!: boolean;
+
+  @ApiProperty({ type: 'object', description: 'Market truth consensus result' })
+  data!: TruthData;
 
   @ApiProperty({ example: '2025-01-15T12:00:00.000Z' })
   timestamp!: string;

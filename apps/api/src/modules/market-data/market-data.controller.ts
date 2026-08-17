@@ -11,7 +11,11 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Public } from '../../common/auth/decorators';
-import { MarketDataOrchestrator, ProviderDashboardEntry } from './orchestrator/market-data-orchestrator';
+import {
+  MarketDataOrchestrator,
+  ProviderDashboardEntry,
+} from './orchestrator/market-data-orchestrator';
+import { MarketTruthService } from './services/market-truth.service';
 import { IncrementalMarketDataService } from './incremental/incremental-market-data.service';
 import { LatestPriceIncrementalService } from './incremental/latest-price-incremental.service';
 import { MarketDataHealthService } from './health/market-data-health.service';
@@ -27,6 +31,7 @@ import {
   ProvidersResponseDto,
   ProviderConfigurationResponseDto,
   ErrorResponseDto,
+  TruthResponseDto,
 } from './dto';
 
 @ApiTags('Market Data')
@@ -34,6 +39,7 @@ import {
 export class MarketDataController {
   constructor(
     private readonly orchestrator: MarketDataOrchestrator,
+    @Optional() private readonly marketTruth: MarketTruthService | undefined,
     private readonly incremental: IncrementalMarketDataService,
     private readonly latestPriceIncremental: LatestPriceIncrementalService,
     private readonly healthService: MarketDataHealthService,
@@ -56,7 +62,11 @@ export class MarketDataController {
   @Public()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get provider configuration status (no secrets)' })
-  @ApiResponse({ status: 200, description: 'Provider configuration statuses', type: ProviderConfigurationResponseDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Provider configuration statuses',
+    type: ProviderConfigurationResponseDto,
+  })
   getProviderConfiguration(): ProviderConfigurationResponseDto {
     return {
       success: true,
@@ -84,7 +94,12 @@ export class MarketDataController {
     const cleanSymbol = symbol.trim().toUpperCase();
     const cleanTimeframe = timeframe?.trim().toLowerCase();
 
-    if (cleanTimeframe && !SUPPORTED_TIMEFRAMES.includes(cleanTimeframe as Timeframe) && cleanTimeframe !== '1h' && cleanTimeframe !== '2h') {
+    if (
+      cleanTimeframe &&
+      !SUPPORTED_TIMEFRAMES.includes(cleanTimeframe as Timeframe) &&
+      cleanTimeframe !== '1h' &&
+      cleanTimeframe !== '2h'
+    ) {
       throw new BadRequestException(
         `Unsupported timeframe: ${cleanTimeframe}. Supported: ${SUPPORTED_TIMEFRAMES.join(', ')}`,
       );
@@ -96,7 +111,10 @@ export class MarketDataController {
 
     // R2-041: timeframe-aware incremental latest price with freshness + dedup.
     if (cleanTimeframe) {
-      const state = await this.latestPriceIncremental.getLatestPriceIncremental(cleanSymbol, cleanTimeframe);
+      const state = await this.latestPriceIncremental.getLatestPriceIncremental(
+        cleanSymbol,
+        cleanTimeframe,
+      );
       if (!state) {
         throw new NotFoundException(`No data found for symbol: ${cleanSymbol}`);
       }
@@ -252,5 +270,75 @@ export class MarketDataController {
   @ApiResponse({ status: 200, description: 'Data coverage report' })
   getCoverage(): CoverageReport {
     return this.coverageService.generate();
+  }
+
+  @Get(':ticker/truth')
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Get multi-source market truth and price consensus' })
+  @ApiResponse({
+    status: 200,
+    description: 'Market truth consensus result',
+    type: TruthResponseDto,
+  })
+  @ApiResponse({ status: 400, description: 'Invalid ticker', type: ErrorResponseDto })
+  @ApiResponse({ status: 503, description: 'No providers available', type: ErrorResponseDto })
+  async getMarketTruth(@Param('ticker') ticker: string): Promise<TruthResponseDto> {
+    if (!ticker || ticker.trim().length === 0) {
+      throw new ErrorResponseDto('Invalid ticker', 400);
+    }
+
+    const cleanSymbol = ticker.trim().toUpperCase();
+    const availableProviders = this.orchestrator.getAvailableProviders();
+    if (availableProviders.length === 0) {
+      throw new ErrorResponseDto('No data provider available', 503);
+    }
+
+    let truth: ConsensusResult;
+    if (this.marketTruth) {
+      truth = await this.marketTruth.getMarketTruth(cleanSymbol);
+    } else {
+      // Fallback: single source verified using Yahoo only
+      truth = {
+        consensusPrice: null,
+        consensusCurrency: null,
+        status: 'SINGLE_SOURCE_UNAVAILABLE' as const,
+        confidence: 'NONE' as const,
+        sources: [],
+        freshness: 'UNKNOWN',
+        generatedAt: new Date().toISOString(),
+      };
+    }
+    return {
+      success: true,
+      data: {
+        ticker: cleanSymbol,
+        consensusPrice: truth.consensusPrice,
+        consensusCurrency: truth.consensusCurrency,
+        status: truth.status,
+        confidence: truth.confidence,
+        sources: truth.sources.map((s) => ({
+          provider: s.provider,
+          providerSymbol: s.providerSymbol,
+          price: s.price,
+          currency: s.currency,
+          timestamp: s.timestamp,
+          freshness: s.freshnessSeconds !== null ? `${s.freshnessSeconds}s ago` : null,
+          validationStatus: s.validationStatus,
+          source: s.source,
+        })),
+        conflict: truth.conflict
+          ? {
+              detected: truth.conflict.detected,
+              maxDifference: truth.conflict.maxDifference,
+              maxDifferencePercent: truth.conflict.maxDifferencePercent,
+              contributingSources: truth.conflict.contributingSources,
+            }
+          : undefined,
+        freshness: truth.freshness,
+        generatedAt: truth.generatedAt,
+      },
+      timestamp: new Date().toISOString(),
+    };
   }
 }

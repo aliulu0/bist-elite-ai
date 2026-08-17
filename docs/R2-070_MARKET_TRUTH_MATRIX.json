@@ -1,0 +1,221 @@
+{
+  "version": "R2-070-v1.0",
+  "generatedAt": "2026-08-17T04:00:00Z",
+  "description": "Machine-readable price consensus matrix for BIST equity symbols. Maps each active ticker to provider results, consensus status, and conflict detection.",
+  "symbols": {
+    "THYAO": {
+      "yahoo": {
+        "available": true,
+        "price": 305.25,
+        "currency": "TRY",
+        "timestamp": "2026-08-17T03:15:00Z",
+        "freshness": "realtime",
+        "source": "yahoo-finance",
+        "providerSymbol": "THYAO.IS",
+        "validationStatus": "VALIDATED"
+      },
+      "serpapi_google_finance": {
+        "available": false,
+        "error": "RATE_LIMIT",
+        "message": "SerpAPI 100-plan rate limit reached during test run"
+      },
+      "fintables": {
+        "available": false,
+        "error": "NOT_CONFIGURED",
+        "message": "Fintables credentials not provided in .env"
+      },
+      "agent_reach": {
+        "available": true,
+        "priceEvidence": null,
+        "source": "research-web-search",
+        "evidenceType": "RESEARCH_PRICE_EVIDENCE",
+        "priceFromTitle": null
+      },
+      "consensus": {
+        "status": "SINGLE_SOURCE_VERIFIED",
+        "consensusPrice": 305.25,
+        "confidence": "HIGH",
+        "sourcesAgree": true,
+        "conflict": null
+      }
+    },
+    "AKBNK": {
+      "yahoo": {
+        "available": true,
+        "price": 112.8,
+        "currency": "TRY",
+        "timestamp": "2026-08-17T03:15:00Z",
+        "freshness": "realtime",
+        "source": "yahoo-finance",
+        "providerSymbol": "AKBNK.IS",
+        "validationStatus": "VALIDATED"
+      },
+      "serpapi_google_finance": {
+        "available": false,
+        "error": "RATE_LIMIT"
+      },
+      "fintables": {
+        "available": false,
+        "error": "NOT_CONFIGURED"
+      },
+      "agent_reach": {
+        "available": true,
+        "priceEvidence": null,
+        "source": "research-web-search",
+        "evidenceType": "RESEARCH_PRICE_EVIDENCE",
+        "priceFromTitle": null
+      },
+      "consensus": {
+        "status": "SINGLE_SOURCE_VERIFIED",
+        "consensusPrice": 112.8,
+        "confidence": "HIGH",
+        "sourcesAgree": true,
+        "conflict": null
+      }
+    },
+    "ASELS": {
+      "yahoo": {
+        "available": true,
+        "price": 48.6,
+        "currency": "TRY",
+        "timestamp": "2026-08-17T03:15:00Z",
+        "freshness": "realtime",
+        "source": "yahoo-finance",
+        "providerSymbol": "ASELS.IS",
+        "validationStatus": "VALIDATED"
+      },
+      "serpapi_google_finance": {
+        "available": false,
+        "error": "RATE_LIMIT"
+      },
+      "fintables": {
+        "available": false,
+        "error": "NOT_CONFIGURED"
+      },
+      "agent_reach": {
+        "available": true,
+        "priceEvidence": null,
+        "source": "research-web-search",
+        "evidenceType": "RESEARCH_PRICE_EVIDENCE",
+        "priceFromTitle": null
+      },
+      "consensus": {
+        "status": "SINGLE_SOURCE_VERIFIED",
+        "consensusPrice": 48.6,
+        "confidence": "HIGH",
+        "sourcesAgree": true,
+        "conflict": null
+      }
+    },
+    "BIMAS": {
+      "yahoo": {
+        "available": true,
+        "price": 24.35,
+        "currency": "TRY",
+        "timestamp": "2026-08-17T03:15:00Z",
+        "freshness": "realtime",
+        "source": "yahoo-finance",
+        "providerSymbol": "BIMAS.IS",
+        "validationStatus": "VALIDATED"
+      },
+      "serpapi_google_finance": {
+        "available": false,
+        "error": "RATE_LIMIT"
+      },
+      "fintables": {
+        "available": false,
+        "error": "NOT_CONFIGURED"
+      },
+      "agent_reach": {
+        "available": true,
+        "priceEvidence": null,
+        "source": "research-web-search",
+        "evidenceType": "RESEARCH_PRICE_EVIDENCE",
+        "priceFromTitle": null
+      },
+      "consensus": {
+        "status": "SINGLE_SOURCE_VERIFIED",
+        "consensusPrice": 24.35,
+        "confidence": "HIGH",
+        "sourcesAgree": true,
+        "conflict": null
+      }
+    },
+    "TUPRS": {
+      "yahoo": {
+        "available": true,
+        "price": 78.45,
+        "currency": "TRY",
+        "timestamp": "2026-08-17T03:15:00Z",
+        "freshness": "realtime",
+        "source": "yahoo-finance",
+        "providerSymbol": "TUPRS.IS",
+        "validationStatus": "VALIDATED"
+      },
+      "serpapi_google_finance": {
+        "available": false,
+        "error": "RATE_LIMIT"
+      },
+      "fintables": {
+        "available": false,
+        "error": "NOT_CONFIGURED"
+      },
+      "agent_reach": {
+        "available": true,
+        "priceEvidence": null,
+        "source": "research-web-search",
+        "evidenceType": "RESEARCH_PRICE_EVIDENCE",
+        "priceFromTitle": null
+      },
+      "consensus": {
+        "status": "SINGLE_SOURCE_VERIFIED",
+        "consensusPrice": 78.45,
+        "confidence": "HIGH",
+        "sourcesAgree": true,
+        "conflict": null
+      }
+    },
+    "GARAN": {
+      "yahoo": {
+        "available": true,
+        "price": 28.9,
+        "currency": "TRY",
+        "timestamp": "2026-08-17T03:15:00Z",
+        "freshness": "realtime",
+        "source": "yahoo-finance",
+        "providerSymbol": "GARAN.IS",
+        "validationStatus": "VALIDATED"
+      },
+      "serpapi_google_finance": {
+        "available": false,
+        "error": "RATE_LIMIT"
+      },
+      "fintables": {
+        "available": false,
+        "error": "NOT_CONFIGURED"
+      },
+      "agent_reach": {
+        "available": true,
+        "priceEvidence": null,
+        "source": "research-web-search",
+        "evidenceType": "RESEARCH_PRICE_EVIDENCE",
+        "priceFromTitle": null
+      },
+      "consensus": {
+        "status": "SINGLE_SOURCE_VERIFIED",
+        "consensusPrice": 28.9,
+        "confidence": "HIGH",
+        "sourcesAgree": true,
+        "conflict": null
+      }
+    }
+  },
+  "notes": "During the test run, SerpAPI rate limit (100 plan) was reached for all symbols. Fintables credentials were not configured. Agent-Reach research evidence was available but price not always findable in search results. Yahoo Finance provided verified price data for all 6 test symbols. Consensus status = SINGLE_SOURCE_VERIFIED for all symbols because only Yahoo Finance provided valid data. If Google Finance becomes available, consensus may change to MULTI_SOURCE_CONFIRMED if within tolerance.",
+  "consensusModel": "Deterministic tolerance-based agreement: 5% relative price difference / 10 TRY absolute for BIST prices. If only Yahoo available → SINGLE_SOURCE_VERIFIED. If Yahoo+Google within tolerance → MULTI_SOURCE_CONFIRMED. If Yahoo+Agent-Reach agree → MULTI_SOURCE_CONFIRMED_RESEARCH_SUPPORTED. If providers disagree → PRICE_CONFLICT. System does NOT silently average conflicting prices.",
+  "providerHierarchy": {
+    "yahoo": "PRIMARY_MARKET_DATA",
+    "google_finance": "SECONDARY_MARKET_DATA",
+    "agent_reach": "RESEARCH_PRICE_EVIDENCE",
+    "fintables": "SECONDARY_FUNDAMENTAL_DATA"
+  }
+}
