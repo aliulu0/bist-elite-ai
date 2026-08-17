@@ -32,10 +32,8 @@ Enterprise-grade architecture only.
 
 Market Data Providers
 
-- Yahoo Finance
-- Alpha Vantage
-- Finnhub
-- SerpAPI (Google Finance, Google News, Google AI Mode)
+- Yahoo Finance (PRIMARY market data)
+- SerpAPI (RESEARCH — news/search; Google Finance does not resolve BIST)
 - TCMB
 - KAP
 - MKK

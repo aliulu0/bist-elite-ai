@@ -6,17 +6,17 @@ This document describes how to deploy the BIST Elite AI platform to production u
 
 ### Recommended Stack (Free Tier)
 
-| Component | Service | Cost | Notes |
-|-----------|---------|------|-------|
-| Frontend | Cloudflare Pages | Free | SPA with _redirects for routing |
-| Backend API | Render (Docker) | Free tier | 750 hrs/mo, 512 MB RAM |
-| Scheduler | Render (Background Worker) | Free tier | Same Docker image as API |
-| Database | Supabase PostgreSQL (free 500MB) | Free | Pooler port 6543, TLS enforced |
-| Redis | Upstash Redis (free 100MB) | Free | 20 concurrent connections |
-| Monitoring | UptimeRobot (free 50 monitors) | Free | 5-min interval checks |
-| CI/CD | GitHub Actions (free 2000 min/mo) | Free | Build + Docker + Deploy |
-| Container Registry | GitHub Container Registry (ghcr.io) | Free | SHA + latest tags |
-| Domain | Cloudflare DNS (free plan) | Free | Proxy enabled, SSL Full(strict) |
+| Component          | Service                             | Cost      | Notes                           |
+| ------------------ | ----------------------------------- | --------- | ------------------------------- |
+| Frontend           | Cloudflare Pages                    | Free      | SPA with _redirects for routing |
+| Backend API        | Render (Docker)                     | Free tier | 750 hrs/mo, 512 MB RAM          |
+| Scheduler          | Render (Background Worker)          | Free tier | Same Docker image as API        |
+| Database           | Supabase PostgreSQL (free 500MB)    | Free      | Pooler port 6543, TLS enforced  |
+| Redis              | Upstash Redis (free 100MB)          | Free      | 20 concurrent connections       |
+| Monitoring         | UptimeRobot (free 50 monitors)      | Free      | 5-min interval checks           |
+| CI/CD              | GitHub Actions (free 2000 min/mo)   | Free      | Build + Docker + Deploy         |
+| Container Registry | GitHub Container Registry (ghcr.io) | Free      | SHA + latest tags               |
+| Domain             | Cloudflare DNS (free plan)          | Free      | Proxy enabled, SSL Full(strict) |
 
 ---
 
@@ -49,6 +49,7 @@ Browser ──► Cloudflare DNS ──► Cloudflare Pages (static) ──► R
 4. Use the **pooler port (6543)** with `?pgbonder=true` for production
 
 **Required connection string format:**
+
 ```
 postgresql://postgres:YOUR_PASSWORD@db.xxxxx.supabase.co:6543/postgres?pgbonder=true
 ```
@@ -58,6 +59,7 @@ postgresql://postgres:YOUR_PASSWORD@db.xxxxx.supabase.co:6543/postgres?pgbonder=
 **Note:** Previous docs referenced `?pgbouncer=true` — the correct parameter is `?pgbonder=true` (no 'u'). Verify in Supabase dashboard.
 
 **Prisma schema creation:** The Docker entrypoint runs `prisma migrate deploy` with fallback to `prisma db push`. On first deploy, `db push` creates all tables automatically. For production, create an initial migration:
+
 ```bash
 pnpm --filter @bist-elite/database exec prisma migrate dev --name init --schema=../../packages/database/prisma/schema.prisma
 ```
@@ -70,6 +72,7 @@ pnpm --filter @bist-elite/database exec prisma migrate dev --name init --schema=
 4. Save as `REDIS_URL` in your environment
 
 **Required connection string format:**
+
 ```
 redis://default:YOUR_PASSWORD@xxxxx.upstash.io:6379
 ```
@@ -81,11 +84,11 @@ redis://default:YOUR_PASSWORD@xxxxx.upstash.io:6379
 1. Add your domain to Cloudflare
 2. Create DNS records:
 
-| Type | Name | Value |
-|------|------|-------|
-| CNAME | `@` | `yourdomain.com` (redirect to Cloudflare Pages) |
-| CNAME | `api` | `your-app.onrender.com` |
-| CNAME | `www` | `@` |
+| Type  | Name  | Value                                           |
+| ----- | ----- | ----------------------------------------------- |
+| CNAME | `@`   | `yourdomain.com` (redirect to Cloudflare Pages) |
+| CNAME | `api` | `your-app.onrender.com`                         |
+| CNAME | `www` | `@`                                             |
 
 3. Enable proxy (orange cloud) for all records
 4. SSL/TLS → **Full (strict)**
@@ -101,26 +104,26 @@ redis://default:YOUR_PASSWORD@xxxxx.upstash.io:6379
 
 These 8 variables are validated by `env-validator.ts` at API startup. Missing required vars cause immediate failure:
 
-| Variable | Required | Description | Source |
-|----------|----------|-------------|--------|
-| `DATABASE_URL` | **Yes** | PostgreSQL connection string | Supabase |
-| `REDIS_URL` | **Yes** | Redis connection string | Upstash |
-| `JWT_SECRET` | **Yes** | JWT signing key (min 32 chars, recommend 64) | Generate: `openssl rand -hex 64` |
-| `CORS_ORIGINS` | No | Comma-separated allowed origins | Your domain |
-| `PORT` | No | API server port (default 3001) | — |
-| `NODE_ENV` | No | `development` / `production` / `staging` | — |
-| `LOG_LEVEL` | No | `trace` / `debug` / `info` / `warn` / `error` / `fatal` | — |
-| `SCHEDULER_ENABLED` | No | Enable scheduler (`true`/`false`) | — |
+| Variable            | Required | Description                                             | Source                           |
+| ------------------- | -------- | ------------------------------------------------------- | -------------------------------- |
+| `DATABASE_URL`      | **Yes**  | PostgreSQL connection string                            | Supabase                         |
+| `REDIS_URL`         | **Yes**  | Redis connection string                                 | Upstash                          |
+| `JWT_SECRET`        | **Yes**  | JWT signing key (min 32 chars, recommend 64)            | Generate: `openssl rand -hex 64` |
+| `CORS_ORIGINS`      | No       | Comma-separated allowed origins                         | Your domain                      |
+| `PORT`              | No       | API server port (default 3001)                          | —                                |
+| `NODE_ENV`          | No       | `development` / `production` / `staging`                | —                                |
+| `LOG_LEVEL`         | No       | `trace` / `debug` / `info` / `warn` / `error` / `fatal` | —                                |
+| `SCHEDULER_ENABLED` | No       | Enable scheduler (`true`/`false`)                       | —                                |
 
-### 2.2 Provider API Keys (all optional — simulated data used if unset)
+### 2.2 Provider API Keys (all optional — unconfigured providers return no data)
 
-| Variable | Description |
-|----------|-------------|
-| `FINTABLES_API_KEY` | Fintables market data |
-| `FINNHUB_API_KEY` | Finnhub market data |
-| `KAP_API_KEY` | KAP (Public Disclosure Platform) |
-| `TCMB_API_KEY` | TCMB (Central Bank) |
-| `MKK_API_KEY` | MKK (Central Registry) |
+| Variable            | Description                      |
+| ------------------- | -------------------------------- |
+| `SERPAPI_API_KEY`   | SerpAPI (research: news/search)  |
+| `FINTABLES_API_KEY` | Fintables market data            |
+| `KAP_API_KEY`       | KAP (Public Disclosure Platform) |
+| `TCMB_API_KEY`      | TCMB (Central Bank)              |
+| `MKK_API_KEY`       | MKK (Central Registry)           |
 
 Set all provider `*_ENABLED` vars to `false` if no API keys available (the default).
 
@@ -130,20 +133,20 @@ See `.env.production` for the complete categorized list (54 variables across 14 
 
 Key variable groups:
 
-| Group | Variables | Default Behavior |
-|-------|-----------|-----------------|
-| App | `APP_NAME`, `APP_VERSION`, `APP_ENV`, `APP_DEBUG`, `APP_LOG_LEVEL` | Production mode |
-| Database | `DATABASE_URL` | Bypassed if unset (graceful) |
-| Redis | `REDIS_URL` | Graceful fallback if unset |
-| Auth | `JWT_SECRET`, `JWT_EXPIRES_IN` | Required for JWT signing |
-| CORS | `CORS_ORIGINS` | Comma-separated origins |
-| Rate Limit | `SECURITY_RATE_LIMIT_ENABLED`, `SECURITY_RATE_LIMIT_MAX`, `SECURITY_RATE_LIMIT_WINDOW_MS` | 100 req/min default |
-| Scheduler | `SCHEDULER_ENABLED`, interval overrides | 13 production jobs |
-| Providers | `*_ENABLED`, `*_API_KEY`, `*_BASE_URL`, `*_TIMEOUT_MS`, `*_RETRY_*` | Default to disabled |
-| Macro | `FED_MACRO_ENABLED`, `ECB_MACRO_ENABLED`, `TCMB_MACRO_ENABLED` | Default to disabled |
-| Cache | `CACHE_ENABLED`, `CACHE_TTL`, `CACHE_MAX_ENTRIES`, `CACHE_COMPRESSION_ENABLED` | In-memory LRU + optional Redis |
-| Security | `SECURITY_MAX_BODY_SIZE`, `SECURITY_TIMEOUT_MS`, `SECURITY_FILE_MAX_SIZE` | 10mb body, 30s timeout |
-| Currency | `CURRENCY_RATE_USD`, `CURRENCY_RATE_EUR`, `CURRENCY_RATE_GBP` | Static rates (TRY base) |
+| Group      | Variables                                                                                 | Default Behavior               |
+| ---------- | ----------------------------------------------------------------------------------------- | ------------------------------ |
+| App        | `APP_NAME`, `APP_VERSION`, `APP_ENV`, `APP_DEBUG`, `APP_LOG_LEVEL`                        | Production mode                |
+| Database   | `DATABASE_URL`                                                                            | Bypassed if unset (graceful)   |
+| Redis      | `REDIS_URL`                                                                               | Graceful fallback if unset     |
+| Auth       | `JWT_SECRET`, `JWT_EXPIRES_IN`                                                            | Required for JWT signing       |
+| CORS       | `CORS_ORIGINS`                                                                            | Comma-separated origins        |
+| Rate Limit | `SECURITY_RATE_LIMIT_ENABLED`, `SECURITY_RATE_LIMIT_MAX`, `SECURITY_RATE_LIMIT_WINDOW_MS` | 100 req/min default            |
+| Scheduler  | `SCHEDULER_ENABLED`, interval overrides                                                   | 13 production jobs             |
+| Providers  | `*_ENABLED`, `*_API_KEY`, `*_BASE_URL`, `*_TIMEOUT_MS`, `*_RETRY_*`                       | Default to disabled            |
+| Macro      | `FED_MACRO_ENABLED`, `ECB_MACRO_ENABLED`, `TCMB_MACRO_ENABLED`                            | Default to disabled            |
+| Cache      | `CACHE_ENABLED`, `CACHE_TTL`, `CACHE_MAX_ENTRIES`, `CACHE_COMPRESSION_ENABLED`            | In-memory LRU + optional Redis |
+| Security   | `SECURITY_MAX_BODY_SIZE`, `SECURITY_TIMEOUT_MS`, `SECURITY_FILE_MAX_SIZE`                 | 10mb body, 30s timeout         |
+| Currency   | `CURRENCY_RATE_USD`, `CURRENCY_RATE_EUR`, `CURRENCY_RATE_GBP`                             | Static rates (TRY base)        |
 
 ---
 
@@ -186,6 +189,7 @@ Render is the primary backend host. Both API and Scheduler use Docker deployment
 ### 3.2 Railway (Not recommended for R1-001)
 
 Railway is an alternative backend host, but **Render is the primary target for R1-001**. If using Railway:
+
 1. Install Railway CLI or connect GitHub repo
 2. Create a new project
 3. Add PostgreSQL plugin (or use Supabase URL manually)
@@ -210,12 +214,14 @@ Railway is an alternative backend host, but **Render is the primary target for R
 **SPA Routing:**
 
 The `apps/web/public/_redirects` file handles SPA routing:
+
 ```
 /api/*  https://api.yourdomain.com 200
 /*  /index.html 200
 ```
 
 This ensures:
+
 - All `/api/*` requests are forwarded to the backend
 - All other routes return `index.html` for SPA client-side routing
 - HTTP 200 is returned for all routes (no redirect)
@@ -223,6 +229,7 @@ This ensures:
 **Security Headers:**
 
 The `apps/web/public/_headers` file sets security headers automatically:
+
 - `X-Frame-Options: DENY`
 - `X-Content-Type-Options: nosniff`
 - `Referrer-Policy: strict-origin-when-cross-origin`
@@ -236,6 +243,7 @@ The `apps/web/public/_headers` file sets security headers automatically:
 ### 3.4 Vercel (Not recommended for R1-001)
 
 **Cloudflare Pages is the primary frontend host for R1-001.** If using Vercel:
+
 1. Import GitHub repo to Vercel
 2. Framework preset: **Vite**
 3. Root directory: `apps/web`
@@ -245,7 +253,12 @@ The `apps/web/public/_headers` file sets security headers automatically:
    - `VITE_API_URL`: `https://api.yourdomain.com`
 7. Add `vercel.json` for SPA routing:
    ```json
-   { "routes": [{ "src": "/api/(.*)", "dest": "https://api.yourdomain.com/$1" }, { "src": "/(.*)", "dest": "/index.html" }] }
+   {
+     "routes": [
+       { "src": "/api/(.*)", "dest": "https://api.yourdomain.com/$1" },
+       { "src": "/(.*)", "dest": "/index.html" }
+     ]
+   }
    ```
 
 ---
@@ -256,14 +269,14 @@ GitHub Actions workflows are located in `.github/workflows/`:
 
 ### 4.1 Automatic Workflows
 
-| Workflow | Trigger | Purpose |
-|----------|---------|---------|
-| `ci.yml` | Push/PR to main/develop | Lint, typecheck, unit tests, build |
-| `deploy.yml` | Push to main | Build Docker images → push to ghcr.io → deploy to Render |
-| `docker.yml` | Push/PR to main/develop | Docker compose validation |
-| `integration.yml` | Push/PR to main/develop | Integration tests, smoke tests |
-| `security.yml` | Push/PR + weekly | Dependency audit, secret scan, CodeQL |
-| `release.yml` | Tag `v*` | GitHub release + changelog |
+| Workflow          | Trigger                 | Purpose                                                  |
+| ----------------- | ----------------------- | -------------------------------------------------------- |
+| `ci.yml`          | Push/PR to main/develop | Lint, typecheck, unit tests, build                       |
+| `deploy.yml`      | Push to main            | Build Docker images → push to ghcr.io → deploy to Render |
+| `docker.yml`      | Push/PR to main/develop | Docker compose validation                                |
+| `integration.yml` | Push/PR to main/develop | Integration tests, smoke tests                           |
+| `security.yml`    | Push/PR + weekly        | Dependency audit, secret scan, CodeQL                    |
+| `release.yml`     | Tag `v*`                | GitHub release + changelog                               |
 
 ### 4.2 Deploy Flow
 
@@ -305,11 +318,13 @@ To roll back to a previous deployment:
 ### 5.1 Migrations
 
 Migrations run automatically on startup via `docker/entrypoint.sh`:
+
 ```bash
 npx prisma migrate deploy --schema=packages/database/prisma/schema.prisma
 ```
 
 To create a new migration:
+
 ```bash
 pnpm --filter @bist-elite/database prisma:migrate --name migration_name
 ```
@@ -318,13 +333,14 @@ pnpm --filter @bist-elite/database prisma:migrate --name migration_name
 
 Automatic backup script at `deploy/backup.sh`:
 
-| Backup | Frequency | Retention |
-|--------|-----------|-----------|
-| PostgreSQL dump | Daily (3 AM) | 30 days |
-| Config files (.env, nginx) | Daily | 30 days |
-| Log archive | Daily | 14 days |
+| Backup                     | Frequency    | Retention |
+| -------------------------- | ------------ | --------- |
+| PostgreSQL dump            | Daily (3 AM) | 30 days   |
+| Config files (.env, nginx) | Daily        | 30 days   |
+| Log archive                | Daily        | 14 days   |
 
 **Manual backup:**
+
 ```bash
 pg_dump -Fc -h <host> -U postgres bist_elite_ai > backup_$(date +%Y%m%d).dump
 ```
@@ -341,45 +357,45 @@ pg_restore -h <host> -U postgres -d bist_elite_ai --clean --if-exists backup_202
 
 ### 6.1 Health Endpoints
 
-| Endpoint | Purpose |
-|----------|---------|
-| `GET /health` | Full system health |
-| `GET /health/ready` | Readiness probe |
-| `GET /health/live` | Liveness probe |
-| `GET /api/metrics` | Application metrics |
-| `POST /ai/chat` | AI Chat Assistant |
-| `GET /ai/suggestions` | Suggested chat questions |
-| `GET /api/pipeline/status` | Pipeline status |
-| `POST /api/pipeline/run` | Run full pipeline |
-| `GET /api/scheduler` | Scheduler status |
-| `POST /api/scheduler/{job}/execute` | Trigger scheduler job |
-| `GET /markets/bist` | BIST exchange metadata |
-| `GET /markets/nasdaq` | NASDAQ exchange metadata |
-| `GET /markets/nyse` | NYSE exchange metadata |
+| Endpoint                            | Purpose                  |
+| ----------------------------------- | ------------------------ |
+| `GET /health`                       | Full system health       |
+| `GET /health/ready`                 | Readiness probe          |
+| `GET /health/live`                  | Liveness probe           |
+| `GET /api/metrics`                  | Application metrics      |
+| `POST /ai/chat`                     | AI Chat Assistant        |
+| `GET /ai/suggestions`               | Suggested chat questions |
+| `GET /api/pipeline/status`          | Pipeline status          |
+| `POST /api/pipeline/run`            | Run full pipeline        |
+| `GET /api/scheduler`                | Scheduler status         |
+| `POST /api/scheduler/{job}/execute` | Trigger scheduler job    |
+| `GET /markets/bist`                 | BIST exchange metadata   |
+| `GET /markets/nasdaq`               | NASDAQ exchange metadata |
+| `GET /markets/nyse`                 | NYSE exchange metadata   |
 
 ### 6.2 Health Check Components
 
 The `/health` endpoint reports on:
 
-| Component | Statuses | Description |
-|-----------|----------|-------------|
-| `database` | healthy / unhealthy | PostgreSQL connectivity |
-| `redis` | healthy / degraded | Redis ping (3s timeout) |
-| `memory` | healthy / degraded / unhealthy | Heap usage, GC pressure |
-| `pipeline` | healthy / degraded | Pipeline job success rate |
-| `scheduler` | healthy / degraded | Scheduler job health |
-| `websocket` | healthy | WebSocket gateway status |
+| Component   | Statuses                       | Description               |
+| ----------- | ------------------------------ | ------------------------- |
+| `database`  | healthy / unhealthy            | PostgreSQL connectivity   |
+| `redis`     | healthy / degraded             | Redis ping (3s timeout)   |
+| `memory`    | healthy / degraded / unhealthy | Heap usage, GC pressure   |
+| `pipeline`  | healthy / degraded             | Pipeline job success rate |
+| `scheduler` | healthy / degraded             | Scheduler job health      |
+| `websocket` | healthy                        | WebSocket gateway status  |
 
 ### 6.3 UptimeRobot Setup
 
 1. Create account at https://uptimerobot.com
 2. Add monitors:
 
-| Monitor | URL | Interval |
-|---------|-----|----------|
-| API Health | `https://api.yourdomain.com/health` | 5 min |
-| API Liveness | `https://api.yourdomain.com/health/live` | 5 min |
-| Website | `https://yourdomain.com` | 5 min |
+| Monitor      | URL                                      | Interval |
+| ------------ | ---------------------------------------- | -------- |
+| API Health   | `https://api.yourdomain.com/health`      | 5 min    |
+| API Liveness | `https://api.yourdomain.com/health/live` | 5 min    |
+| Website      | `https://yourdomain.com`                 | 5 min    |
 
 3. Configure alert contacts (email, Slack, Telegram)
 
@@ -400,6 +416,7 @@ Structured JSON logs are output to stdout (console) with these fields:
 ```
 
 Configure via environment:
+
 - `LOG_LEVEL`: `trace` | `debug` | `info` | `warn` | `error` | `fatal`
 - `LOG_CONSOLE`: `true` | `false`
 - `LOG_FILE`: `true` | `false` (for file logging)
@@ -411,6 +428,7 @@ Configure via environment:
 ### 7.1 HTTPS
 
 SSL/TLS is handled automatically by:
+
 - **Render**: Built-in SSL for `*.onrender.com` and custom domains
 - **Cloudflare**: Universal SSL (free) for proxied domains
 - **Railway**: Built-in SSL for `*.railway.app`
@@ -419,18 +437,18 @@ SSL/TLS is handled automatically by:
 
 The API applies these headers via **Helmet** middleware:
 
-| Header | Value | Applied By |
-|--------|-------|------------|
-| `Strict-Transport-Security` | `max-age=31536000; includeSubDomains; preload` | Helmet |
-| `X-Frame-Options` | `DENY` | Helmet + SecurityHeadersMiddleware |
-| `X-Content-Type-Options` | `nosniff` | SecurityHeadersMiddleware |
-| `Referrer-Policy` | `strict-origin-when-cross-origin` | SecurityHeadersMiddleware |
-| `Permissions-Policy` | Restricted (camera, microphone, geolocation, etc.) | SecurityHeadersMiddleware |
-| `X-Permitted-Cross-Domain-Policies` | `none` | SecurityHeadersMiddleware |
-| `Cross-Origin-Embedder-Policy` | `require-corp` | SecurityHeadersMiddleware |
-| `Cross-Origin-Opener-Policy` | `same-origin` | Helmet |
-| `Cross-Origin-Resource-Policy` | `same-origin` | Helmet |
-| `Content-Security-Policy` | Restricted (self + CORS_ORIGINS for connect-src) | Helmet |
+| Header                              | Value                                              | Applied By                         |
+| ----------------------------------- | -------------------------------------------------- | ---------------------------------- |
+| `Strict-Transport-Security`         | `max-age=31536000; includeSubDomains; preload`     | Helmet                             |
+| `X-Frame-Options`                   | `DENY`                                             | Helmet + SecurityHeadersMiddleware |
+| `X-Content-Type-Options`            | `nosniff`                                          | SecurityHeadersMiddleware          |
+| `Referrer-Policy`                   | `strict-origin-when-cross-origin`                  | SecurityHeadersMiddleware          |
+| `Permissions-Policy`                | Restricted (camera, microphone, geolocation, etc.) | SecurityHeadersMiddleware          |
+| `X-Permitted-Cross-Domain-Policies` | `none`                                             | SecurityHeadersMiddleware          |
+| `Cross-Origin-Embedder-Policy`      | `require-corp`                                     | SecurityHeadersMiddleware          |
+| `Cross-Origin-Opener-Policy`        | `same-origin`                                      | Helmet                             |
+| `Cross-Origin-Resource-Policy`      | `same-origin`                                      | Helmet                             |
+| `Content-Security-Policy`           | Restricted (self + CORS_ORIGINS for connect-src)   | Helmet                             |
 
 The frontend also sets security headers via `_headers` file on Cloudflare Pages (see section 3.3).
 
@@ -438,11 +456,11 @@ The frontend also sets security headers via `_headers` file on Cloudflare Pages 
 
 The API uses a **custom rate limit guard** applied globally via `APP_GUARD`:
 
-| Scope | Limit | Window | Applied |
-|-------|-------|--------|---------|
-| API (`/api/*`) | 100 requests | 60 seconds | Default |
-| Health (`/health`, `/health/ready`, `/health/live`) | No limit | — | Excluded |
-| Custom override via env | `SECURITY_RATE_LIMIT_MAX` | `SECURITY_RATE_LIMIT_WINDOW_MS` | Optional |
+| Scope                                               | Limit                     | Window                          | Applied  |
+| --------------------------------------------------- | ------------------------- | ------------------------------- | -------- |
+| API (`/api/*`)                                      | 100 requests              | 60 seconds                      | Default  |
+| Health (`/health`, `/health/ready`, `/health/live`) | No limit                  | —                               | Excluded |
+| Custom override via env                             | `SECURITY_RATE_LIMIT_MAX` | `SECURITY_RATE_LIMIT_WINDOW_MS` | Optional |
 
 Rate limiting uses in-memory storage (Map). Headers returned: `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`, `Retry-After`.
 
@@ -457,6 +475,7 @@ Never commit secrets. The following files are gitignored:
 - `.env.*local`
 
 Secrets are injected via:
+
 - **Render**: Dashboard → Environment Variables
 - **GitHub Actions**: Settings → Secrets and Variables
 - **Docker**: Docker secrets or `--env-file`
@@ -473,12 +492,12 @@ Secrets are injected via:
 
 ### 8.2 Caching
 
-| Layer | Type | TTL |
-|-------|------|-----|
-| CacheService (in-memory) | LRU with namespaces | Configurable |
-| Browser (static assets) | Cache-Control immutable | 1 year |
-| Nginx proxy cache | Static assets | 7 days |
-| Redis (optional) | Enabled via REDIS_URL | Configurable |
+| Layer                    | Type                    | TTL          |
+| ------------------------ | ----------------------- | ------------ |
+| CacheService (in-memory) | LRU with namespaces     | Configurable |
+| Browser (static assets)  | Cache-Control immutable | 1 year       |
+| Nginx proxy cache        | Static assets           | 7 days       |
+| Redis (optional)         | Enabled via REDIS_URL   | Configurable |
 
 ### 8.3 Frontend Performance
 
@@ -500,14 +519,14 @@ Secrets are injected via:
 
 ### Common Issues
 
-| Issue | Solution |
-|-------|----------|
-| API won't start — `DATABASE_URL` missing | Validate env vars — startup fails fast with clear message |
-| Redis connection refused | Check `REDIS_URL`, Upstash allows only TLS connections |
-| Scheduler not running | Set `SCHEDULER_ENABLED=true` |
-| WebSocket not connecting | Verify `/socket.io` proxy in Vite config or nginx |
-| CORS errors | Add domain to `CORS_ORIGINS` |
-| Prisma migration fails | Run `prisma migrate deploy` manually, check migration history |
+| Issue                                    | Solution                                                      |
+| ---------------------------------------- | ------------------------------------------------------------- |
+| API won't start — `DATABASE_URL` missing | Validate env vars — startup fails fast with clear message     |
+| Redis connection refused                 | Check `REDIS_URL`, Upstash allows only TLS connections        |
+| Scheduler not running                    | Set `SCHEDULER_ENABLED=true`                                  |
+| WebSocket not connecting                 | Verify `/socket.io` proxy in Vite config or nginx             |
+| CORS errors                              | Add domain to `CORS_ORIGINS`                                  |
+| Prisma migration fails                   | Run `prisma migrate deploy` manually, check migration history |
 
 ### Health Check Debugging
 
@@ -530,7 +549,7 @@ curl https://api.yourdomain.com/health/live
 - [ ] Upstash Redis created and `REDIS_URL` configured
 - [ ] `JWT_SECRET` generated (min 64 chars random)
 - [ ] `CORS_ORIGINS` set to your domain
-- [ ] Provider API keys configured (Fintables, Finnhub)
+- [ ] Provider API keys configured (SerpAPI, Fintables)
 - [ ] Domain DNS pointing to the platform
 - [ ] SSL enabled (Cloudflare or Render built-in)
 - [ ] GitHub Actions secrets configured

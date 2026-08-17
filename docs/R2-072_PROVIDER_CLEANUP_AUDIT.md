@@ -70,6 +70,22 @@ These files also carry pre-existing changes from other in-flight sprints; they a
 - `apps/api/src/modules/market-data/incremental/incremental-market-data.service.spec.ts` — finnhub→yahoo + pre-existing date-range clipping tests
 - `apps/api/src/modules/macro/__tests__/macro.controller.spec.ts`, `macro.service.spec.ts`, `macro-elite-score.service.spec.ts` — finnhub→tcmb + pre-existing earlyOpportunity/eliteScore tests
 
+## Documentation Classification (Phase 1/2/3)
+
+Repository references to Finnhub / Alpha Vantage were classified and handled as follows:
+
+| Category                                      | Docs                                                                                                                                                                                                                                            | Action                                                                                                                                                                                                                                                                                 |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| OPERATIONAL (env tables, checklists, handoff) | `docs/AI_HANDOFF.md` (CURRENT ARCHITECTURE), `docs/DEPLOYMENT.md`, `docs/GO_LIVE_CHECKLIST.md`, `docs/AI_AGENT.md`                                                                                                                              | **UPDATED** — removed Finnhub/Alpha Vantage as active providers; corrected "simulated data" wording to explicit absence; `FINNHUB_API_KEY`/`FINNHUB_ENABLED` rows dropped; SerpAPI added to keyed-provider docs                                                                        |
+| HISTORICAL sprint/decision records            | `docs/ARCHITECTURE_BIBLE.md`, `docs/MULTI_SOURCE_DATA_ARCHITECTURE.md`, `docs/PROJECT_DECISIONS.md`, `docs/PROJECT_STATUS.md`, `docs/ADR-058-*.md`, `docs/FINAL_RELEASE.md`, `docs/DATA_FLOW_AUDIT.md`, `docs/R2-0xx_*.md`, `MASTER_ROADMAP.md` | **RETAINED as historical evidence** — these record the architecture/evidence as of earlier sprints (e.g., R2-034 "Finnhub HTTP 403 observed", DATA_FLOW_AUDIT finnhub 401s). Rewriting them would falsify sprint history. Current truth is this audit + `R2-072_PROVIDER_MATRIX.json`. |
+| ENV EXAMPLE                                   | `.env.example` (working tree)                                                                                                                                                                                                                   | FINNHUB__/ALPHA_VANTAGE__ blocks removed + R2-072 comment (uncommitted — entangled with pre-existing env edits; ships with those)                                                                                                                                                      |
+| ARTIFACT                                      | `apps/api/tsconfig.tsbuildinfo`                                                                                                                                                                                                                 | build artifact; regenerated, not source                                                                                                                                                                                                                                                |
+
+## Smoke Spec Strengthening (Phase 7)
+
+`real-provider-validation.smoke-spec.ts` provider-config test now also asserts the removed providers are absent:
+`for (const removed of ['finnhub','alpha_vantage','alpha-vantage','finnhub-news']) expect(names).not.toContain(removed)`.
+
 ## Runtime Verification
 
 Standalone probe (`r2-072-runtime-verify.cjs`, reads `.env` without printing keys):
@@ -85,6 +101,20 @@ Standalone probe (`r2-072-runtime-verify.cjs`, reads `.env` without printing key
 - Affected modules (macro | provider-health-monitor | scoring | ai-research | verification-ai | ai-analysis | opportunity-detection | data-research-pipeline | pipeline-orchestrator | scheduler | error-handling | market-data): **1241 passed / 1 skipped**
 - Full API suite: **350 passed, 1 failed** — `error-handling.integration.spec.ts` fails intermittently ONLY under heavy parallel load (passes in isolation; mocked HealthService/AuthService only, no market-data interaction; pre-existing, unrelated to R2-072)
 - Web typecheck: **0 errors**; web vitest is pre-existing broken in this env (no vitest config; `React is not defined`; picks up `frontend/`), unrelated to R2-072 string-only UI changes
+
+## Fake Data Audit (Phase 9)
+
+- **Market-data pipeline**: no mock/fake/simulated price or volume data in production. The smoke spec's real-data gate (`served === true`) + "never fabricates data when every provider fails" test lock this in. Runtime probe returned real Yahoo TRY prices only.
+- `bist-index.service.ts` BIST100/BIST30 values are derived from **real** Yahoo constituent prices and explicitly typed `SYNTHETIC_PROXY` (never labeled as official) — honest, real-data-derived, acceptable.
+- `market-overview.controller.ts:68` comment "BIST100 calculation (simple average for demo)" — the code computes a simple average of **real** fetched prices (not fabricated); the word "demo" is a misleading comment. Pre-existing, outside R2-072 scope, flagged.
+- `common/portfolio-optimization/portfolio-optimization.service.ts` `simulateReturns()` — statistical fallback when a holding's return series is absent; pre-existing, unrelated to market-data pricing. Flagged for review, not modified.
+- Test fixtures (`backtest-test-helpers.ts` stubs, spec mocks) are TEST-only — legitimately retained.
+
+## Architecture Audit (Phase 10)
+
+- Single market-data pipeline: one `MarketDataOrchestrator`, one cache, one opportunity engine — no duplicates introduced.
+- Yahoo → `THYAO.IS` conversion is confined to `yahoo-finance.provider.ts toYahooSymbol()`; SerpAPI receives the bare canonical symbol (`THYAO`). No second normalization pipeline.
+- No autonomous trading. No look-ahead bias changes. No secrets in source (staged diff secret-scanned). No provider claims without runtime evidence.
 
 ## Unresolved Limitations
 

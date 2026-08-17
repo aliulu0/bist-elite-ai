@@ -33,7 +33,7 @@
   - [ ] `DATABASE_URL` — Supabase connection string
   - [ ] `REDIS_URL` — Upstash connection URL
   - [ ] `JWT_SECRET` — 64-char random string
-  - [ ] Provider API keys (Fintables, Finnhub, etc.)
+  - [ ] Provider API keys (SerpAPI, Fintables, etc.)
 
 ---
 
@@ -41,11 +41,11 @@
 
 - [ ] **Cloudflare DNS records** created:
 
-| Type | Name | Value |
-|------|------|-------|
-| CNAME | `@` | `yourdomain.com` (redirect to Cloudflare Pages) |
-| CNAME | `api` | `your-app.onrender.com` |
-| CNAME | `www` | `yourdomain.com` |
+| Type  | Name  | Value                                           |
+| ----- | ----- | ----------------------------------------------- |
+| CNAME | `@`   | `yourdomain.com` (redirect to Cloudflare Pages) |
+| CNAME | `api` | `your-app.onrender.com`                         |
+| CNAME | `www` | `yourdomain.com`                                |
 
 - [ ] **Cloudflare Proxy** enabled (orange cloud) for all records
 - [ ] **SSL/TLS** → Full (strict)
@@ -59,46 +59,45 @@
 
 ### Required (validated at startup)
 
-| Variable | Source | Notes |
-|----------|--------|-------|
-| `DATABASE_URL` | Supabase | `postgresql://postgres:pass@db.xxxxx.supabase.co:6543/postgres?pgbonder=true` |
-| `REDIS_URL` | Upstash | `redis://default:pass@xxxxx.upstash.io:6379` |
-| `JWT_SECRET` | Generate | `openssl rand -hex 64` (min 64 chars) |
-| `CORS_ORIGINS` | Your domain | `https://yourdomain.com,https://www.yourdomain.com` |
-| `PORT` | — | `3001` |
-| `NODE_ENV` | — | `production` |
-| `LOG_LEVEL` | — | `info` |
-| `SCHEDULER_ENABLED` | — | `true` (scheduler service) / `false` (API service) |
+| Variable            | Source      | Notes                                                                         |
+| ------------------- | ----------- | ----------------------------------------------------------------------------- |
+| `DATABASE_URL`      | Supabase    | `postgresql://postgres:pass@db.xxxxx.supabase.co:6543/postgres?pgbonder=true` |
+| `REDIS_URL`         | Upstash     | `redis://default:pass@xxxxx.upstash.io:6379`                                  |
+| `JWT_SECRET`        | Generate    | `openssl rand -hex 64` (min 64 chars)                                         |
+| `CORS_ORIGINS`      | Your domain | `https://yourdomain.com,https://www.yourdomain.com`                           |
+| `PORT`              | —           | `3001`                                                                        |
+| `NODE_ENV`          | —           | `production`                                                                  |
+| `LOG_LEVEL`         | —           | `info`                                                                        |
+| `SCHEDULER_ENABLED` | —           | `true` (scheduler service) / `false` (API service)                            |
 
-### Market Data Providers (leave disabled to use simulated data)
+### Market Data Providers (leave disabled — unconfigured providers return no data)
 
-| Variable | Value |
-|----------|-------|
+| Variable            | Value   |
+| ------------------- | ------- |
 | `FINTABLES_ENABLED` | `false` |
-| `FINNHUB_ENABLED` | `false` |
-| `KAP_ENABLED` | `false` |
-| `TCMB_ENABLED` | `false` |
-| `MKK_ENABLED` | `false` |
+| `KAP_ENABLED`       | `false` |
+| `TCMB_ENABLED`      | `false` |
+| `MKK_ENABLED`       | `false` |
 
 ### Other Backend Variables
 
 Set from `.env.production` template. Key overrides:
 
-| Variable | Production Value |
-|----------|-----------------|
-| `APP_DEBUG` | `false` |
-| `APP_LOG_LEVEL` | `info` |
-| `RATE_LIMIT_MAX_REQUESTS` | `100` |
-| `CACHE_ENABLED` | `true` |
+| Variable                  | Production Value |
+| ------------------------- | ---------------- |
+| `APP_DEBUG`               | `false`          |
+| `APP_LOG_LEVEL`           | `info`           |
+| `RATE_LIMIT_MAX_REQUESTS` | `100`            |
+| `CACHE_ENABLED`           | `true`           |
 
 ---
 
 ## 4. Environment Variables — Frontend (Cloudflare Pages)
 
-| Variable | Value | Notes |
-|----------|-------|-------|
+| Variable       | Value                        | Notes                                             |
+| -------------- | ---------------------------- | ------------------------------------------------- |
 | `VITE_API_URL` | `https://api.yourdomain.com` | Only used for Vite dev proxy; not read at runtime |
-| `NODE_VERSION` | `22` | Cloudflare Pages build environment |
+| `NODE_VERSION` | `22`                         | Cloudflare Pages build environment                |
 
 **Note:** The frontend SDK uses relative URL `/api` (see `apps/web/src/lib/constants.ts`). In production, `/api` requests are proxied via the deployed frontend's domain or redirected via Cloudflare Pages redirects. If deploying API separately on `api.yourdomain.com`, the `_redirects` file handles cross-origin routing.
 
@@ -226,11 +225,11 @@ curl -f https://yourdomain.com
 
 ### 7.1 UptimeRobot Monitors
 
-| Monitor | URL | Interval |
-|---------|-----|----------|
-| API Health | `https://api.yourdomain.com/health` | 5 min |
-| API Liveness | `https://api.yourdomain.com/health/live` | 5 min |
-| Frontend | `https://yourdomain.com` | 5 min |
+| Monitor      | URL                                      | Interval |
+| ------------ | ---------------------------------------- | -------- |
+| API Health   | `https://api.yourdomain.com/health`      | 5 min    |
+| API Liveness | `https://api.yourdomain.com/health/live` | 5 min    |
+| Frontend     | `https://yourdomain.com`                 | 5 min    |
 
 ### 7.2 Render Dashboard Monitoring
 
@@ -241,6 +240,7 @@ curl -f https://yourdomain.com
 ### 7.3 Health Endpoint Monitoring
 
 The `/health` endpoint returns:
+
 ```json
 {
   "status": "healthy",
@@ -261,12 +261,13 @@ The `/health` endpoint returns:
 
 ### 8.1 Database Backup
 
-| Method | Frequency | Retention | Command |
-|--------|-----------|-----------|---------|
-| Supabase Daily Backup | Daily (automatic) | 7 days (free) | Enabled by default in Supabase |
-| Manual pg_dump | On-demand | Indefinite | `pg_dump -Fc "YOUR_DATABASE_URL" > backup_$(date +%Y%m%d).dump` |
+| Method                | Frequency         | Retention     | Command                                                         |
+| --------------------- | ----------------- | ------------- | --------------------------------------------------------------- |
+| Supabase Daily Backup | Daily (automatic) | 7 days (free) | Enabled by default in Supabase                                  |
+| Manual pg_dump        | On-demand         | Indefinite    | `pg_dump -Fc "YOUR_DATABASE_URL" > backup_$(date +%Y%m%d).dump` |
 
 **Restore:**
+
 ```bash
 pg_restore --clean --if-exists -d "YOUR_DATABASE_URL" backup_20250101.dump
 ```
@@ -278,16 +279,19 @@ Upstash Redis data is persisted automatically. No manual backup needed. In case 
 ### 8.3 Deployment Rollback
 
 **Render:**
+
 1. Go to Render Dashboard → bist-elite-api → Deploys
 2. Find the last working deploy
 3. Click "Manual Deploy" → "Deploy existing image"
 
 **Cloudflare Pages:**
+
 1. Go to Cloudflare Dashboard → Pages → bist-elite-ai
 2. Find the last working deployment
 3. Click "Rollback to this deployment"
 
 **GitHub:**
+
 ```bash
 git revert HEAD  # Revert last commit
 git push origin main  # Triggers deploy workflow
@@ -318,16 +322,16 @@ curl -f https://api.yourdomain.com/health
 
 ### Common Issues
 
-| Symptom | Likely Cause | Solution |
-|---------|-------------|----------|
-| API won't start | Missing `DATABASE_URL` or `JWT_SECRET` | Check env validator error in logs |
-| Database health fails | Supabase connection string wrong | Verify `?pgbonder=true` and password |
-| Redis health fails | Upstash URL wrong or network restricted | Check `REDIS_URL` format, ensure no firewall |
-| Frontend loads blank | SPA routing not set up | Verify `_redirects` file deployed with build |
-| CORS errors in browser | `CORS_ORIGINS` doesn't match frontend URL | Add frontend domain to CORS_ORIGINS |
-| WebSocket won't connect | Socket.io path not proxied | Ensure `/socket.io` is forwarded in Cloudflare |
-| Scheduler not running | `SCHEDULER_ENABLED` not `true` | Add env var to scheduler service |
-| HTTPS warning | SSL not set to Full (strict) | Cloudflare SSL/TLS → Full (strict) |
+| Symptom                 | Likely Cause                              | Solution                                       |
+| ----------------------- | ----------------------------------------- | ---------------------------------------------- |
+| API won't start         | Missing `DATABASE_URL` or `JWT_SECRET`    | Check env validator error in logs              |
+| Database health fails   | Supabase connection string wrong          | Verify `?pgbonder=true` and password           |
+| Redis health fails      | Upstash URL wrong or network restricted   | Check `REDIS_URL` format, ensure no firewall   |
+| Frontend loads blank    | SPA routing not set up                    | Verify `_redirects` file deployed with build   |
+| CORS errors in browser  | `CORS_ORIGINS` doesn't match frontend URL | Add frontend domain to CORS_ORIGINS            |
+| WebSocket won't connect | Socket.io path not proxied                | Ensure `/socket.io` is forwarded in Cloudflare |
+| Scheduler not running   | `SCHEDULER_ENABLED` not `true`            | Add env var to scheduler service               |
+| HTTPS warning           | SSL not set to Full (strict)              | Cloudflare SSL/TLS → Full (strict)             |
 
 ### Logs
 
@@ -374,4 +378,4 @@ curl -f https://api.yourdomain.com/health
 
 ---
 
-*End of Go-Live Checklist — R1-001*
+_End of Go-Live Checklist — R1-001_

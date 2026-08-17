@@ -240,6 +240,10 @@ describeOrSkip('Real Provider Runtime Validation (SMOKE)', () => {
       for (const provider of ['fintables', 'serpapi', 'yahoo', 'kap', 'tcmb', 'mkk']) {
         expect(names).toContain(provider);
       }
+      // R2-072: removed providers must NOT be active anywhere in the runtime.
+      for (const removed of ['finnhub', 'alpha_vantage', 'alpha-vantage', 'finnhub-news']) {
+        expect(names).not.toContain(removed);
+      }
       for (const entry of configuration) {
         expect(typeof entry.priority).toBe('number');
         expect(typeof entry.enabled).toBe('boolean');
