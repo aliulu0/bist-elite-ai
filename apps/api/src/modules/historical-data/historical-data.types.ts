@@ -10,6 +10,8 @@ export interface CorporateAction {
   description: string;
 }
 
+export type FundamentalDataStatus = 'AVAILABLE' | 'PARTIALLY_AVAILABLE' | 'UNAVAILABLE';
+
 export interface FundamentalData {
   priceToBook: number | null;
   evToEBITDA: number | null;
@@ -21,6 +23,22 @@ export interface FundamentalData {
   marketCap: number | null;
   sector: string | null;
   companyName: string | null;
+  /** Provider that supplied these fundamentals (e.g. 'fintables'). */
+  provider?: string | null;
+  /** Timestamp when the data was retrieved from the provider. */
+  retrievedAt?: string | null;
+  /** Earliest timestamp at which this data can be used (point-in-time). */
+  availableAt?: string | null;
+  /** Fiscal period end date the figures refer to. */
+  periodEndDate?: string | null;
+  /** Company announcement date of these figures. */
+  announcementDate?: string | null;
+  /** Reporting currency of the figures. */
+  currency?: string | null;
+  /** Truth status of the underlying data. */
+  dataStatus?: FundamentalDataStatus | null;
+  /** Confidence 0..1 that the reported fields are real and complete. */
+  confidence?: number | null;
 }
 
 export interface ProviderMetadata {

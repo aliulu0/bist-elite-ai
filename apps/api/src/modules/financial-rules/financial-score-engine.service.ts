@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import {
+  FinancialDataStatus,
   FinancialScoreResult,
   ScoreBreakdown,
   ScoreBreakdownItem,
@@ -29,10 +30,13 @@ export class FinancialScoreEngine {
     const passedRules = rules.filter((r) => r.status === 'PASS').length;
     const warningRules = rules.filter((r) => r.status === 'WARNING').length;
     const failedRules = rules.filter((r) => r.status === 'FAIL').length;
+    const unavailableRules = rules.filter((r) => r.status === 'UNAVAILABLE').length;
+    const dataStatus = this.determineDataStatus(breakdown.totalWeight, unavailableRules);
+    const isValid = breakdown.totalWeight > 0;
 
     this.logger.debug(
       `Scored ${symbol}: ${score.toFixed(1)} (${grade}) ` +
-        `[confidence: ${(confidence * 100).toFixed(0)}%]`,
+        `[confidence: ${(confidence * 100).toFixed(0)}%, status: ${dataStatus}]`,
     );
 
     return {
@@ -44,6 +48,9 @@ export class FinancialScoreEngine {
       failedRules,
       confidence,
       breakdown,
+      dataStatus,
+      isValid,
+      unavailableRules,
     };
   }
 
@@ -60,7 +67,9 @@ export class FinancialScoreEngine {
       };
     });
 
-    const totalWeight = items.reduce((sum, item) => sum + item.weight, 0);
+    const totalWeight = items
+      .filter((item) => item.status !== 'UNAVAILABLE')
+      .reduce((sum, item) => sum + item.weight, 0);
 
     return { items, totalWeight };
   }
@@ -73,6 +82,8 @@ export class FinancialScoreEngine {
         return weight * 0.5;
       case 'FAIL':
         return 0;
+      case 'UNAVAILABLE':
+        return 0;
       default:
         return 0;
     }
@@ -82,6 +93,15 @@ export class FinancialScoreEngine {
     if (breakdown.totalWeight === 0) return 0;
     const earned = breakdown.items.reduce((sum, item) => sum + item.contribution, 0);
     return (earned / breakdown.totalWeight) * 100;
+  }
+
+  private determineDataStatus(
+    availableWeight: number,
+    unavailableRules: number,
+  ): FinancialDataStatus {
+    if (availableWeight === 0) return 'UNAVAILABLE';
+    if (unavailableRules > 0) return 'PARTIALLY_AVAILABLE';
+    return 'AVAILABLE';
   }
 
   private determineGrade(score: number): ScoreGrade {

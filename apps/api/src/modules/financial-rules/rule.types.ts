@@ -1,4 +1,4 @@
-export type RuleStatus = 'PASS' | 'WARNING' | 'FAIL';
+export type RuleStatus = 'PASS' | 'WARNING' | 'FAIL' | 'UNAVAILABLE';
 
 export interface RuleResult {
   id: string;

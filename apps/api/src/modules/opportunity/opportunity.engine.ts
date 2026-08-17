@@ -14,7 +14,7 @@ export interface OpportunityInput {
   confluence: ConfluenceResult;
   financialScore: FinancialScoreResult;
   technicalScore: TechnicalScore;
-  smartMoney: SmartMoneyResult;
+  smartMoney: SmartMoneyResult | null;
   marketStructure: MarketStructureResult;
 }
 
@@ -24,6 +24,7 @@ interface DimensionEvaluation {
   contribution: number;
   strengths: string[];
   riskFactors: string[];
+  available?: boolean;
 }
 
 const AGREEMENT_RANK: Record<string, number> = {
@@ -141,6 +142,17 @@ export class OpportunityEngine {
   }
 
   private evaluateFinancial(score: FinancialScoreResult): DimensionEvaluation {
+    if (score.dataStatus === 'UNAVAILABLE') {
+      return {
+        score: 0,
+        weight: 0,
+        contribution: 0,
+        strengths: [],
+        riskFactors: ['Financial data unavailable'],
+        available: false,
+      };
+    }
+
     const strengths: string[] = [];
     const riskFactors: string[] = [];
 
@@ -166,9 +178,10 @@ export class OpportunityEngine {
     return {
       score: normalized,
       weight: this.config.dimensionWeights.financial,
-      contribution: normalized * this.config.dimensionWeights.financial / 100,
+      contribution: (normalized * this.config.dimensionWeights.financial) / 100,
       strengths,
       riskFactors,
+      available: true,
     };
   }
 
@@ -192,7 +205,7 @@ export class OpportunityEngine {
     return {
       score: normalized,
       weight: this.config.dimensionWeights.technical,
-      contribution: normalized * this.config.dimensionWeights.technical / 100,
+      contribution: (normalized * this.config.dimensionWeights.technical) / 100,
       strengths,
       riskFactors,
     };
@@ -221,15 +234,25 @@ export class OpportunityEngine {
     return {
       score: normalized,
       weight: this.config.dimensionWeights.confluence,
-      contribution: normalized * this.config.dimensionWeights.confluence / 100,
+      contribution: (normalized * this.config.dimensionWeights.confluence) / 100,
       strengths,
       riskFactors,
     };
   }
 
-  private evaluateSmartMoney(result: SmartMoneyResult): DimensionEvaluation {
+  private evaluateSmartMoney(result: SmartMoneyResult | null): DimensionEvaluation {
     const strengths: string[] = [];
     const riskFactors: string[] = [];
+
+    if (!result) {
+      return {
+        score: 0,
+        weight: this.config.dimensionWeights.smartMoney,
+        contribution: 0,
+        strengths,
+        riskFactors: ['Smart money data unavailable'],
+      };
+    }
 
     if (result.accumulationScore >= this.config.smartMoney.minAccumulationScore) {
       strengths.push(`Accumulation detected: ${result.accumulationScore}`);
@@ -255,7 +278,7 @@ export class OpportunityEngine {
     return {
       score: normalized,
       weight: this.config.dimensionWeights.smartMoney,
-      contribution: normalized * this.config.dimensionWeights.smartMoney / 100,
+      contribution: (normalized * this.config.dimensionWeights.smartMoney) / 100,
       strengths,
       riskFactors,
     };
@@ -299,7 +322,8 @@ export class OpportunityEngine {
     return {
       score: this.normalizeScore(structureScore),
       weight: this.config.dimensionWeights.marketStructure,
-      contribution: this.normalizeScore(structureScore) * this.config.dimensionWeights.marketStructure / 100,
+      contribution:
+        (this.normalizeScore(structureScore) * this.config.dimensionWeights.marketStructure) / 100,
       strengths,
       riskFactors,
     };
@@ -312,14 +336,15 @@ export class OpportunityEngine {
     smartMoneyEval: DimensionEvaluation,
     structureEval: DimensionEvaluation,
   ): number {
-    const total =
-      financial.contribution +
-      technical.contribution +
-      confluenceEval.contribution +
-      smartMoneyEval.contribution +
-      structureEval.contribution;
+    const dimensions = [financial, technical, confluenceEval, smartMoneyEval, structureEval];
+    const available = dimensions.filter((d) => d.available !== false);
+    const totalWeight = available.reduce((sum, d) => sum + d.weight, 0);
 
-    return Math.round(Math.min(100, Math.max(0, total)));
+    if (totalWeight === 0) return 0;
+
+    const total = available.reduce((sum, d) => sum + d.contribution, 0);
+
+    return Math.round(Math.min(100, Math.max(0, (total / totalWeight) * 100)));
   }
 
   private calculateConfidence(
@@ -327,26 +352,25 @@ export class OpportunityEngine {
     confluence: ConfluenceResult,
     financialScore: FinancialScoreResult,
     technicalScore: TechnicalScore,
-    smartMoney: SmartMoneyResult,
+    smartMoney: SmartMoneyResult | null,
   ): number {
     const scores = [
       candidate.confidence,
       confluence.confidence,
-      financialScore.confidence,
+      financialScore.dataStatus === 'UNAVAILABLE' ? undefined : financialScore.confidence,
       technicalScore.confidence,
-      smartMoney.smartMoneyConfidence,
+      smartMoney?.smartMoneyConfidence,
     ];
 
-    const validScores = scores.filter((s) => typeof s === 'number' && !isNaN(s));
+    const validScores: number[] = scores.filter(
+      (s): s is number => typeof s === 'number' && !isNaN(s),
+    );
     if (validScores.length === 0) return 0;
 
     return validScores.reduce((a, b) => a + b, 0) / validScores.length;
   }
 
-  private determineLevel(
-    score: number,
-    earlyOpportunity: boolean,
-  ): OpportunityLevel {
+  private determineLevel(score: number, earlyOpportunity: boolean): OpportunityLevel {
     if (!earlyOpportunity) return 'NONE';
 
     if (score >= this.config.levelThresholds.veryHigh) return 'VERY_HIGH';

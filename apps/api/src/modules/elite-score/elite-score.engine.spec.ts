@@ -100,13 +100,25 @@ describe('EliteScoreEngine', () => {
 
   describe('AAA scenario', () => {
     it('should produce AAA rating for excellent inputs', () => {
-      const result = engine.evaluate(makeInput({
-        opportunity: makeOpportunity({ opportunityScore: 95, earlyOpportunity: true }),
-        candidate: makeCandidate({ candidateScore: 92, priority: 'VERY_HIGH', confidence: 0.9 }),
-        confluence: makeConfluence({ confluenceScore: 90, agreement: 'VERY_HIGH', confidence: 0.9 }),
-        financialScore: makeFinancialScore({ score: 95, grade: 'A+', passedRules: 6, failedRules: 0, confidence: 0.95 }),
-        technicalScore: makeTechnicalScore({ score: 92, grade: 'A+', confidence: 0.9 }),
-      }));
+      const result = engine.evaluate(
+        makeInput({
+          opportunity: makeOpportunity({ opportunityScore: 95, earlyOpportunity: true }),
+          candidate: makeCandidate({ candidateScore: 92, priority: 'VERY_HIGH', confidence: 0.9 }),
+          confluence: makeConfluence({
+            confluenceScore: 90,
+            agreement: 'VERY_HIGH',
+            confidence: 0.9,
+          }),
+          financialScore: makeFinancialScore({
+            score: 95,
+            grade: 'A+',
+            passedRules: 6,
+            failedRules: 0,
+            confidence: 0.95,
+          }),
+          technicalScore: makeTechnicalScore({ score: 92, grade: 'A+', confidence: 0.9 }),
+        }),
+      );
       expect(result.rating).toBe('AAA');
       expect(result.eliteScore).toBeGreaterThanOrEqual(90);
       expect(result.priority).toBe('CRITICAL');
@@ -115,13 +127,21 @@ describe('EliteScoreEngine', () => {
 
   describe('AA scenario', () => {
     it('should produce AA rating for strong inputs', () => {
-      const result = engine.evaluate(makeInput({
-        opportunity: makeOpportunity({ opportunityScore: 85, earlyOpportunity: true }),
-        candidate: makeCandidate({ candidateScore: 82, priority: 'VERY_HIGH', confidence: 0.8 }),
-        confluence: makeConfluence({ confluenceScore: 82, agreement: 'HIGH', confidence: 0.8 }),
-        financialScore: makeFinancialScore({ score: 85, grade: 'A', passedRules: 5, failedRules: 1, confidence: 0.8 }),
-        technicalScore: makeTechnicalScore({ score: 82, grade: 'A', confidence: 0.8 }),
-      }));
+      const result = engine.evaluate(
+        makeInput({
+          opportunity: makeOpportunity({ opportunityScore: 85, earlyOpportunity: true }),
+          candidate: makeCandidate({ candidateScore: 82, priority: 'VERY_HIGH', confidence: 0.8 }),
+          confluence: makeConfluence({ confluenceScore: 82, agreement: 'HIGH', confidence: 0.8 }),
+          financialScore: makeFinancialScore({
+            score: 85,
+            grade: 'A',
+            passedRules: 5,
+            failedRules: 1,
+            confidence: 0.8,
+          }),
+          technicalScore: makeTechnicalScore({ score: 82, grade: 'A', confidence: 0.8 }),
+        }),
+      );
       expect(result.rating).toBe('AA');
       expect(result.eliteScore).toBeGreaterThanOrEqual(80);
       expect(result.priority).toBe('VERY_HIGH');
@@ -130,19 +150,27 @@ describe('EliteScoreEngine', () => {
 
   describe('rejected opportunity', () => {
     it('should return NONE priority when opportunity is not valid', () => {
-      const result = engine.evaluate(makeInput({
-        opportunity: makeOpportunity({ isValid: false }),
-      }));
+      const result = engine.evaluate(
+        makeInput({
+          opportunity: makeOpportunity({ isValid: false }),
+        }),
+      );
       expect(result.isValid).toBe(false);
       expect(result.priority).toBe('NONE');
       expect(result.eliteScore).toBe(0);
     });
 
     it('should return NONE priority when candidate is rejected', () => {
-      const result = engine.evaluate(makeInput({
-        candidate: makeCandidate({ candidate: false, priority: 'REJECT', candidateScore: 10 }),
-        opportunity: makeOpportunity({ earlyOpportunity: false, opportunityLevel: 'NONE', opportunityScore: 15 }),
-      }));
+      const result = engine.evaluate(
+        makeInput({
+          candidate: makeCandidate({ candidate: false, priority: 'REJECT', candidateScore: 10 }),
+          opportunity: makeOpportunity({
+            earlyOpportunity: false,
+            opportunityLevel: 'NONE',
+            opportunityScore: 15,
+          }),
+        }),
+      );
       expect(result.eliteScore).toBeLessThan(50);
       expect(result.priority).not.toBe('CRITICAL');
     });
@@ -150,33 +178,39 @@ describe('EliteScoreEngine', () => {
 
   describe('low confidence', () => {
     it('should have low confidence when inputs are low confidence', () => {
-      const result = engine.evaluate(makeInput({
-        candidate: makeCandidate({ confidence: 0.2 }),
-        confluence: makeConfluence({ confidence: 0.2 }),
-        financialScore: makeFinancialScore({ confidence: 0.2 }),
-        technicalScore: makeTechnicalScore({ confidence: 0.2 }),
-      }));
+      const result = engine.evaluate(
+        makeInput({
+          candidate: makeCandidate({ confidence: 0.2 }),
+          confluence: makeConfluence({ confidence: 0.2 }),
+          financialScore: makeFinancialScore({ confidence: 0.2 }),
+          technicalScore: makeTechnicalScore({ confidence: 0.2 }),
+        }),
+      );
       expect(result.confidence).toBeLessThan(0.3);
     });
 
     it('should have high confidence when inputs are high confidence', () => {
-      const result = engine.evaluate(makeInput({
-        candidate: makeCandidate({ confidence: 0.9 }),
-        confluence: makeConfluence({ confidence: 0.9 }),
-        financialScore: makeFinancialScore({ confidence: 0.9 }),
-        technicalScore: makeTechnicalScore({ confidence: 0.9 }),
-      }));
+      const result = engine.evaluate(
+        makeInput({
+          candidate: makeCandidate({ confidence: 0.9 }),
+          confluence: makeConfluence({ confidence: 0.9 }),
+          financialScore: makeFinancialScore({ confidence: 0.9 }),
+          technicalScore: makeTechnicalScore({ confidence: 0.9 }),
+        }),
+      );
       expect(result.confidence).toBeGreaterThan(0.8);
     });
 
     it('should not set earlyOpportunity when confidence is below threshold', () => {
-      const result = engine.evaluate(makeInput({
-        opportunity: makeOpportunity({ earlyOpportunity: true }),
-        candidate: makeCandidate({ confidence: 0.1 }),
-        confluence: makeConfluence({ confidence: 0.1 }),
-        financialScore: makeFinancialScore({ confidence: 0.1 }),
-        technicalScore: makeTechnicalScore({ confidence: 0.1 }),
-      }));
+      const result = engine.evaluate(
+        makeInput({
+          opportunity: makeOpportunity({ earlyOpportunity: true }),
+          candidate: makeCandidate({ confidence: 0.1 }),
+          confluence: makeConfluence({ confidence: 0.1 }),
+          financialScore: makeFinancialScore({ confidence: 0.1 }),
+          technicalScore: makeTechnicalScore({ confidence: 0.1 }),
+        }),
+      );
       expect(result.earlyOpportunity).toBe(false);
     });
   });
@@ -227,7 +261,7 @@ describe('EliteScoreEngine', () => {
     it('should calculate contributions correctly', () => {
       const result = engine.evaluate(makeInput());
       const b = result.breakdown;
-      const expectedFinancial = Math.round(72 * 25 / 100 * 100) / 100;
+      const expectedFinancial = Math.round(((72 * 25) / 100) * 100) / 100;
       expect(b.financial.contribution).toBeCloseTo(expectedFinancial, 1);
     });
 
@@ -242,24 +276,28 @@ describe('EliteScoreEngine', () => {
 
   describe('priority validation', () => {
     it('should assign CRITICAL for eliteScore >= 90', () => {
-      const result = engine.evaluate(makeInput({
-        opportunity: makeOpportunity({ opportunityScore: 95 }),
-        candidate: makeCandidate({ candidateScore: 92 }),
-        confluence: makeConfluence({ confluenceScore: 90 }),
-        financialScore: makeFinancialScore({ score: 95 }),
-        technicalScore: makeTechnicalScore({ score: 92 }),
-      }));
+      const result = engine.evaluate(
+        makeInput({
+          opportunity: makeOpportunity({ opportunityScore: 95 }),
+          candidate: makeCandidate({ candidateScore: 92 }),
+          confluence: makeConfluence({ confluenceScore: 90 }),
+          financialScore: makeFinancialScore({ score: 95 }),
+          technicalScore: makeTechnicalScore({ score: 92 }),
+        }),
+      );
       expect(result.priority).toBe('CRITICAL');
     });
 
     it('should assign VERY_HIGH for eliteScore 80-89', () => {
-      const result = engine.evaluate(makeInput({
-        opportunity: makeOpportunity({ opportunityScore: 85 }),
-        candidate: makeCandidate({ candidateScore: 82 }),
-        confluence: makeConfluence({ confluenceScore: 82 }),
-        financialScore: makeFinancialScore({ score: 85 }),
-        technicalScore: makeTechnicalScore({ score: 82 }),
-      }));
+      const result = engine.evaluate(
+        makeInput({
+          opportunity: makeOpportunity({ opportunityScore: 85 }),
+          candidate: makeCandidate({ candidateScore: 82 }),
+          confluence: makeConfluence({ confluenceScore: 82 }),
+          financialScore: makeFinancialScore({ score: 85 }),
+          technicalScore: makeTechnicalScore({ score: 82 }),
+        }),
+      );
       expect(result.priority).toBe('VERY_HIGH');
     });
 
@@ -269,35 +307,45 @@ describe('EliteScoreEngine', () => {
     });
 
     it('should assign MEDIUM for eliteScore 55-69', () => {
-      const result = engine.evaluate(makeInput({
-        opportunity: makeOpportunity({ opportunityScore: 58 }),
-        candidate: makeCandidate({ candidateScore: 55 }),
-        confluence: makeConfluence({ confluenceScore: 55 }),
-        financialScore: makeFinancialScore({ score: 58 }),
-        technicalScore: makeTechnicalScore({ score: 55 }),
-      }));
+      const result = engine.evaluate(
+        makeInput({
+          opportunity: makeOpportunity({ opportunityScore: 58 }),
+          candidate: makeCandidate({ candidateScore: 55 }),
+          confluence: makeConfluence({ confluenceScore: 55 }),
+          financialScore: makeFinancialScore({ score: 58 }),
+          technicalScore: makeTechnicalScore({ score: 55 }),
+        }),
+      );
       expect(result.priority).toBe('MEDIUM');
     });
 
     it('should assign LOW for eliteScore 40-54', () => {
-      const result = engine.evaluate(makeInput({
-        opportunity: makeOpportunity({ opportunityScore: 45 }),
-        candidate: makeCandidate({ candidateScore: 42 }),
-        confluence: makeConfluence({ confluenceScore: 42 }),
-        financialScore: makeFinancialScore({ score: 45 }),
-        technicalScore: makeTechnicalScore({ score: 42 }),
-      }));
+      const result = engine.evaluate(
+        makeInput({
+          opportunity: makeOpportunity({ opportunityScore: 45 }),
+          candidate: makeCandidate({ candidateScore: 42 }),
+          confluence: makeConfluence({ confluenceScore: 42 }),
+          financialScore: makeFinancialScore({ score: 45 }),
+          technicalScore: makeTechnicalScore({ score: 42 }),
+        }),
+      );
       expect(result.priority).toBe('LOW');
     });
 
     it('should assign NONE for eliteScore < 40', () => {
-      const result = engine.evaluate(makeInput({
-        opportunity: makeOpportunity({ opportunityScore: 30, earlyOpportunity: false, opportunityLevel: 'NONE' }),
-        candidate: makeCandidate({ candidateScore: 25, priority: 'REJECT' }),
-        confluence: makeConfluence({ confluenceScore: 25, agreement: 'VERY_LOW' }),
-        financialScore: makeFinancialScore({ score: 30, passedRules: 1, failedRules: 4 }),
-        technicalScore: makeTechnicalScore({ score: 25 }),
-      }));
+      const result = engine.evaluate(
+        makeInput({
+          opportunity: makeOpportunity({
+            opportunityScore: 30,
+            earlyOpportunity: false,
+            opportunityLevel: 'NONE',
+          }),
+          candidate: makeCandidate({ candidateScore: 25, priority: 'REJECT' }),
+          confluence: makeConfluence({ confluenceScore: 25, agreement: 'VERY_LOW' }),
+          financialScore: makeFinancialScore({ score: 30, passedRules: 1, failedRules: 4 }),
+          technicalScore: makeTechnicalScore({ score: 25 }),
+        }),
+      );
       expect(result.priority).toBe('NONE');
     });
   });
@@ -329,13 +377,19 @@ describe('EliteScoreEngine', () => {
     });
 
     it('should show not recommended for NONE priority', () => {
-      const result = engine.evaluate(makeInput({
-        opportunity: makeOpportunity({ earlyOpportunity: false, opportunityLevel: 'NONE', opportunityScore: 10 }),
-        candidate: makeCandidate({ candidate: false, priority: 'REJECT', candidateScore: 10 }),
-        confluence: makeConfluence({ confluenceScore: 10, agreement: 'VERY_LOW' }),
-        financialScore: makeFinancialScore({ score: 10, passedRules: 0, failedRules: 5 }),
-        technicalScore: makeTechnicalScore({ score: 10 }),
-      }));
+      const result = engine.evaluate(
+        makeInput({
+          opportunity: makeOpportunity({
+            earlyOpportunity: false,
+            opportunityLevel: 'NONE',
+            opportunityScore: 10,
+          }),
+          candidate: makeCandidate({ candidate: false, priority: 'REJECT', candidateScore: 10 }),
+          confluence: makeConfluence({ confluenceScore: 10, agreement: 'VERY_LOW' }),
+          financialScore: makeFinancialScore({ score: 10, passedRules: 0, failedRules: 5 }),
+          technicalScore: makeTechnicalScore({ score: 10 }),
+        }),
+      );
       expect(result.summary).toContain('Not recommended');
     });
   });
@@ -347,35 +401,45 @@ describe('EliteScoreEngine', () => {
     });
 
     it('should assign BBB for eliteScore 60-69', () => {
-      const result = engine.evaluate(makeInput({
-        opportunity: makeOpportunity({ opportunityScore: 62 }),
-        candidate: makeCandidate({ candidateScore: 60 }),
-        confluence: makeConfluence({ confluenceScore: 60 }),
-        financialScore: makeFinancialScore({ score: 62 }),
-        technicalScore: makeTechnicalScore({ score: 60 }),
-      }));
+      const result = engine.evaluate(
+        makeInput({
+          opportunity: makeOpportunity({ opportunityScore: 62 }),
+          candidate: makeCandidate({ candidateScore: 60 }),
+          confluence: makeConfluence({ confluenceScore: 60 }),
+          financialScore: makeFinancialScore({ score: 62 }),
+          technicalScore: makeTechnicalScore({ score: 60 }),
+        }),
+      );
       expect(result.rating).toBe('BBB');
     });
 
     it('should assign BB for eliteScore 50-59', () => {
-      const result = engine.evaluate(makeInput({
-        opportunity: makeOpportunity({ opportunityScore: 52 }),
-        candidate: makeCandidate({ candidateScore: 50 }),
-        confluence: makeConfluence({ confluenceScore: 50 }),
-        financialScore: makeFinancialScore({ score: 52 }),
-        technicalScore: makeTechnicalScore({ score: 50 }),
-      }));
+      const result = engine.evaluate(
+        makeInput({
+          opportunity: makeOpportunity({ opportunityScore: 52 }),
+          candidate: makeCandidate({ candidateScore: 50 }),
+          confluence: makeConfluence({ confluenceScore: 50 }),
+          financialScore: makeFinancialScore({ score: 52 }),
+          technicalScore: makeTechnicalScore({ score: 50 }),
+        }),
+      );
       expect(result.rating).toBe('BB');
     });
 
     it('should assign D for eliteScore < 30', () => {
-      const result = engine.evaluate(makeInput({
-        opportunity: makeOpportunity({ opportunityScore: 15, earlyOpportunity: false, opportunityLevel: 'NONE' }),
-        candidate: makeCandidate({ candidateScore: 10, priority: 'REJECT' }),
-        confluence: makeConfluence({ confluenceScore: 10, agreement: 'VERY_LOW' }),
-        financialScore: makeFinancialScore({ score: 15, passedRules: 0, failedRules: 5 }),
-        technicalScore: makeTechnicalScore({ score: 10 }),
-      }));
+      const result = engine.evaluate(
+        makeInput({
+          opportunity: makeOpportunity({
+            opportunityScore: 15,
+            earlyOpportunity: false,
+            opportunityLevel: 'NONE',
+          }),
+          candidate: makeCandidate({ candidateScore: 10, priority: 'REJECT' }),
+          confluence: makeConfluence({ confluenceScore: 10, agreement: 'VERY_LOW' }),
+          financialScore: makeFinancialScore({ score: 15, passedRules: 0, failedRules: 5 }),
+          technicalScore: makeTechnicalScore({ score: 10 }),
+        }),
+      );
       expect(result.rating).toBe('D');
     });
   });
@@ -387,20 +451,24 @@ describe('EliteScoreEngine', () => {
     });
 
     it('should include all grade information', () => {
-      const result = engine.evaluate(makeInput({
-        financialScore: makeFinancialScore({ grade: 'A+' }),
-        technicalScore: makeTechnicalScore({ grade: 'A' }),
-      }));
+      const result = engine.evaluate(
+        makeInput({
+          financialScore: makeFinancialScore({ grade: 'A+' }),
+          technicalScore: makeTechnicalScore({ grade: 'A' }),
+        }),
+      );
       expect(result.metadata.financialGrade).toBe('A+');
       expect(result.metadata.technicalGrade).toBe('A');
     });
 
     it('should include opportunity and candidate info', () => {
-      const result = engine.evaluate(makeInput({
-        candidate: makeCandidate({ priority: 'VERY_HIGH' }),
-        opportunity: makeOpportunity({ opportunityLevel: 'HIGH' }),
-        confluence: makeConfluence({ agreement: 'MEDIUM' }),
-      }));
+      const result = engine.evaluate(
+        makeInput({
+          candidate: makeCandidate({ priority: 'VERY_HIGH' }),
+          opportunity: makeOpportunity({ opportunityLevel: 'HIGH' }),
+          confluence: makeConfluence({ agreement: 'MEDIUM' }),
+        }),
+      );
       expect(result.metadata.candidatePriority).toBe('VERY_HIGH');
       expect(result.metadata.opportunityLevel).toBe('HIGH');
       expect(result.metadata.confluenceAgreement).toBe('MEDIUM');
@@ -409,25 +477,38 @@ describe('EliteScoreEngine', () => {
 
   describe('edge cases', () => {
     it('should handle zero scores', () => {
-      const result = engine.evaluate(makeInput({
-        opportunity: makeOpportunity({ opportunityScore: 0, earlyOpportunity: false, opportunityLevel: 'NONE' }),
-        candidate: makeCandidate({ candidateScore: 0, priority: 'REJECT', confidence: 0 }),
-        confluence: makeConfluence({ confluenceScore: 0, agreement: 'VERY_LOW', confidence: 0 }),
-        financialScore: makeFinancialScore({ score: 0, passedRules: 0, failedRules: 6, confidence: 0 }),
-        technicalScore: makeTechnicalScore({ score: 0, confidence: 0 }),
-      }));
+      const result = engine.evaluate(
+        makeInput({
+          opportunity: makeOpportunity({
+            opportunityScore: 0,
+            earlyOpportunity: false,
+            opportunityLevel: 'NONE',
+          }),
+          candidate: makeCandidate({ candidateScore: 0, priority: 'REJECT', confidence: 0 }),
+          confluence: makeConfluence({ confluenceScore: 0, agreement: 'VERY_LOW', confidence: 0 }),
+          financialScore: makeFinancialScore({
+            score: 0,
+            passedRules: 0,
+            failedRules: 6,
+            confidence: 0,
+          }),
+          technicalScore: makeTechnicalScore({ score: 0, confidence: 0 }),
+        }),
+      );
       expect(result.eliteScore).toBe(0);
       expect(result.rating).toBe('D');
     });
 
     it('should cap scores at 100', () => {
-      const result = engine.evaluate(makeInput({
-        opportunity: makeOpportunity({ opportunityScore: 150 }),
-        candidate: makeCandidate({ candidateScore: 150 }),
-        confluence: makeConfluence({ confluenceScore: 150 }),
-        financialScore: makeFinancialScore({ score: 150 }),
-        technicalScore: makeTechnicalScore({ score: 150 }),
-      }));
+      const result = engine.evaluate(
+        makeInput({
+          opportunity: makeOpportunity({ opportunityScore: 150 }),
+          candidate: makeCandidate({ candidateScore: 150 }),
+          confluence: makeConfluence({ confluenceScore: 150 }),
+          financialScore: makeFinancialScore({ score: 150 }),
+          technicalScore: makeTechnicalScore({ score: 150 }),
+        }),
+      );
       expect(result.eliteScore).toBeLessThanOrEqual(100);
       for (const dim of Object.values(result.breakdown)) {
         expect(dim.score).toBeLessThanOrEqual(100);
@@ -435,12 +516,14 @@ describe('EliteScoreEngine', () => {
     });
 
     it('should handle negative scores gracefully', () => {
-      const result = engine.evaluate(makeInput({
-        opportunity: makeOpportunity({ opportunityScore: -10 }),
-        candidate: makeCandidate({ candidateScore: -5 }),
-        financialScore: makeFinancialScore({ score: -20 }),
-        technicalScore: makeTechnicalScore({ score: -15 }),
-      }));
+      const result = engine.evaluate(
+        makeInput({
+          opportunity: makeOpportunity({ opportunityScore: -10 }),
+          candidate: makeCandidate({ candidateScore: -5 }),
+          financialScore: makeFinancialScore({ score: -20 }),
+          technicalScore: makeTechnicalScore({ score: -15 }),
+        }),
+      );
       expect(result.eliteScore).toBeGreaterThanOrEqual(0);
     });
 
@@ -451,6 +534,69 @@ describe('EliteScoreEngine', () => {
       expect(r1.eliteScore).toBe(r2.eliteScore);
       expect(r1.rating).toBe(r2.rating);
       expect(r1.priority).toBe(r2.priority);
+    });
+  });
+
+  describe('financial truth semantics (R2-073)', () => {
+    it('should exclude UNAVAILABLE financial dimension from the elite composite', () => {
+      const result = engine.evaluate(
+        makeInput({
+          financialScore: makeFinancialScore({
+            score: 0,
+            dataStatus: 'UNAVAILABLE',
+            isValid: false,
+            confidence: 0,
+          }),
+        }),
+      );
+      expect(result.breakdown.financial.weight).toBe(0);
+      expect(result.breakdown.financial.contribution).toBe(0);
+      // Remaining weights: technical 25 + opportunity 20 + confluence 15 + candidate 15 = 75
+      const weightSum = Object.values(result.breakdown).reduce((sum, d) => sum + d.weight, 0);
+      expect(weightSum).toBe(75);
+      expect(result.isValid).toBe(true);
+    });
+
+    it('should normalize elite score over available dimensions when financial is unavailable', () => {
+      const strongResult = engine.evaluate(
+        makeInput({
+          opportunity: makeOpportunity({ opportunityScore: 80 }),
+          candidate: makeCandidate({ candidateScore: 80 }),
+          confluence: makeConfluence({ confluenceScore: 80 }),
+          technicalScore: makeTechnicalScore({ score: 80 }),
+          financialScore: makeFinancialScore({ score: 80, dataStatus: 'AVAILABLE', isValid: true }),
+        }),
+      );
+      const unavailableResult = engine.evaluate(
+        makeInput({
+          opportunity: makeOpportunity({ opportunityScore: 80 }),
+          candidate: makeCandidate({ candidateScore: 80 }),
+          confluence: makeConfluence({ confluenceScore: 80 }),
+          technicalScore: makeTechnicalScore({ score: 80 }),
+          financialScore: makeFinancialScore({
+            score: 80,
+            dataStatus: 'UNAVAILABLE',
+            isValid: false,
+            confidence: 0,
+          }),
+        }),
+      );
+      // Excluding the (equally strong) financial dim must not lower the score:
+      // absence is not a measured 0.
+      expect(unavailableResult.eliteScore).toBe(strongResult.eliteScore);
+    });
+
+    it('should exclude UNAVAILABLE financial from confidence averaging', () => {
+      const result = engine.evaluate(
+        makeInput({
+          financialScore: makeFinancialScore({
+            dataStatus: 'UNAVAILABLE',
+            isValid: false,
+            confidence: 0,
+          }),
+        }),
+      );
+      expect(result.confidence).toBeGreaterThan(0);
     });
   });
 });

@@ -6,10 +6,7 @@ import { TechnicalSummary } from '../technical-summary/technical-summary.types';
 import { SmartMoneyResult } from '../smart-money/smart-money.types';
 import { MarketStructureResult, TrendDirection } from '../market-structure/market-structure.types';
 import { ConfluenceResult, AlignmentScore, AgreementLevel } from './confluence.types';
-import {
-  ConfluenceConfig,
-  DEFAULT_CONFLUENCE_CONFIG,
-} from './confluence.config';
+import { ConfluenceConfig, DEFAULT_CONFLUENCE_CONFIG } from './confluence.config';
 
 export interface ConfluenceInput {
   financialScore: FinancialScoreResult;
@@ -39,6 +36,7 @@ export class ConfluenceEngine {
       technicalAlignment,
       smartMoneyAlignment,
       trendAlignment,
+      input.financialScore.dataStatus !== 'UNAVAILABLE',
     );
 
     const confidence = this.calculateConfidence(
@@ -67,7 +65,19 @@ export class ConfluenceEngine {
     };
   }
 
-  private evaluateFinancial(score: FinancialScoreResult, summary: FinancialSummary): AlignmentScore {
+  private evaluateFinancial(
+    score: FinancialScoreResult,
+    summary: FinancialSummary,
+  ): AlignmentScore {
+    if (score.dataStatus === 'UNAVAILABLE') {
+      return {
+        score: 0,
+        direction: 'neutral',
+        confidence: 0,
+        factors: ['Financial data unavailable'],
+      };
+    }
+
     const factors: string[] = [];
     let directionScore = score.score;
 
@@ -198,16 +208,26 @@ export class ConfluenceEngine {
     technical: AlignmentScore,
     smartMoney: AlignmentScore,
     trend: AlignmentScore,
+    financialAvailable: boolean,
   ): { confluenceScore: number; agreement: AgreementLevel } {
     const { dimensionWeights } = this.config;
-    const totalWeight = dimensionWeights.financial + dimensionWeights.technical +
-      dimensionWeights.smartMoney + dimensionWeights.trend;
+
+    const entries = [
+      { alignment: financial, weight: financialAvailable ? dimensionWeights.financial : 0 },
+      { alignment: technical, weight: dimensionWeights.technical },
+      { alignment: smartMoney, weight: dimensionWeights.smartMoney },
+      { alignment: trend, weight: dimensionWeights.trend },
+    ];
+
+    const available = entries.filter((e) => e.weight > 0);
+    const totalWeight = available.reduce((sum, e) => sum + e.weight, 0);
+
+    if (totalWeight === 0) {
+      return { confluenceScore: 0, agreement: 'VERY_LOW' };
+    }
 
     const confluenceScore =
-      (financial.score * dimensionWeights.financial +
-        technical.score * dimensionWeights.technical +
-        smartMoney.score * dimensionWeights.smartMoney +
-        trend.score * dimensionWeights.trend) / totalWeight;
+      available.reduce((sum, e) => sum + e.alignment.score * e.weight, 0) / totalWeight;
 
     const agreement = this.determineAgreement(
       financial.direction,
@@ -253,13 +273,26 @@ export class ConfluenceEngine {
       marketStructure,
     );
 
+    const financialWeight =
+      financialScore.dataStatus === 'UNAVAILABLE' ? 0 : confidenceWeights.financialConfidence;
+
+    const totalWeight =
+      financialWeight +
+      confidenceWeights.technicalConfidence +
+      confidenceWeights.smartMoneyConfidence +
+      confidenceWeights.dataCompleteness;
+
+    if (totalWeight === 0) return 0;
+
     const confidence =
-      financialScore.confidence * confidenceWeights.financialConfidence +
+      (financialScore.dataStatus === 'UNAVAILABLE'
+        ? 0
+        : financialScore.confidence * confidenceWeights.financialConfidence) +
       technicalScore.confidence * confidenceWeights.technicalConfidence +
       smartMoney.smartMoneyConfidence * confidenceWeights.smartMoneyConfidence +
       dataCompleteness * confidenceWeights.dataCompleteness;
 
-    return Math.round(confidence * 100) / 100;
+    return Math.round((confidence / totalWeight) * 100) / 100;
   }
 
   private calculateDataCompleteness(
@@ -271,7 +304,7 @@ export class ConfluenceEngine {
     let available = 0;
     let total = 0;
 
-    if (financialScore.symbol) available++;
+    if (financialScore.dataStatus !== 'UNAVAILABLE' && financialScore.symbol) available++;
     total++;
     if (technicalScore.isValid) available++;
     total++;
@@ -285,7 +318,7 @@ export class ConfluenceEngine {
 
   private countAvailableData(input: ConfluenceInput): number {
     let count = 0;
-    if (input.financialScore.symbol) count++;
+    if (input.financialScore.dataStatus !== 'UNAVAILABLE' && input.financialScore.symbol) count++;
     if (input.technicalScore.isValid) count++;
     if (input.smartMoney.isValid) count++;
     if (input.marketStructure.isValid) count++;

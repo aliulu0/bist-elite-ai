@@ -8,7 +8,7 @@ export class DebtRatioRule {
       return {
         id: 'debt_ratio',
         name: 'Debt Ratio',
-        status: 'WARNING',
+        status: 'UNAVAILABLE',
         value: null,
         reason: 'Debt or asset data not available for ratio calculation',
       };
@@ -18,7 +18,7 @@ export class DebtRatioRule {
       return {
         id: 'debt_ratio',
         name: 'Debt Ratio',
-        status: 'WARNING',
+        status: 'UNAVAILABLE',
         value: null,
         reason: 'Total assets is zero, cannot calculate debt ratio',
       };

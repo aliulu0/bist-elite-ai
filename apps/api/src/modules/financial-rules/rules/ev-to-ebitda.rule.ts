@@ -10,7 +10,7 @@ export class EvToEbitdaRule {
       return {
         id: 'ev_to_ebitda',
         name: 'EV / EBITDA (FD/FAVÖK)',
-        status: 'WARNING',
+        status: 'UNAVAILABLE',
         value: null,
         reason: 'EV/EBITDA data not available',
       };

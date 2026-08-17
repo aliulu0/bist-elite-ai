@@ -23,10 +23,22 @@ describe('FinancialScoreEngine', () => {
       rules: [
         { id: 'price_to_book', name: 'Price/Book', status: 'PASS', value: 1.2, reason: 'Good' },
         { id: 'ev_to_ebitda', name: 'EV/EBITDA', status: 'PASS', value: 8, reason: 'Good' },
-        { id: 'net_profit_growth', name: 'Net Profit Growth', status: 'PASS', value: 28, reason: 'Good' },
+        {
+          id: 'net_profit_growth',
+          name: 'Net Profit Growth',
+          status: 'PASS',
+          value: 28,
+          reason: 'Good',
+        },
         { id: 'equity_growth', name: 'Equity Growth', status: 'PASS', value: 12.5, reason: 'Good' },
         { id: 'debt_ratio', name: 'Debt Ratio', status: 'PASS', value: 0.36, reason: 'Good' },
-        { id: 'sector_comparison', name: 'Sector Comparison', status: 'PASS', value: null, reason: 'Good' },
+        {
+          id: 'sector_comparison',
+          name: 'Sector Comparison',
+          status: 'PASS',
+          value: null,
+          reason: 'Good',
+        },
       ],
     };
 
@@ -35,22 +47,64 @@ describe('FinancialScoreEngine', () => {
       rules: [
         { id: 'price_to_book', name: 'Price/Book', status: 'FAIL', value: 5.0, reason: 'High' },
         { id: 'ev_to_ebitda', name: 'EV/EBITDA', status: 'FAIL', value: 20, reason: 'High' },
-        { id: 'net_profit_growth', name: 'Net Profit Growth', status: 'FAIL', value: -10, reason: 'Negative' },
-        { id: 'equity_growth', name: 'Equity Growth', status: 'FAIL', value: -5, reason: 'Negative' },
+        {
+          id: 'net_profit_growth',
+          name: 'Net Profit Growth',
+          status: 'FAIL',
+          value: -10,
+          reason: 'Negative',
+        },
+        {
+          id: 'equity_growth',
+          name: 'Equity Growth',
+          status: 'FAIL',
+          value: -5,
+          reason: 'Negative',
+        },
         { id: 'debt_ratio', name: 'Debt Ratio', status: 'FAIL', value: 0.85, reason: 'High' },
-        { id: 'sector_comparison', name: 'Sector Comparison', status: 'FAIL', value: null, reason: 'Far' },
+        {
+          id: 'sector_comparison',
+          name: 'Sector Comparison',
+          status: 'FAIL',
+          value: null,
+          reason: 'Far',
+        },
       ],
     };
 
     const allWarning: FinancialRulesOutput = {
       symbol: 'GARAN',
       rules: [
-        { id: 'price_to_book', name: 'Price/Book', status: 'WARNING', value: 2.5, reason: 'Moderate' },
+        {
+          id: 'price_to_book',
+          name: 'Price/Book',
+          status: 'WARNING',
+          value: 2.5,
+          reason: 'Moderate',
+        },
         { id: 'ev_to_ebitda', name: 'EV/EBITDA', status: 'WARNING', value: 12, reason: 'Moderate' },
-        { id: 'net_profit_growth', name: 'Net Profit Growth', status: 'WARNING', value: null, reason: 'Missing' },
-        { id: 'equity_growth', name: 'Equity Growth', status: 'WARNING', value: null, reason: 'Missing' },
+        {
+          id: 'net_profit_growth',
+          name: 'Net Profit Growth',
+          status: 'WARNING',
+          value: null,
+          reason: 'Missing',
+        },
+        {
+          id: 'equity_growth',
+          name: 'Equity Growth',
+          status: 'WARNING',
+          value: null,
+          reason: 'Missing',
+        },
         { id: 'debt_ratio', name: 'Debt Ratio', status: 'WARNING', value: null, reason: 'Missing' },
-        { id: 'sector_comparison', name: 'Sector Comparison', status: 'WARNING', value: null, reason: 'Missing' },
+        {
+          id: 'sector_comparison',
+          name: 'Sector Comparison',
+          status: 'WARNING',
+          value: null,
+          reason: 'Missing',
+        },
       ],
     };
 
@@ -59,10 +113,22 @@ describe('FinancialScoreEngine', () => {
       rules: [
         { id: 'price_to_book', name: 'Price/Book', status: 'PASS', value: 1.0, reason: 'Good' },
         { id: 'ev_to_ebitda', name: 'EV/EBITDA', status: 'FAIL', value: 18, reason: 'High' },
-        { id: 'net_profit_growth', name: 'Net Profit Growth', status: 'PASS', value: 35, reason: 'Good' },
+        {
+          id: 'net_profit_growth',
+          name: 'Net Profit Growth',
+          status: 'PASS',
+          value: 35,
+          reason: 'Good',
+        },
         { id: 'equity_growth', name: 'Equity Growth', status: 'WARNING', value: 2, reason: 'Low' },
         { id: 'debt_ratio', name: 'Debt Ratio', status: 'PASS', value: 0.3, reason: 'Good' },
-        { id: 'sector_comparison', name: 'Sector Comparison', status: 'FAIL', value: null, reason: 'Far' },
+        {
+          id: 'sector_comparison',
+          name: 'Sector Comparison',
+          status: 'FAIL',
+          value: null,
+          reason: 'Far',
+        },
       ],
     };
 
@@ -263,14 +329,94 @@ describe('FinancialScoreEngine', () => {
     it('should handle unknown rule id with 0 weight', () => {
       const output: FinancialRulesOutput = {
         symbol: 'TEST',
-        rules: [
-          { id: 'unknown_rule', name: 'Unknown', status: 'PASS', value: 1, reason: '' },
-        ],
+        rules: [{ id: 'unknown_rule', name: 'Unknown', status: 'PASS', value: 1, reason: '' }],
       };
       const result = engine.evaluate(output);
       expect(result.breakdown.items[0].weight).toBe(0);
       expect(result.breakdown.items[0].contribution).toBe(0);
       expect(result.score).toBe(0);
+    });
+
+    describe('truth semantics (R2-073)', () => {
+      it('should be UNAVAILABLE with isValid=false when every rule is UNAVAILABLE', () => {
+        const output: FinancialRulesOutput = {
+          symbol: 'NODATA',
+          rules: [
+            { id: 'price_to_book', name: 'P/B', status: 'UNAVAILABLE', value: null, reason: '' },
+            {
+              id: 'ev_to_ebitda',
+              name: 'EV/EBITDA',
+              status: 'UNAVAILABLE',
+              value: null,
+              reason: '',
+            },
+            {
+              id: 'net_profit_growth',
+              name: 'NPG',
+              status: 'UNAVAILABLE',
+              value: null,
+              reason: '',
+            },
+            { id: 'equity_growth', name: 'EG', status: 'UNAVAILABLE', value: null, reason: '' },
+            { id: 'debt_ratio', name: 'DR', status: 'UNAVAILABLE', value: null, reason: '' },
+            { id: 'sector_comparison', name: 'SC', status: 'UNAVAILABLE', value: null, reason: '' },
+          ],
+        };
+        const result = engine.evaluate(output);
+        expect(result.dataStatus).toBe('UNAVAILABLE');
+        expect(result.isValid).toBe(false);
+        expect(result.unavailableRules).toBe(6);
+        expect(result.score).toBe(0);
+        expect(result.breakdown.totalWeight).toBe(0);
+      });
+
+      it('should exclude UNAVAILABLE rules from totalWeight (no penalty for absence)', () => {
+        const output: FinancialRulesOutput = {
+          symbol: 'PARTIAL',
+          rules: [
+            { id: 'price_to_book', name: 'P/B', status: 'PASS', value: 1.2, reason: '' },
+            {
+              id: 'ev_to_ebitda',
+              name: 'EV/EBITDA',
+              status: 'UNAVAILABLE',
+              value: null,
+              reason: '',
+            },
+            { id: 'net_profit_growth', name: 'NPG', status: 'PASS', value: 28, reason: '' },
+            { id: 'equity_growth', name: 'EG', status: 'UNAVAILABLE', value: null, reason: '' },
+            { id: 'debt_ratio', name: 'DR', status: 'PASS', value: 0.3, reason: '' },
+            { id: 'sector_comparison', name: 'SC', status: 'UNAVAILABLE', value: null, reason: '' },
+          ],
+        };
+        const result = engine.evaluate(output);
+        expect(result.dataStatus).toBe('PARTIALLY_AVAILABLE');
+        expect(result.isValid).toBe(true);
+        expect(result.unavailableRules).toBe(3);
+        expect(result.breakdown.totalWeight).toBe(20 + 20 + 15);
+        expect(result.score).toBe(100);
+      });
+
+      it('should be AVAILABLE when all rules have data', () => {
+        const result = engine.evaluate(allPassed);
+        expect(result.dataStatus).toBe('AVAILABLE');
+        expect(result.isValid).toBe(true);
+        expect(result.unavailableRules).toBe(0);
+      });
+
+      it('should contribute 0 for UNAVAILABLE rules', () => {
+        const output: FinancialRulesOutput = {
+          symbol: 'TEST',
+          rules: [
+            { id: 'price_to_book', name: 'P/B', status: 'UNAVAILABLE', value: null, reason: '' },
+            { id: 'ev_to_ebitda', name: 'EV/EBITDA', status: 'PASS', value: 8, reason: '' },
+          ],
+        };
+        const result = engine.evaluate(output);
+        const unavailable = result.breakdown.items.find((i) => i.ruleId === 'price_to_book');
+        expect(unavailable!.contribution).toBe(0);
+        expect(result.breakdown.totalWeight).toBe(20);
+        expect(result.score).toBe(100);
+      });
     });
   });
 });

@@ -91,11 +91,11 @@ describe('FinancialRulesEngine', () => {
       expect(rule!.status).toBe('WARNING');
     });
 
-    it('should WARNING price_to_book when value is null', () => {
+    it('should mark price_to_book UNAVAILABLE when value is null', () => {
       const data: FinancialData = { ...completeData, priceToBook: null };
       const result = engine.evaluate(data);
       const rule = result.rules.find((r) => r.id === 'price_to_book');
-      expect(rule!.status).toBe('WARNING');
+      expect(rule!.status).toBe('UNAVAILABLE');
     });
 
     it('should FAIL ev_to_ebitda when value is high', () => {
@@ -130,11 +130,11 @@ describe('FinancialRulesEngine', () => {
       expect(rule!.status).toBe('FAIL');
     });
 
-    it('should WARNING net_profit_growth when data is missing', () => {
+    it('should mark net_profit_growth UNAVAILABLE when data is missing', () => {
       const data: FinancialData = { ...completeData, netProfit: null, netProfitPrevious: null };
       const result = engine.evaluate(data);
       const rule = result.rules.find((r) => r.id === 'net_profit_growth');
-      expect(rule!.status).toBe('WARNING');
+      expect(rule!.status).toBe('UNAVAILABLE');
     });
 
     it('should PASS equity_growth when growth is positive', () => {
@@ -173,11 +173,11 @@ describe('FinancialRulesEngine', () => {
       expect(rule!.status).toBe('FAIL');
     });
 
-    it('should WARNING debt_ratio when data is missing', () => {
+    it('should mark debt_ratio UNAVAILABLE when data is missing', () => {
       const data: FinancialData = { ...completeData, totalDebt: null, totalAssets: null };
       const result = engine.evaluate(data);
       const rule = result.rules.find((r) => r.id === 'debt_ratio');
-      expect(rule!.status).toBe('WARNING');
+      expect(rule!.status).toBe('UNAVAILABLE');
     });
 
     it('should PASS sector_comparison when close to averages', () => {
@@ -198,11 +198,11 @@ describe('FinancialRulesEngine', () => {
       expect(rule!.status).toBe('FAIL');
     });
 
-    it('should WARNING sector_comparison when sector data is missing', () => {
+    it('should mark sector_comparison UNAVAILABLE when sector data is missing', () => {
       const data: FinancialData = { ...completeData, sector: null, sectorAverages: undefined };
       const result = engine.evaluate(data);
       const rule = result.rules.find((r) => r.id === 'sector_comparison');
-      expect(rule!.status).toBe('WARNING');
+      expect(rule!.status).toBe('UNAVAILABLE');
     });
 
     it('should handle all null data gracefully', () => {
@@ -221,7 +221,7 @@ describe('FinancialRulesEngine', () => {
       const result = engine.evaluate(data);
       expect(result.rules).toHaveLength(6);
       result.rules.forEach((rule) => {
-        expect(rule.status).toBe('WARNING');
+        expect(rule.status).toBe('UNAVAILABLE');
         expect(rule.id).toBeDefined();
         expect(rule.name).toBeDefined();
         expect(rule.reason).toBeDefined();

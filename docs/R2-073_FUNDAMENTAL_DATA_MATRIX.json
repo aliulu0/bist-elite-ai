@@ -1,0 +1,125 @@
+{
+  "version": "R2-073-v1.0",
+  "generatedAt": "2026-08-17T19:20:00Z",
+  "runtimeProbeAt": "2026-08-17T19:14:39Z",
+  "description": "Fundamental (financial) data truth matrix for BIST after R2-073. Every cell is either a REAL, runtime-verified data point or an explicit absence (null / UNAVAILABLE / PARTIALLY_AVAILABLE) with provenance. Technical indicators are NEVER fundamental inputs. Fintables is the only provider that implements fetchFundamentalData; it is NOT_CONFIGURED, so the production financial dimension is UNAVAILABLE until credentials are supplied and runtime-verified.",
+  "truthRule": "REAL_FUNDAMENTAL_DATA_OR_EXPLICIT_ABSENCE",
+  "technicalIndicatorsAreFundamentals": false,
+  "sourceHierarchy": {
+    "1_fintables": {
+      "role": "FUNDAMENTALS",
+      "status": "NOT_CONFIGURED",
+      "evidence": "no FINTABLES_* keys in .env; live unauthenticated probe to https://fintables.com/api/v1/health returned HTTP 403 (2026-08-17T19:14:39Z)",
+      "adapter": "fintables-unified.adapter.ts implements fetchFundamentalData; validateConnection() returns false when no apiKey (line 68)"
+    },
+    "2_kap": {
+      "role": "DISCLOSURE_ONLY",
+      "status": "NO_FUNDAMENTALS",
+      "evidence": "kap.adapter.ts exposes company + disclosures only; no financial statements, ratios, or balance-sheet fields"
+    },
+    "3_verified_integrated_sources": {
+      "role": "NONE_VERIFIED",
+      "status": "NOT_PRESENT",
+      "evidence": "no other provider implements fetchFundamentalData; base-provider.adapter.ts default returns null (line 193)"
+    },
+    "4_public_research": {
+      "role": "RESEARCH_EVIDENCE_ONLY",
+      "status": "NEVER_AUTHORITATIVE",
+      "evidence": "serpapi/google research is never promoted to authoritative financial truth"
+    },
+    "yahoo": {
+      "role": "PRICE_OHLCV_ONLY",
+      "status": "VERIFIED",
+      "evidence": "R2-072 runtime probe 10/10 TRY quotes; yahoo-unified.adapter.ts getFinancialRatios/getBalanceSheet/getIncomeStatement all return null"
+    }
+  },
+  "fundamentalFields": {
+    "priceToBook": { "sources": ["fintables"], "runtime": "null", "status": "UNAVAILABLE" },
+    "evToEBITDA": { "sources": ["fintables"], "runtime": "null", "status": "UNAVAILABLE" },
+    "netProfit": { "sources": ["fintables"], "runtime": "null", "status": "UNAVAILABLE" },
+    "equity": { "sources": ["fintables"], "runtime": "null", "status": "UNAVAILABLE" },
+    "totalDebt": { "sources": ["fintables"], "runtime": "null", "status": "UNAVAILABLE" },
+    "totalAssets": { "sources": ["fintables"], "runtime": "null", "status": "UNAVAILABLE" },
+    "sharesOutstanding": { "sources": ["fintables"], "runtime": "null", "status": "UNAVAILABLE" },
+    "marketCap": { "sources": ["fintables"], "runtime": "null", "status": "UNAVAILABLE" },
+    "sector": {
+      "sources": ["fintables", "kap", "yahoo"],
+      "runtime": "yahoo 'Unknown' or null",
+      "status": "UNAVAILABLE_OR_UNKNOWN"
+    },
+    "netProfitPrevious": {
+      "sources": ["fintables"],
+      "runtime": "null",
+      "status": "UNAVAILABLE",
+      "note": "fintables single-period endpoint does not provide prior period; kept null (no fabrication)"
+    },
+    "equityPrevious": {
+      "sources": ["fintables"],
+      "runtime": "null",
+      "status": "UNAVAILABLE",
+      "note": "same as netProfitPrevious"
+    }
+  },
+  "metadataFields": {
+    "provider": "present (mapper derives from source)",
+    "retrievedAt": "present (mapper sets now)",
+    "availableAt": "present; = retrievedAt when provider gives no period dates; point-in-time guard: data usable only when availableAt <= signalTimestamp",
+    "periodEndDate": "null until a provider exposes fiscal period end",
+    "announcementDate": "null until a provider exposes announcement date",
+    "currency": "null (not asserted by current providers)",
+    "dataStatus": "AVAILABLE | PARTIALLY_AVAILABLE | UNAVAILABLE",
+    "confidence": "fraction of core fields present (0..1)"
+  },
+  "scoreSemantics": {
+    "weights": "UNCHANGED (opportunity.config: financial 20, technical 20, confluence 25, smartMoney 20, marketStructure 15; elite-score.config: financial 25, technical 25, opportunity 20, confluence 15, candidate 15; candidate.config: financial 30, technical 30, confluence 40)",
+    "thresholds": "UNCHANGED (DEFAULT_THRESHOLDS and score grade thresholds untouched)",
+    "ruleStatusOnMissingData": "UNAVAILABLE (was WARNING/50%-credit fabrication)",
+    "scoreEngineTotalWeight": "sum of weights of rules with status != UNAVAILABLE",
+    "dataStatusRules": {
+      "allRulesUnavailable": "UNAVAILABLE, isValid=false, score=0",
+      "someRulesUnavailable": "PARTIALLY_AVAILABLE, isValid=true",
+      "noUnavailableRules": "AVAILABLE, isValid=true"
+    },
+    "neutralFabrication": "REMOVED: missing data never yields 50/0/neutral default; absence is excluded from composites and normalized over available dimensions",
+    "financialDimensionExclusion": "opportunity/candidate/confluence/elite engines exclude a UNAVAILABLE financial dimension from weighted composites and confidence averages"
+  },
+  "technicalVsFundamental": {
+    "rsiAsFinancialScore": "REMOVED (historical-backtest.service.ts: previously score: rsi14 ?? 50)",
+    "now": "explicit { score:0, grade:'D', dataStatus:'UNAVAILABLE', isValid:false }; financialAlignment { score:0, direction:'neutral', confidence:0, factors:['Financial data unavailable'] }",
+    "smaAsConfluence": "allowed (confluence/technical dimensions are technical by design)"
+  },
+  "smartMoney": {
+    "live": "computed from real OHLCV (accumulation/distribution); empty result = zeros with isValid=false; NO hardcoded 50/30",
+    "historicalBacktest": "explicit null (UNAVAILABLE) - unchanged, already truthful"
+  },
+  "pointInTimeIntegrity": {
+    "guard": "availableAt <= signalTimestamp",
+    "implementation": "availableAt now carried on FundamentalData/FundamentalProfile; historical-backtest dataAtT filters timestamp <= T (candles); fundamentals in backtest are UNAVAILABLE so no PIT leak",
+    "lookAhead": "none found"
+  },
+  "architecture": {
+    "secondPipeline": "NONE (no new cache/opportunity/backtest engine created)",
+    "fakeData": [
+      {
+        "location": "portfolio-optimization.service.ts simulateReturns()",
+        "status": "PRE-EXISTING_FLAG",
+        "scope": "out of R2-073 scope; statistical fallback when holdings returns absent",
+        "modified": false
+      },
+      {
+        "location": "market-overview.controller.ts:68 'simple average for demo' comment",
+        "status": "PRE-EXISTING_FLAG",
+        "scope": "comment only; computation uses real prices",
+        "modified": false
+      },
+      {
+        "location": "bist-index.service.ts SYNTHETIC_PROXY",
+        "status": "EXPLICITLY_LABELED",
+        "scope": "BIST100/30 from real Yahoo constituents, typed SYNTHETIC_PROXY",
+        "modified": false
+      }
+    ],
+    "providers": "fintables NOT_CONFIGURED; yahoo price-only; kap disclosure-only; mkk ownership; tcmb macro; serpapi research"
+  },
+  "deliverables": ["docs/R2-073_STATUS_REPORT.md", "docs/R2-073_FUNDAMENTAL_DATA_MATRIX.json"]
+}

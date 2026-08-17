@@ -10,7 +10,17 @@ import {
   Sector,
   Disclosure,
 } from '../../interfaces/unified-domain.types';
-import { MarketDataPoint, FetchOptions, CompanyProfile, FinancialRatios, BalanceSheet, IncomeStatement, CompanySector, MacroIndicator, FundamentalProfile } from '../../interfaces';
+import {
+  MarketDataPoint,
+  FetchOptions,
+  CompanyProfile,
+  FinancialRatios,
+  BalanceSheet,
+  IncomeStatement,
+  CompanySector,
+  MacroIndicator,
+  FundamentalProfile,
+} from '../../interfaces';
 
 interface FintablesFundamentalsRaw {
   ticker?: string;
@@ -86,18 +96,26 @@ export class FintablesUnifiedAdapter extends BaseProviderAdapter {
     }
 
     const result = await this.withRetry(async () => {
-      const params = this.periodOverride ? `?period=${encodeURIComponent(this.periodOverride)}` : '';
-      const response = await fetch(`${this.baseUrl}/fundamentals/${encodeURIComponent(symbol)}${params}`, {
-        method: 'GET',
-        headers: this.buildHeaders(),
-        signal: AbortSignal.timeout(this.timeoutMs),
-      });
+      const params = this.periodOverride
+        ? `?period=${encodeURIComponent(this.periodOverride)}`
+        : '';
+      const response = await fetch(
+        `${this.baseUrl}/fundamentals/${encodeURIComponent(symbol)}${params}`,
+        {
+          method: 'GET',
+          headers: this.buildHeaders(),
+          signal: AbortSignal.timeout(this.timeoutMs),
+        },
+      );
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       return (await response.json()) as FintablesFundamentalsRaw;
     }, `fetchFundamentals(${symbol})`);
 
     if (result) {
-      this.fundamentalRawCache.set(cacheKey, { data: result, expiresAt: Date.now() + this.fundamentalCacheTtlMs });
+      this.fundamentalRawCache.set(cacheKey, {
+        data: result,
+        expiresAt: Date.now() + this.fundamentalCacheTtlMs,
+      });
     }
     return result;
   }
@@ -211,7 +229,11 @@ export class FintablesUnifiedAdapter extends BaseProviderAdapter {
     return [];
   }
 
-  async getHistoricalData(symbol: string, timeframe: string, _options?: FetchOptions): Promise<MarketDataPoint[]> {
+  async getHistoricalData(
+    symbol: string,
+    timeframe: string,
+    _options?: FetchOptions,
+  ): Promise<MarketDataPoint[]> {
     const result = await this.withRetry(async () => {
       const response = await fetch(
         `${this.baseUrl}/historical/${encodeURIComponent(symbol)}?timeframe=${encodeURIComponent(timeframe)}`,
@@ -347,6 +369,13 @@ export class FintablesUnifiedAdapter extends BaseProviderAdapter {
     // Prior-period figures (netProfitPrevious / equityPrevious) are not
     // provided by this endpoint, so they are left null -> growth rules
     // resolve to UNKNOWN. Do NOT fabricate them from the current period.
+    const presentCount = [profile, ratios, balance, income, sector].filter(
+      (v) => v !== null && v !== undefined,
+    ).length;
+    const dataStatus: 'AVAILABLE' | 'PARTIALLY_AVAILABLE' | 'UNAVAILABLE' =
+      presentCount === 0 ? 'UNAVAILABLE' : presentCount < 5 ? 'PARTIALLY_AVAILABLE' : 'AVAILABLE';
+    const confidence = presentCount / 5;
+
     return {
       symbol,
       profile,
@@ -360,6 +389,12 @@ export class FintablesUnifiedAdapter extends BaseProviderAdapter {
       equityPrevious: null,
       lastUpdated,
       source: this.name,
+      availableAt: lastUpdated,
+      periodEndDate: null,
+      announcementDate: null,
+      currency: null,
+      dataStatus,
+      confidence,
     };
   }
 

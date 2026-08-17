@@ -8,7 +8,7 @@ export class EquityGrowthRule {
       return {
         id: 'equity_growth',
         name: 'Equity Growth',
-        status: 'WARNING',
+        status: 'UNAVAILABLE',
         value: null,
         reason: 'Equity data not available for growth calculation',
       };
@@ -18,7 +18,7 @@ export class EquityGrowthRule {
       return {
         id: 'equity_growth',
         name: 'Equity Growth',
-        status: 'WARNING',
+        status: 'UNAVAILABLE',
         value: null,
         reason: 'Previous period equity is zero, cannot calculate growth',
       };

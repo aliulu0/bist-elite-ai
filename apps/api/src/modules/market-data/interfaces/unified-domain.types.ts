@@ -1,4 +1,9 @@
-import { CompanyProfile, FinancialRatios, BalanceSheet, IncomeStatement } from './fundamental.types';
+import {
+  CompanyProfile,
+  FinancialRatios,
+  BalanceSheet,
+  IncomeStatement,
+} from './fundamental.types';
 
 export interface Company {
   symbol: string;
@@ -91,6 +96,18 @@ export interface FundamentalProfile {
   equityPrevious: number | null;
   lastUpdated: string;
   source: string;
+  /** Earliest timestamp at which this data can be used (point-in-time). */
+  availableAt?: string | null;
+  /** Fiscal period end date the figures refer to. */
+  periodEndDate?: string | null;
+  /** Company announcement date of these figures. */
+  announcementDate?: string | null;
+  /** Reporting currency of the figures. */
+  currency?: string | null;
+  /** Truth status of the underlying data. */
+  dataStatus?: 'AVAILABLE' | 'PARTIALLY_AVAILABLE' | 'UNAVAILABLE' | null;
+  /** Confidence 0..1 that the reported fields are real and complete. */
+  confidence?: number | null;
 }
 
 export type DataQuality = 'VALID' | 'PARTIAL' | 'INVALID';

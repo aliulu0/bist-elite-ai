@@ -36,7 +36,8 @@ export class FinancialRulesEngine {
       `Evaluated ${rules.length} rules for ${data.symbol}: ` +
         `${rules.filter((r) => r.status === 'PASS').length} PASS, ` +
         `${rules.filter((r) => r.status === 'WARNING').length} WARNING, ` +
-        `${rules.filter((r) => r.status === 'FAIL').length} FAIL`,
+        `${rules.filter((r) => r.status === 'FAIL').length} FAIL, ` +
+        `${rules.filter((r) => r.status === 'UNAVAILABLE').length} UNAVAILABLE`,
     );
 
     return {

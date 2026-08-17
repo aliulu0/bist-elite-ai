@@ -15,6 +15,8 @@ export interface ScoreBreakdown {
   totalWeight: number;
 }
 
+export type FinancialDataStatus = 'AVAILABLE' | 'PARTIALLY_AVAILABLE' | 'UNAVAILABLE';
+
 export interface FinancialScoreResult {
   symbol: string;
   score: number;
@@ -24,6 +26,14 @@ export interface FinancialScoreResult {
   failedRules: number;
   confidence: number;
   breakdown: ScoreBreakdown;
+  /**
+   * Truth semantics: how much of the underlying fundamental data was
+   * actually available. 'UNAVAILABLE' means no real fundamentals existed
+   * to score; the score must never be interpreted as a measured value.
+   */
+  dataStatus?: FinancialDataStatus;
+  isValid?: boolean;
+  unavailableRules?: number;
 }
 
 export interface ScoreConfig {

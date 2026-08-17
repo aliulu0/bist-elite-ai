@@ -31,8 +31,14 @@ export class CandidateEngine {
     const priority = this.determinePriority(candidateScore);
     const reasons = this.buildReasons(financial, technical, confluenceEval, candidateScore);
     const confidence = this.calculateConfidence(financialScore, technicalScore, confluence);
-    const allDimensionsPassed = financial.passed && technical.passed && confluenceEval.passed;
-    const candidate = allDimensionsPassed && priority !== 'REJECT' && candidateScore >= this.config.scoreThresholds.minCandidateScore;
+    const allDimensionsPassed =
+      (financial.available === false || financial.passed) &&
+      technical.passed &&
+      confluenceEval.passed;
+    const candidate =
+      allDimensionsPassed &&
+      priority !== 'REJECT' &&
+      candidateScore >= this.config.scoreThresholds.minCandidateScore;
 
     return {
       candidate,
@@ -51,6 +57,15 @@ export class CandidateEngine {
   }
 
   private evaluateFinancial(score: FinancialScoreResult): DimensionEvaluation {
+    if (score.dataStatus === 'UNAVAILABLE') {
+      return {
+        score: 0,
+        passed: true,
+        factors: ['Financial data unavailable'],
+        available: false,
+      };
+    }
+
     const { financialCriteria } = this.config;
     const factors: string[] = [];
 
@@ -63,15 +78,22 @@ export class CandidateEngine {
     else factors.push(`Score ${score.score} below minimum ${financialCriteria.minScore}`);
 
     if (passedOk) factors.push(`${score.passedRules} rules passed`);
-    else factors.push(`Only ${score.passedRules} rules passed (need ${financialCriteria.minPassedRules})`);
+    else
+      factors.push(
+        `Only ${score.passedRules} rules passed (need ${financialCriteria.minPassedRules})`,
+      );
 
-    if (!failedOk) factors.push(`${score.failedRules} rules failed (max ${financialCriteria.maxFailedRules})`);
+    if (!failedOk)
+      factors.push(`${score.failedRules} rules failed (max ${financialCriteria.maxFailedRules})`);
 
-    if (!confidenceOk) factors.push(`Confidence ${score.confidence} below minimum ${financialCriteria.minConfidence}`);
+    if (!confidenceOk)
+      factors.push(
+        `Confidence ${score.confidence} below minimum ${financialCriteria.minConfidence}`,
+      );
 
     const passed = scoreOk && passedOk && failedOk && confidenceOk;
 
-    return { score: score.score, passed, factors };
+    return { score: score.score, passed, factors, available: true };
   }
 
   private evaluateTechnical(score: TechnicalScore): DimensionEvaluation {
@@ -85,7 +107,10 @@ export class CandidateEngine {
     else factors.push(`Score ${score.score} below minimum ${technicalCriteria.minScore}`);
 
     if (confidenceOk) factors.push(`Confidence ${score.confidence} meets minimum`);
-    else factors.push(`Confidence ${score.confidence} below minimum ${technicalCriteria.minConfidence}`);
+    else
+      factors.push(
+        `Confidence ${score.confidence} below minimum ${technicalCriteria.minConfidence}`,
+      );
 
     const passed = scoreOk && confidenceOk;
 
@@ -99,11 +124,20 @@ export class CandidateEngine {
     const scoreOk = confluence.confluenceScore >= confluenceCriteria.minScore;
     const confidenceOk = confluence.confidence >= confluenceCriteria.minConfidence;
 
-    if (scoreOk) factors.push(`Confluence ${confluence.confluenceScore} meets minimum ${confluenceCriteria.minScore}`);
-    else factors.push(`Confluence ${confluence.confluenceScore} below minimum ${confluenceCriteria.minScore}`);
+    if (scoreOk)
+      factors.push(
+        `Confluence ${confluence.confluenceScore} meets minimum ${confluenceCriteria.minScore}`,
+      );
+    else
+      factors.push(
+        `Confluence ${confluence.confluenceScore} below minimum ${confluenceCriteria.minScore}`,
+      );
 
     if (confidenceOk) factors.push(`Confidence ${confluence.confidence} meets minimum`);
-    else factors.push(`Confidence ${confluence.confidence} below minimum ${confluenceCriteria.minConfidence}`);
+    else
+      factors.push(
+        `Confidence ${confluence.confidence} below minimum ${confluenceCriteria.minConfidence}`,
+      );
 
     const passed = scoreOk && confidenceOk;
 
@@ -116,12 +150,20 @@ export class CandidateEngine {
     confluence: DimensionEvaluation,
   ): number {
     const { dimensionWeights } = this.config;
-    const totalWeight = dimensionWeights.financial + dimensionWeights.technical + dimensionWeights.confluence;
 
-    const score =
-      (financial.score * dimensionWeights.financial +
-        technical.score * dimensionWeights.technical +
-        confluence.score * dimensionWeights.confluence) / totalWeight;
+    const available = [
+      {
+        score: financial.score,
+        weight: financial.available === false ? 0 : dimensionWeights.financial,
+      },
+      { score: technical.score, weight: dimensionWeights.technical },
+      { score: confluence.score, weight: dimensionWeights.confluence },
+    ];
+
+    const totalWeight = available.reduce((sum, d) => sum + d.weight, 0);
+    if (totalWeight === 0) return 0;
+
+    const score = available.reduce((sum, d) => sum + d.score * d.weight, 0) / totalWeight;
 
     return Math.round(score * 10) / 10;
   }
@@ -168,10 +210,12 @@ export class CandidateEngine {
     confluence: ConfluenceResult,
   ): number {
     const confidence =
-      financialScore.confidence * 0.3 +
+      (financialScore.dataStatus === 'UNAVAILABLE' ? 0 : financialScore.confidence * 0.3) +
       technicalScore.confidence * 0.3 +
       confluence.confidence * 0.4;
 
-    return Math.round(confidence * 100) / 100;
+    const weight = (financialScore.dataStatus === 'UNAVAILABLE' ? 0 : 0.3) + 0.3 + 0.4;
+
+    return weight > 0 ? Math.round((confidence / weight) * 100) / 100 : 0;
   }
 }

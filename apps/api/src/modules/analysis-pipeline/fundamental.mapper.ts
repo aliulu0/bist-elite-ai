@@ -51,12 +51,49 @@ export function mapToFundamentalData(inputs: FundamentalProviderInputs): Fundame
     companyName: profile?.companyName ?? null,
   };
 
+  const coreFields: Array<keyof FundamentalData> = [
+    'priceToBook',
+    'evToEBITDA',
+    'netProfit',
+    'equity',
+    'totalDebt',
+    'totalAssets',
+    'sharesOutstanding',
+    'marketCap',
+  ];
+
+  const present = coreFields.filter((field) => result[field] != null).length;
+  const provider =
+    profile?.source ??
+    ratios?.source ??
+    balance?.source ??
+    income?.source ??
+    sector?.source ??
+    null;
+  const retrievedAt = new Date().toISOString();
+
+  result.provider = provider;
+  result.retrievedAt = retrievedAt;
+  result.availableAt = retrievedAt;
+  result.periodEndDate = null;
+  result.announcementDate = null;
+  result.currency = null;
+  result.dataStatus =
+    present === 0
+      ? 'UNAVAILABLE'
+      : present < coreFields.length
+        ? 'PARTIALLY_AVAILABLE'
+        : 'AVAILABLE';
+  result.confidence = coreFields.length > 0 ? present / coreFields.length : 0;
+
   const missingFields = Object.entries(result)
     .filter(([, v]) => v === null)
     .map(([k]) => k);
 
   if (missingFields.length > 0) {
-    logger.debug(`Fundamental mapping: ${missingFields.length} null field(s) [${missingFields.join(', ')}]`);
+    logger.debug(
+      `Fundamental mapping: ${missingFields.length} null field(s) [${missingFields.join(', ')}]`,
+    );
   }
 
   return result;
@@ -76,7 +113,7 @@ export function mapToFinancialData(
     equity: fundamentals.equity,
     equityPrevious: overrides.equityPrevious ?? null,
     totalDebt: fundamentals.totalDebt,
-    totalAssets: fundamentals.totalAssets ?? fundamentals.marketCap,
+    totalAssets: fundamentals.totalAssets ?? null,
     sector: fundamentals.sector,
     sectorAverages: overrides.sectorAverages,
   };

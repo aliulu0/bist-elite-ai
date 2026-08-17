@@ -22,7 +22,13 @@ export interface EliteScoreInput {
 }
 
 const GRADE_MAP: Record<ScoreGrade, number> = { 'A+': 95, A: 85, B: 72, C: 58, D: 40 };
-const TECHNICAL_GRADE_MAP: Record<TechnicalGrade, number> = { 'A+': 95, A: 85, B: 72, C: 58, D: 40 };
+const TECHNICAL_GRADE_MAP: Record<TechnicalGrade, number> = {
+  'A+': 95,
+  A: 85,
+  B: 72,
+  C: 58,
+  D: 40,
+};
 
 const AGREEMENT_MAP: Record<AgreementLevel, number> = {
   VERY_HIGH: 95,
@@ -67,13 +73,32 @@ export class EliteScoreEngine {
       return this.emptyResult(symbol, 'Technical score missing');
     }
 
-    const breakdown = this.buildBreakdown(opportunity, candidate, confluence, financialScore, technicalScore);
+    const breakdown = this.buildBreakdown(
+      opportunity,
+      candidate,
+      confluence,
+      financialScore,
+      technicalScore,
+    );
     const eliteScore = this.calculateEliteScore(breakdown);
-    const confidence = this.calculateConfidence(candidate, confluence, financialScore, technicalScore);
-    const earlyOpportunity = opportunity.earlyOpportunity && confidence >= this.config.minConfidenceForEarlyOpportunity;
+    const confidence = this.calculateConfidence(
+      candidate,
+      confluence,
+      financialScore,
+      technicalScore,
+    );
+    const earlyOpportunity =
+      opportunity.earlyOpportunity && confidence >= this.config.minConfidenceForEarlyOpportunity;
     const rating = this.determineRating(eliteScore);
     const priority = this.determinePriority(eliteScore, candidate.priority);
-    const summary = this.buildSummary(rating, priority, eliteScore, confidence, earlyOpportunity, candidate.priority);
+    const summary = this.buildSummary(
+      rating,
+      priority,
+      eliteScore,
+      confidence,
+      earlyOpportunity,
+      candidate.priority,
+    );
 
     return {
       eliteScore,
@@ -102,12 +127,27 @@ export class EliteScoreEngine {
     financialScore: FinancialScoreResult,
     technicalScore: TechnicalScore,
   ): EliteScoreBreakdown {
+    const financialUnavailable = financialScore.dataStatus === 'UNAVAILABLE';
     return {
-      financial: this.dimensionBreakdown(financialScore.score, this.config.dimensionWeights.financial),
-      technical: this.dimensionBreakdown(technicalScore.score, this.config.dimensionWeights.technical),
-      opportunity: this.dimensionBreakdown(opportunity.opportunityScore, this.config.dimensionWeights.opportunity),
-      confluence: this.dimensionBreakdown(confluence.confluenceScore, this.config.dimensionWeights.confluence),
-      candidate: this.dimensionBreakdown(candidate.candidateScore, this.config.dimensionWeights.candidate),
+      financial: financialUnavailable
+        ? { score: 0, weight: 0, contribution: 0 }
+        : this.dimensionBreakdown(financialScore.score, this.config.dimensionWeights.financial),
+      technical: this.dimensionBreakdown(
+        technicalScore.score,
+        this.config.dimensionWeights.technical,
+      ),
+      opportunity: this.dimensionBreakdown(
+        opportunity.opportunityScore,
+        this.config.dimensionWeights.opportunity,
+      ),
+      confluence: this.dimensionBreakdown(
+        confluence.confluenceScore,
+        this.config.dimensionWeights.confluence,
+      ),
+      candidate: this.dimensionBreakdown(
+        candidate.candidateScore,
+        this.config.dimensionWeights.candidate,
+      ),
     };
   }
 
@@ -116,19 +156,27 @@ export class EliteScoreEngine {
     return {
       score: normalized,
       weight,
-      contribution: normalized * weight / 100,
+      contribution: (normalized * weight) / 100,
     };
   }
 
   private calculateEliteScore(breakdown: EliteScoreBreakdown): number {
-    const total =
-      breakdown.financial.contribution +
-      breakdown.technical.contribution +
-      breakdown.opportunity.contribution +
-      breakdown.confluence.contribution +
-      breakdown.candidate.contribution;
+    const dimensions = [
+      breakdown.financial,
+      breakdown.technical,
+      breakdown.opportunity,
+      breakdown.confluence,
+      breakdown.candidate,
+    ];
 
-    return Math.round(Math.min(100, Math.max(0, total)));
+    const available = dimensions.filter((d) => d.weight > 0);
+    const totalWeight = available.reduce((sum, d) => sum + d.weight, 0);
+
+    if (totalWeight === 0) return 0;
+
+    const total = available.reduce((sum, d) => sum + d.contribution, 0);
+
+    return Math.round(Math.min(100, Math.max(0, (total / totalWeight) * 100)));
   }
 
   private calculateConfidence(
@@ -140,10 +188,10 @@ export class EliteScoreEngine {
     const scores = [
       candidate.confidence,
       confluence.confidence,
-      financialScore.confidence,
+      financialScore.dataStatus === 'UNAVAILABLE' ? undefined : financialScore.confidence,
       technicalScore.confidence,
     ];
-    const valid = scores.filter((s) => typeof s === 'number' && !isNaN(s));
+    const valid = scores.filter((s): s is number => typeof s === 'number' && !isNaN(s));
     if (valid.length === 0) return 0;
     return valid.reduce((a, b) => a + b, 0) / valid.length;
   }
@@ -203,7 +251,11 @@ export class EliteScoreEngine {
       breakdown: {
         financial: { score: 0, weight: this.config.dimensionWeights.financial, contribution: 0 },
         technical: { score: 0, weight: this.config.dimensionWeights.technical, contribution: 0 },
-        opportunity: { score: 0, weight: this.config.dimensionWeights.opportunity, contribution: 0 },
+        opportunity: {
+          score: 0,
+          weight: this.config.dimensionWeights.opportunity,
+          contribution: 0,
+        },
         confluence: { score: 0, weight: this.config.dimensionWeights.confluence, contribution: 0 },
         candidate: { score: 0, weight: this.config.dimensionWeights.candidate, contribution: 0 },
       },

@@ -10,7 +10,7 @@ export class PriceToBookRule {
       return {
         id: 'price_to_book',
         name: 'Price to Book (PD/DD)',
-        status: 'WARNING',
+        status: 'UNAVAILABLE',
         value: null,
         reason: 'Price to book data not available',
       };

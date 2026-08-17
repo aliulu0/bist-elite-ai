@@ -8,7 +8,7 @@ export class SectorComparisonRule {
       return {
         id: 'sector_comparison',
         name: 'Sector Comparison',
-        status: 'WARNING',
+        status: 'UNAVAILABLE',
         value: null,
         reason: 'Sector data or averages not available for comparison',
       };
@@ -58,7 +58,7 @@ export class SectorComparisonRule {
       return {
         id: 'sector_comparison',
         name: 'Sector Comparison',
-        status: 'WARNING',
+        status: 'UNAVAILABLE',
         value: null,
         reason: 'No comparable metrics available for sector analysis',
       };

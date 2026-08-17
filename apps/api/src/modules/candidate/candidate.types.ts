@@ -4,6 +4,7 @@ export interface DimensionEvaluation {
   score: number;
   passed: boolean;
   factors: string[];
+  available?: boolean;
 }
 
 export interface CandidateResult {

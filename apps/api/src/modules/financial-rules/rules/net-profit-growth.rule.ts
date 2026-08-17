@@ -8,7 +8,7 @@ export class NetProfitGrowthRule {
       return {
         id: 'net_profit_growth',
         name: 'Net Profit Growth',
-        status: 'WARNING',
+        status: 'UNAVAILABLE',
         value: null,
         reason: 'Net profit data not available for growth calculation',
       };
@@ -18,7 +18,7 @@ export class NetProfitGrowthRule {
       return {
         id: 'net_profit_growth',
         name: 'Net Profit Growth',
-        status: 'WARNING',
+        status: 'UNAVAILABLE',
         value: null,
         reason: 'Previous period net profit is zero, cannot calculate growth',
       };
