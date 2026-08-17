@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Public } from '../../common/auth/decorators';
+import { Optional } from '@nestjs/common';
 import {
   MarketDataOrchestrator,
   ProviderDashboardEntry,
@@ -24,6 +25,7 @@ import { MarketDataHealthReport } from './health/provider-health.types';
 import { CoverageReport } from './coverage/coverage-report.types';
 import { SUPPORTED_TIMEFRAMES, Timeframe } from './interfaces';
 import { HistoryQueryDto } from './dto';
+import { ConsensusResult } from './services/market-truth.service';
 import {
   LatestPriceResponseDto,
   HistoryResponseDto,

@@ -1,0 +1,561 @@
+{
+  "version": "R2-071-v2.0",
+  "generatedAt": "2026-08-17T08:50:00Z",
+  "runtimeProbeAt": "2026-08-17T08:46:00Z",
+  "description": "Machine-readable runtime market truth matrix for BIST equity symbols. REAL runtime values only. Null where unavailable. Never fabricated.",
+  "symbols": [
+    "THYAO",
+    "AKBNK",
+    "ASELS",
+    "BIMAS",
+    "TUPRS",
+    "GARAN",
+    "ISCTR",
+    "KCHOL",
+    "SAHOL",
+    "EREGL"
+  ],
+  "providers": ["yahoo-finance", "finnhub", "alpha-vantage", "serpapi-google-finance", "fintables"],
+  "truthResults": [
+    {
+      "symbol": "THYAO",
+      "providerSymbol": "THYAO.IS",
+      "providers": {
+        "yahoo-finance": {
+          "received": true,
+          "price": 305.5,
+          "currency": "TRY",
+          "timestamp": "2026-08-17T08:46:35Z",
+          "status": "VERIFIED",
+          "priceType": "chart_1d_close"
+        },
+        "finnhub": {
+          "received": false,
+          "price": null,
+          "status": "AUTH_FAILED",
+          "error": "You don't have access to this resource."
+        },
+        "alpha-vantage": {
+          "received": false,
+          "price": null,
+          "status": "NO_QUOTE",
+          "error": "empty Global Quote"
+        },
+        "serpapi-google-finance": {
+          "received": false,
+          "price": null,
+          "status": "NO_RESULTS",
+          "error": "Google Finance hasn't returned any results for this query."
+        },
+        "fintables": { "received": false, "price": null, "status": "NOT_CONFIGURED" }
+      },
+      "consensus": {
+        "status": "SINGLE_SOURCE",
+        "consensusPrice": 305.5,
+        "consensusCurrency": "TRY",
+        "confidence": "LOW",
+        "providerCount": 1,
+        "validProviderCount": 1,
+        "freshProviderCount": 1,
+        "minPrice": 305.5,
+        "maxPrice": 305.5,
+        "medianPrice": 305.5,
+        "primaryPrice": 305.5,
+        "relativeSpread": 0,
+        "absoluteSpread": 0,
+        "disagreementPercent": 0
+      }
+    },
+    {
+      "symbol": "AKBNK",
+      "providerSymbol": "AKBNK.IS",
+      "providers": {
+        "yahoo-finance": {
+          "received": true,
+          "price": 68.8,
+          "currency": "TRY",
+          "timestamp": "2026-08-17T08:46:32Z",
+          "status": "VERIFIED",
+          "priceType": "chart_1d_close"
+        },
+        "finnhub": {
+          "received": false,
+          "price": null,
+          "status": "AUTH_FAILED",
+          "error": "You don't have access to this resource."
+        },
+        "alpha-vantage": {
+          "received": false,
+          "price": null,
+          "status": "RATE_LIMITED",
+          "error": "1 request per second"
+        },
+        "serpapi-google-finance": {
+          "received": false,
+          "price": null,
+          "status": "NOT_TESTED",
+          "note": "quota conserved; THYAO probe returned NO_RESULTS"
+        },
+        "fintables": { "received": false, "price": null, "status": "NOT_CONFIGURED" }
+      },
+      "consensus": {
+        "status": "SINGLE_SOURCE",
+        "consensusPrice": 68.8,
+        "consensusCurrency": "TRY",
+        "confidence": "LOW",
+        "providerCount": 1,
+        "validProviderCount": 1,
+        "freshProviderCount": 1,
+        "minPrice": 68.8,
+        "maxPrice": 68.8,
+        "medianPrice": 68.8,
+        "primaryPrice": 68.8,
+        "relativeSpread": 0,
+        "absoluteSpread": 0,
+        "disagreementPercent": 0
+      }
+    },
+    {
+      "symbol": "ASELS",
+      "providerSymbol": "ASELS.IS",
+      "providers": {
+        "yahoo-finance": {
+          "received": true,
+          "price": 387.5,
+          "currency": "TRY",
+          "timestamp": "2026-08-17T08:46:39Z",
+          "status": "VERIFIED",
+          "priceType": "chart_1d_close"
+        },
+        "finnhub": {
+          "received": false,
+          "price": null,
+          "status": "AUTH_FAILED",
+          "error": "You don't have access to this resource."
+        },
+        "alpha-vantage": {
+          "received": false,
+          "price": null,
+          "status": "RATE_LIMITED",
+          "error": "1 request per second"
+        },
+        "serpapi-google-finance": { "received": false, "price": null, "status": "NOT_TESTED" },
+        "fintables": { "received": false, "price": null, "status": "NOT_CONFIGURED" }
+      },
+      "consensus": {
+        "status": "SINGLE_SOURCE",
+        "consensusPrice": 387.5,
+        "consensusCurrency": "TRY",
+        "confidence": "LOW",
+        "providerCount": 1,
+        "validProviderCount": 1,
+        "freshProviderCount": 1,
+        "minPrice": 387.5,
+        "maxPrice": 387.5,
+        "medianPrice": 387.5,
+        "primaryPrice": 387.5,
+        "relativeSpread": 0,
+        "absoluteSpread": 0,
+        "disagreementPercent": 0
+      }
+    },
+    {
+      "symbol": "BIMAS",
+      "providerSymbol": "BIMAS.IS",
+      "providers": {
+        "yahoo-finance": {
+          "received": true,
+          "price": 375.75,
+          "currency": "TRY",
+          "timestamp": "2026-08-17T08:46:39Z",
+          "status": "VERIFIED",
+          "priceType": "chart_1d_close"
+        }
+      },
+      "consensus": {
+        "status": "SINGLE_SOURCE",
+        "consensusPrice": 375.75,
+        "consensusCurrency": "TRY",
+        "confidence": "LOW",
+        "providerCount": 1,
+        "validProviderCount": 1,
+        "freshProviderCount": 1,
+        "minPrice": 375.75,
+        "maxPrice": 375.75,
+        "medianPrice": 375.75,
+        "primaryPrice": 375.75,
+        "relativeSpread": 0,
+        "absoluteSpread": 0,
+        "disagreementPercent": 0
+      }
+    },
+    {
+      "symbol": "TUPRS",
+      "providerSymbol": "TUPRS.IS",
+      "providers": {
+        "yahoo-finance": {
+          "received": true,
+          "price": 362.75,
+          "currency": "TRY",
+          "timestamp": "2026-08-17T08:46:37Z",
+          "status": "VERIFIED",
+          "priceType": "chart_1d_close"
+        }
+      },
+      "consensus": {
+        "status": "SINGLE_SOURCE",
+        "consensusPrice": 362.75,
+        "consensusCurrency": "TRY",
+        "confidence": "LOW",
+        "providerCount": 1,
+        "validProviderCount": 1,
+        "freshProviderCount": 1,
+        "minPrice": 362.75,
+        "maxPrice": 362.75,
+        "medianPrice": 362.75,
+        "primaryPrice": 362.75,
+        "relativeSpread": 0,
+        "absoluteSpread": 0,
+        "disagreementPercent": 0
+      }
+    },
+    {
+      "symbol": "GARAN",
+      "providerSymbol": "GARAN.IS",
+      "providers": {
+        "yahoo-finance": {
+          "received": true,
+          "price": 131.2,
+          "currency": "TRY",
+          "timestamp": "2026-08-17T08:46:33Z",
+          "status": "VERIFIED",
+          "priceType": "chart_1d_close"
+        }
+      },
+      "consensus": {
+        "status": "SINGLE_SOURCE",
+        "consensusPrice": 131.2,
+        "consensusCurrency": "TRY",
+        "confidence": "LOW",
+        "providerCount": 1,
+        "validProviderCount": 1,
+        "freshProviderCount": 1,
+        "minPrice": 131.2,
+        "maxPrice": 131.2,
+        "medianPrice": 131.2,
+        "primaryPrice": 131.2,
+        "relativeSpread": 0,
+        "absoluteSpread": 0,
+        "disagreementPercent": 0
+      }
+    },
+    {
+      "symbol": "ISCTR",
+      "providerSymbol": "ISCTR.IS",
+      "providers": {
+        "yahoo-finance": {
+          "received": true,
+          "price": 12.52,
+          "currency": "TRY",
+          "timestamp": "2026-08-17T08:46:38Z",
+          "status": "VERIFIED",
+          "priceType": "chart_1d_close"
+        }
+      },
+      "consensus": {
+        "status": "SINGLE_SOURCE",
+        "consensusPrice": 12.52,
+        "consensusCurrency": "TRY",
+        "confidence": "LOW",
+        "providerCount": 1,
+        "validProviderCount": 1,
+        "freshProviderCount": 1,
+        "minPrice": 12.52,
+        "maxPrice": 12.52,
+        "medianPrice": 12.52,
+        "primaryPrice": 12.52,
+        "relativeSpread": 0,
+        "absoluteSpread": 0,
+        "disagreementPercent": 0
+      }
+    },
+    {
+      "symbol": "KCHOL",
+      "providerSymbol": "KCHOL.IS",
+      "providers": {
+        "yahoo-finance": {
+          "received": true,
+          "price": 206.1,
+          "currency": "TRY",
+          "timestamp": "2026-08-17T08:46:37Z",
+          "status": "VERIFIED",
+          "priceType": "chart_1d_close"
+        }
+      },
+      "consensus": {
+        "status": "SINGLE_SOURCE",
+        "consensusPrice": 206.1,
+        "consensusCurrency": "TRY",
+        "confidence": "LOW",
+        "providerCount": 1,
+        "validProviderCount": 1,
+        "freshProviderCount": 1,
+        "minPrice": 206.1,
+        "maxPrice": 206.1,
+        "medianPrice": 206.1,
+        "primaryPrice": 206.1,
+        "relativeSpread": 0,
+        "absoluteSpread": 0,
+        "disagreementPercent": 0
+      }
+    },
+    {
+      "symbol": "SAHOL",
+      "providerSymbol": "SAHOL.IS",
+      "providers": {
+        "yahoo-finance": {
+          "received": true,
+          "price": 89.2,
+          "currency": "TRY",
+          "timestamp": "2026-08-17T08:46:35Z",
+          "status": "VERIFIED",
+          "priceType": "chart_1d_close"
+        }
+      },
+      "consensus": {
+        "status": "SINGLE_SOURCE",
+        "consensusPrice": 89.2,
+        "consensusCurrency": "TRY",
+        "confidence": "LOW",
+        "providerCount": 1,
+        "validProviderCount": 1,
+        "freshProviderCount": 1,
+        "minPrice": 89.2,
+        "maxPrice": 89.2,
+        "medianPrice": 89.2,
+        "primaryPrice": 89.2,
+        "relativeSpread": 0,
+        "absoluteSpread": 0,
+        "disagreementPercent": 0
+      }
+    },
+    {
+      "symbol": "EREGL",
+      "providerSymbol": "EREGL.IS",
+      "providers": {
+        "yahoo-finance": {
+          "received": true,
+          "price": 37.68,
+          "currency": "TRY",
+          "timestamp": "2026-08-17T08:46:39Z",
+          "status": "VERIFIED",
+          "priceType": "chart_1d_close"
+        }
+      },
+      "consensus": {
+        "status": "SINGLE_SOURCE",
+        "consensusPrice": 37.68,
+        "consensusCurrency": "TRY",
+        "confidence": "LOW",
+        "providerCount": 1,
+        "validProviderCount": 1,
+        "freshProviderCount": 1,
+        "minPrice": 37.68,
+        "maxPrice": 37.68,
+        "medianPrice": 37.68,
+        "primaryPrice": 37.68,
+        "relativeSpread": 0,
+        "absoluteSpread": 0,
+        "disagreementPercent": 0
+      }
+    }
+  ],
+  "conflicts": [],
+  "confidence": {
+    "THYAO": "LOW",
+    "AKBNK": "LOW",
+    "ASELS": "LOW",
+    "BIMAS": "LOW",
+    "TUPRS": "LOW",
+    "GARAN": "LOW",
+    "ISCTR": "LOW",
+    "KCHOL": "LOW",
+    "SAHOL": "LOW",
+    "EREGL": "LOW"
+  },
+  "runtimeEvidence": [
+    {
+      "symbol": "THYAO",
+      "provider": "yahoo-finance",
+      "price": 305.5,
+      "currency": "TRY",
+      "timestamp": "2026-08-17T08:46:35Z",
+      "status": "VERIFIED"
+    },
+    {
+      "symbol": "AKBNK",
+      "provider": "yahoo-finance",
+      "price": 68.8,
+      "currency": "TRY",
+      "timestamp": "2026-08-17T08:46:32Z",
+      "status": "VERIFIED"
+    },
+    {
+      "symbol": "ASELS",
+      "provider": "yahoo-finance",
+      "price": 387.5,
+      "currency": "TRY",
+      "timestamp": "2026-08-17T08:46:39Z",
+      "status": "VERIFIED"
+    },
+    {
+      "symbol": "BIMAS",
+      "provider": "yahoo-finance",
+      "price": 375.75,
+      "currency": "TRY",
+      "timestamp": "2026-08-17T08:46:39Z",
+      "status": "VERIFIED"
+    },
+    {
+      "symbol": "TUPRS",
+      "provider": "yahoo-finance",
+      "price": 362.75,
+      "currency": "TRY",
+      "timestamp": "2026-08-17T08:46:37Z",
+      "status": "VERIFIED"
+    },
+    {
+      "symbol": "GARAN",
+      "provider": "yahoo-finance",
+      "price": 131.2,
+      "currency": "TRY",
+      "timestamp": "2026-08-17T08:46:33Z",
+      "status": "VERIFIED"
+    },
+    {
+      "symbol": "ISCTR",
+      "provider": "yahoo-finance",
+      "price": 12.52,
+      "currency": "TRY",
+      "timestamp": "2026-08-17T08:46:38Z",
+      "status": "VERIFIED"
+    },
+    {
+      "symbol": "KCHOL",
+      "provider": "yahoo-finance",
+      "price": 206.1,
+      "currency": "TRY",
+      "timestamp": "2026-08-17T08:46:37Z",
+      "status": "VERIFIED"
+    },
+    {
+      "symbol": "SAHOL",
+      "provider": "yahoo-finance",
+      "price": 89.2,
+      "currency": "TRY",
+      "timestamp": "2026-08-17T08:46:35Z",
+      "status": "VERIFIED"
+    },
+    {
+      "symbol": "EREGL",
+      "provider": "yahoo-finance",
+      "price": 37.68,
+      "currency": "TRY",
+      "timestamp": "2026-08-17T08:46:39Z",
+      "status": "VERIFIED"
+    },
+    {
+      "symbol": "THYAO",
+      "provider": "finnhub",
+      "price": null,
+      "status": "AUTH_FAILED",
+      "error": "You don't have access to this resource."
+    },
+    {
+      "symbol": "THYAO",
+      "provider": "alpha-vantage",
+      "price": null,
+      "status": "NO_QUOTE",
+      "error": "empty Global Quote"
+    },
+    {
+      "symbol": "THYAO",
+      "provider": "serpapi-google-finance",
+      "price": null,
+      "status": "NO_RESULTS",
+      "error": "Google Finance hasn't returned any results for this query."
+    }
+  ],
+  "externalIntegrations": [
+    { "repo": "TradingAgents", "status": "ADAPTER_ONLY/NOT_ACTIVATED", "runtimeTested": false },
+    { "repo": "NOFX", "status": "ADAPTER_ONLY/NOT_ACTIVATED", "runtimeTested": false },
+    { "repo": "AI-Berkshire", "status": "ADAPTER_ONLY/NOT_ACTIVATED", "runtimeTested": false },
+    {
+      "repo": "Agent-Reach",
+      "status": "INTEGRATED_RUNTIME (research only)",
+      "runtimeTested": true
+    },
+    { "repo": "VectorBT", "status": "NOT_ACTIVATED", "runtimeTested": false }
+  ],
+  "defects": [
+    {
+      "id": "R2-071-D01",
+      "severity": "HIGH",
+      "description": "SerpAPI Google Finance returns NO_RESULTS for BIST .IS symbols; R2-070 secondary-market-data claim not runtime-confirmed"
+    },
+    {
+      "id": "R2-071-D02",
+      "severity": "HIGH",
+      "description": "R2-070 artifacts contained price figures not obtained from runtime probes (e.g. THYAO 305.25 vs real 305.5)"
+    },
+    {
+      "id": "R2-071-D03",
+      "severity": "MEDIUM",
+      "description": "Finnhub configured key has no BIST access (AUTH_FAILED)"
+    },
+    {
+      "id": "R2-071-D04",
+      "severity": "MEDIUM",
+      "description": "Alpha Vantage returns no BIST quote and hits free-tier rate limits"
+    },
+    {
+      "id": "R2-071-D05",
+      "severity": "HIGH",
+      "description": "Fintables credentials not configured; cannot verify"
+    }
+  ],
+  "fixes": [
+    {
+      "id": "R2-071-F01",
+      "description": "Corrected market-data.controller.ts imports (Optional, ConsensusResult) → typecheck 0 errors"
+    },
+    {
+      "id": "R2-071-F02",
+      "description": "R2-071 artifacts rewritten with real runtime prices only; fabricated R2-070 figures removed"
+    },
+    {
+      "id": "R2-071-F03",
+      "description": "Conservative quota usage: Google Finance probed once; Finnhub/AlphaVantage limited to 3 symbols"
+    },
+    { "id": "R2-071-F04", "description": "Provider hierarchy corrected per runtime evidence" }
+  ],
+  "conflictModel": {
+    "tolerance": "5% relative / 10 TRY absolute",
+    "singleSource": "SINGLE_SOURCE",
+    "multiSourceConfirmed": "MULTI_SOURCE_CONFIRMED",
+    "conflict": "PRICE_CONFLICT (never silently averaged)",
+    "observed": "No conflicts — only one independent direct provider returned a price"
+  },
+  "providerTrustModel": {
+    "price": [
+      "yahoo-finance (VERIFIED)",
+      "google-finance (NO_RESULTS)",
+      "finnhub (AUTH_FAILED)",
+      "alpha-vantage (NO_QUOTE)"
+    ],
+    "research": ["serpapi", "agent-reach", "kap"],
+    "fundamentals": ["fintables (NOT_CONFIGURED)", "kap"],
+    "macro": ["tcmb"]
+  },
+  "neverFabricate": "REAL DATA OR EXPLICIT ABSENCE. Null where unavailable. Never 0/fake/estimated/AI-generated values."
+}
