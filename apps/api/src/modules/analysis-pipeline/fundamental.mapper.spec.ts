@@ -1,4 +1,8 @@
-import { mapToFundamentalData, mapToFinancialData, FundamentalProviderInputs } from './fundamental.mapper';
+import {
+  mapToFundamentalData,
+  mapToFinancialData,
+  FundamentalProviderInputs,
+} from './fundamental.mapper';
 
 describe('FundamentalMapper', () => {
   describe('mapToFundamentalData', () => {
@@ -58,7 +62,12 @@ describe('FundamentalMapper', () => {
     it('should use sector from sector provider when available', () => {
       const result = mapToFundamentalData({
         ...fullInputs,
-        sector: { symbol: 'THYAO', sector: 'Finans', lastUpdated: '2025-01-01', source: 'fintables' },
+        sector: {
+          symbol: 'THYAO',
+          sector: 'Finans',
+          lastUpdated: '2025-01-01',
+          source: 'fintables',
+        },
       });
       expect(result.sector).toBe('Finans');
     });
@@ -107,7 +116,13 @@ describe('FundamentalMapper', () => {
 
     it('should handle partial inputs with only ratios', () => {
       const result = mapToFundamentalData({
-        ratios: { symbol: 'THYAO', priceToBook: 2.5, enterpriseValueToEBITDA: 10, lastUpdated: '2025-01-01', source: 'fintables' },
+        ratios: {
+          symbol: 'THYAO',
+          priceToBook: 2.5,
+          enterpriseValueToEBITDA: 10,
+          lastUpdated: '2025-01-01',
+          source: 'fintables',
+        },
       });
       expect(result.priceToBook).toBe(2.5);
       expect(result.evToEBITDA).toBe(10);
@@ -118,7 +133,15 @@ describe('FundamentalMapper', () => {
 
     it('should handle partial inputs with only balance sheet', () => {
       const result = mapToFundamentalData({
-        balance: { symbol: 'THYAO', equity: 100, totalDebt: 50, totalAssets: 200, sharesOutstanding: 1000, lastUpdated: '2025-01-01', source: 'fintables' },
+        balance: {
+          symbol: 'THYAO',
+          equity: 100,
+          totalDebt: 50,
+          totalAssets: 200,
+          sharesOutstanding: 1000,
+          lastUpdated: '2025-01-01',
+          source: 'fintables',
+        },
       });
       expect(result.equity).toBe(100);
       expect(result.totalDebt).toBe(50);
@@ -129,8 +152,22 @@ describe('FundamentalMapper', () => {
 
     it('should handle null values within non-null objects', () => {
       const result = mapToFundamentalData({
-        ratios: { symbol: 'THYAO', priceToBook: null, enterpriseValueToEBITDA: null, lastUpdated: '2025-01-01', source: 'fintables' },
-        balance: { symbol: 'THYAO', equity: null, totalDebt: null, totalAssets: null, sharesOutstanding: null, lastUpdated: '2025-01-01', source: 'fintables' },
+        ratios: {
+          symbol: 'THYAO',
+          priceToBook: null,
+          enterpriseValueToEBITDA: null,
+          lastUpdated: '2025-01-01',
+          source: 'fintables',
+        },
+        balance: {
+          symbol: 'THYAO',
+          equity: null,
+          totalDebt: null,
+          totalAssets: null,
+          sharesOutstanding: null,
+          lastUpdated: '2025-01-01',
+          source: 'fintables',
+        },
       });
       expect(result.priceToBook).toBeNull();
       expect(result.evToEBITDA).toBeNull();
@@ -187,7 +224,7 @@ describe('FundamentalMapper', () => {
       expect(result.totalAssets).toBe(500);
     });
 
-    it('should fall back to marketCap when totalAssets is null', () => {
+    it('should NOT fall back to marketCap when totalAssets is null (truth semantics)', () => {
       const fundamentals = {
         priceToBook: 1,
         evToEBITDA: 5,
@@ -202,10 +239,10 @@ describe('FundamentalMapper', () => {
       };
 
       const result = mapToFinancialData('TEST', fundamentals);
-      expect(result.totalAssets).toBe(300);
+      expect(result.totalAssets).toBeNull();
     });
 
-    it('should fall back to marketCap when totalAssets is undefined', () => {
+    it('should NOT fall back to marketCap when totalAssets is undefined (truth semantics)', () => {
       const fundamentals = {
         priceToBook: 1,
         evToEBITDA: 5,
@@ -219,7 +256,7 @@ describe('FundamentalMapper', () => {
       } as any;
 
       const result = mapToFinancialData('TEST', fundamentals);
-      expect(result.totalAssets).toBe(300);
+      expect(result.totalAssets).toBeNull();
     });
 
     it('should preserve null values throughout', () => {
@@ -316,7 +353,18 @@ describe('FundamentalMapper', () => {
     });
 
     it('should handle BIST tracked symbols', () => {
-      const symbols = ['THYAO', 'ASELS', 'GARAN', 'AKBNK', 'EREGL', 'BIMAS', 'KCHOL', 'SAHOL', 'TUPRS', 'ISCTR'];
+      const symbols = [
+        'THYAO',
+        'ASELS',
+        'GARAN',
+        'AKBNK',
+        'EREGL',
+        'BIMAS',
+        'KCHOL',
+        'SAHOL',
+        'TUPRS',
+        'ISCTR',
+      ];
       for (const symbol of symbols) {
         const fundamentals = {
           priceToBook: 1 + Math.random() * 5,

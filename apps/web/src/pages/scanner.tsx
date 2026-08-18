@@ -1,7 +1,13 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useScannerStore, filterStocks } from '@/stores/scanner-store';
 import { sdkClient } from '@/lib/sdk';
-import { ScannerFilters, ScannerTable, ScannerDetail, ScannerKpi, exportCsv } from '@/components/scanner';
+import {
+  ScannerFilters,
+  ScannerTable,
+  ScannerDetail,
+  ScannerKpi,
+  exportCsv,
+} from '@/components/scanner';
 import type { ScannerRow } from '@/components/scanner/scanner-table';
 import { PageHeader, ErrorCard } from '@/components/shared';
 import { RefreshCw, Download, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
@@ -21,30 +27,23 @@ export default function ScannerPage() {
     setLoading(true);
     setError('');
     try {
-      const [scanRes, candidateRes] = await Promise.all([
-        sdkClient.scanner(),
-        sdkClient.scannerCandidates().catch(() => null),
-      ]);
+      const candidateRes = await sdkClient.scannerCandidates();
+      const candidates = candidateRes?.sonuclar || [];
 
-      const candidates = candidateRes?.data?.items || [];
-      const candidateMap = new Map(candidates.map((c) => [c.symbol, c]));
-
-      const top = scanRes?.topCandidates || [];
-      const items: ScannerRow[] = top.map((item) => {
-        const candidate = candidateMap.get(item.symbol);
-        const eliteScore = item.eliteScore || 0;
+      const items: ScannerRow[] = candidates.map((item, index) => {
+        const aiScore = item.aiScore || 0;
         return {
-          symbol: item.symbol,
-          name: '',
-          sector: '',
-          eliteScore,
-          opportunityScore: candidate?.eliteScore || eliteScore,
+          symbol: item.ticker,
+          name: item.company,
+          sector: item.sector || '',
+          eliteScore: aiScore,
+          opportunityScore: aiScore,
           financialScore: 0,
           technicalScore: 0,
           smartMoneyScore: 0,
-          totalScore: item.compositeScore || eliteScore,
-          status: item.rank <= 5 ? 'TOP_CANDIDATE' : item.rank <= 20 ? 'WATCHLIST' : 'REJECTED',
-          rank: item.rank,
+          totalScore: aiScore,
+          status: aiScore >= 80 ? 'TOP_CANDIDATE' : aiScore >= 60 ? 'WATCHLIST' : 'REJECTED',
+          rank: index + 1,
         };
       });
 
@@ -56,9 +55,19 @@ export default function ScannerPage() {
     }
   }, []);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
-  const filtered = useMemo(() => filterStocks(rawData as unknown as Record<string, unknown>[], filters, search) as unknown as ScannerRow[], [rawData, filters, search]);
+  const filtered = useMemo(
+    () =>
+      filterStocks(
+        rawData as unknown as Record<string, unknown>[],
+        filters,
+        search,
+      ) as unknown as ScannerRow[],
+    [rawData, filters, search],
+  );
 
   return (
     <div>
@@ -80,7 +89,11 @@ export default function ScannerPage() {
               className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-accent"
               aria-label="Filtre panelini aç/kapat"
             >
-              {leftPanelOpen ? <PanelLeftClose className="h-3.5 w-3.5" /> : <PanelLeftOpen className="h-3.5 w-3.5" />}
+              {leftPanelOpen ? (
+                <PanelLeftClose className="h-3.5 w-3.5" />
+              ) : (
+                <PanelLeftOpen className="h-3.5 w-3.5" />
+              )}
               Filtreler
             </button>
             <button

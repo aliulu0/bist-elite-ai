@@ -30,22 +30,57 @@ export class MarketRegimeEngine {
     const us10y = this.findPoint(points, 'us10y');
     const cds = this.findPoint(points, 'turkey_cds');
 
-    const vixComp = { value: vix?.value ?? 0, impact: this.calcVixImpact(vix?.value ?? 0) };
-    const dxyComp = { value: dxy?.value ?? 0, impact: this.calcDxyImpact(dxy?.value ?? 0) };
-    const us10yComp = { value: us10y?.value ?? 0, impact: this.calcUs10yImpact(us10y?.value ?? 0) };
-    const cdsComp = { value: cds?.value ?? 0, impact: this.calcCdsImpact(cds?.value ?? 0) };
-    const liquidityComp = { value: us10y?.value ?? 0, impact: this.calcLiquidityImpact(us10y?.value ?? 0) };
-    const momentumComp = { value: 0, impact: 0 };
+    const vixValue = vix?.value ?? null;
+    const dxyValue = dxy?.value ?? null;
+    const us10yValue = us10y?.value ?? null;
+    const cdsValue = cds?.value ?? null;
 
-    const totalImpact = vixComp.impact + dxyComp.impact + us10yComp.impact + cdsComp.impact + liquidityComp.impact + momentumComp.impact;
-    const avgImpact = totalImpact / 6;
+    const vixComp = {
+      value: vixValue,
+      impact: vixValue === null ? 0 : this.calcVixImpact(vixValue),
+    };
+    const dxyComp = {
+      value: dxyValue,
+      impact: dxyValue === null ? 0 : this.calcDxyImpact(dxyValue),
+    };
+    const us10yComp = {
+      value: us10yValue,
+      impact: us10yValue === null ? 0 : this.calcUs10yImpact(us10yValue),
+    };
+    const cdsComp = {
+      value: cdsValue,
+      impact: cdsValue === null ? 0 : this.calcCdsImpact(cdsValue),
+    };
+    const liquidityComp = {
+      value: us10yValue,
+      impact: us10yValue === null ? 0 : this.calcLiquidityImpact(us10yValue),
+    };
+    const momentumComp = { value: null, impact: 0 };
 
-    const regime = this.determineRegime(avgImpact);
-    const signals = this.generateSignals(vixComp, dxyComp, us10yComp, cdsComp);
+    const hasData = [vixValue, dxyValue, us10yValue, cdsValue].some((v) => v !== null);
+    let regime: MarketRegimeType | null;
+    let score: number | null;
+    if (!hasData) {
+      regime = null;
+      score = null;
+    } else {
+      const totalImpact =
+        vixComp.impact +
+        dxyComp.impact +
+        us10yComp.impact +
+        cdsComp.impact +
+        liquidityComp.impact +
+        momentumComp.impact;
+      const avgImpact = totalImpact / 6;
+      regime = this.determineRegime(avgImpact);
+      score = Math.round((1 - avgImpact) * 100);
+    }
+
+    const signals = this.generateSignals(vixComp, dxyComp, us10yComp, cdsComp, hasData);
 
     return {
       regime,
-      score: Math.round((1 - avgImpact) * 100),
+      score,
       components: {
         vix: vixComp,
         dxy: dxyComp,
@@ -103,16 +138,19 @@ export class MarketRegimeEngine {
   }
 
   private generateSignals(
-    vix: { value: number; impact: number },
-    dxy: { value: number; impact: number },
-    us10y: { value: number; impact: number },
-    cds: { value: number; impact: number },
+    vix: { value: number | null; impact: number },
+    dxy: { value: number | null; impact: number },
+    us10y: { value: number | null; impact: number },
+    cds: { value: number | null; impact: number },
+    hasData: boolean,
   ): string[] {
+    if (!hasData) return ['Yetersiz veri: rejim belirlenemedi'];
     const signals: string[] = [];
-    if (vix.impact >= 0.6) signals.push(`VIX spike at ${vix.value}`);
-    if (dxy.impact >= 0.5) signals.push(`DXY strength at ${dxy.value}`);
-    if (us10y.impact >= 0.5) signals.push(`US10Y elevated at ${us10y.value}%`);
-    if (cds.impact >= 0.5) signals.push(`CDS elevated at ${cds.value} bps`);
+    if (vix.impact >= 0.6 && vix.value !== null) signals.push(`VIX spike at ${vix.value}`);
+    if (dxy.impact >= 0.5 && dxy.value !== null) signals.push(`DXY strength at ${dxy.value}`);
+    if (us10y.impact >= 0.5 && us10y.value !== null)
+      signals.push(`US10Y elevated at ${us10y.value}%`);
+    if (cds.impact >= 0.5 && cds.value !== null) signals.push(`CDS elevated at ${cds.value} bps`);
     if (signals.length === 0) signals.push('No significant risk signals');
     return signals;
   }

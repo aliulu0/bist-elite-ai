@@ -46,14 +46,15 @@ export class MacroEliteScoreService {
     const decisionDelta = this.decisionAdjustment(decision?.analysis ?? null);
     const yieldDelta = this.yieldCurveAdjustment(data.points);
 
-    const eliteScore = Math.round(
-      Math.max(0, Math.min(100, base.macroScore + decisionDelta + yieldDelta)),
-    );
+    const eliteScore =
+      base.macroScore === null
+        ? null
+        : Math.round(Math.max(0, Math.min(100, base.macroScore + decisionDelta + yieldDelta)));
     const risk = this.determineRisk(eliteScore, data.points, decision);
 
     const result: MacroEliteResult = {
       eliteScore,
-      confidence: this.computeConfidence(base.confidence, decision),
+      confidence: base.macroScore === null ? 0 : this.computeConfidence(base.confidence, decision),
       trend: this.determineTrend(eliteScore, decision),
       risk,
       recommendation: this.determineRecommendation(eliteScore, risk),
@@ -71,7 +72,10 @@ export class MacroEliteScoreService {
     const result = await this.calculate();
     return {
       trend: result.trend,
-      change: previous ? Math.round((result.eliteScore - previous.eliteScore) * 10) / 10 : 0,
+      change:
+        previous && result.eliteScore !== null && previous.eliteScore !== null
+          ? Math.round((result.eliteScore - previous.eliteScore) * 10) / 10
+          : 0,
       currentScore: result.eliteScore,
       previousScore: previous?.eliteScore ?? null,
       drivers: result.recommendation.reasons,
@@ -138,17 +142,27 @@ export class MacroEliteScoreService {
     return Math.round(0.7 * dataConfidence + 0.3 * decision.analysis.confidence);
   }
 
-  private determineTrend(eliteScore: number, decision: TCMBDecisionRecord | null): MacroTrend {
-    if (this.previousResult) {
+  private determineTrend(
+    eliteScore: number | null,
+    decision: TCMBDecisionRecord | null,
+  ): MacroTrend {
+    if (eliteScore === null) return 'stable';
+    if (this.previousResult && this.previousResult.eliteScore !== null) {
       const delta = eliteScore - this.previousResult.eliteScore;
       if (delta >= 3) return 'improving';
       if (delta <= -3) return 'deteriorating';
     }
     if (decision) {
-      if (decision.analysis.sentiment === 'hawkish' || decision.analysis.sentiment === 'hawkish_leaning') {
+      if (
+        decision.analysis.sentiment === 'hawkish' ||
+        decision.analysis.sentiment === 'hawkish_leaning'
+      ) {
         return 'deteriorating';
       }
-      if (decision.analysis.sentiment === 'dovish' || decision.analysis.sentiment === 'dovish_leaning') {
+      if (
+        decision.analysis.sentiment === 'dovish' ||
+        decision.analysis.sentiment === 'dovish_leaning'
+      ) {
         return 'improving';
       }
     }
@@ -156,7 +170,7 @@ export class MacroEliteScoreService {
   }
 
   private determineRisk(
-    eliteScore: number,
+    eliteScore: number | null,
     points: MacroDataPoint[],
     decision: TCMBDecisionRecord | null,
   ): MacroRiskAssessment {
@@ -166,32 +180,44 @@ export class MacroEliteScoreService {
 
     if (vix !== undefined && vix >= 40) drivers.push(`VIX at ${vix}`);
     if (cds !== undefined && cds >= 500) drivers.push(`Turkey CDS at ${cds}bps`);
-    if (eliteScore < 40) drivers.push(`Macro elite score ${eliteScore}`);
+    if (eliteScore !== null && eliteScore < 40) drivers.push(`Macro elite score ${eliteScore}`);
     if (decision) drivers.push(`TCMB sentiment: ${decision.analysis.sentiment}`);
 
     let level: MacroRiskAssessment['level'] = 'moderate';
-    if (vix !== undefined && vix >= 40) level = 'extreme';
+    if (eliteScore === null) {
+      level = 'moderate';
+    } else if (vix !== undefined && vix >= 40) level = 'extreme';
     else if (cds !== undefined && cds >= 500) level = 'extreme';
     else if (eliteScore < 40) level = 'high';
     else if (eliteScore < 60) level = 'moderate';
     else level = 'low';
 
-    if (decision && decision.analysis.risk === 'high' && (level === 'low' || level === 'moderate')) {
+    if (
+      decision &&
+      decision.analysis.risk === 'high' &&
+      (level === 'low' || level === 'moderate')
+    ) {
       level = 'high';
     }
 
     return {
       level,
-      score: Math.round((100 - eliteScore) * 10) / 10,
+      score: eliteScore === null ? null : Math.round((100 - eliteScore) * 10) / 10,
       drivers,
     };
   }
 
-  private determineRecommendation(eliteScore: number, risk: MacroRiskAssessment): MacroRecommendation {
+  private determineRecommendation(
+    eliteScore: number | null,
+    risk: MacroRiskAssessment,
+  ): MacroRecommendation {
     let action: MacroRecommendationAction;
     const reasons: string[] = [];
 
-    if (risk.level === 'extreme') {
+    if (eliteScore === null) {
+      action = 'selective';
+      reasons.push('No macro data available');
+    } else if (risk.level === 'extreme') {
       action = 'cash';
       reasons.push('Extreme macro risk regime');
     } else if (risk.level === 'high') {
@@ -215,12 +241,17 @@ export class MacroEliteScoreService {
     };
   }
 
-  private recommendationSummary(action: MacroRecommendationAction, eliteScore: number): string {
+  private recommendationSummary(
+    action: MacroRecommendationAction,
+    eliteScore: number | null,
+  ): string {
     switch (action) {
       case 'opportunistic':
         return `Macro conditions supportive (score ${eliteScore}); consider adding exposure to macro-sensitive names.`;
       case 'selective':
-        return `Macro conditions mixed (score ${eliteScore}); prefer selective, high-quality positions.`;
+        return eliteScore === null
+          ? 'Macro verisi mevcut değil; skor üretilemedi.'
+          : `Macro conditions mixed (score ${eliteScore}); prefer selective, high-quality positions.`;
       case 'defensive':
         return `Macro conditions weak (score ${eliteScore}); lean defensive and reduce cyclical exposure.`;
       case 'cash':
@@ -248,10 +279,10 @@ export class MacroEliteScoreService {
       const score = base.components[key];
       return {
         name: key,
-        score,
+        score: score ?? 0,
         weight: weightMap[key],
-        weighted: Math.round(score * weightMap[key] * 100) / 100,
-        status: score === 0 ? 'pending' : 'ready',
+        weighted: score === null ? null : Math.round(score * weightMap[key] * 100) / 100,
+        status: score === null ? 'pending' : 'ready',
         detail: this.componentDetail(key, score),
       };
     });
@@ -282,7 +313,8 @@ export class MacroEliteScoreService {
     return components;
   }
 
-  private componentDetail(key: string, score: number): string {
+  private componentDetail(key: string, score: number | null): string {
+    if (score === null) return `no ${key} data available`;
     if (score === 0) return `no ${key} data available`;
     return `${key} component score ${score}`;
   }

@@ -1,6 +1,0 @@
-﻿# STATUS — 005_GITHUB_INTEGRATIONS
-
-## RED (10/100 reuse)
-
-> Verified during MASTER PROJECT AUDIT (A-001), 2026-08-08.
-

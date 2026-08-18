@@ -22,22 +22,24 @@ export class MacroRecommendationDto {
   @ApiProperty({ example: 'selective', enum: ['opportunistic', 'selective', 'defensive', 'cash'] })
   action!: string;
 
-  @ApiProperty({ example: 'Macro conditions mixed (score 58); prefer selective, high-quality positions.' })
+  @ApiProperty({
+    example: 'Macro conditions mixed (score 58); prefer selective, high-quality positions.',
+  })
   summary!: string;
 
   @ApiProperty({ type: [String] })
   reasons!: string[];
 
-  @ApiProperty({ example: 58 })
-  score!: number;
+  @ApiProperty({ example: 58, nullable: true })
+  score!: number | null;
 }
 
 export class MacroRiskDto {
   @ApiProperty({ example: 'moderate', enum: ['low', 'moderate', 'high', 'extreme'] })
   level!: string;
 
-  @ApiProperty({ example: 42 })
-  score!: number;
+  @ApiProperty({ example: 42, nullable: true })
+  score!: number | null;
 
   @ApiProperty({ type: [String] })
   drivers!: string[];
@@ -53,8 +55,8 @@ export class MacroEliteComponentDto {
   @ApiProperty({ example: 0.25 })
   weight!: number;
 
-  @ApiProperty({ example: 11.25 })
-  weighted!: number;
+  @ApiProperty({ example: 11.25, nullable: true })
+  weighted!: number | null;
 
   @ApiProperty({ example: 'ready', enum: ['ready', 'pending', 'stale'] })
   status!: string;
@@ -87,8 +89,8 @@ export class MacroDecisionDto {
 }
 
 export class MacroEliteResultDto {
-  @ApiProperty({ example: 58 })
-  eliteScore!: number;
+  @ApiProperty({ example: 58, nullable: true })
+  eliteScore!: number | null;
 
   @ApiProperty({ example: 72 })
   confidence!: number;
@@ -119,8 +121,8 @@ export class MacroTrendDto {
   @ApiProperty({ example: 0 })
   change!: number;
 
-  @ApiProperty({ example: 58 })
-  currentScore!: number;
+  @ApiProperty({ example: 58, nullable: true })
+  currentScore!: number | null;
 
   @ApiProperty({ example: 58, nullable: true })
   previousScore!: number | null;
@@ -139,8 +141,8 @@ export class CombinedConfidenceDto {
   @ApiProperty({ example: 72 })
   macroConfidence!: number;
 
-  @ApiProperty({ example: 71 })
-  combined!: number;
+  @ApiProperty({ example: 71, nullable: true })
+  combined!: number | null;
 
   @ApiProperty({ example: 0.5 })
   weightElite!: number;
@@ -188,8 +190,8 @@ export class ProviderObservabilityDto {
 }
 
 export class MacroObservabilityDto {
-  @ApiProperty({ example: 58 })
-  macroScore!: number;
+  @ApiProperty({ example: 58, nullable: true })
+  macroScore!: number | null;
 
   @ApiProperty({ example: 72 })
   macroConfidence!: number;

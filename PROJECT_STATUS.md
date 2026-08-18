@@ -1,20 +1,20 @@
 # PROJECT STATUS
 
-## Overall: RED (build broken) — see FINAL_MASTER_AUDIT (R2-047)
+## Overall: GREEN (build fixed in R2-047A; runtime hardening in R2-047B)
 
-> Status corrected by R2-047 Final Master Audit (2026-08-12). Previous "GREEN" status is
-> **no longer true** because the R2-046 module was committed in a non-compiling state.
+> Status corrected by R2-047A (2026-08-12): the R2-046 compile errors were fixed — `tsc --noEmit`
+> is clean for apps/api and apps/web, and the API boots and serves real BIST data against the live
+> localhost stack. R2-047B further hardens the localhost runtime: standardized provider env config
+> (`.env.example` + deterministic `.env.local`/`.env.<NODE_ENV>` loading), optional-Redis
+> health/readiness, strict history `from/to` range clipping, and the backtest `:runId` route fix.
 
-- **Build:** `tsc --noEmit -p apps/api/tsconfig.json` **FAILS with 5 errors** (all in the R2-046
-  `early-opportunity-backtest` module: wrong `../common/cache/*` and `../indicators/...` import
-  paths, missing `uuid` dependency, arity at `historical-early-opportunity-backtest.service.ts:289`).
-  The API therefore **cannot boot** (`app.module.ts` imports `EarlyOpportunityBacktestModule`).
-  `apps/web` typecheck **passes** (exit 0).
-- **Tests:** R2-046 `early-opportunity-backtest` 10 suites / 52 tests GREEN — **but all mocked**
-  (they construct services directly and do not exercise the broken DI wiring). R2-045
-  `early-opportunity-decision` 2 suites / 16 tests GREEN. Full 5512-test regression is
-  **not re-runnable** here (API compile + turbo/pnpm unavailable in this shell).
-- **Fix:** see `FINAL_MASTER_AUDIT/18_R2-046_BACKTEST_TRUTH_AUDIT.md` (small, ~1–2 h).
+- **Build:** `tsc --noEmit -p apps/api/tsconfig.json` **EXIT 0** (0 errors); `apps/web` typecheck
+  **EXIT 0**. API boots and serves on `:3001`; web on `:5173`.
+- **Runtime:** `/health` 200, `/health/ready` 200. Real BIST OHLCV + live early-opportunity +
+  R2-046 backtest execution validated in R2-047A.
+- **Tests:** full API regression green in R2-047A (see `docs/R2-047A_STATUS_REPORT.md`); targeted
+  suites re-run green for R2-047B changes.
+- **Docs:** `docs/R2-047A_STATUS_REPORT.md`, `docs/R2-047B_STATUS_REPORT.md`.
 
 ## R2-046 - Historical Early Opportunity Backtest & Decision Validation
 
@@ -226,6 +226,7 @@ Completed the deterministic Early Signal Scanner layer:
   multi-timeframe/smart-money/backtest/entry/research/verification/catalyst/dashboard
   regression suites GREEN. Web portfolio tests 95/95 passing. Data Research Pipeline
   (R2-031) infrastructure tests pending; 663 regression tests pass.
+
 - **Lint:** `eslint` script is configured but the `eslint` binary is **not installed** in
   `node_modules` in this environment; TypeScript strict typecheck is clean. Re-run
   `npm run lint` once eslint is vendored.
@@ -264,7 +265,7 @@ Implemented the deterministic Financial Data Quality & Opportunity Validation la
 - See `docs/R2-037_FINANCIAL_DATA_QUALITY.md`
 
 ---
- 
+
 ## R2-031 — Data Research Pipeline ✅
 
 - **One unified view** — `GET /portfolio/analysis` returns portfolio score, status

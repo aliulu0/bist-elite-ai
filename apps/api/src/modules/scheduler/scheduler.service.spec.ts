@@ -6,9 +6,18 @@ import { IJob, JobResult } from './jobs/job.interface';
 function makeNoRetryConfig() {
   const jobs: Record<string, any> = {};
   for (const name of [
-    'marketOpenScan', 'incrementalScan', 'nightlyBacktest', 'benchmark',
-    'ruleAnalytics', 'weightOptimization', 'cacheRefresh', 'providerHealthCheck',
-    'macroRefresh', 'portfolioRefresh', 'alertRefresh', 'retryFailedJobs',
+    'marketOpenScan',
+    'incrementalScan',
+    'nightlyBacktest',
+    'benchmark',
+    'ruleAnalytics',
+    'weightOptimization',
+    'cacheRefresh',
+    'providerHealthCheck',
+    'macroRefresh',
+    'portfolioRefresh',
+    'alertRefresh',
+    'retryFailedJobs',
   ]) {
     jobs[name] = { enabled: true, intervalMs: 900000, retryAttempts: 0, retryDelayMs: 0 };
   }
@@ -58,7 +67,7 @@ describe('SchedulerService', () => {
     it('should return scheduler status', () => {
       const status = service.getStatus();
       expect(status.running).toBe(false);
-      expect(status.jobs).toHaveLength(17);
+      expect(status.jobs).toHaveLength(18);
       expect(status.totalExecutions).toBe(0);
     });
 

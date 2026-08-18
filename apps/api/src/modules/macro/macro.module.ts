@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MarketDataModule } from '../market-data/market-data.module';
+import { EarlyOpportunityModule } from '../ai-early-opportunity/early-opportunity.module';
 import { MacroController } from './macro.controller';
 import { MacroService } from './macro.service';
 import { MacroDataService } from './macro-data.service';
@@ -17,7 +18,7 @@ import { CombinedConfidenceService } from './combined-confidence.service';
 import { TCMBDecisionCaptureService } from './tcmb-decision-capture.service';
 
 @Module({
-  imports: [MarketDataModule],
+  imports: [MarketDataModule, EarlyOpportunityModule],
   controllers: [MacroController],
   providers: [
     MacroService,

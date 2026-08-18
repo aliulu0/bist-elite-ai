@@ -5,30 +5,61 @@ import ScannerPage from './scanner';
 vi.mock('@/lib/sdk', () => ({
   sdkClient: {
     scanner: vi.fn().mockResolvedValue({
-      success: true,
-      topCandidates: [
-        { symbol: 'GARAN', status: 'TOP_CANDIDATE', eliteScore: 85, compositeScore: 85, rank: 1, reasons: [] },
-        { symbol: 'AKBNK', status: 'WATCHLIST', eliteScore: 60, compositeScore: 60, rank: 10, reasons: [] },
-        { symbol: 'EREGL', status: 'REJECTED', eliteScore: 40, compositeScore: 40, rank: 30, reasons: [] },
-      ],
-      watchlist: [],
-      rejected: [],
-      statistics: { totalSymbols: 3, topCandidateCount: 1, watchlistCount: 1, rejectedCount: 1 },
-      timestamp: '',
+      baslik: 'Tarama Genel Bakış',
+      toplamHisse: 795,
+      aktifHisse: 643,
+      sektorSayisi: 10,
+      stratejiSayisi: 9,
+      stratejiler: [],
+      sonTarama: null,
     }),
     scannerCandidates: vi.fn().mockResolvedValue({
-      success: true,
-      data: { items: [{ symbol: 'GARAN', status: 'TOP_CANDIDATE', eliteScore: 78, compositeScore: 85, rank: 1, reasons: ['Test reason'] }], total: 1, offset: 0, limit: 10 },
-      timestamp: '',
+      baslik: 'En Yüksek AI Puanlı Hisse Senetleri',
+      toplamHisse: 3,
+      ortalamaYapayZekaPuani: 68,
+      ortalamaYapayZekaGuveni: 55,
+      sonuclar: [
+        {
+          ticker: 'GARAN',
+          company: 'Garanti BBVA',
+          sector: 'Finans',
+          aiScore: 85,
+          aiConfidence: 70,
+          strategyId: 'value-hunter',
+          strategyName: 'Değer Avcısı',
+          scannedAt: '',
+        },
+        {
+          ticker: 'AKBNK',
+          company: 'Akbank',
+          sector: 'Finans',
+          aiScore: 60,
+          aiConfidence: 55,
+          strategyId: 'value-hunter',
+          strategyName: 'Değer Avcısı',
+          scannedAt: '',
+        },
+        {
+          ticker: 'EREGL',
+          company: 'Ereğli Demir Çelik',
+          sector: 'Metal',
+          aiScore: 40,
+          aiConfidence: 40,
+          strategyId: 'momentum',
+          strategyName: 'Momentum',
+          scannedAt: '',
+        },
+      ],
     }),
   },
 }));
 
-const renderPage = () => render(
-  <BrowserRouter>
-    <ScannerPage />
-  </BrowserRouter>,
-);
+const renderPage = () =>
+  render(
+    <BrowserRouter>
+      <ScannerPage />
+    </BrowserRouter>,
+  );
 
 describe('ScannerPage', () => {
   beforeEach(() => {
@@ -42,7 +73,9 @@ describe('ScannerPage', () => {
 
   it('renders description', () => {
     renderPage();
-    expect(screen.getByText('BIST hisselerini tarayın ve fırsatları tespit edin')).toBeInTheDocument();
+    expect(
+      screen.getByText('BIST hisselerini tarayın ve fırsatları tespit edin'),
+    ).toBeInTheDocument();
   });
 
   it('renders KPI cards after load', async () => {
@@ -82,14 +115,13 @@ describe('ScannerPage', () => {
     const sdk = await import('@/lib/sdk');
     renderPage();
     await waitFor(() => {
-      expect(sdk.sdkClient.scanner).toHaveBeenCalled();
       expect(sdk.sdkClient.scannerCandidates).toHaveBeenCalled();
     });
   });
 
   it('shows error state on failure', async () => {
     const sdk = await import('@/lib/sdk');
-    vi.mocked(sdk.sdkClient.scanner).mockRejectedValueOnce(new Error('fail'));
+    vi.mocked(sdk.sdkClient.scannerCandidates).mockRejectedValueOnce(new Error('fail'));
     renderPage();
     await waitFor(() => {
       expect(screen.getByText('Tarama sonuçları yüklenirken hata oluştu')).toBeInTheDocument();
@@ -98,7 +130,7 @@ describe('ScannerPage', () => {
 
   it('shows retry link on error', async () => {
     const sdk = await import('@/lib/sdk');
-    vi.mocked(sdk.sdkClient.scanner).mockRejectedValueOnce(new Error('fail'));
+    vi.mocked(sdk.sdkClient.scannerCandidates).mockRejectedValueOnce(new Error('fail'));
     renderPage();
     await waitFor(() => {
       expect(screen.getByText('Tekrar Dene')).toBeInTheDocument();

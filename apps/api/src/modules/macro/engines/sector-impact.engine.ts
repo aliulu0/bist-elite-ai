@@ -15,12 +15,21 @@ const SECTORS: SectorConfig[] = [
   { name: 'Banking', sensitivity: { interestRate: 0.9, currency: 0.3, growth: 0.5, risk: 0.8 } },
   { name: 'Industrial', sensitivity: { interestRate: 0.4, currency: 0.3, growth: 0.7, risk: 0.3 } },
   { name: 'Export', sensitivity: { interestRate: 0.2, currency: 0.8, growth: 0.6, risk: 0.4 } },
-  { name: 'Construction', sensitivity: { interestRate: 0.8, currency: 0.2, growth: 0.6, risk: 0.5 } },
+  {
+    name: 'Construction',
+    sensitivity: { interestRate: 0.8, currency: 0.2, growth: 0.6, risk: 0.5 },
+  },
   { name: 'Technology', sensitivity: { interestRate: 0.5, currency: 0.2, growth: 0.8, risk: 0.6 } },
   { name: 'Energy', sensitivity: { interestRate: 0.3, currency: 0.6, growth: 0.4, risk: 0.5 } },
-  { name: 'Food & Beverage', sensitivity: { interestRate: 0.4, currency: 0.4, growth: 0.5, risk: 0.3 } },
+  {
+    name: 'Food & Beverage',
+    sensitivity: { interestRate: 0.4, currency: 0.4, growth: 0.5, risk: 0.3 },
+  },
   { name: 'Telecom', sensitivity: { interestRate: 0.5, currency: 0.3, growth: 0.4, risk: 0.3 } },
-  { name: 'Real Estate', sensitivity: { interestRate: 0.9, currency: 0.2, growth: 0.5, risk: 0.7 } },
+  {
+    name: 'Real Estate',
+    sensitivity: { interestRate: 0.9, currency: 0.2, growth: 0.5, risk: 0.7 },
+  },
   { name: 'Defense', sensitivity: { interestRate: 0.2, currency: 0.2, growth: 0.3, risk: 0.2 } },
 ];
 
@@ -38,17 +47,21 @@ export class SectorImpactEngine {
       const rateImpact = this.calcRateImpact(us10y, sector.sensitivity.interestRate);
       const currencyImpact = this.calcCurrencyImpact(usdtry, sector.sensitivity.currency);
       const growthImpact = this.calcGrowthImpact(pmi, sector.sensitivity.growth);
-      const riskPenalty = (100 - regimeScore) / 100 * sector.sensitivity.risk;
+      const riskPenalty =
+        regimeScore === null ? 0 : ((100 - regimeScore) / 100) * sector.sensitivity.risk;
 
-      const rawScore = 50
-        - rateImpact * 15
-        - currencyImpact * 10
-        + growthImpact * 15
-        - riskPenalty * 20;
+      const rawScore =
+        50 - rateImpact * 15 - currencyImpact * 10 + growthImpact * 15 - riskPenalty * 20;
 
       const score = Math.max(0, Math.min(100, Math.round(rawScore)));
       const impact = this.scoreToImpact(score);
-      const drivers = this.generateDrivers(sector, rateImpact, currencyImpact, growthImpact, riskPenalty);
+      const drivers = this.generateDrivers(
+        sector,
+        rateImpact,
+        currencyImpact,
+        growthImpact,
+        riskPenalty,
+      );
 
       return { sector: sector.name, impact, score, drivers };
     });
@@ -80,7 +93,13 @@ export class SectorImpactEngine {
     return 'negative';
   }
 
-  private generateDrivers(sector: SectorConfig, rate: number, currency: number, growth: number, risk: number): string[] {
+  private generateDrivers(
+    sector: SectorConfig,
+    rate: number,
+    currency: number,
+    growth: number,
+    risk: number,
+  ): string[] {
     const drivers: string[] = [];
     if (rate > 0.2) drivers.push(`Interest rate sensitivity`);
     if (rate < -0.1) drivers.push(`Falling rates benefit`);

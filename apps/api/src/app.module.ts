@@ -86,6 +86,7 @@ import { PipelineOrchestratorModule } from './modules/pipeline-orchestrator/pipe
 
 // ── Early Opportunity Engine ──
 import { EarlyOpportunityModule } from './modules/ai-early-opportunity/early-opportunity.module';
+import { RadarModule } from './modules/ai-early-opportunity/radar/radar.module';
 
 // ── Early Opportunity Backtest (R2-046) ──
 import { EarlyOpportunityBacktestModule } from './modules/early-opportunity-backtest/early-opportunity-backtest.module';
@@ -235,6 +236,9 @@ import { RequestDeduplicationInterceptor } from './common/performance/request-de
 
     // ── Early Opportunity Engine ──
     EarlyOpportunityModule,
+
+    // ── Live Opportunity Monitoring & Radar Engine (R2-048) ──
+    RadarModule,
 
     // ── Early Opportunity Backtest (R2-046) ──
     EarlyOpportunityBacktestModule,

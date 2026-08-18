@@ -16,12 +16,12 @@ export class MacroRefreshJob implements IJob {
       const alerts = await this.macroService.getAlerts();
 
       this.logger.log(
-        `MacroRefreshJob completed: ${analysis.data.healthyCount}/${analysis.data.sourceCount} sources healthy, regime: ${analysis.regime.regime}, score: ${analysis.score.macroScore}`,
+        `MacroRefreshJob completed: ${analysis.data.healthyCount}/${analysis.data.sourceCount} sources healthy, regime: ${analysis.regime.regime ?? 'Veri yok'}, score: ${analysis.score.macroScore ?? 'Veri yok'}`,
       );
 
       return {
         success: true,
-        message: `Macro data refreshed: ${analysis.data.healthyCount} sources, regime: ${analysis.regime.regime}, score: ${analysis.score.macroScore}`,
+        message: `Macro data refreshed: ${analysis.data.healthyCount} sources, regime: ${analysis.regime.regime ?? 'Veri yok'}, score: ${analysis.score.macroScore ?? 'Veri yok'}`,
         metadata: {
           sourceCount: analysis.data.sourceCount,
           healthyCount: analysis.data.healthyCount,

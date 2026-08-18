@@ -13,6 +13,7 @@ export interface ComponentHealth {
   message: string;
   duration: number;
   metadata?: Record<string, unknown>;
+  optional?: boolean;
 }
 
 export interface HealthCheckResult {
@@ -26,6 +27,12 @@ export interface HealthCheckResult {
 export interface HealthCheck {
   name: string;
   check: () => Promise<ComponentHealth>;
+  /**
+   * Optional dependencies (e.g. Redis cache) do NOT influence the aggregate
+   * health/readiness status. They are still reported in `components` so the
+   * degraded/unhealthy state stays visible to operators.
+   */
+  optional?: boolean;
 }
 
 @Injectable()
@@ -40,7 +47,10 @@ export class HealthService {
 
   registerCheck(check: HealthCheck): void {
     this.checks.push(check);
-    this.logger.log(`Health check registered: ${check.name}`, 'HealthService');
+    this.logger.log(
+      `Health check registered: ${check.name}${check.optional ? ' (optional)' : ''}`,
+      'HealthService',
+    );
   }
 
   async checkHealth(): Promise<HealthCheckResult> {
@@ -49,19 +59,23 @@ export class HealthService {
     for (const check of this.checks) {
       try {
         const result = await check.check();
-        results.push(result);
+        results.push({ ...result, optional: check.optional });
       } catch (error) {
         results.push({
           name: check.name,
           status: HealthStatus.UNHEALTHY,
           message: error instanceof Error ? error.message : 'Unknown error',
           duration: 0,
+          optional: check.optional,
         });
       }
     }
 
-    const hasUnhealthy = results.some((r) => r.status === HealthStatus.UNHEALTHY);
-    const hasDegraded = results.some((r) => r.status === HealthStatus.DEGRADED);
+    // Required checks determine the aggregate status; optional components
+    // (e.g. Redis cache) are informational and must not flip overall health.
+    const required = results.filter((r) => !r.optional);
+    const hasUnhealthy = required.some((r) => r.status === HealthStatus.UNHEALTHY);
+    const hasDegraded = required.some((r) => r.status === HealthStatus.DEGRADED);
 
     let overallStatus: HealthStatus;
     if (hasUnhealthy) {
@@ -90,7 +104,9 @@ export class HealthService {
     return true;
   }
 
-  createDatabaseCheck(prisma: { $queryRaw: (query: TemplateStringsArray) => Promise<unknown> }): HealthCheck {
+  createDatabaseCheck(prisma: {
+    $queryRaw: (query: TemplateStringsArray) => Promise<unknown>;
+  }): HealthCheck {
     return {
       name: 'database',
       check: async (): Promise<ComponentHealth> => {
@@ -145,7 +161,9 @@ export class HealthService {
     };
   }
 
-  createPipelineHealthCheck(pipelines?: { name: string; lastRun: Date | null; status: string }[]): HealthCheck {
+  createPipelineHealthCheck(
+    pipelines?: { name: string; lastRun: Date | null; status: string }[],
+  ): HealthCheck {
     return {
       name: 'pipeline',
       check: async (): Promise<ComponentHealth> => {
@@ -186,10 +204,7 @@ export class HealthService {
     };
   }
 
-  createWebSocketHealthCheck(
-    connectedClients?: number,
-    gatewayStatus?: string,
-  ): HealthCheck {
+  createWebSocketHealthCheck(connectedClients?: number, gatewayStatus?: string): HealthCheck {
     return {
       name: 'websocket',
       check: async (): Promise<ComponentHealth> => {
@@ -199,7 +214,10 @@ export class HealthService {
           status: HealthStatus.HEALTHY,
           message: `Connected clients: ${connectedClients ?? 0}, status: ${gatewayStatus ?? 'running'}`,
           duration: Date.now() - start,
-          metadata: { connectedClients: connectedClients ?? 0, gatewayStatus: gatewayStatus ?? 'running' },
+          metadata: {
+            connectedClients: connectedClients ?? 0,
+            gatewayStatus: gatewayStatus ?? 'running',
+          },
         };
       },
     };
@@ -251,14 +269,16 @@ export class HealthService {
 
         heapHistory.push(heapPercent);
         if (heapHistory.length > MAX_HISTORY) heapHistory.shift();
-        const avgHeap = heapHistory.length > 0
-          ? heapHistory.reduce((a, b) => a + b, 0) / heapHistory.length
-          : heapPercent;
+        const avgHeap =
+          heapHistory.length > 0
+            ? heapHistory.reduce((a, b) => a + b, 0) / heapHistory.length
+            : heapPercent;
 
         const heapProximity = Math.min(1, heapPercent / 100);
-        const growthRate = prevHeapUsed > 0
-          ? Math.min(1, Math.max(0, (mem.heapUsed - prevHeapUsed) / mem.heapUsed))
-          : 0;
+        const growthRate =
+          prevHeapUsed > 0
+            ? Math.min(1, Math.max(0, (mem.heapUsed - prevHeapUsed) / mem.heapUsed))
+            : 0;
         const externalRatio = Math.min(1, mem.external / (mem.heapTotal || 1));
         const gcPressure = Math.min(1, heapProximity * 0.5 + growthRate * 3 + externalRatio * 0.5);
         prevHeapUsed = mem.heapUsed;

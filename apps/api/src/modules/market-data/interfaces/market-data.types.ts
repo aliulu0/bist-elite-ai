@@ -1,4 +1,4 @@
-export type Timeframe = '4h' | '1d' | '1w' | '1m' | '3m' | '6m';
+export type Timeframe = '1H' | '2H' | '4h' | '1d' | '1w' | '1m' | '3m' | '6m';
 
 export type ValidationStatus = 'valid' | 'partial' | 'invalid';
 

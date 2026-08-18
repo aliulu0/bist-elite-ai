@@ -10,12 +10,21 @@ import { AnalysisService } from '../../analysis-pipeline/analysis.service';
 @Injectable()
 export class AiAssistantService {
   private readonly suggestions: Record<string, string[]> = {
-    stock_analysis: ['ASELS neden düştü?', 'THYAO teknik analizi nedir?', 'GARAN için al/sat önerisi nedir?', 'Bu hisse neden AAA aldı?'],
+    stock_analysis: [
+      'ASELS neden düştü?',
+      'THYAO teknik analizi nedir?',
+      'GARAN için al/sat önerisi nedir?',
+      'Bu hisse neden AAA aldı?',
+    ],
     portfolio: ['Portföyümü analiz et.', 'Portföy riski nedir?', 'Sektör dağılımım nasıl?'],
     macro: ['Makro riskler neler?', 'TCMB faiz kararı ne?', 'CDS ne durumda?'],
     sector: ['Bankacılık sektörü güçlü mü?', 'Savunma sektörü nasıl?', 'En iyi sektör hangisi?'],
     risk: ['Portföyümdeki riskler neler?', 'En riskli hisseler hangileri?'],
-    scanner: ['Bugün en güvenli hisseler hangileri?', 'Fırsatlar neler?', 'Al sinyali veren hisseler?'],
+    scanner: [
+      'Bugün en güvenli hisseler hangileri?',
+      'Fırsatlar neler?',
+      'Al sinyali veren hisseler?',
+    ],
     ranking: ['En yüksek not alan hisseler?', 'Sıralama nasıl?'],
     opportunity: ['Yükseliş potansiyeli olan hisseler?', 'Fırsatlar neler?'],
     general: ['Genel durum nedir?', 'Piyasa nasıl?'],
@@ -78,7 +87,11 @@ export class AiAssistantService {
     };
   }
 
-  private async handleStockAnalysis(intent: Intent, sources: Array<{ name: string; type: string; confidence: number }>, context: Record<string, unknown>): Promise<string> {
+  private async handleStockAnalysis(
+    intent: Intent,
+    sources: Array<{ name: string; type: string; confidence: number }>,
+    context: Record<string, unknown>,
+  ): Promise<string> {
     const symbol = intent.symbol || 'ASELS';
     const parts: string[] = [];
     const lower = intent.rawQuery.toLowerCase();
@@ -102,10 +115,18 @@ export class AiAssistantService {
 
           if (es.breakdown) {
             parts.push('**Bileşenler:**');
-            parts.push(`   • Finansal: ${es.breakdown.financial.score} (katkı: %${(es.breakdown.financial.contribution * 100).toFixed(0)})`);
-            parts.push(`   • Teknik: ${es.breakdown.technical.score} (katkı: %${(es.breakdown.technical.contribution * 100).toFixed(0)})`);
-            parts.push(`   • Fırsat: ${es.breakdown.opportunity.score} (katkı: %${(es.breakdown.opportunity.contribution * 100).toFixed(0)})`);
-            parts.push(`   • Uyum: ${es.breakdown.confluence.score} (katkı: %${(es.breakdown.confluence.contribution * 100).toFixed(0)})`);
+            parts.push(
+              `   • Finansal: ${es.breakdown.financial.score} (katkı: %${(es.breakdown.financial.contribution * 100).toFixed(0)})`,
+            );
+            parts.push(
+              `   • Teknik: ${es.breakdown.technical.score} (katkı: %${(es.breakdown.technical.contribution * 100).toFixed(0)})`,
+            );
+            parts.push(
+              `   • Fırsat: ${es.breakdown.opportunity.score} (katkı: %${(es.breakdown.opportunity.contribution * 100).toFixed(0)})`,
+            );
+            parts.push(
+              `   • Uyum: ${es.breakdown.confluence.score} (katkı: %${(es.breakdown.confluence.contribution * 100).toFixed(0)})`,
+            );
             parts.push('');
           }
         }
@@ -157,7 +178,11 @@ export class AiAssistantService {
     return `**${symbol}** için anlık analiz verisi mevcut değil. Lütfen daha sonra tekrar deneyin.`;
   }
 
-  private async handlePortfolio(intent: Intent, sources: Array<{ name: string; type: string; confidence: number }>, context: Record<string, unknown>): Promise<string> {
+  private async handlePortfolio(
+    intent: Intent,
+    sources: Array<{ name: string; type: string; confidence: number }>,
+    context: Record<string, unknown>,
+  ): Promise<string> {
     const parts: string[] = ['**Portföy Analizi**\n'];
 
     if (this.portfolioEngine) {
@@ -174,9 +199,15 @@ export class AiAssistantService {
           let summary: any = null;
           let risk: any = null;
           let allocation: any = null;
-          try { summary = this.portfolioEngine.getSummary(portfolio.id); } catch {}
-          try { risk = this.portfolioEngine.getRisk(portfolio.id); } catch {}
-          try { allocation = this.portfolioEngine.getAllocation(portfolio.id); } catch {}
+          try {
+            summary = this.portfolioEngine.getSummary(portfolio.id);
+          } catch {}
+          try {
+            risk = this.portfolioEngine.getRisk(portfolio.id);
+          } catch {}
+          try {
+            allocation = this.portfolioEngine.getAllocation(portfolio.id);
+          } catch {}
 
           parts.push(`**${portfolio.name}**`);
           if (summary) {
@@ -187,7 +218,8 @@ export class AiAssistantService {
           if (risk) {
             parts.push(`   ⚠️ Risk: ${risk.riskScore || 0}/100`);
             parts.push(`   📊 Volatilite: %${((risk.volatility || 0) * 100).toFixed(2)}`);
-            if (risk.diversificationScore !== undefined) parts.push(`   🔀 Çeşitlendirme: ${risk.diversificationScore}/100`);
+            if (risk.diversificationScore !== undefined)
+              parts.push(`   🔀 Çeşitlendirme: ${risk.diversificationScore}/100`);
             parts.push(`   Sharpe Oranı: ${(risk.sharpeRatio || 0).toFixed(2)}`);
             parts.push(`   Max Drawdown: %${(risk.maxDrawdown || 0).toFixed(1)}`);
           }
@@ -214,7 +246,11 @@ export class AiAssistantService {
     return parts.join('\n');
   }
 
-  private async handleMacro(intent: Intent, sources: Array<{ name: string; type: string; confidence: number }>, context: Record<string, unknown>): Promise<string> {
+  private async handleMacro(
+    intent: Intent,
+    sources: Array<{ name: string; type: string; confidence: number }>,
+    context: Record<string, unknown>,
+  ): Promise<string> {
     const parts: string[] = ['**Makro Ekonomik Analiz**\n'];
 
     if (this.macroService) {
@@ -227,13 +263,15 @@ export class AiAssistantService {
 
         context.macro = { data: macroData, score: macroScore, regime };
 
-        if (macroScore !== null) {
-          parts.push(`📊 **Makro Skor**: ${macroScore}/100`);
+        if (macroScore && macroScore.macroScore !== null) {
+          parts.push(`📊 **Makro Skor**: ${macroScore.macroScore}/100`);
           sources.push({ name: 'Makro Skor', type: 'macro', confidence: 0.9 });
+        } else {
+          parts.push(`📊 **Makro Skor**: Veri yok`);
         }
 
         if (regime) {
-          parts.push(`📈 **Piyasa Rejimi**: ${regime.regime || 'N/A'}`);
+          parts.push(`📈 **Piyasa Rejimi**: ${regime.regime || 'Veri yok'}`);
           parts.push(`   Güven: %${(((regime as any).confidence || 0) * 100).toFixed(0)}`);
           sources.push({ name: 'Piyasa Rejimi', type: 'macro', confidence: 0.85 });
         }
@@ -253,7 +291,9 @@ export class AiAssistantService {
         if (alerts && alerts.length > 0) {
           parts.push(`\n🔔 **Makro Uyarılar:**`);
           for (const alert of alerts.slice(0, 5)) {
-            parts.push(`   ${alert.severity === 'critical' ? '🔴' : alert.severity === 'warning' ? '🟡' : '🟢'} ${alert.message || JSON.stringify(alert)}`);
+            parts.push(
+              `   ${alert.severity === 'critical' ? '🔴' : alert.severity === 'warning' ? '🟡' : '🟢'} ${alert.message || JSON.stringify(alert)}`,
+            );
           }
           sources.push({ name: 'Makro Uyarılar', type: 'macro', confidence: 0.85 });
         }
@@ -269,7 +309,11 @@ export class AiAssistantService {
     return parts.join('\n');
   }
 
-  private async handleSector(intent: Intent, sources: Array<{ name: string; type: string; confidence: number }>, context: Record<string, unknown>): Promise<string> {
+  private async handleSector(
+    intent: Intent,
+    sources: Array<{ name: string; type: string; confidence: number }>,
+    context: Record<string, unknown>,
+  ): Promise<string> {
     const parts: string[] = ['**Sektör Analizi**\n'];
 
     if (this.macroService) {
@@ -278,12 +322,22 @@ export class AiAssistantService {
         if (sectorImpacts) {
           context.sectorImpacts = sectorImpacts;
           parts.push('**Sektör Bazında Makro Etkiler:**');
-          const entries = Array.isArray(sectorImpacts) ? sectorImpacts : Object.entries(sectorImpacts);
+          const entries = Array.isArray(sectorImpacts)
+            ? sectorImpacts
+            : Object.entries(sectorImpacts);
           for (const entry of entries.slice(0, 10)) {
             const [name, data] = Array.isArray(entry) ? entry : [entry, {}];
-            const impact = typeof data === 'object' && data !== null ? (data as Record<string, unknown>).impact || '' : '';
-            const score = typeof data === 'object' && data !== null ? (data as Record<string, unknown>).score : '';
-            parts.push(`   • ${name}: ${impact ? ` ${impact}` : ''}${score ? ` (skor: ${score})` : ''}`);
+            const impact =
+              typeof data === 'object' && data !== null
+                ? (data as Record<string, unknown>).impact || ''
+                : '';
+            const score =
+              typeof data === 'object' && data !== null
+                ? (data as Record<string, unknown>).score
+                : '';
+            parts.push(
+              `   • ${name}: ${impact ? ` ${impact}` : ''}${score ? ` (skor: ${score})` : ''}`,
+            );
           }
           sources.push({ name: 'Sektör Etkileri', type: 'macro', confidence: 0.8 });
         } else {
@@ -299,7 +353,11 @@ export class AiAssistantService {
     return parts.join('\n');
   }
 
-  private async handleRisk(intent: Intent, sources: Array<{ name: string; type: string; confidence: number }>, context: Record<string, unknown>): Promise<string> {
+  private async handleRisk(
+    intent: Intent,
+    sources: Array<{ name: string; type: string; confidence: number }>,
+    context: Record<string, unknown>,
+  ): Promise<string> {
     const parts: string[] = ['**Risk Analizi**\n'];
 
     if (this.portfolioEngine) {
@@ -308,7 +366,9 @@ export class AiAssistantService {
         if (portfolios && portfolios.length > 0) {
           for (const portfolio of portfolios) {
             let risk: any = null;
-            try { risk = this.portfolioEngine.getRisk(portfolio.id); } catch {}
+            try {
+              risk = this.portfolioEngine.getRisk(portfolio.id);
+            } catch {}
             if (risk) {
               context.risk = risk;
               parts.push(`**${portfolio.name}**`);
@@ -337,7 +397,11 @@ export class AiAssistantService {
     return parts.join('\n');
   }
 
-  private async handleScanner(intent: Intent, sources: Array<{ name: string; type: string; confidence: number }>, context: Record<string, unknown>): Promise<string> {
+  private async handleScanner(
+    intent: Intent,
+    sources: Array<{ name: string; type: string; confidence: number }>,
+    context: Record<string, unknown>,
+  ): Promise<string> {
     const parts: string[] = ['**Tarama Sonuçları**\n'];
 
     if (this.scannerEngine) {
@@ -350,7 +414,9 @@ export class AiAssistantService {
           parts.push(`🔍 **En İyi ${Math.min(10, sorted.length)} Fırsat:**`);
           for (let i = 0; i < Math.min(10, sorted.length); i++) {
             const c = sorted[i];
-            parts.push(`   ${i + 1}. **${c.symbol}** — Skor: ${c.score}${c.reason ? ` (${c.reason})` : ''}`);
+            parts.push(
+              `   ${i + 1}. **${c.symbol}** — Skor: ${c.score}${c.reason ? ` (${c.reason})` : ''}`,
+            );
           }
           sources.push({ name: 'Tarayıcı Motoru', type: 'scanner', confidence: 0.9 });
         } else {
@@ -366,7 +432,11 @@ export class AiAssistantService {
     return parts.join('\n');
   }
 
-  private async handleRanking(intent: Intent, sources: Array<{ name: string; type: string; confidence: number }>, context: Record<string, unknown>): Promise<string> {
+  private async handleRanking(
+    intent: Intent,
+    sources: Array<{ name: string; type: string; confidence: number }>,
+    context: Record<string, unknown>,
+  ): Promise<string> {
     const parts: string[] = ['**Sıralama (Ranking) Sonuçları**\n'];
 
     if (this.rankingEngine) {
@@ -378,7 +448,9 @@ export class AiAssistantService {
           parts.push(`🏆 **En Yüksek Not Alanlar:**`);
           for (let i = 0; i < Math.min(10, ranked.length); i++) {
             const r = ranked[i];
-            parts.push(`   ${i + 1}. **${r.symbol}** — ${r.grade || 'N/A'} | Skor: ${r.score || 0} | ${r.recommendation || 'N/A'}`);
+            parts.push(
+              `   ${i + 1}. **${r.symbol}** — ${r.grade || 'N/A'} | Skor: ${r.score || 0} | ${r.recommendation || 'N/A'}`,
+            );
           }
           sources.push({ name: 'Sıralama Motoru', type: 'ranking', confidence: 0.9 });
         } else {
@@ -394,19 +466,27 @@ export class AiAssistantService {
     return parts.join('\n');
   }
 
-  private async handleOpportunity(intent: Intent, sources: Array<{ name: string; type: string; confidence: number }>, context: Record<string, unknown>): Promise<string> {
+  private async handleOpportunity(
+    intent: Intent,
+    sources: Array<{ name: string; type: string; confidence: number }>,
+    context: Record<string, unknown>,
+  ): Promise<string> {
     const parts: string[] = ['**Fırsat Analizi**\n'];
 
     if (this.rankingEngine) {
       try {
         const ranked = (this.rankingEngine as any).getRanked?.() || [];
-        const opportunities = ranked.filter((r: any) => r.recommendation === 'STRONG_BUY' || r.recommendation === 'BUY');
+        const opportunities = ranked.filter(
+          (r: any) => r.recommendation === 'STRONG_BUY' || r.recommendation === 'BUY',
+        );
         context.opportunities = opportunities;
 
         if (opportunities.length > 0) {
           parts.push(`🚀 **Al Sinyali Veren Hisseler:**`);
           for (const opp of opportunities.slice(0, 10)) {
-            parts.push(`   • **${opp.symbol}** — ${opp.grade} | Skor: ${opp.score} | Öneri: ${opp.recommendation}`);
+            parts.push(
+              `   • **${opp.symbol}** — ${opp.grade} | Skor: ${opp.score} | Öneri: ${opp.recommendation}`,
+            );
           }
           sources.push({ name: 'Fırsat Motoru', type: 'ranking', confidence: 0.85 });
         } else {
@@ -422,7 +502,11 @@ export class AiAssistantService {
     return parts.join('\n');
   }
 
-  private async handleGeneral(intent: Intent, sources: Array<{ name: string; type: string; confidence: number }>, context: Record<string, unknown>): Promise<string> {
+  private async handleGeneral(
+    intent: Intent,
+    sources: Array<{ name: string; type: string; confidence: number }>,
+    context: Record<string, unknown>,
+  ): Promise<string> {
     const parts: string[] = ['**Genel Durum**\n'];
     parts.push('BIST Elite AI, Borsa İstanbul için gelişmiş yatırım analiz platformudur.\n');
     parts.push('**Sorabileceğiniz sorular:**');

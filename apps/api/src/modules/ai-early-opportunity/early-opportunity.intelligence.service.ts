@@ -1,6 +1,9 @@
 import { forwardRef, Inject, Injectable, Logger, Optional } from '@nestjs/common';
 import { MarketDataOrchestrator } from '../market-data/orchestrator/market-data-orchestrator';
-import { LatestPriceIncrementalService, latestPriceStateToDataPoint } from '../market-data/incremental/latest-price-incremental.service';
+import {
+  LatestPriceIncrementalService,
+  latestPriceStateToDataPoint,
+} from '../market-data/incremental/latest-price-incremental.service';
 import { EarlyOpportunityService } from './early-opportunity.service';
 import { EarlyOpportunityIntelligenceEngine } from './early-opportunity.intelligence-engine';
 import { SelfLearningService } from './self-learning/self-learning.service';
@@ -45,11 +48,12 @@ export class EarlyOpportunityIntelligenceService {
     @Optional() private readonly fundamental?: FundamentalIntegrationService,
     @Optional() private readonly signalScanner?: EarlySignalScannerService,
     @Optional() private readonly dataQuality?: FinancialDataQualityService,
-    @Optional() @Inject(forwardRef(() => EarlyOpportunityDecisionService))
+    @Optional()
+    @Inject(forwardRef(() => EarlyOpportunityDecisionService))
     private readonly decisionService?: EarlyOpportunityDecisionService,
   ) {}
 
-async getEarlyOpportunities(
+  async getEarlyOpportunities(
     filters: EarlyOpportunityFilters = {},
     options: EarlyOpportunityQueryOptions = {},
   ): Promise<EarlyOpportunityIntelligenceResult[]> {
@@ -57,7 +61,9 @@ async getEarlyOpportunities(
 
     if (options.runLearning !== false) {
       await this.selfLearningService.runLearningCycle().catch((error) => {
-        this.logger.warn(`Self-learning cycle failed: ${error instanceof Error ? error.message : String(error)}`);
+        this.logger.warn(
+          `Self-learning cycle failed: ${error instanceof Error ? error.message : String(error)}`,
+        );
       });
     }
 
@@ -65,26 +71,28 @@ async getEarlyOpportunities(
       limit: 100,
     });
 
-    const withCap = await this.mapWithConcurrency(
-      detailed,
-      INTELLIGENCE_CONCURRENCY,
-      async (d) => {
-        const bundle = this.fundamental
-          ? await this.fundamental.getReportAndMarketCap(d.input.ticker, d.input.sector).catch(() => null)
-          : null;
-        const marketCap = bundle?.marketCap ?? (await this.fetchMarketCap(d.input.ticker).catch(() => null));
-        const result = this.intelligenceEngine.buildIntelligenceResult(
-          d.input,
-          d.result,
-          marketCap,
-          undefined,
-          bundle?.report ?? null,
-        );
-        // First pass ignores signal filters: signals are attached later as enrichment.
-        const passes = this.intelligenceEngine.matchesFilters(result, this.withoutSignalFilters(filters));
-        return { result, passes, input: d.input, bundle };
-      },
-    );
+    const withCap = await this.mapWithConcurrency(detailed, INTELLIGENCE_CONCURRENCY, async (d) => {
+      const bundle = this.fundamental
+        ? await this.fundamental
+            .getReportAndMarketCap(d.input.ticker, d.input.sector)
+            .catch(() => null)
+        : null;
+      const marketCap =
+        bundle?.marketCap ?? (await this.fetchMarketCap(d.input.ticker).catch(() => null));
+      const result = this.intelligenceEngine.buildIntelligenceResult(
+        d.input,
+        d.result,
+        marketCap,
+        undefined,
+        bundle?.report ?? null,
+      );
+      // First pass ignores signal filters: signals are attached later as enrichment.
+      const passes = this.intelligenceEngine.matchesFilters(
+        result,
+        this.withoutSignalFilters(filters),
+      );
+      return { result, passes, input: d.input, bundle };
+    });
 
     // First pass: apply basic filters
     const filtered = withCap.filter((w) => w.passes).map((w) => w.result);
@@ -103,12 +111,16 @@ async getEarlyOpportunities(
     }
 
     // Apply data quality + signal + decision filters after enrichment
-    const qualityFiltered = filtered.filter((r) => this.intelligenceEngine.matchesFilters(r, filters));
+    const qualityFiltered = filtered.filter((r) =>
+      this.intelligenceEngine.matchesFilters(r, filters),
+    );
 
     const modifiers = new Map(
       this.selfLearningService.getAllModifiers().map((e) => [e.ticker, e.modifier]),
     );
-    const ranked = this.intelligenceEngine.rankByAdjusted(qualityFiltered, modifiers).slice(0, limit);
+    const ranked = this.intelligenceEngine
+      .rankByAdjusted(qualityFiltered, modifiers)
+      .slice(0, limit);
 
     if (this.signalScanner && !needsEnrichment) {
       await this.enrichWithSignals(ranked);
@@ -152,14 +164,10 @@ async getEarlyOpportunities(
     return rest;
   }
 
-  private async enrichWithSignals(
-    results: EarlyOpportunityIntelligenceResult[],
-  ): Promise<void> {
+  private async enrichWithSignals(results: EarlyOpportunityIntelligenceResult[]): Promise<void> {
     if (!this.signalScanner) return;
-    const scans = await this.mapWithConcurrency(
-      results,
-      INTELLIGENCE_CONCURRENCY,
-      (r) => this.signalScanner!.scan(r.ticker).catch(() => null),
+    const scans = await this.mapWithConcurrency(results, INTELLIGENCE_CONCURRENCY, (r) =>
+      this.signalScanner!.scan(r.ticker).catch(() => null),
     );
     for (let i = 0; i < results.length; i += 1) {
       this.attachSignals(results[i], scans[i]);
@@ -187,13 +195,19 @@ async getEarlyOpportunities(
       this.latestPrice.getLatestPriceIncremental(ticker, '1d').catch(() => null),
       this.marketData.fetchHistoricalData(ticker, '1d', { limit: 30 }).catch(() => null),
     ]);
+    const history = historyResult?.data ?? [];
+    const price = state
+      ? latestPriceStateToDataPoint(state)
+      : history.length > 0
+        ? history[history.length - 1]
+        : null;
 
     return {
-      price: state ? latestPriceStateToDataPoint(state) : null,
-      priceProvider: state?.provider,
-      priceFallbackUsed: state?.dataFreshness === 'stale',
-      priceTimestamp: state?.timestamp,
-      history: historyResult?.data ?? [],
+      price,
+      priceProvider: state?.provider ?? historyResult?.provider,
+      priceFallbackUsed: state ? state.dataFreshness === 'stale' : history.length > 0,
+      priceTimestamp: state?.timestamp ?? (price ? price.timestamp : undefined),
+      history,
       fundamental,
       consensus: consensus ?? null,
       providers: this.marketData.getAvailableProviders(),
@@ -203,14 +217,23 @@ async getEarlyOpportunities(
 
   private async enrichWithDataQuality(
     results: EarlyOpportunityIntelligenceResult[],
-    original: Array<{ result: EarlyOpportunityIntelligenceResult; passes: boolean; input: any; bundle: FundamentalBundle | null }>,
+    original: Array<{
+      result: EarlyOpportunityIntelligenceResult;
+      passes: boolean;
+      input: any;
+      bundle: FundamentalBundle | null;
+    }>,
     dataQuality: any,
   ): Promise<void> {
     for (const result of results) {
       const orig = original.find((o) => o.result.ticker === result.ticker);
       if (!orig) continue;
 
-      const context = await this.fetchPriceContext(result.ticker, orig.bundle, orig.input.consensus);
+      const context = await this.fetchPriceContext(
+        result.ticker,
+        orig.bundle,
+        orig.input.consensus,
+      );
 
       const qualityReport = await dataQuality.assess(context);
       result.financialDataQuality = qualityReport;
@@ -238,11 +261,13 @@ async getEarlyOpportunities(
 
     if (this.signalScanner) {
       const predictionResult = context.detailed.result.predictions?.[0] ?? null;
-      const scan = await this.signalScanner.scan(ticker, { 
-        prediction: predictionResult, 
-        multiTimeframe: context.multiTimeframe,
-        financialDataQuality: result.financialDataQuality ?? undefined 
-      }).catch(() => null);
+      const scan = await this.signalScanner
+        .scan(ticker, {
+          prediction: predictionResult,
+          multiTimeframe: context.multiTimeframe,
+          financialDataQuality: result.financialDataQuality ?? undefined,
+        })
+        .catch(() => null);
       this.attachSignals(result, scan);
     }
 
@@ -259,7 +284,7 @@ async getEarlyOpportunities(
     return this.intelligenceEngine.explain(result);
   }
 
-async explainDataQuality(ticker: string): Promise<string | null> {
+  async explainDataQuality(ticker: string): Promise<string | null> {
     const result = await this.getEarlyOpportunity(ticker);
     if (!result?.financialDataQuality) return null;
     if (!this.dataQuality) return null;
@@ -278,11 +303,13 @@ async explainDataQuality(ticker: string): Promise<string | null> {
     const detailed = await this.earlyOpportunityService.scanTickerDetailed(ticker);
     if (!detailed) return null;
     const bundle = this.fundamental
-      ? await this.fundamental.getReportAndMarketCap(ticker, detailed.input.sector).catch(() => null)
+      ? await this.fundamental
+          .getReportAndMarketCap(ticker, detailed.input.sector)
+          .catch(() => null)
       : null;
     const marketCap = bundle?.marketCap ?? (await this.fetchMarketCap(ticker).catch(() => null));
     const multiTimeframe = await this.multiTimeframeService.analyze(ticker).catch(() => null);
-    
+
     return {
       detailedInput: detailed.input,
       detailedResult: detailed.result,
@@ -334,10 +361,7 @@ async explainDataQuality(ticker: string): Promise<string | null> {
         results[index] = await fn(items[index], index);
       }
     };
-    const workers = Array.from(
-      { length: Math.min(concurrency, items.length) },
-      () => worker(),
-    );
+    const workers = Array.from({ length: Math.min(concurrency, items.length) }, () => worker());
     await Promise.all(workers);
     return results;
   }

@@ -3,7 +3,10 @@ import { PredictionService } from '../../prediction/prediction.service';
 import { SmartMoneyService } from '../../smart-money/smart-money.service';
 import { CatalystService } from '../../catalyst/catalyst.service';
 import { MarketDataOrchestrator } from '../../market-data/orchestrator/market-data-orchestrator';
-import { LatestPriceIncrementalService, latestPriceStateToDataPoint } from '../../market-data/incremental/latest-price-incremental.service';
+import {
+  LatestPriceIncrementalService,
+  latestPriceStateToDataPoint,
+} from '../../market-data/incremental/latest-price-incremental.service';
 import { SymbolRegistryService } from '../../market-data/symbol-registry/symbol-registry.service';
 import { MultiTimeframeOpportunityService } from '../multi-timeframe/multi-timeframe.service';
 import { FundamentalIntegrationService } from '../../financial-rules/fundamental-integration.service';
@@ -41,7 +44,10 @@ export class EarlySignalScannerService {
     @Optional() private readonly dataQuality?: FinancialDataQualityService,
   ) {}
 
-  async scan(ticker: string, context: EarlySignalScanContext = {}): Promise<EarlySignalScannerResult | null> {
+  async scan(
+    ticker: string,
+    context: EarlySignalScanContext = {},
+  ): Promise<EarlySignalScannerResult | null> {
     const normalized = ticker.toUpperCase();
     const cacheKey = `early-signals:${normalized}`;
     const cached = this.cache.get<EarlySignalScannerResult>(cacheKey, SIGNAL_CACHE_NAMESPACE);
@@ -52,18 +58,18 @@ export class EarlySignalScannerService {
       const company = symbol?.companyName ?? normalized;
       const sector = symbol?.sector ?? '';
 
-      const [prediction, smartMoney, catalyst, multiTimeframe, fundamentals, financialDataQuality] = await Promise.all([
-        context.prediction ??
-          this.predictionService.getPrediction(normalized, '1d').catch(() => null),
-        context.smartMoney ??
-          this.smartMoneyService.getSmartMoney(normalized, '1d').catch(() => null),
-        context.catalyst ??
-          this.catalystService.getCatalyst(normalized).catch(() => null),
-        context.multiTimeframe ??
-          this.multiTimeframeService.analyze(normalized).catch(() => null),
-        context.fundamentals ?? this.fetchFundamentals(normalized, sector),
-        context.financialDataQuality ?? this.assessDataQuality(normalized, sector),
-      ]);
+      const [prediction, smartMoney, catalyst, multiTimeframe, fundamentals, financialDataQuality] =
+        await Promise.all([
+          context.prediction ??
+            this.predictionService.getPrediction(normalized, '1d').catch(() => null),
+          context.smartMoney ??
+            this.smartMoneyService.getSmartMoney(normalized, '1d').catch(() => null),
+          context.catalyst ?? this.catalystService.getCatalyst(normalized).catch(() => null),
+          context.multiTimeframe ??
+            this.multiTimeframeService.analyze(normalized).catch(() => null),
+          context.fundamentals ?? this.fetchFundamentals(normalized, sector),
+          context.financialDataQuality ?? this.assessDataQuality(normalized, sector),
+        ]);
 
       if (!prediction && !smartMoney && !catalyst && !multiTimeframe) {
         return null;
@@ -128,10 +134,7 @@ export class EarlySignalScannerService {
         results[index] = await fn(items[index], index);
       }
     };
-    const workers = Array.from(
-      { length: Math.min(concurrency, items.length) },
-      () => worker(),
-    );
+    const workers = Array.from({ length: Math.min(concurrency, items.length) }, () => worker());
     await Promise.all(workers);
     return results;
   }
@@ -147,13 +150,19 @@ export class EarlySignalScannerService {
       this.latestPrice.getLatestPriceIncremental(ticker, '1d').catch(() => null),
       this.marketData.fetchHistoricalData(ticker, '1d', { limit: 30 }).catch(() => null),
     ]);
+    const history = historyResult?.data ?? [];
+    const price = state
+      ? latestPriceStateToDataPoint(state)
+      : history.length > 0
+        ? history[history.length - 1]
+        : null;
 
     const context: DataQualityContext = {
-      price: state ? latestPriceStateToDataPoint(state) : null,
-      priceProvider: state?.provider,
-      priceFallbackUsed: state?.dataFreshness === 'stale',
-      priceTimestamp: state?.timestamp,
-      history: historyResult?.data ?? [],
+      price,
+      priceProvider: state?.provider ?? historyResult?.provider,
+      priceFallbackUsed: state ? state.dataFreshness === 'stale' : history.length > 0,
+      priceTimestamp: state?.timestamp ?? (price ? price.timestamp : undefined),
+      history,
       fundamental: null,
       consensus: null,
       providers: this.marketData.getAvailableProviders(),

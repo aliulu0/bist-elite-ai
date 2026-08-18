@@ -42,7 +42,8 @@ export interface MacroDataSnapshot {
 
 export type CentralBank = 'tcmb' | 'fed' | 'ecb';
 
-export type CentralBankTone = 'hawkish' | 'dovish' | 'neutral' | 'hawkish_leaning' | 'dovish_leaning';
+export type CentralBankTone =
+  'hawkish' | 'dovish' | 'neutral' | 'hawkish_leaning' | 'dovish_leaning';
 
 export type MarketImpact = 'positive' | 'negative' | 'neutral';
 
@@ -63,28 +64,28 @@ export interface CentralBankAnalysis {
 export type MarketRegimeType = 'risk_on' | 'neutral' | 'risk_off' | 'extreme_risk';
 
 export interface MarketRegimeAnalysis {
-  regime: MarketRegimeType;
-  score: number;
+  regime: MarketRegimeType | null;
+  score: number | null;
   components: {
-    vix: { value: number; impact: number };
-    dxy: { value: number; impact: number };
-    us10y: { value: number; impact: number };
-    cds: { value: number; impact: number };
-    liquidity: { value: number; impact: number };
-    momentum: { value: number; impact: number };
+    vix: { value: number | null; impact: number };
+    dxy: { value: number | null; impact: number };
+    us10y: { value: number | null; impact: number };
+    cds: { value: number | null; impact: number };
+    liquidity: { value: number | null; impact: number };
+    momentum: { value: number | null; impact: number };
   };
   signals: string[];
   analyzedAt: string;
 }
 
 export interface MacroScoreResult {
-  macroScore: number;
+  macroScore: number | null;
   components: {
-    monetaryPolicy: number;
-    globalRisk: number;
-    domesticRisk: number;
-    growth: number;
-    liquidity: number;
+    monetaryPolicy: number | null;
+    globalRisk: number | null;
+    domesticRisk: number | null;
+    growth: number | null;
+    liquidity: number | null;
   };
   confidence: number;
   calculatedAt: string;
@@ -99,8 +100,8 @@ export interface SectorImpact {
 
 export interface CombinedConfidence {
   eliteScore: number;
-  macroScore: number;
-  combined: number;
+  macroScore: number | null;
+  combined: number | null;
   weightElite: number;
   weightMacro: number;
   calculatedAt: string;
@@ -120,9 +121,9 @@ export interface MacroOpportunity {
   ticker: string;
   name: string;
   sector: string;
-  eliteScore: number;
-  macroScore: number;
-  combinedConfidence: number;
+  eliteScore: number | null;
+  macroScore: number | null;
+  combinedConfidence: number | null;
   reason: string;
   sectorImpact: MarketImpact;
   priority: 'high' | 'medium' | 'low';
@@ -133,10 +134,15 @@ export interface MacroRiskItem {
   ticker: string;
   name: string;
   sector: string;
-  riskType: 'rate_sensitive' | 'currency_sensitive' | 'global_risk_exposed' | 'weak_sector' | 'high_macro_risk';
+  riskType:
+    | 'rate_sensitive'
+    | 'currency_sensitive'
+    | 'global_risk_exposed'
+    | 'weak_sector'
+    | 'high_macro_risk';
   riskDescription: string;
-  macroScore: number;
-  severity: MarketRegimeType;
+  macroScore: number | null;
+  severity: MarketRegimeType | null;
   timestamp: string;
 }
 

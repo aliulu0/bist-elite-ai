@@ -1,10 +1,17 @@
 import { Injectable, Logger, Optional } from '@nestjs/common';
-import { IUnifiedMarketDataProvider, ProviderStatus } from '../providers/unified/unified-provider.interface';
+import {
+  IUnifiedMarketDataProvider,
+  ProviderStatus,
+} from '../providers/unified/unified-provider.interface';
 import { ProviderDiagnostics } from '../providers/unified/base-provider.adapter';
 import { CircuitBreakerService } from '../circuit-breaker/circuit-breaker.service';
 import { MarketDataCacheService } from '../cache/market-data-cache.service';
 import { MarketDataValidationService } from '../market-data-validation.service';
-import { MarketDataConfig, getMarketDataConfig, ProviderConfig } from '../config/market-data.config';
+import {
+  MarketDataConfig,
+  getMarketDataConfig,
+  ProviderConfig,
+} from '../config/market-data.config';
 import { SymbolRegistryService } from '../symbol-registry/symbol-registry.service';
 import { RequestDeduplicatorService } from '../dedup/request-deduplicator.service';
 import { SymbolNormalizerService } from '../symbol-normalizer/symbol-normalizer.service';
@@ -23,7 +30,11 @@ import {
   DataQuality,
   FundamentalProfile,
 } from '../interfaces/unified-domain.types';
-import { PLATFORM_TIMEFRAMES, PREDICTION_TIMEFRAME_MAPPING } from '../coverage/coverage-report.types';
+import {
+  PLATFORM_TIMEFRAMES,
+  PREDICTION_TIMEFRAME_MAPPING,
+} from '../coverage/coverage-report.types';
+import { BistAssetType } from '../symbol-registry/symbol-registry.types';
 
 export type ProviderDashboardStatus = 'healthy' | 'degraded' | 'down' | 'unconfigured';
 
@@ -143,7 +154,9 @@ export class MarketDataOrchestrator {
     );
   }
 
-  async fetchIncomeStatement(symbol: string): Promise<MarketDataResult<UnifiedIncomeStatement> | null> {
+  async fetchIncomeStatement(
+    symbol: string,
+  ): Promise<MarketDataResult<UnifiedIncomeStatement> | null> {
     return this.executeWithFallback<UnifiedIncomeStatement>(
       symbol,
       'incomeStatement',
@@ -216,11 +229,19 @@ export class MarketDataOrchestrator {
       }
     }
 
-    this.cacheService.set('any', 'macroIndicators', 'all', allIndicators, this.config.cache.macroIndicatorsTtlMs);
+    this.cacheService.set(
+      'any',
+      'macroIndicators',
+      'all',
+      allIndicators,
+      this.config.cache.macroIndicatorsTtlMs,
+    );
     return allIndicators;
   }
 
-  async getProviderStatus(): Promise<Array<ProviderStatus & { enabled: boolean; priority: number }>> {
+  async getProviderStatus(): Promise<
+    Array<ProviderStatus & { enabled: boolean; priority: number }>
+  > {
     return this.providers.map((provider) => {
       const config = this.providerConfigs.get(provider.name);
       const status = provider.getStatus();
@@ -238,10 +259,11 @@ export class MarketDataOrchestrator {
       const status = provider.getStatus();
       const enabled = config?.enabled ?? false;
       const authConfigured = !!config?.apiKey || this.hasPublicEndpoint(provider.name);
-      const latestBudget = this.getProviderBudget(provider.name, 'latestPrice')
-        ?? this.getProviderBudget(provider.name, 'historicalData')
-        ?? this.getProviderBudget(provider.name, 'company')
-        ?? this.configuredBudgetEntry(provider.name, config);
+      const latestBudget =
+        this.getProviderBudget(provider.name, 'latestPrice') ??
+        this.getProviderBudget(provider.name, 'historicalData') ??
+        this.getProviderBudget(provider.name, 'company') ??
+        this.configuredBudgetEntry(provider.name, config);
 
       return {
         name: provider.name,
@@ -337,14 +359,15 @@ export class MarketDataOrchestrator {
   getProviderDiagnostics(): Record<string, ProviderDiagnostics> {
     const result: Record<string, ProviderDiagnostics> = {};
     for (const provider of this.providers) {
-      const diag = (provider as unknown as { getDiagnostics?: () => ProviderDiagnostics }).getDiagnostics?.();
-      result[provider.name] =
-        diag ?? {
-          lastErrorCategory: null,
-          lastErrorMessage: null,
-          lastErrorTime: null,
-          lastSuccessTime: null,
-        };
+      const diag = (
+        provider as unknown as { getDiagnostics?: () => ProviderDiagnostics }
+      ).getDiagnostics?.();
+      result[provider.name] = diag ?? {
+        lastErrorCategory: null,
+        lastErrorMessage: null,
+        lastErrorTime: null,
+        lastSuccessTime: null,
+      };
     }
     return result;
   }
@@ -353,14 +376,24 @@ export class MarketDataOrchestrator {
     const tcmb = this.providers.find((p) => p.name === 'tcmb') as TCMBAdapter | undefined;
     if (!tcmb || !this.isProviderEnabled('tcmb')) return [];
 
-    const cached = this.cacheService.get<TCMBInterestDecision[]>('tcmb', 'interestDecisions', 'all');
+    const cached = this.cacheService.get<TCMBInterestDecision[]>(
+      'tcmb',
+      'interestDecisions',
+      'all',
+    );
     if (cached !== undefined) return cached;
 
     if (this.circuitBreaker.isCircuitOpen('tcmb')) return [];
 
     try {
       const decisions = await tcmb.getInterestDecisionDates();
-      this.cacheService.set('tcmb', 'interestDecisions', 'all', decisions, this.config.cache.tcmbTtlMs);
+      this.cacheService.set(
+        'tcmb',
+        'interestDecisions',
+        'all',
+        decisions,
+        this.config.cache.tcmbTtlMs,
+      );
       return decisions;
     } catch {
       this.circuitBreaker.recordFailure('tcmb');
@@ -380,12 +413,21 @@ export class MarketDataOrchestrator {
    * key that all cache reads use, so cache hits actually occur after a provider
    * fetch instead of only during the same deduplication window.
    */
-  private cacheStore(provider: string, type: string, key: string, data: unknown, ttlMs: number): void {
+  private cacheStore(
+    provider: string,
+    type: string,
+    key: string,
+    data: unknown,
+    ttlMs: number,
+  ): void {
     this.cacheService.set('any', type, key, data, ttlMs);
     this.cacheService.set(provider, type, key, data, ttlMs);
   }
 
-  async fetchLatestPrice(symbol: string, forceRefresh = false): Promise<MarketDataResult<MarketDataPoint | null> | null> {
+  async fetchLatestPrice(
+    symbol: string,
+    forceRefresh = false,
+  ): Promise<MarketDataResult<MarketDataPoint | null> | null> {
     const normalized = this.normalizeSymbol(symbol);
     return this.dedupe(`latest:${normalized}`, () =>
       forceRefresh
@@ -437,7 +479,13 @@ export class MarketDataOrchestrator {
 
           const dataQuality: DataQuality =
             validated.validationStatus === 'partial' ? 'PARTIAL' : 'VALID';
-          this.cacheStore(provider.name, 'latestPrice', symbol, validated, this.config.cache.historicalTtlMs);
+          this.cacheStore(
+            provider.name,
+            'latestPrice',
+            symbol,
+            validated,
+            this.config.cache.historicalTtlMs,
+          );
           const actualProvider = provider.name;
           const fallbackUsed = attemptedProviders.length > 1;
           const providerAttempts = attemptedProviders.length;
@@ -475,7 +523,9 @@ export class MarketDataOrchestrator {
   ): Promise<MarketDataResult<MarketDataPoint[]> | null> {
     const normalized = this.normalizeSymbol(symbol);
     const cacheKey = `${normalized}|${timeframe}`;
-    return this.dedupe(`history:${cacheKey}`, () => this.doFetchHistoricalData(normalized, timeframe, options, cacheKey));
+    return this.dedupe(`history:${cacheKey}`, () =>
+      this.doFetchHistoricalData(normalized, timeframe, options, cacheKey),
+    );
   }
 
   async fetchHistoricalRange(
@@ -486,7 +536,9 @@ export class MarketDataOrchestrator {
     const normalized = this.normalizeSymbol(symbol);
     const cacheKey = `${normalized}|${timeframe}`;
     const rangeKey = `range:${cacheKey}:${options?.startDate ?? ''}:${options?.endDate ?? ''}`;
-    return this.dedupe(rangeKey, () => this.fetchHistoricalFromProviders(normalized, timeframe, options, cacheKey));
+    return this.dedupe(rangeKey, () =>
+      this.fetchHistoricalFromProviders(normalized, timeframe, options, cacheKey),
+    );
   }
 
   private async doFetchHistoricalData(
@@ -507,7 +559,13 @@ export class MarketDataOrchestrator {
 
     const result = await this.fetchHistoricalFromProviders(symbol, timeframe, options, cacheKey);
     if (result) {
-      this.cacheStore(result.provider, 'historical', cacheKey, result.data, this.config.cache.historicalTtlMs);
+      this.cacheStore(
+        result.provider,
+        'historical',
+        cacheKey,
+        result.data,
+        this.config.cache.historicalTtlMs,
+      );
     }
     return result;
   }
@@ -539,7 +597,9 @@ export class MarketDataOrchestrator {
         const points = await provider.getHistoricalData(symbol, timeframe, options);
         if (points && points.length > 0) {
           const validated = this.validationService
-            ? this.validationService.validateDataPoints(points).filter((p) => p.validationStatus !== 'invalid')
+            ? this.validationService
+                .validateDataPoints(points)
+                .filter((p) => p.validationStatus !== 'invalid')
             : points;
 
           if (validated.length === 0) continue;
@@ -759,7 +819,10 @@ export class MarketDataOrchestrator {
     return budget;
   }
 
-  private configuredBudgetEntry(provider: string, config?: ProviderConfig): ProviderBudgetEntry | null {
+  private configuredBudgetEntry(
+    provider: string,
+    config?: ProviderConfig,
+  ): ProviderBudgetEntry | null {
     const budgetCfg = config?.budget;
     if (!budgetCfg || !(budgetCfg.dailyLimit > 0)) return null;
     return {
@@ -774,7 +837,11 @@ export class MarketDataOrchestrator {
     };
   }
 
-  private recordProviderRequestBudget(provider: string, capability: string, success: boolean): void {
+  private recordProviderRequestBudget(
+    provider: string,
+    capability: string,
+    success: boolean,
+  ): void {
     let providerCaps = this.providerBudgets.get(provider);
     if (!providerCaps) {
       providerCaps = new Map<string, ProviderBudgetEntry>();
@@ -785,7 +852,8 @@ export class MarketDataOrchestrator {
     if (!budget) {
       const config = this.getProviderConfig(provider);
       const budgetCfg = config?.budget;
-      const limit = budgetCfg?.dailyLimit && budgetCfg.dailyLimit > 0 ? budgetCfg.dailyLimit : 1_000_000;
+      const limit =
+        budgetCfg?.dailyLimit && budgetCfg.dailyLimit > 0 ? budgetCfg.dailyLimit : 1_000_000;
       budget = {
         provider,
         capability,
@@ -827,9 +895,150 @@ export class MarketDataOrchestrator {
     return Date.now() < budget.cooldownUntil;
   }
 
-  private markProviderInCooldown(provider: string, capability: string, durationMs: number): void {
-    const budget = this.getProviderBudget(provider, capability);
-    if (!budget) return;
-    budget.cooldownUntil = Date.now() + durationMs;
+  /**
+   * Discover the full BIST equity universe beyond the 6 test symbols.
+   *
+   * For each symbol in the master registry, determine availability status
+   * by checking if real market data can be fetched. Returns per-symbol
+   * status and a coverage matrix summary.
+   *
+   * @returns Universe discovery result with per-symbol status and coverage metrics
+   */
+  async discoverUniverse(): Promise<{
+    discoveredCount: number;
+    validatedCount: number;
+    invalidCount: number;
+    unavailableCount: number;
+    byStatus: Record<string, number>;
+    symbols: Array<{
+      ticker: string;
+      yahooTicker: string;
+      status: 'AVAILABLE' | 'UNAVAILABLE' | 'INVALID' | 'RATE_LIMITED';
+      instrumentType: BistAssetType | null;
+      sector: string | null;
+      currency: string;
+      hasPriceData: boolean;
+      hasVolumeData: boolean;
+      coverage: 'FULL' | 'PARTIAL' | 'UNAVAILABLE';
+    }>;
+    timestamp: string;
+    source: 'BIST_MASTER_REGISTRY' | 'YahooFinance' | 'KAP' | 'MKK' | 'RESEARCH_TIER';
+  }> {
+    const totalStart = Date.now();
+    const masterRegistry = this.symbolRegistry?.getMasterRegistry() ?? [];
+    const results: Array<{
+      ticker: string;
+      yahooTicker: string;
+      status: 'AVAILABLE' | 'UNAVAILABLE' | 'INVALID' | 'RATE_LIMITED';
+      instrumentType: BistAssetType | null;
+      sector: string | null;
+      currency: string;
+      hasPriceData: boolean;
+      hasVolumeData: boolean;
+      coverage: 'FULL' | 'PARTIAL' | 'UNAVAILABLE';
+    }> = [];
+
+    let validatedCount = 0;
+    let invalidCount = 0;
+    let unavailableCount = 0;
+
+    const equityTypes: BistAssetType[] = ['Equity', 'Bank', 'Insurance', 'Holding', 'REIT'];
+
+    for (const entry of masterRegistry) {
+      const ticker = entry.ticker;
+      const yahooTicker = entry.yahooTicker;
+      const assetType = entry.assetType;
+      const sector = entry.sector;
+      const currency = entry.currency;
+
+      // Equity-only filtering: exclude non-equity instrument types
+      const isEquity = equityTypes.includes(assetType);
+
+      let status: 'AVAILABLE' | 'UNAVAILABLE' | 'INVALID' | 'RATE_LIMITED' = 'UNAVAILABLE';
+      let hasPriceData = false;
+      let hasVolumeData = false;
+      let coverage: 'FULL' | 'PARTIAL' | 'UNAVAILABLE' = 'UNAVAILABLE';
+
+      if (!isEquity) {
+        status = 'INVALID';
+        invalidCount++;
+        results.push({
+          ticker,
+          yahooTicker,
+          status,
+          instrumentType: assetType,
+          sector,
+          currency,
+          hasPriceData: false,
+          hasVolumeData: false,
+          coverage: 'UNAVAILABLE',
+        });
+        continue;
+      }
+
+      // Try to fetch latest price from providers to determine availability
+      try {
+        const priceResult = (await this.fetchLatestPrice(
+          yahooTicker,
+        )) as MarketDataResult<MarketDataPoint | null> | null;
+        if (priceResult && priceResult.data !== null) {
+          status = 'AVAILABLE';
+          hasPriceData = true;
+          hasVolumeData = !!priceResult.data.volume;
+          validatedCount++;
+
+          // Determine coverage level using MarketDataResult.dataQuality
+          const dataQuality = priceResult.dataQuality;
+          if (dataQuality === 'VALID') {
+            coverage = 'FULL';
+          } else if (dataQuality === 'PARTIAL') {
+            coverage = 'PARTIAL';
+          } else {
+            coverage = 'PARTIAL';
+          }
+        } else {
+          // No additional provider available - UNAVAILABLE
+          status = 'UNAVAILABLE';
+          unavailableCount++;
+          hasPriceData = false;
+          coverage = 'UNAVAILABLE';
+        }
+      } catch (error) {
+        // Rate-limited or transient error
+        status = 'RATE_LIMITED';
+        unavailableCount++;
+        hasPriceData = false;
+        coverage = 'UNAVAILABLE';
+      }
+
+      results.push({
+        ticker,
+        yahooTicker,
+        status,
+        instrumentType: assetType,
+        sector,
+        currency,
+        hasPriceData,
+        hasVolumeData,
+        coverage,
+      });
+    }
+
+    const totalTimeMs = Date.now() - totalStart;
+    const byStatus: Record<string, number> = {};
+    for (const r of results) {
+      byStatus[r.status] = (byStatus[r.status] ?? 0) + 1;
+    }
+
+    return {
+      discoveredCount: masterRegistry.length,
+      validatedCount,
+      invalidCount,
+      unavailableCount,
+      byStatus,
+      symbols: results,
+      timestamp: new Date().toISOString(),
+      source: 'BIST_MASTER_REGISTRY',
+    };
   }
 }

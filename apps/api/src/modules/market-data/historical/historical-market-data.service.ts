@@ -15,7 +15,10 @@ import {
   HISTORICAL_META_NAMESPACE,
 } from '../incremental/incremental-timeframe.config';
 import { MarketDataPoint } from '../interfaces';
-import { HistoricalMarketDataConfig, getHistoricalMarketDataConfig } from './historical-market-data.config';
+import {
+  HistoricalMarketDataConfig,
+  getHistoricalMarketDataConfig,
+} from './historical-market-data.config';
 import * as calendar from './bist-trading-calendar';
 import {
   HistoricalAllSymbolsReport,
@@ -86,12 +89,19 @@ export class HistoricalMarketDataService {
 
   // ── Public API ─────────────────────────────────────────────────────────────
 
-  async getSymbolStatus(symbol: string, timeframe: string, options?: HistoricalStatusOptions): Promise<SymbolHistoricalStatus> {
+  async getSymbolStatus(
+    symbol: string,
+    timeframe: string,
+    options?: HistoricalStatusOptions,
+  ): Promise<SymbolHistoricalStatus> {
     const analysis = await this.analyze(symbol, timeframe, options);
     return analysis.status;
   }
 
-  async getAllStatus(timeframe = '1d', options?: HistoricalStatusOptions): Promise<HistoricalAllSymbolsReport> {
+  async getAllStatus(
+    timeframe = '1d',
+    options?: HistoricalStatusOptions,
+  ): Promise<HistoricalAllSymbolsReport> {
     const fetchable = resolveFetchableTimeframe(timeframe);
     const now = options?.now ?? Date.now();
     const today = calendar.todayTrDate(now);
@@ -112,14 +122,22 @@ export class HistoricalMarketDataService {
     for (const ticker of symbols) {
       const normalized = this.normalizeSymbol(ticker);
       const cacheKey = this.cacheKeyFor(normalized, fetchable);
-      const state = this.cache.get<IncrementalMarketDataState>(CACHE_PROVIDER_ANY, HISTORICAL_META_NAMESPACE, cacheKey);
+      const state = this.cache.get<IncrementalMarketDataState>(
+        CACHE_PROVIDER_ANY,
+        HISTORICAL_META_NAMESPACE,
+        cacheKey,
+      );
       const barCount = state?.barCount ?? 0;
-      const freshness = state?.lastTimestamp ? computeFreshness(state.lastTimestamp as string, fetchable, now) : 'no-data';
+      const freshness = state?.lastTimestamp
+        ? computeFreshness(state.lastTimestamp as string, fetchable, now)
+        : 'no-data';
       const expected = this.expectedPeriods(targetStart, targetEnd, fetchable, now).length;
       const coveragePct =
-        expected > 0 ? Math.min(100, Math.round(((barCount / expected) * 1000)) / 10) : 0;
+        expected > 0 ? Math.min(100, Math.round((barCount / expected) * 1000) / 10) : 0;
       const usableForBacktest =
-        barCount >= minBars && freshness !== 'no-data' && coveragePct >= this.resolvedConfig.minCoveragePctForBacktest;
+        barCount >= minBars &&
+        freshness !== 'no-data' &&
+        coveragePct >= this.resolvedConfig.minCoveragePctForBacktest;
 
       const summary: SymbolHistoricalSummary = {
         symbol: normalized,
@@ -160,7 +178,11 @@ export class HistoricalMarketDataService {
     };
   }
 
-  async getGaps(symbol: string, timeframe: string, options?: HistoricalStatusOptions): Promise<HistoricalGapReport> {
+  async getGaps(
+    symbol: string,
+    timeframe: string,
+    options?: HistoricalStatusOptions,
+  ): Promise<HistoricalGapReport> {
     const analysis = await this.analyze(symbol, timeframe, options);
     const { points, coverage } = analysis;
     const anomalies = this.analyzeAnomalies(points, timeframe, coverage.missingRanges);
@@ -174,7 +196,11 @@ export class HistoricalMarketDataService {
     };
   }
 
-  async getQuality(symbol: string, timeframe: string, options?: HistoricalStatusOptions): Promise<HistoricalQuality> {
+  async getQuality(
+    symbol: string,
+    timeframe: string,
+    options?: HistoricalStatusOptions,
+  ): Promise<HistoricalQuality> {
     const analysis = await this.analyze(symbol, timeframe, options);
     return analysis.status.quality;
   }
@@ -186,13 +212,30 @@ export class HistoricalMarketDataService {
     const { points, state } = this.readData(normalized, fetchable);
     const coverage =
       points.length > 0
-        ? this.computeCoverage(points, fetchable, this.resolvedConfig.defaultStartDate, calendar.todayTrDate(now), now)
-        : { expectedBarCount: 0, actualBarCount: 0, coveragePercent: 0, gapCount: 0, largestGap: 0, missingRanges: [] };
+        ? this.computeCoverage(
+            points,
+            fetchable,
+            this.resolvedConfig.defaultStartDate,
+            calendar.todayTrDate(now),
+            now,
+          )
+        : {
+            expectedBarCount: 0,
+            actualBarCount: 0,
+            coveragePercent: 0,
+            gapCount: 0,
+            largestGap: 0,
+            missingRanges: [],
+          };
     const info = this.computeBackfillInfo(normalized, fetchable, state, coverage, now);
     return info;
   }
 
-  async backfill(symbol: string, timeframe: string, options: HistoricalBackfillOptions = {}): Promise<HistoricalBackfillResult> {
+  async backfill(
+    symbol: string,
+    timeframe: string,
+    options: HistoricalBackfillOptions = {},
+  ): Promise<HistoricalBackfillResult> {
     const normalized = this.normalizeSymbol(symbol);
     if (!isWorkableTimeframe(timeframe)) {
       return {
@@ -215,14 +258,18 @@ export class HistoricalMarketDataService {
     }
     const fetchable = resolveFetchableTimeframe(timeframe);
     const cacheKey = this.cacheKeyFor(normalized, fetchable);
-    return this.dedupe(`backfill:${cacheKey}`, () => this.doBackfill(normalized, timeframe, fetchable, cacheKey, options));
+    return this.dedupe(`backfill:${cacheKey}`, () =>
+      this.doBackfill(normalized, timeframe, fetchable, cacheKey, options),
+    );
   }
 
   async backfillAll(
     options: HistoricalBackfillOptions & { symbols?: string[]; timeframe?: string } = {},
   ): Promise<HistoricalBackfillAllResult> {
     const timeframe = options.timeframe ?? '1d';
-    const symbols = options.symbols?.length ? options.symbols.map((s) => s.toUpperCase()) : this.activeSymbols();
+    const symbols = options.symbols?.length
+      ? options.symbols.map((s) => s.toUpperCase())
+      : this.activeSymbols();
     const results: HistoricalBackfillResult[] = [];
     const failedSymbols: string[] = [];
     for (const symbol of symbols) {
@@ -241,13 +288,17 @@ export class HistoricalMarketDataService {
    * never a second provider pipeline). Returns null when no usable series is
    * available so the caller falls back to its existing data source.
    */
-  async getValidatedHistory(symbol: string, timeframe: string, options?: HistoricalBackfillOptions): Promise<MarketDataPoint[] | null> {
+  async getValidatedHistory(
+    symbol: string,
+    timeframe: string,
+    options?: HistoricalBackfillOptions,
+  ): Promise<MarketDataPoint[] | null> {
     const normalized = this.normalizeSymbol(symbol);
     const fetchable = resolveFetchableTimeframe(timeframe);
     if (!isWorkableTimeframe(timeframe)) return null;
 
     const { points } = this.readData(normalized, fetchable);
-    const cached = this.validatedPoints(points);
+    const cached = this.clipToRange(this.validatedPoints(points), options);
     if (cached.length >= 2) return cached;
 
     if (this.incremental) {
@@ -256,13 +307,35 @@ export class HistoricalMarketDataService {
           startDate: options?.startDate,
           endDate: options?.endDate,
         });
-        const data = this.validatedPoints(result?.data ?? []);
+        const data = this.clipToRange(this.validatedPoints(result?.data ?? []), options);
         if (data.length >= 2) return data;
       } catch (error) {
-        this.logger.debug(`Incremental history unavailable for ${normalized}: ${this.describe(error)}`);
+        this.logger.debug(
+          `Incremental history unavailable for ${normalized}: ${this.describe(error)}`,
+        );
       }
     }
     return null;
+  }
+
+  /**
+   * Strictly clips points to the caller's [startDate, endDate] window so the
+   * backtest engine and other consumers only receive bars inside the requested
+   * range. The shared cache keeps the full series.
+   */
+  private clipToRange(
+    points: MarketDataPoint[],
+    options?: { startDate?: string; endDate?: string },
+  ): MarketDataPoint[] {
+    const start = options?.startDate ? options.startDate.slice(0, 10) : null;
+    const end = options?.endDate ? options.endDate.slice(0, 10) : null;
+    if (!start && !end) return points;
+    return points.filter((p) => {
+      const d = String(p.timestamp).slice(0, 10);
+      if (start && d < start) return false;
+      if (end && d > end) return false;
+      return true;
+    });
   }
 
   // ── Analysis ───────────────────────────────────────────────────────────────
@@ -271,7 +344,11 @@ export class HistoricalMarketDataService {
     symbol: string,
     timeframe: string,
     options?: HistoricalStatusOptions,
-  ): Promise<{ status: SymbolHistoricalStatus; points: MarketDataPoint[]; coverage: HistoricalCoverage }> {
+  ): Promise<{
+    status: SymbolHistoricalStatus;
+    points: MarketDataPoint[];
+    coverage: HistoricalCoverage;
+  }> {
     const normalized = this.normalizeSymbol(symbol);
     const fetchable = resolveFetchableTimeframe(timeframe);
     const now = options?.now ?? Date.now();
@@ -283,7 +360,8 @@ export class HistoricalMarketDataService {
     const { points, state } = this.readData(normalized, fetchable);
 
     const firstPeriod = points.length > 0 ? this.periodKeyOf(points[0].timestamp, fetchable) : null;
-    const lastPeriod = points.length > 0 ? this.periodKeyOf(points[points.length - 1].timestamp, fetchable) : null;
+    const lastPeriod =
+      points.length > 0 ? this.periodKeyOf(points[points.length - 1].timestamp, fetchable) : null;
     const windowStart = firstPeriod ? calendar.maxDate(targetStart, firstPeriod) : targetStart;
     const windowEnd = lastPeriod ? calendar.minDate(targetEnd, lastPeriod) : targetEnd;
 
@@ -310,7 +388,13 @@ export class HistoricalMarketDataService {
     return { status, points, coverage };
   }
 
-  private computeCoverage(points: MarketDataPoint[], timeframe: string, windowStart: string, windowEnd: string, now: number): HistoricalCoverage {
+  private computeCoverage(
+    points: MarketDataPoint[],
+    timeframe: string,
+    windowStart: string,
+    windowEnd: string,
+    now: number,
+  ): HistoricalCoverage {
     const expected = this.expectedPeriods(windowStart, windowEnd, timeframe, now);
     const expectedSet = new Set(expected);
     const present = new Set<string>();
@@ -320,9 +404,16 @@ export class HistoricalMarketDataService {
     }
     const expectedBarCount = expected.length;
     const actualBarCount = present.size;
-    const coveragePercent = expectedBarCount > 0 ? Math.round((actualBarCount / expectedBarCount) * 1000) / 10 : 0;
-    const missingRanges = this.groupMissingIntoRanges(expected.filter((k) => !present.has(k)), timeframe);
-    const largestGap = missingRanges.reduce((max, range) => Math.max(max, this.calendarDaysBetween(range.start, range.end)), 0);
+    const coveragePercent =
+      expectedBarCount > 0 ? Math.round((actualBarCount / expectedBarCount) * 1000) / 10 : 0;
+    const missingRanges = this.groupMissingIntoRanges(
+      expected.filter((k) => !present.has(k)),
+      timeframe,
+    );
+    const largestGap = missingRanges.reduce(
+      (max, range) => Math.max(max, this.calendarDaysBetween(range.start, range.end)),
+      0,
+    );
     return {
       expectedBarCount,
       actualBarCount,
@@ -360,7 +451,10 @@ export class HistoricalMarketDataService {
     const lastTs = points[points.length - 1].timestamp;
     const freshness = computeFreshness(lastTs, timeframe, now);
     const minBars = this.minBarsFor(timeframe);
-    const depthScore = Math.min(100, Math.round((coverage.actualBarCount / Math.max(1, minBars)) * 100));
+    const depthScore = Math.min(
+      100,
+      Math.round((coverage.actualBarCount / Math.max(1, minBars)) * 100),
+    );
     let qualityScore = Math.round((coverage.coveragePercent + depthScore) / 2);
     if (freshness === 'stale') qualityScore = Math.max(0, qualityScore - 10);
 
@@ -382,9 +476,15 @@ export class HistoricalMarketDataService {
     };
   }
 
-  private backtestReason(coverage: HistoricalCoverage, barCount: number, minBars: number, integrityValid: boolean): string {
+  private backtestReason(
+    coverage: HistoricalCoverage,
+    barCount: number,
+    minBars: number,
+    integrityValid: boolean,
+  ): string {
     if (!integrityValid) return 'Veri kalitesi yetersiz (OHLC doğrulama hatası).';
-    if (coverage.coveragePercent < this.resolvedConfig.minCoveragePctForBacktest) return 'Veri aralığında boşluklar bulundu.';
+    if (coverage.coveragePercent < this.resolvedConfig.minCoveragePctForBacktest)
+      return 'Veri aralığında boşluklar bulundu.';
     if (barCount < minBars) return 'Backtest için tarihsel veri yetersiz.';
     return 'Geçmiş veri eksik.';
   }
@@ -414,7 +514,9 @@ export class HistoricalMarketDataService {
       status,
       lastRunAt: record?.startedAt ?? null,
       lastError:
-        status === 'failed' || status === 'partial' || status === 'STALE_BUT_VALID' ? (record?.message ?? null) : null,
+        status === 'failed' || status === 'partial' || status === 'STALE_BUT_VALID'
+          ? (record?.message ?? null)
+          : null,
       fetchedBars: record?.fetchedBars ?? 0,
       requestedRanges: record?.requestedRanges ?? 0,
       completedRanges: record?.completedRanges ?? 0,
@@ -424,7 +526,11 @@ export class HistoricalMarketDataService {
     };
   }
 
-  private statusMessage(status: HistoricalBackfillStatus, remainingRanges: number, lastTimestamp: string | null): string {
+  private statusMessage(
+    status: HistoricalBackfillStatus,
+    remainingRanges: number,
+    lastTimestamp: string | null,
+  ): string {
     switch (status) {
       case 'running':
         return 'Backfill sürüyor.';
@@ -446,7 +552,11 @@ export class HistoricalMarketDataService {
 
   // ── Gap detection ──────────────────────────────────────────────────────────
 
-  private analyzeAnomalies(points: MarketDataPoint[], timeframe: string, missingRanges: HistoricalRange[]) {
+  private analyzeAnomalies(
+    points: MarketDataPoint[],
+    timeframe: string,
+    missingRanges: HistoricalRange[],
+  ) {
     const seen = new Set<string>();
     let duplicateTimestamps = 0;
     let outOfOrderCount = 0;
@@ -458,7 +568,8 @@ export class HistoricalMarketDataService {
       const p = points[i];
       if (seen.has(p.timestamp)) duplicateTimestamps++;
       seen.add(p.timestamp);
-      if (i > 0 && new Date(p.timestamp).getTime() <= new Date(points[i - 1].timestamp).getTime()) outOfOrderCount++;
+      if (i > 0 && new Date(p.timestamp).getTime() <= new Date(points[i - 1].timestamp).getTime())
+        outOfOrderCount++;
       if (p.validationStatus === 'invalid') invalidOhlcCount++;
       if (p.open <= 0 || p.high <= 0 || p.low <= 0 || p.close <= 0) zeroOrNegativePriceCount++;
       if (p.volume < 0) invalidVolumeCount++;
@@ -506,7 +617,13 @@ export class HistoricalMarketDataService {
     if (options.force) {
       missingRanges = [{ start: targetStart, end: targetEnd }];
     } else {
-      missingRanges = this.computeCoverage(existing, fetchable, targetStart, targetEnd, now).missingRanges;
+      missingRanges = this.computeCoverage(
+        existing,
+        fetchable,
+        targetStart,
+        targetEnd,
+        now,
+      ).missingRanges;
     }
 
     if (missingRanges.length === 0) {
@@ -542,13 +659,18 @@ export class HistoricalMarketDataService {
     }
 
     if (missingRanges.length > this.resolvedConfig.maxRangesPerBackfill) {
-      warnings.push(`Aşırı boşluk sayısı (${missingRanges.length}) tespit edildi; ilk ${this.resolvedConfig.maxRangesPerBackfill} aralık işlenecek.`);
+      warnings.push(
+        `Aşırı boşluk sayısı (${missingRanges.length}) tespit edildi; ilk ${this.resolvedConfig.maxRangesPerBackfill} aralık işlenecek.`,
+      );
       missingRanges = missingRanges.slice(0, this.resolvedConfig.maxRangesPerBackfill);
     }
 
     const concurrency = Math.max(
       1,
-      Math.min(options.concurrency ?? this.resolvedConfig.defaultConcurrency, this.resolvedConfig.maxConcurrency),
+      Math.min(
+        options.concurrency ?? this.resolvedConfig.defaultConcurrency,
+        this.resolvedConfig.maxConcurrency,
+      ),
     );
 
     const startedAt = new Date().toISOString();
@@ -602,7 +724,8 @@ export class HistoricalMarketDataService {
     let status: HistoricalBackfillStatus;
     if (finalPoints.length === 0) status = 'no-data';
     else if (failedAll) status = hadExisting ? 'STALE_BUT_VALID' : 'failed';
-    else if (failedRanges > 0) status = hadExisting && fetchedBars === 0 ? 'STALE_BUT_VALID' : 'partial';
+    else if (failedRanges > 0)
+      status = hadExisting && fetchedBars === 0 ? 'STALE_BUT_VALID' : 'partial';
     else status = 'completed';
 
     const finalCoverage = this.computeCoverage(finalPoints, fetchable, targetStart, targetEnd, now);
@@ -611,13 +734,23 @@ export class HistoricalMarketDataService {
       status = 'partial';
     }
 
-    const message = this.backfillResultMessage(status, fetchedBars, finalCoverage.missingRanges.length > 0);
+    const message = this.backfillResultMessage(
+      status,
+      fetchedBars,
+      finalCoverage.missingRanges.length > 0,
+    );
 
     const actualProvider = Array.from(providersUsed)[0] ?? state?.provider ?? 'unknown';
     if (fetchedBars > 0 && finalPoints.length > 0) {
       const ttl = this.ttlFor(fetchable);
       this.cache.set(CACHE_PROVIDER_ANY, CACHE_TYPE_HISTORICAL, cacheKey, finalPoints, ttl);
-      this.cache.set(CACHE_PROVIDER_ANY, HISTORICAL_META_NAMESPACE, cacheKey, this.buildState(finalPoints, actualProvider), ttl);
+      this.cache.set(
+        CACHE_PROVIDER_ANY,
+        HISTORICAL_META_NAMESPACE,
+        cacheKey,
+        this.buildState(finalPoints, actualProvider),
+        ttl,
+      );
     }
 
     const record: HistoricalBackfillRunRecord = {
@@ -652,7 +785,11 @@ export class HistoricalMarketDataService {
     };
   }
 
-  private backfillResultMessage(status: HistoricalBackfillStatus, fetchedBars: number, stillMissing = false): string {
+  private backfillResultMessage(
+    status: HistoricalBackfillStatus,
+    fetchedBars: number,
+    stillMissing = false,
+  ): string {
     switch (status) {
       case 'no-data':
         return 'Sağlayıcılardan veri alınamadı.';
@@ -661,9 +798,13 @@ export class HistoricalMarketDataService {
       case 'STALE_BUT_VALID':
         return 'Önceki geçerli veri korunarak kullanıldı.';
       case 'partial':
-        return stillMissing ? 'Provider yanıtı eksik; boşluklar korundu.' : 'Backfill kısmen tamamlandı; önceki geçerli veri korunarak kullanıldı.';
+        return stillMissing
+          ? 'Provider yanıtı eksik; boşluklar korundu.'
+          : 'Backfill kısmen tamamlandı; önceki geçerli veri korunarak kullanıldı.';
       case 'completed':
-        return fetchedBars > 0 ? `${fetchedBars} yeni bar eklendi.` : 'Veri zaten eksiksiz (boşluk bulunamadı).';
+        return fetchedBars > 0
+          ? `${fetchedBars} yeni bar eklendi.`
+          : 'Veri zaten eksiksiz (boşluk bulunamadı).';
       default:
         return 'Backfill sürüyor.';
     }
@@ -716,7 +857,11 @@ export class HistoricalMarketDataService {
     }
   }
 
-  private expectedPeriodStarts(windowStart: string, windowEnd: string, timeframe: string): string[] {
+  private expectedPeriodStarts(
+    windowStart: string,
+    windowEnd: string,
+    timeframe: string,
+  ): string[] {
     if (windowStart > windowEnd) return [];
     if (timeframe === '4h' || timeframe === '1d') {
       return calendar.eachTradingDay(windowStart, windowEnd);
@@ -730,7 +875,12 @@ export class HistoricalMarketDataService {
     return periods;
   }
 
-  private expectedPeriods(windowStart: string, windowEnd: string, timeframe: string, now: number): string[] {
+  private expectedPeriods(
+    windowStart: string,
+    windowEnd: string,
+    timeframe: string,
+    now: number,
+  ): string[] {
     const today = calendar.todayTrDate(now);
     return this.expectedPeriodStarts(windowStart, windowEnd, timeframe).filter((periodStart) => {
       return this.periodEndOf(periodStart, timeframe) < today;
@@ -768,20 +918,48 @@ export class HistoricalMarketDataService {
 
   // ── Data / cache helpers ───────────────────────────────────────────────────
 
-  private readData(normalized: string, fetchable: string): { points: MarketDataPoint[]; state: IncrementalMarketDataState | undefined } {
+  private readData(
+    normalized: string,
+    fetchable: string,
+  ): { points: MarketDataPoint[]; state: IncrementalMarketDataState | undefined } {
     const cacheKey = this.cacheKeyFor(normalized, fetchable);
-    const cached = this.cache.get<MarketDataPoint[]>(CACHE_PROVIDER_ANY, CACHE_TYPE_HISTORICAL, cacheKey);
-    const state = this.cache.get<IncrementalMarketDataState>(CACHE_PROVIDER_ANY, HISTORICAL_META_NAMESPACE, cacheKey);
+    const cached = this.cache.get<MarketDataPoint[]>(
+      CACHE_PROVIDER_ANY,
+      CACHE_TYPE_HISTORICAL,
+      cacheKey,
+    );
+    const state = this.cache.get<IncrementalMarketDataState>(
+      CACHE_PROVIDER_ANY,
+      HISTORICAL_META_NAMESPACE,
+      cacheKey,
+    );
     const points = Array.isArray(cached) ? cached : [];
     return { points, state };
   }
 
-  private readRunRecord(normalized: string, fetchable: string): HistoricalBackfillRunRecord | undefined {
-    return this.cache.get<HistoricalBackfillRunRecord>(CACHE_PROVIDER_ANY, HISTORICAL_BACKFILL_NAMESPACE, this.cacheKeyFor(normalized, fetchable));
+  private readRunRecord(
+    normalized: string,
+    fetchable: string,
+  ): HistoricalBackfillRunRecord | undefined {
+    return this.cache.get<HistoricalBackfillRunRecord>(
+      CACHE_PROVIDER_ANY,
+      HISTORICAL_BACKFILL_NAMESPACE,
+      this.cacheKeyFor(normalized, fetchable),
+    );
   }
 
-  private cacheRunRecord(normalized: string, fetchable: string, record: HistoricalBackfillRunRecord): void {
-    this.cache.set(CACHE_PROVIDER_ANY, HISTORICAL_BACKFILL_NAMESPACE, this.cacheKeyFor(normalized, fetchable), record, this.ttlFor(fetchable));
+  private cacheRunRecord(
+    normalized: string,
+    fetchable: string,
+    record: HistoricalBackfillRunRecord,
+  ): void {
+    this.cache.set(
+      CACHE_PROVIDER_ANY,
+      HISTORICAL_BACKFILL_NAMESPACE,
+      this.cacheKeyFor(normalized, fetchable),
+      record,
+      this.ttlFor(fetchable),
+    );
   }
 
   private buildState(points: MarketDataPoint[], provider: string): IncrementalMarketDataState {
@@ -798,9 +976,14 @@ export class HistoricalMarketDataService {
     };
   }
 
-  private mergeAndDedupe(existing: MarketDataPoint[], incoming: MarketDataPoint[]): MarketDataPoint[] {
+  private mergeAndDedupe(
+    existing: MarketDataPoint[],
+    incoming: MarketDataPoint[],
+  ): MarketDataPoint[] {
     const validatedIncoming = this.validationService
-      ? this.validationService.validateDataPoints(incoming).filter((p) => p.validationStatus !== 'invalid')
+      ? this.validationService
+          .validateDataPoints(incoming)
+          .filter((p) => p.validationStatus !== 'invalid')
       : incoming;
     const byTs = new Map<string, MarketDataPoint>();
     for (const p of existing) byTs.set(p.timestamp, p);
@@ -809,7 +992,9 @@ export class HistoricalMarketDataService {
     merged.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
     if (this.validationService && merged.length > 0) {
       try {
-        return this.validationService.validateDataPoints(merged).filter((p) => p.validationStatus !== 'invalid');
+        return this.validationService
+          .validateDataPoints(merged)
+          .filter((p) => p.validationStatus !== 'invalid');
       } catch {
         return merged;
       }
@@ -843,7 +1028,11 @@ export class HistoricalMarketDataService {
     return `${normalized}|${fetchable}`;
   }
 
-  private async runWithConcurrency<T>(items: T[], concurrency: number, worker: (item: T) => Promise<void>): Promise<void> {
+  private async runWithConcurrency<T>(
+    items: T[],
+    concurrency: number,
+    worker: (item: T) => Promise<void>,
+  ): Promise<void> {
     const queue = [...items];
     const runners = Array.from({ length: Math.max(1, concurrency) }, async () => {
       while (queue.length > 0) {

@@ -2,11 +2,22 @@ import { useState, useCallback, useEffect } from 'react';
 import { Eye, LayoutGrid, Bell, StickyNote, BarChart3 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useWatchlistStore } from '@/stores/watchlist-store';
-import type { WatchlistItem, WatchlistAlert, WatchlistNote, WatchlistPerformance as WatchlistPerformanceData } from '@/components/watchlist/watchlist-types';
+import type {
+  WatchlistItem,
+  WatchlistAlert,
+  WatchlistNote,
+  WatchlistPerformance as WatchlistPerformanceData,
+} from '@/components/watchlist/watchlist-types';
 import { WATCHLIST_TAB } from '@/components/watchlist/watchlist-types';
 import {
-  WatchlistHeader, WatchlistSummaryCards, WatchlistTable, WatchlistFilters,
-  WatchlistAlerts, WatchlistNotes, WatchlistPerformance as WatchlistPerformancePanel, WatchlistExport,
+  WatchlistHeader,
+  WatchlistSummaryCards,
+  WatchlistTable,
+  WatchlistFilters,
+  WatchlistAlerts,
+  WatchlistNotes,
+  WatchlistPerformance as WatchlistPerformancePanel,
+  WatchlistExport,
 } from '@/components/watchlist';
 import { SkeletonCard } from '@/components/shared/skeleton';
 import { ErrorCard } from '@/components/shared/error-card';
@@ -19,11 +30,16 @@ function toNumber(value: unknown): number {
 
 function mapOpportunity(level: string): string {
   switch (level) {
-    case 'VERY_HIGH': return 'Çok Yüksek';
-    case 'HIGH': return 'Yüksek';
-    case 'MEDIUM': return 'Orta';
-    case 'LOW': return 'Düşük';
-    default: return '';
+    case 'VERY_HIGH':
+      return 'Çok Yüksek';
+    case 'HIGH':
+      return 'Yüksek';
+    case 'MEDIUM':
+      return 'Orta';
+    case 'LOW':
+      return 'Düşük';
+    default:
+      return '';
   }
 }
 
@@ -35,15 +51,23 @@ function mapTrend(level: string): string {
 
 function mapStatus(status: string): WatchlistItem['status'] {
   switch (status) {
-    case 'TOP_CANDIDATE': return 'AKTİF';
-    case 'WATCHLIST': return 'İZLENEN';
-    default: return 'BEKLEMEDE';
+    case 'TOP_CANDIDATE':
+      return 'AKTİF';
+    case 'WATCHLIST':
+      return 'İZLENEN';
+    default:
+      return 'BEKLEMEDE';
   }
 }
 
 function mapAlert(entry: Record<string, unknown>): WatchlistAlert {
   const priority = String(entry.priority ?? '').toUpperCase();
-  const severity = priority === 'HIGH' || priority === 'CRITICAL' ? 'CRITICAL' : priority === 'MEDIUM' ? 'WARNING' : 'INFO';
+  const severity =
+    priority === 'HIGH' || priority === 'CRITICAL'
+      ? 'CRITICAL'
+      : priority === 'MEDIUM'
+        ? 'WARNING'
+        : 'INFO';
   return {
     id: String(entry.id ?? ''),
     symbol: String(entry.symbol ?? ''),
@@ -81,31 +105,38 @@ export default function WatchlistPage() {
         sdkClient.alerts().catch(() => null),
       ]);
 
-      const lists = (watchlistRes.data?.lists ?? []) as Array<{ name?: string; entries?: Array<{ symbol?: string }> }>;
-      const symbols = [...new Set(lists.flatMap((l) => (l.entries ?? []).map((e) => String(e.symbol ?? '').toUpperCase()).filter(Boolean)))];
+      const lists = (watchlistRes.data?.lists ?? []) as Array<{
+        name?: string;
+        entries?: Array<{ symbol?: string }>;
+      }>;
+      const symbols = [
+        ...new Set(
+          lists.flatMap((l) =>
+            (l.entries ?? []).map((e) => String(e.symbol ?? '').toUpperCase()).filter(Boolean),
+          ),
+        ),
+      ];
 
       const scanItems: Array<Record<string, unknown>> = [];
       if (scannerRes) {
         const r = scannerRes as Record<string, unknown>;
-        for (const key of ['topCandidates', 'watchlist', 'rejected']) {
-          const arr = r[key];
-          if (Array.isArray(arr)) scanItems.push(...(arr as Array<Record<string, unknown>>));
-        }
+        const arr = r['sonuclar'];
+        if (Array.isArray(arr)) scanItems.push(...(arr as Array<Record<string, unknown>>));
       }
       const scanMap = new Map<string, Record<string, unknown>>();
-      for (const item of scanItems) scanMap.set(String(item.symbol).toUpperCase(), item);
+      for (const item of scanItems) scanMap.set(String(item.ticker).toUpperCase(), item);
 
       const mappedItems: WatchlistItem[] = symbols.map((symbol) => {
         const scan = scanMap.get(symbol);
         const opportunity = String(scan?.opportunityLevel ?? '');
         return {
           symbol,
-          name: symbol,
-          sector: '',
-          eliteScore: toNumber(scan?.eliteScore),
+          name: String(scan?.company ?? ''),
+          sector: String(scan?.sector ?? ''),
+          eliteScore: toNumber(scan?.aiScore),
           eliteRating: String(scan?.eliteRating ?? ''),
           opportunityLevel: mapOpportunity(opportunity),
-          confidence: toNumber(scan?.candidateScore) / 100,
+          confidence: toNumber(scan?.aiConfidence) / 100,
           currentPrice: 0,
           dailyChange: 0,
           dailyChangePercent: 0,
@@ -135,16 +166,14 @@ export default function WatchlistPage() {
     }
   }, []);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   if (error) {
     return (
       <div className="p-4">
-        <ErrorCard
-          title="İzleme Listesi Yüklenemedi"
-          message={error}
-          onRetry={fetchData}
-        />
+        <ErrorCard title="İzleme Listesi Yüklenemedi" message={error} onRetry={fetchData} />
       </div>
     );
   }
@@ -178,13 +207,19 @@ export default function WatchlistPage() {
       <WatchlistSummaryCards
         summary={{
           totalWatched: items.length,
-          earlyOpportunities: items.filter((i) => i.opportunityLevel === 'Erken' || i.opportunityLevel === 'Çok Yüksek').length,
+          earlyOpportunities: items.filter(
+            (i) => i.opportunityLevel === 'Erken' || i.opportunityLevel === 'Çok Yüksek',
+          ).length,
           aaaCount: items.filter((i) => i.eliteRating === 'AAA').length,
           risingCount: items.filter((i) => i.trend === 'YUKARI').length,
           fallingCount: items.filter((i) => i.trend === 'ASAGI').length,
           newAlerts: alerts.length,
-          avgEliteScore: items.length ? items.reduce((s, i) => s + i.eliteScore, 0) / items.length : 0,
-          avgConfidence: items.length ? items.reduce((s, i) => s + i.confidence, 0) / items.length : 0,
+          avgEliteScore: items.length
+            ? items.reduce((s, i) => s + i.eliteScore, 0) / items.length
+            : 0,
+          avgConfidence: items.length
+            ? items.reduce((s, i) => s + i.confidence, 0) / items.length
+            : 0,
         }}
       />
 
@@ -221,13 +256,9 @@ export default function WatchlistPage() {
             </div>
           )}
 
-          {activeTab === WATCHLIST_TAB.ALERTS && (
-            <WatchlistAlerts alerts={alerts} />
-          )}
+          {activeTab === WATCHLIST_TAB.ALERTS && <WatchlistAlerts alerts={alerts} />}
 
-          {activeTab === WATCHLIST_TAB.NOTES && (
-            <WatchlistNotes notes={notes} />
-          )}
+          {activeTab === WATCHLIST_TAB.NOTES && <WatchlistNotes notes={notes} />}
 
           {activeTab === WATCHLIST_TAB.PERFORMANCE && (
             <WatchlistPerformancePanel data={performance} />

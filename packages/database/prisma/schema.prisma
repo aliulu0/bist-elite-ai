@@ -811,6 +811,82 @@ model TelegramMessage {
 // F11-005: PERSISTENCE LAYER — Pipeline Analysis Results
 // ==========================================================
 
+model OpportunitySnapshots {
+  id            String   @id @default(uuid())
+  ticker        String
+  state         String
+  configVersion String
+  originalScore   Float
+  originalSignalStrengths Json
+  originalDecision Json
+  originalPrediction Json
+  originalRisk      String
+  originalDataQuality Json
+  originalTimestamp DateTime
+  dataFreshness     String
+  providerCalls     Int       @default(0)
+  cacheHits         Int       @default(0)
+  cheapScans        Int       @default(0)
+  deepAnalyses      Int       @default(0)
+  snapshotData      Json
+  isActive          Boolean   @default(true)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([ticker])
+  @@index([configVersion])
+  @@index([isActive])
+  @@index([createdAt])
+}
+
+model OpportunityOutcomes {
+  id            String   @id @default(uuid())
+  snapshotId    String
+  userAction    String   // 'CONFIRM' | 'REJECT' | 'IGNORE'
+  realizedOutcome String?  // 'SUCCESS' | 'FAILURE' | 'PENDING' | 'NULL'
+  outcomeTimestamp DateTime?
+  explanation      String?
+  createdAt        DateTime  @default(now())
+
+  @@unique([snapshotId])
+  @@index([snapshotId])
+  @@index([userAction])
+}
+
+model LearnedWeightConfigs {
+  id              String   @id @default(uuid())
+  version         String   // e.g. 'v1.0.0', 'v1.0.1'
+  weightConfig    Json     // {momentum: number, score: number, freshness: number, convergence: number}
+  evidenceCount   Int      @default(0)
+  createdAt       DateTime  @default(now())
+  lastAppliedAt   DateTime?
+  isActive        Boolean  @default(false)
+  parentVersion   String?
+  mutationType    String?  // 'SLIGHT_INCREASE' | 'SLIGHT_DECREASE' | 'FLIP'
+  rationale       String?
+  createdBy       String?
+  updatedBy       String?
+
+  @@index([isActive])
+  @@index([parentVersion])
+  @@index([version])
+}
+
+model FeedbackEvents {
+  id            String   @id @default(uuid())
+  snapshotId    String
+  userId        String?
+  action        String   // 'CONFIRM' | 'REJECT' | 'IGNORE'
+  timestamp     DateTime
+  notes         String?
+  affectedLearnedConfig String?
+  createdAt     DateTime  @default(now())
+
+  @@index([snapshotId])
+  @@index([action])
+  @@index([timestamp])
+}
+
 model AnalysisResult {
   id            String   @id @default(uuid())
   symbol        String

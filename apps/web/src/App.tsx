@@ -9,6 +9,12 @@ import { Loader2 } from 'lucide-react';
 
 const DashboardPage = lazy(() => import('./pages/dashboard'));
 const ScannerPage = lazy(() => import('./pages/scanner'));
+const DailyScanPage = lazy(() => import('./pages/daily-scan'));
+const RadarPage = lazy(() => import('./pages/radar'));
+const RadarDetailPage = lazy(() => import('./pages/radar-detail'));
+const SignalsPage = lazy(() => import('./pages/signals'));
+const StockPage = lazy(() => import('./pages/stock'));
+const BISTMarketIntelligencePage = lazy(() => import('./pages/bist-market-intelligence'));
 const AnalysisPage = lazy(() => import('./pages/analysis'));
 const BacktestPage = lazy(() => import('./pages/backtest'));
 const PortfolioPage = lazy(() => import('./pages/portfolio'));
@@ -28,7 +34,9 @@ const AiAssistantPage = lazy(() => import('./pages/ai-assistant'));
 const AiReportsPage = lazy(() => import('./pages/ai-reports'));
 const ResearchIntelligencePage = lazy(() => import('./pages/research-intelligence'));
 const HistoryPage = lazy(() => import('./pages/history'));
-const NotFoundPage = lazy(() => import('./pages/not-found').then(m => ({ default: m.NotFoundPage })));
+const NotFoundPage = lazy(() =>
+  import('./pages/not-found').then((m) => ({ default: m.NotFoundPage })),
+);
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -49,36 +57,45 @@ export function App() {
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <RealtimeProvider>
-        <BrowserRouter>
-          <Suspense fallback={<PageLoader />}>
-          <Routes>
-            <Route element={<AppLayout />}>
-              <Route path="/" element={<DashboardPage />} />
-              <Route path="/scanner" element={<ScannerPage />} />
-              <Route path="/analysis" element={<AnalysisPage />} />
-              <Route path="/backtest" element={<BacktestPage />} />
-              <Route path="/portfolio" element={<PortfolioPage />} />
-              <Route path="/watchlist" element={<WatchlistPage />} />
-              <Route path="/alerts" element={<AlertsPage />} />
-              <Route path="/telegram" element={<TelegramPage />} />
-              <Route path="/workflows" element={<WorkflowsPage />} />
-              <Route path="/pipeline-status" element={<PipelineStatusPage />} />
-              <Route path="/configuration" element={<ConfigurationPage />} />
-              <Route path="/performance" element={<PerformancePage />} />
-              <Route path="/providers" element={<ProvidersPage />} />
-              <Route path="/events" element={<EventsPage />} />
-              <Route path="/diagnostics" element={<DiagnosticsPage />} />
-              <Route path="/audit" element={<AuditPage />} />
-              <Route path="/ai-assistant" element={<AiAssistantPage />} />
-              <Route path="/ai-reports" element={<AiReportsPage />} />
-              <Route path="/research-intelligence" element={<ResearchIntelligencePage />} />
-              <Route path="/market-data-history" element={<HistoryPage />} />
-              <Route path="/settings" element={<SettingsPage />} />
-              <Route path="*" element={<NotFoundPage />} />
-            </Route>
-          </Routes>
-          </Suspense>
-        </BrowserRouter>
+          <BrowserRouter>
+            <Suspense fallback={<PageLoader />}>
+              <Routes>
+                <Route element={<AppLayout />}>
+                  <Route path="/" element={<DashboardPage />} />
+                  <Route path="/scanner" element={<ScannerPage />} />
+                  <Route path="/daily-scan" element={<DailyScanPage />} />
+                  <Route path="/radar" element={<RadarPage />} />
+                  <Route path="/radar/:ticker" element={<RadarDetailPage />} />
+                  <Route path="/signals" element={<SignalsPage />} />
+                  <Route path="/stock/:ticker" element={<StockPage />} />
+                  <Route
+                    path="/bist-market-intelligence"
+                    element={<BISTMarketIntelligencePage />}
+                  />
+                  <Route path="/analysis" element={<AnalysisPage />} />
+                  <Route path="/backtest" element={<BacktestPage />} />
+                  <Route path="/portfolio" element={<PortfolioPage />} />
+                  <Route path="/watchlist" element={<WatchlistPage />} />
+                  <Route path="/alerts" element={<AlertsPage />} />
+                  <Route path="/telegram" element={<TelegramPage />} />
+                  <Route path="/workflows" element={<WorkflowsPage />} />
+                  <Route path="/pipeline-status" element={<PipelineStatusPage />} />
+                  <Route path="/configuration" element={<ConfigurationPage />} />
+                  <Route path="/performance" element={<PerformancePage />} />
+                  <Route path="/providers" element={<ProvidersPage />} />
+                  <Route path="/events" element={<EventsPage />} />
+                  <Route path="/diagnostics" element={<DiagnosticsPage />} />
+                  <Route path="/audit" element={<AuditPage />} />
+                  <Route path="/ai-assistant" element={<AiAssistantPage />} />
+                  <Route path="/ai-reports" element={<AiReportsPage />} />
+                  <Route path="/research-intelligence" element={<ResearchIntelligencePage />} />
+                  <Route path="/market-data-history" element={<HistoryPage />} />
+                  <Route path="/settings" element={<SettingsPage />} />
+                  <Route path="*" element={<NotFoundPage />} />
+                </Route>
+              </Routes>
+            </Suspense>
+          </BrowserRouter>
         </RealtimeProvider>
         <NotificationToast />
       </QueryClientProvider>

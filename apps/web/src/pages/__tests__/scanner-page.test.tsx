@@ -18,7 +18,11 @@ describe('ScannerPage', () => {
     const sdk = await import('@/lib/sdk');
     vi.mocked(sdk.sdkClient.scanner).mockResolvedValue({ candidates: [] } as never);
     vi.mocked(sdk.sdkClient.scannerCandidates).mockResolvedValue({ candidates: [] } as never);
-    render(<MemoryRouter><ScannerPage /></MemoryRouter>);
+    render(
+      <MemoryRouter>
+        <ScannerPage />
+      </MemoryRouter>,
+    );
     expect(screen.getByText('Piyasa Tarayıcı')).toBeInTheDocument();
   });
 
@@ -26,7 +30,11 @@ describe('ScannerPage', () => {
     const sdk = await import('@/lib/sdk');
     vi.mocked(sdk.sdkClient.scanner).mockResolvedValue({ candidates: [] } as never);
     vi.mocked(sdk.sdkClient.scannerCandidates).mockResolvedValue({ candidates: [] } as never);
-    render(<MemoryRouter><ScannerPage /></MemoryRouter>);
+    render(
+      <MemoryRouter>
+        <ScannerPage />
+      </MemoryRouter>,
+    );
     await waitFor(() => {
       expect(screen.getByText('Toplam Taranan')).toBeInTheDocument();
     });
@@ -36,7 +44,11 @@ describe('ScannerPage', () => {
     const sdk = await import('@/lib/sdk');
     vi.mocked(sdk.sdkClient.scanner).mockResolvedValue({ candidates: [] } as never);
     vi.mocked(sdk.sdkClient.scannerCandidates).mockResolvedValue({ candidates: [] } as never);
-    render(<MemoryRouter><ScannerPage /></MemoryRouter>);
+    render(
+      <MemoryRouter>
+        <ScannerPage />
+      </MemoryRouter>,
+    );
     await waitFor(() => {
       expect(screen.getByText('Filtrelere uygun hisse bulunamadı')).toBeInTheDocument();
     });
@@ -46,7 +58,11 @@ describe('ScannerPage', () => {
     const sdk = await import('@/lib/sdk');
     vi.mocked(sdk.sdkClient.scanner).mockResolvedValue({ candidates: [] } as never);
     vi.mocked(sdk.sdkClient.scannerCandidates).mockResolvedValue({ candidates: [] } as never);
-    render(<MemoryRouter><ScannerPage /></MemoryRouter>);
+    render(
+      <MemoryRouter>
+        <ScannerPage />
+      </MemoryRouter>,
+    );
     await waitFor(() => {
       expect(screen.getByLabelText('CSV dışa aktar')).toBeInTheDocument();
     });
@@ -56,7 +72,11 @@ describe('ScannerPage', () => {
     const sdk = await import('@/lib/sdk');
     vi.mocked(sdk.sdkClient.scanner).mockResolvedValue({ candidates: [] } as never);
     vi.mocked(sdk.sdkClient.scannerCandidates).mockResolvedValue({ candidates: [] } as never);
-    render(<MemoryRouter><ScannerPage /></MemoryRouter>);
+    render(
+      <MemoryRouter>
+        <ScannerPage />
+      </MemoryRouter>,
+    );
     await waitFor(() => {
       expect(screen.getByLabelText('Filtre panelini aç/kapat')).toBeInTheDocument();
     });
@@ -66,7 +86,11 @@ describe('ScannerPage', () => {
     const sdk = await import('@/lib/sdk');
     vi.mocked(sdk.sdkClient.scanner).mockResolvedValue({ candidates: [] } as never);
     vi.mocked(sdk.sdkClient.scannerCandidates).mockResolvedValue({ candidates: [] } as never);
-    render(<MemoryRouter><ScannerPage /></MemoryRouter>);
+    render(
+      <MemoryRouter>
+        <ScannerPage />
+      </MemoryRouter>,
+    );
     await waitFor(() => {
       expect(screen.getByLabelText('Tazele')).toBeInTheDocument();
     });
@@ -75,18 +99,30 @@ describe('ScannerPage', () => {
   it('loading state shown', async () => {
     const sdk = await import('@/lib/sdk');
     let resolve!: (v: unknown) => void;
-    vi.mocked(sdk.sdkClient.scanner).mockReturnValue(new Promise((r) => { resolve = r; }) as never);
+    vi.mocked(sdk.sdkClient.scanner).mockReturnValue(
+      new Promise((r) => {
+        resolve = r;
+      }) as never,
+    );
     vi.mocked(sdk.sdkClient.scannerCandidates).mockResolvedValue({ candidates: [] } as never);
-    render(<MemoryRouter><ScannerPage /></MemoryRouter>);
+    render(
+      <MemoryRouter>
+        <ScannerPage />
+      </MemoryRouter>,
+    );
     expect(document.querySelector('.animate-pulse')).toBeInTheDocument();
     resolve({ candidates: [] });
   });
 
   it('shows error with retry', async () => {
     const sdk = await import('@/lib/sdk');
-    vi.mocked(sdk.sdkClient.scanner).mockRejectedValue(new Error('fail') as never);
-    vi.mocked(sdk.sdkClient.scannerCandidates).mockResolvedValue({ candidates: [] } as never);
-    render(<MemoryRouter><ScannerPage /></MemoryRouter>);
+    vi.mocked(sdk.sdkClient.scanner).mockResolvedValue({ candidates: [] } as never);
+    vi.mocked(sdk.sdkClient.scannerCandidates).mockRejectedValue(new Error('fail') as never);
+    render(
+      <MemoryRouter>
+        <ScannerPage />
+      </MemoryRouter>,
+    );
     await waitFor(() => {
       expect(screen.getByText('Tarama sonuçları yüklenirken hata oluştu')).toBeInTheDocument();
     });
@@ -97,7 +133,11 @@ describe('ScannerPage', () => {
     const sdk = await import('@/lib/sdk');
     vi.mocked(sdk.sdkClient.scanner).mockResolvedValue({ candidates: [] } as never);
     vi.mocked(sdk.sdkClient.scannerCandidates).mockResolvedValue({ candidates: [] } as never);
-    const { container } = render(<MemoryRouter><ScannerPage /></MemoryRouter>);
+    const { container } = render(
+      <MemoryRouter>
+        <ScannerPage />
+      </MemoryRouter>,
+    );
     await waitFor(() => {
       expect(container.firstChild).toBeTruthy();
     });
@@ -107,7 +147,13 @@ describe('ScannerPage', () => {
     const sdk = await import('@/lib/sdk');
     vi.mocked(sdk.sdkClient.scanner).mockResolvedValue({ candidates: [] } as never);
     vi.mocked(sdk.sdkClient.scannerCandidates).mockResolvedValue({ candidates: [] } as never);
-    render(<MemoryRouter><ScannerPage /></MemoryRouter>);
-    expect(screen.getByText("BIST hisselerini tarayın ve fırsatları tespit edin")).toBeInTheDocument();
+    render(
+      <MemoryRouter>
+        <ScannerPage />
+      </MemoryRouter>,
+    );
+    expect(
+      screen.getByText('BIST hisselerini tarayın ve fırsatları tespit edin'),
+    ).toBeInTheDocument();
   });
 });

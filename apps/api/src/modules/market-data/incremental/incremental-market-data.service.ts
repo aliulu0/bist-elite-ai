@@ -7,7 +7,11 @@ import { MarketDataConfig, getMarketDataConfig } from '../config/market-data.con
 import { CacheService } from '../../../common/cache/cache.service';
 import { getCacheConfig } from '../../../common/cache/cache.config';
 import { MarketDataPoint, FetchOptions } from '../interfaces';
-import { IncrementalQualityReport, MarketDataResult, IncrementalUpdate } from '../interfaces/unified-domain.types';
+import {
+  IncrementalQualityReport,
+  MarketDataResult,
+  IncrementalUpdate,
+} from '../interfaces/unified-domain.types';
 import {
   IncrementalMarketDataState,
   IncrementalTimeframeConfig,
@@ -78,7 +82,7 @@ export class IncrementalMarketDataService {
     symbol: string,
     timeframe: string,
     options?: IncrementalFetchOptions,
-  ): Promise<MarketDataResult<MarketDataPoint[]> & { incremental: IncrementalUpdate } | null> {
+  ): Promise<(MarketDataResult<MarketDataPoint[]> & { incremental: IncrementalUpdate }) | null> {
     if (!isWorkableTimeframe(timeframe)) {
       return null;
     }
@@ -98,7 +102,11 @@ export class IncrementalMarketDataService {
     const now = Date.now();
 
     const cached = this.cache.get<MarketDataPoint[]>('any', 'historical', cacheKey);
-    const state = this.cache.get<IncrementalMarketDataState>('any', HISTORICAL_META_NAMESPACE, cacheKey);
+    const state = this.cache.get<IncrementalMarketDataState>(
+      'any',
+      HISTORICAL_META_NAMESPACE,
+      cacheKey,
+    );
     const existing: MarketDataPoint[] = Array.isArray(cached) ? cached : [];
     const lastTs = state?.lastTimestamp ?? latestTimestamp(existing);
     const previousBarCount = existing.length;
@@ -106,18 +114,23 @@ export class IncrementalMarketDataService {
     if (existing.length > 0 && !options?.forceRefresh) {
       const freshness = computeFreshness(lastTs as string, cacheFetchable, now);
       if (freshness === 'fresh') {
-        return this.buildResult(existing, 'cache', fetchable !== timeframe ? fetchable : undefined, {
-          cacheHit: true,
-          incrementalUpdate: false,
-          providerUsed: state?.provider ?? null,
-          previousBarCount,
-          newBarCount: 0,
-          mergedBarCount: previousBarCount,
-          lastCachedTimestamp: lastTs as string,
-          latestTimestamp: latestTimestamp(existing) as string,
-          dataFreshness: 'fresh',
-          validationStatus: 'validated',
-        });
+        return this.buildResult(
+          this.clipToRange(existing, options),
+          'cache',
+          fetchable !== timeframe ? fetchable : undefined,
+          {
+            cacheHit: true,
+            incrementalUpdate: false,
+            providerUsed: state?.provider ?? null,
+            previousBarCount,
+            newBarCount: 0,
+            mergedBarCount: previousBarCount,
+            lastCachedTimestamp: lastTs as string,
+            latestTimestamp: latestTimestamp(existing) as string,
+            dataFreshness: 'fresh',
+            validationStatus: 'validated',
+          },
+        );
       }
     }
 
@@ -132,6 +145,7 @@ export class IncrementalMarketDataService {
         previousBarCount,
         lastTs as string,
       );
+      this.clipResult(result, options);
       return this.withSourceTimeframe(result, fetchable, timeframe);
     }
 
@@ -145,19 +159,57 @@ export class IncrementalMarketDataService {
       previousBarCount,
       lastTs as string,
     );
+    this.clipResult(result, options);
     return this.withSourceTimeframe(result, fetchable, timeframe);
   }
 
+  /**
+   * Strictly clips the returned series to the caller's [startDate, endDate]
+   * window. The shared cache stores the full series; the requested range is
+   * enforced here so every consumer (`/history?from&to`, backtest engine, etc.)
+   * gets exactly the requested dates. Cache storage is never modified.
+   */
+  private clipResult(
+    result: (MarketDataResult<MarketDataPoint[]> & { incremental: IncrementalUpdate }) | null,
+    options?: IncrementalFetchOptions,
+  ): void {
+    if (!result) return;
+    const start = options?.startDate ? options.startDate.slice(0, 10) : null;
+    const end = options?.endDate ? options.endDate.slice(0, 10) : null;
+    if (!start && !end) return;
+    result.data = result.data.filter((p) => {
+      const d = String(p.timestamp).slice(0, 10);
+      if (start && d < start) return false;
+      if (end && d > end) return false;
+      return true;
+    });
+  }
+
+  private clipToRange(
+    points: MarketDataPoint[],
+    options?: IncrementalFetchOptions,
+  ): MarketDataPoint[] {
+    const start = options?.startDate ? options.startDate.slice(0, 10) : null;
+    const end = options?.endDate ? options.endDate.slice(0, 10) : null;
+    if (!start && !end) return points;
+    return points.filter((p) => {
+      const d = String(p.timestamp).slice(0, 10);
+      if (start && d < start) return false;
+      if (end && d > end) return false;
+      return true;
+    });
+  }
+
   private withSourceTimeframe(
-    result: MarketDataResult<MarketDataPoint[]> & { incremental: IncrementalUpdate } | null,
+    result: (MarketDataResult<MarketDataPoint[]> & { incremental: IncrementalUpdate }) | null,
     fetchable: string,
     requested: string,
-  ): MarketDataResult<MarketDataPoint[]> & { incremental: IncrementalUpdate } | null {
+  ): (MarketDataResult<MarketDataPoint[]> & { incremental: IncrementalUpdate }) | null {
     if (!result) return result;
     if (fetchable !== requested) {
       result.sourceTimeframe = fetchable;
     }
-     return result;
+    return result;
   }
 
   /**
@@ -172,7 +224,9 @@ export class IncrementalMarketDataService {
     this.qualityAssessor = null;
     try {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const { FinancialDataQualityService } = require('../../financial-rules/financial-data-quality.service');
+      const {
+        FinancialDataQualityService,
+      } = require('../../financial-rules/financial-data-quality.service');
       const disabledCache = getCacheConfig({ enabled: false });
       const assessor = new FinancialDataQualityService(new CacheService(disabledCache));
       this.qualityAssessor = assessor as unknown as QualityAssessor;
@@ -234,7 +288,9 @@ export class IncrementalMarketDataService {
     try {
       fetched = await this.orchestrator.fetchHistoricalData(symbol, timeframe, providerOpts);
     } catch (error) {
-      this.logger.warn(`Incremental full fetch failed for ${symbol} (${timeframe}): ${this.describe(error)}`);
+      this.logger.warn(
+        `Incremental full fetch failed for ${symbol} (${timeframe}): ${this.describe(error)}`,
+      );
       if (existing.length > 0) {
         return this.buildStale(existing, previousBarCount, lastTs, 'network-failure');
       }
@@ -273,7 +329,13 @@ export class IncrementalMarketDataService {
     const points = fetched.data;
     const ttl = cfg?.ttlMs ?? this.defaultTtlMs();
     this.cache.set('any', 'historical', cacheKey, points, ttl);
-    this.cache.set('any', HISTORICAL_META_NAMESPACE, cacheKey, this.buildState(points, fetched.provider), ttl);
+    this.cache.set(
+      'any',
+      HISTORICAL_META_NAMESPACE,
+      cacheKey,
+      this.buildState(points, fetched.provider),
+      ttl,
+    );
     const result = this.buildResult(points, fetched.provider, undefined, {
       cacheHit: false,
       incrementalUpdate: false,
@@ -299,7 +361,7 @@ export class IncrementalMarketDataService {
     existing: MarketDataPoint[],
     previousBarCount: number,
     lastTs: string,
-  ): Promise<MarketDataResult<MarketDataPoint[]> & { incremental: IncrementalUpdate } | null> {
+  ): Promise<(MarketDataResult<MarketDataPoint[]> & { incremental: IncrementalUpdate }) | null> {
     const rangeOptions: FetchOptions = {
       startDate: lastTs,
       endDate: options?.endDate,
@@ -309,7 +371,9 @@ export class IncrementalMarketDataService {
     try {
       rangeResult = await this.orchestrator.fetchHistoricalRange(symbol, timeframe, rangeOptions);
     } catch (error) {
-      this.logger.warn(`Incremental range fetch failed for ${symbol} (${timeframe}): ${this.describe(error)}`);
+      this.logger.warn(
+        `Incremental range fetch failed for ${symbol} (${timeframe}): ${this.describe(error)}`,
+      );
     }
 
     if (rangeResult && rangeResult.data.length > 0) {
@@ -319,7 +383,13 @@ export class IncrementalMarketDataService {
       const newBars = incoming.filter((p) => tsOf(p) > lastTsEpoch + 1);
       const ttl = cfg?.ttlMs ?? this.defaultTtlMs();
       this.cache.set('any', 'historical', cacheKey, merged, ttl);
-      this.cache.set('any', HISTORICAL_META_NAMESPACE, cacheKey, this.buildState(merged, rangeResult.provider), ttl);
+      this.cache.set(
+        'any',
+        HISTORICAL_META_NAMESPACE,
+        cacheKey,
+        this.buildState(merged, rangeResult.provider),
+        ttl,
+      );
       const result = this.buildResult(merged, rangeResult.provider, undefined, {
         cacheHit: false,
         incrementalUpdate: newBars.length > 0,
@@ -354,12 +424,26 @@ export class IncrementalMarketDataService {
       }
     }
 
-    return this.doFullFetch(symbol, timeframe, cacheKey, cfg, options, existing, previousBarCount, lastTs);
+    return this.doFullFetch(
+      symbol,
+      timeframe,
+      cacheKey,
+      cfg,
+      options,
+      existing,
+      previousBarCount,
+      lastTs,
+    );
   }
 
-  private mergeAndDedupe(existing: MarketDataPoint[], incoming: MarketDataPoint[]): MarketDataPoint[] {
+  private mergeAndDedupe(
+    existing: MarketDataPoint[],
+    incoming: MarketDataPoint[],
+  ): MarketDataPoint[] {
     const validatedIncoming = this.validationService
-      ? this.validationService.validateDataPoints(incoming).filter((p) => p.validationStatus !== 'invalid')
+      ? this.validationService
+          .validateDataPoints(incoming)
+          .filter((p) => p.validationStatus !== 'invalid')
       : incoming;
     const byTs = new Map<string, MarketDataPoint>();
     for (const p of existing) byTs.set(p.timestamp, p);
@@ -368,7 +452,9 @@ export class IncrementalMarketDataService {
     merged.sort((a, b) => tsOf(a) - tsOf(b));
     if (this.validationService && merged.length > 0) {
       try {
-        return this.validationService.validateDataPoints(merged).filter((p) => p.validationStatus !== 'invalid');
+        return this.validationService
+          .validateDataPoints(merged)
+          .filter((p) => p.validationStatus !== 'invalid');
       } catch {
         return merged;
       }
@@ -428,7 +514,9 @@ export class IncrementalMarketDataService {
     };
   }
 
-  private validationStatusOf(result: MarketDataResult<MarketDataPoint[]>): 'validated' | 'unvalidated' | 'invalid' | 'none' {
+  private validationStatusOf(
+    result: MarketDataResult<MarketDataPoint[]>,
+  ): 'validated' | 'unvalidated' | 'invalid' | 'none' {
     if (!result.validated) return 'unvalidated';
     if (result.dataQuality === 'INVALID') return 'invalid';
     return 'validated';

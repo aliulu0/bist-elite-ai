@@ -1,0 +1,98 @@
+{
+  "metadata": {
+    "generatedAt": "2026-08-16T00:00:00Z",
+    "version": "R2-068A",
+    "description": "R2-068A Smart Money Data Audit - Availability, provenance, and integrity verification",
+    "objective": "Determine whether historical smart-money data exists, identify the source, and document the correct availability status per R2-068A #6 (no hardcoded smart money)",
+    "dataUniverse": "BACKTEST_UNIVERSE (6 validated BIST symbols: THYAO, AKBNK, ASELS, BIMAS, TUPRS, GARAN)",
+    "dataSource": "Yahoo Finance historical OHLCV (1D timeframe)",
+    "smartMoneyStatus": "UNAVAILABLE",
+    "investigationTimestamp": "2026-08-16T00:00:00Z"
+  },
+
+  "smartMoneyAvailabilityAudit": {
+    "historicalDataExists": false,
+    "source": "Yahoo Finance 1D OHLCV only",
+    "providersChecked": [
+      "Yahoo Finance",
+      "Alpha Vantage",
+      "Finnhub",
+      "KAP (Kurdistan Associated Partners)",
+      "TCMB (Central Bank of the Republic of Turkey)",
+      "MKK (Macedonian Capital Markets Commission)",
+      "Fintables"
+    ],
+    "providerResults": {
+      "Yahoo Finance": {
+        "dataType": "OHLCV (1D)",
+        "historicalSmartMoneyAvailable": false,
+        "notes": "Yahoo Finance 1D provides only open, high, low, close, volume. No institutional flow, broker distribution, or ownership change data.",
+        "pointInTimeSafety": "N/A - no smart money data available"
+      },
+      "Alpha Vantage": {
+        "dataType": "Not integrated",
+        "historicalSmartMoneyAvailable": null,
+        "notes": "Not currently integrated into the market-data pipeline. Would require new API keys and pipeline.",
+        "pointInTimeSafety": "N/A - not integrated"
+      },
+      "Finnhub": {
+        "dataType": "Not integrated",
+        "historicalSmartMoneyAvailable": null,
+        "notes": "Not currently integrated into the market-data pipeline.",
+        "pointInTimeSafety": "N/A - not integrated"
+      },
+      "KAP": {
+        "dataType": "Company metadata",
+        "historicalSmartMoneyAvailable": false,
+        "notes": "KAP provides company metadata (foundation, sector) but not institutional flow or smart money signals for historical dates.",
+        "pointInTimeSafety": "N/A - metadata only, not smart money flows"
+      },
+      "TCMB": {
+        "dataType": "Central bank rates",
+        "historicalSmartMoneyAvailable": false,
+        "notes": "TCMB provides central bank interest rates and reserve data, not institutional equity flow data.",
+        "pointInTimeSafety": "N/A - macro rates, not smart money"
+      },
+      "MKK": {
+        "dataType": "Market metadata",
+        "historicalSmartMoneyAvailable": false,
+        "notes": "MKK provides market structure data but not institutional flow or smart money signals for BIST historical dates.",
+        "pointInTimeSafety": "N/A - market structure, not smart money"
+      },
+      "Fintables": {
+        "dataType": "Research fundamentals",
+        "historicalSmartMoneyAvailable": false,
+        "notes": "Fintables provides research fundamental data, not historical institutional flow data for BIST symbols.",
+        "pointInTimeSafety": "N/A - research fundamentals, not smart money"
+      }
+    },
+
+    "codeAudit": {
+      "hardcodedSmartMoneyFound": true,
+      "location": "apps/api/src/modules/market-data/backtest/historical-backtest.service.ts:169-172",
+      "codeSnippet": "smartMoney: {\n    accumulationScore: 50,\n    institutionalActivity: 'neutral',\n    distributionScore: 30,\n    signals: [],\n    smartMoneyConfidence: 0.5,\n  },",
+      "classification": "FORBIDDEN per R2-068A #6 - hard-coded market values",
+      "previousBehavior": "The backtest engine received hardcoded smart money defaults (accumulationScore=50, institutionalActivity=neutral, distributionScore=30), making the component appear 'available' when no historical smart money data exists.",
+      "currentFixApplied": "The smartMoney input to the opportunity engine is now null (R2-068A fix). The engine has been updated to handle null smartMoney gracefully (added null check guard in evaluateSmartMoney). The signal snapshot explicitly reports smartMoneyStatus = 'UNAVAILABLE'.",
+      "engineUpdate": "apps/api/src/modules/opportunity/opportunity.engine.ts:evaluateSmartMoney method updated to accept SmartMoneyResult | null and return score=0, contribution=0 with riskFactors=['Smart money data unavailable'] when null is passed."
+    },
+
+    "zeroVsUnavailable": {
+      "currentBehaviorBeforeFix": "smartMoney appeared to contribute score via weight=20 with accumulationScore=50 (above minAccumulationScore=30), giving a non-zero contribution to the total opportunity score. This was fabricated data presented as real.",
+      "correctBehaviorAfterFix": "smartMoney = null, smartMoneyStatus = 'UNAVAILABLE'. The opportunity score no longer includes fabricated smart money data. The 20 weight remains configured but the contribution is 0 when data is unavailable. This is the correct semantic: configuredWeight (20) !== availableContribution (0).",
+      "documentedPrinciple": "REAL DATA ONLY. NO FABRICATION. UNAVAILABLE ≠ 0 unless existing architecture explicitly defines this behavior AND it does not create a fabricated financial score. R2-068A corrects this by making unavailable explicit."
+    }
+  },
+
+  "smartMoneyDataMatrix": {
+    "symbol": "accumulationScore | distributionScore | institutionalActivity | status | reason",
+    "THYAO": "null | null | null | UNAVAILABLE | No historical institutional flow data from Yahoo Finance 1D",
+    "AKBNK": "null | null | null | UNAVAILABLE | No historical institutional flow data from Yahoo Finance 1D",
+    "ASELS": "null | null | null | UNAVAILABLE | No historical institutional flow data from Yahoo Finance 1D",
+    "BIMAS": "null | null | null | UNAVAILABLE | No historical institutional flow data from Yahoo Finance 1D",
+    "TUPRS": "null | null | null | UNAVAILABLE | No historical institutional flow data from Yahoo Finance 1D",
+    "GARAN": "null | null | null | UNAVAILABLE | No historical institutional flow data from Yahoo Finance 1D"
+  },
+
+  "recommendation": "R2-068A: Maintain smartMoney as UNAVAILABLE with explicit provenance. Do not fabricate or hardcode. The opportunity engine weight of 20 remains configured but contributes 0 when data is unavailable. Document the limitation rather than invent data."
+}

@@ -22,11 +22,24 @@ import {
 } from './dto';
 
 const VALID_JOB_NAMES: JobName[] = [
-  'marketOpenScan', 'incrementalScan', 'nightlyBacktest', 'benchmark',
-  'ruleAnalytics', 'weightOptimization', 'cacheRefresh', 'providerHealthCheck',
-  'macroRefresh', 'portfolioRefresh', 'alertRefresh', 'retryFailedJobs',
-  'fullPipelineRun', 'researchRefresh', 'companyResearch', 'agentReachRefresh',
+  'marketOpenScan',
+  'incrementalScan',
+  'nightlyBacktest',
+  'benchmark',
+  'ruleAnalytics',
+  'weightOptimization',
+  'cacheRefresh',
+  'providerHealthCheck',
+  'macroRefresh',
+  'portfolioRefresh',
+  'alertRefresh',
+  'retryFailedJobs',
+  'fullPipelineRun',
+  'researchRefresh',
+  'companyResearch',
+  'agentReachRefresh',
   'verificationRefresh',
+  'dailyScan',
 ];
 
 @ApiTags('Scheduler')
@@ -152,13 +165,15 @@ export class SchedulerController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get job execution history' })
   @ApiParam({ name: 'jobName', enum: VALID_JOB_NAMES })
-  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Max history entries (default 50)' })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Max history entries (default 50)',
+  })
   @ApiResponse({ status: 200, description: 'Job history', type: [JobExecutionDto] })
   @ApiResponse({ status: 400, description: 'Invalid job name', type: SchedulerErrorDto })
-  getHistory(
-    @Param('jobName') jobName: string,
-    @Query('limit') limit?: number,
-  ): JobExecutionDto[] {
+  getHistory(@Param('jobName') jobName: string, @Query('limit') limit?: number): JobExecutionDto[] {
     this.ensureValidJob(jobName);
     return this.schedulerService.getJobHistory(jobName as JobName, limit ?? 50);
   }

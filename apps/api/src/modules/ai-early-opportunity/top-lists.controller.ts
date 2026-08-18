@@ -43,7 +43,10 @@ export class TopListsController {
 
   @Get()
   @Public()
-  @ApiOperation({ summary: 'Get top lists for smart money, catalyst, confidence, expected return, elite score, opportunity, risk/reward' })
+  @ApiOperation({
+    summary:
+      'Get top lists for smart money, catalyst, confidence, expected return, elite score, opportunity, risk/reward',
+  })
   @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
   @ApiQuery({ name: 'minEarlyOpportunityScore', required: false, type: Number })
   @ApiQuery({ name: 'minConfidence', required: false, type: Number })
@@ -64,7 +67,9 @@ export class TopListsController {
   ): Promise<TopListsData> {
     const listLimit = limit ? Number(limit) : 10;
     const filters: EarlyOpportunityFilters = {
-      minEarlyOpportunityScore: minEarlyOpportunityScore ? Number(minEarlyOpportunityScore) : undefined,
+      minEarlyOpportunityScore: minEarlyOpportunityScore
+        ? Number(minEarlyOpportunityScore)
+        : undefined,
       minConfidence: minConfidence ? Number(minConfidence) : undefined,
       minExpectedReturn: minExpectedReturn ? Number(minExpectedReturn) : undefined,
       maxRisk: maxRisk as RiskLevel | undefined,
@@ -73,14 +78,17 @@ export class TopListsController {
       minSmartMoneyScore: minSmartMoneyScore ? Number(minSmartMoneyScore) : undefined,
     };
 
-    const symbols = this.symbolRegistry.getSymbols()
-      .filter((s: any) => s.isActive)
+    const symbols = this.symbolRegistry
+      .getActiveSymbols()
+      .filter((s: any) => s.active)
       .slice(0, 200);
 
-    const symbolTickers = symbols.map((s: any) => s.ticker);
+    const symbolTickers = symbols.map((s: any) => s.canonicalTicker);
 
     // Get early opportunities for all symbols
-    const earlyOpps = await this.earlyOpportunityService.getEarlyOpportunities(filters, { limit: 200 });
+    const earlyOpps = await this.earlyOpportunityService.getEarlyOpportunities(filters, {
+      limit: 200,
+    });
     const earlyOppsMap = new Map(earlyOpps.map((o: any) => [o.ticker, o]));
 
     // Get multi-timeframe for all symbols (sample)
@@ -126,11 +134,11 @@ export class TopListsController {
     const buildList = (
       items: Map<string, any>,
       getValue: (item: any) => number,
-      getChangePercent?: (item: any) => number | undefined
+      getChangePercent?: (item: any) => number | undefined,
     ): TopListItem[] => {
       return Array.from(items.entries())
         .map(([ticker, data]) => {
-          const symbol = symbols.find((s: any) => s.ticker === ticker);
+          const symbol = symbols.find((s: any) => s.canonicalTicker === ticker);
           return {
             ticker,
             name: symbol?.companyName ?? ticker,
@@ -159,7 +167,7 @@ export class TopListsController {
       eliteScore: buildList(eliteScoreMap, (d: any) => d.skor ?? d.score),
       opportunity: Array.from(earlyOppsMap.entries())
         .map(([ticker, data]) => {
-          const symbol = symbols.find((s: any) => s.ticker === ticker);
+          const symbol = symbols.find((s: any) => s.canonicalTicker === ticker);
           return {
             ticker,
             name: symbol?.companyName ?? ticker,

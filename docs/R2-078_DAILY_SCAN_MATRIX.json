@@ -1,0 +1,109 @@
+{
+  "r2-078": "FULL BIST DAILY SCAN + OPPORTUNITY RADAR + NEW SIGNAL DETECTION",
+  "verdict": "COMPLETE",
+  "generatedAt": "2026-08-18T13:15:00Z",
+  "runtimeScan": {
+    "method": "DailyMarketScanService.runDailyScan(maxSymbols=6)",
+    "scanId": "scan-1787047789943-d4nrq4wz",
+    "status": "COMPLETE",
+    "universeDiscovered": 795,
+    "evaluated": 6,
+    "available": 6,
+    "unavailable": 0,
+    "rateLimited": 0,
+    "failed": 0,
+    "eligibleCount": 0,
+    "signalCount": 0,
+    "dataQuality": "VALID",
+    "coverage": "PARTIAL",
+    "sampleSymbols": ["ACSEL", "ADEL", "ADESE", "AFYON", "ADGYO", "AGHOL"],
+    "notes": "Bounded real-provider smoke. Full universe scan intentionally not run to protect provider budget. Identical code path exercised.",
+    "runtimeTimestamp": "2026-08-18T13:11:00Z"
+  },
+  "providerCoverage": {
+    "yahoo": {
+      "role": ["PRICE", "OHLCV", "HISTORICAL"],
+      "status": "VERIFIED",
+      "symbolsProbed": 6,
+      "runtimeResult": "served 6/6",
+      "notes": "All daily-scan price/feature fetches served from Yahoo. No fabrication."
+    },
+    "fintables": {
+      "role": ["FUNDAMENTALS", "COMPANY", "DISCLOSURES"],
+      "configured": false,
+      "runtimeResult": "HTTP 403 (unauthenticated)",
+      "notes": "Fundamental data reports UNAVAILABLE; never fabricated."
+    },
+    "serpapi": {
+      "role": ["RESEARCH"],
+      "runtimeResult": "Google Finance returned no results",
+      "notes": "Research unavailable at runtime; non-fatal to daily scan."
+    }
+  },
+  "timeframeAvailability": {
+    "1H": "UNAVAILABLE",
+    "2H": "UNAVAILABLE",
+    "1D": "REAL",
+    "1W": "REAL"
+  },
+  "dataIntegrity": {
+    "fakeData": "NONE",
+    "unavailableSemantics": "null/UNAVAILABLE explicitly, never 0/50/neutral/estimated/simulated",
+    "provenance": "sourceProvenance on every snapshot entry and radar event",
+    "lookAhead": "NONE",
+    "eliteScoreWeights": "financial=20, technical=20, confluence=25, smartMoney=20, marketStructure=15"
+  },
+  "radarEvents": {
+    "engine": "OpportunityRadarService (deterministic previous/current comparison, NOT a new opportunity engine)",
+    "firstScanSuppression": "NEW_OPPORTUNITY requires a previous scan (prevents first-scan flooding)",
+    "eventTypes": [
+      "NEW_OPPORTUNITY",
+      "OPPORTUNITY_STRENGTHENING",
+      "RANK_IMPROVEMENT",
+      "SCORE_SURGE",
+      "BREAKOUT_DEVELOPING",
+      "VOLUME_EXPANSION",
+      "MOMENTUM_ACCELERATION",
+      "MULTI_TIMEFRAME_ALIGNMENT",
+      "DNA_RELEVANCE",
+      "SIGNAL_WEAKENING",
+      "RANK_DETERIORATION",
+      "SIGNAL_LOST",
+      "DATA_QUALITY_DETERIORATION",
+      "DATA_BECAME_UNAVAILABLE",
+      "DATA_BECAME_AVAILABLE"
+    ]
+  },
+  "endpoints": {
+    "POST /api/market-scanner/daily-scan": "run scan (forceRefresh, maxSymbols)",
+    "GET /api/market-scanner/daily-scan/latest": "last snapshot (404 until first scan)",
+    "GET /api/market-scanner/daily-scan/radar": "last radar events",
+    "GET /api/market-scanner/daily-scan/summary": "TOP10/20/50 + grouped event summaries (404 until first scan)"
+  },
+  "scheduler": {
+    "job": "dailyScan",
+    "enabled": false,
+    "enableGate": "DAILY_SCAN_ENABLED=true",
+    "intervalMs": 86400000,
+    "retryAttempts": 1,
+    "retryDelayMs": 3600000
+  },
+  "frontend": {
+    "route": "/daily-scan",
+    "sdk": "sdkClient.dailyScanRun/Latest/Summary/Radar + sdk.dailyScan.*",
+    "ui": "Turkish; stat cards, TOP ranking, radar event groups, provider summary, manual run with poll-until-settled",
+    "nav": "sidebar /daily-scan + breadcrumb + topbar title"
+  },
+  "tests": {
+    "newUnitTests": 47,
+    "radarSpec": 30,
+    "notifierSpec": 6,
+    "jobSpec": 3,
+    "serviceSpec": 8,
+    "realProviderSmoke": "6/6 passed (COMPLETE, 795 universe, 6/6 served, no fabrication)",
+    "regressionMarketScanner": "75/75",
+    "regressionScheduler": "144/144",
+    "regressionWeb": "1921/1921",
+    "typecheck": "0 errors (API + web)"
+  }
+}

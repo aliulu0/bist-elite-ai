@@ -4,6 +4,7 @@ import { ChevronRight, Home } from 'lucide-react';
 const routeLabels: Record<string, string> = {
   '/': 'Kontrol Paneli',
   '/scanner': 'Tarayıcı',
+  '/daily-scan': 'Günlük BIST Taraması',
   '/analysis': 'Analiz',
   '/backtest': 'Geri Test',
   '/workflows': 'İş Akışları',

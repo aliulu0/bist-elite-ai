@@ -10,10 +10,16 @@ export class CombinedConfidenceEngine {
     this.config = { ...DEFAULT_MACRO_CONFIG };
   }
 
-  calculate(eliteScore: number, macroScore: number, weightElite?: number, weightMacro?: number): CombinedConfidence {
+  calculate(
+    eliteScore: number,
+    macroScore: number | null,
+    weightElite?: number,
+    weightMacro?: number,
+  ): CombinedConfidence {
     const wElite = weightElite ?? this.config.combinedConfidence.defaultWeightElite;
     const wMacro = weightMacro ?? this.config.combinedConfidence.defaultWeightMacro;
-    const combined = Math.round(eliteScore * wElite + macroScore * wMacro);
+    const combined =
+      macroScore === null ? null : Math.round(eliteScore * wElite + macroScore * wMacro);
 
     return {
       eliteScore,

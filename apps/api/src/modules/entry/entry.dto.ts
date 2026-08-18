@@ -1,5 +1,14 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { ArrayMinSize, IsArray, IsInt, IsOptional, Max, Min, ValidateNested } from 'class-validator';
+import {
+  ArrayMinSize,
+  IsArray,
+  IsInt,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { DecisionInputDto } from '../decision/decision.dto';
 import { EntryQualityLevel, EntryTrendDirection } from './entry-zone.types';
@@ -12,7 +21,10 @@ export class EntryZoneRangeDto {
 }
 
 export class EntryQualityDto {
-  @ApiProperty({ description: 'Giriş kalite seviyesi', enum: ['PERFECT', 'VERY_GOOD', 'GOOD', 'AVERAGE', 'WEAK'] })
+  @ApiProperty({
+    description: 'Giriş kalite seviyesi',
+    enum: ['PERFECT', 'VERY_GOOD', 'GOOD', 'AVERAGE', 'WEAK'],
+  })
   level!: EntryQualityLevel;
   @ApiProperty({ description: 'Giriş kalite etiketi' })
   label!: string;
@@ -27,7 +39,11 @@ export class EntryZoneResultDto {
   company!: string | null;
   @ApiPropertyOptional({ description: 'Son Kapanış Fiyatı', nullable: true })
   price!: number | null;
-  @ApiPropertyOptional({ type: EntryZoneRangeDto, description: 'İdeal Giriş Bölgesi', nullable: true })
+  @ApiPropertyOptional({
+    type: EntryZoneRangeDto,
+    description: 'İdeal Giriş Bölgesi',
+    nullable: true,
+  })
   idealEntryZone!: EntryZoneRangeDto | null;
   @ApiPropertyOptional({ description: 'Agresif Giriş', nullable: true })
   aggressiveEntry!: number | null;
@@ -114,5 +130,6 @@ export class EntryBatchResponseDto {
 
 export class EntryTickerParamDto {
   @ApiProperty({ description: 'Kod (Ticker)' })
+  @IsString()
   ticker!: string;
 }

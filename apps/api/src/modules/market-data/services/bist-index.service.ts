@@ -1,7 +1,19 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Optional } from '@nestjs/common';
 import { MarketDataOrchestrator } from '../orchestrator/market-data-orchestrator';
 import { MarketDataPoint, MarketDataResult } from '../interfaces';
-import { BISTIndex, MarketIntelligenceSummary } from '../interfaces/market-intelligence.types';
+import {
+  BISTIndex,
+  MarketIntelligenceSummary,
+  MarketBreadth,
+  AdvanceDeclineRatio,
+  RelativeStrength,
+  VolumeIntelligence,
+  TurnoverData,
+  MarketRegimeData,
+  MarketBreadthStatus,
+  RegimeConfidence,
+  DataCoverage,
+} from '../interfaces/market-intelligence.types';
 import { SymbolRegistryService } from '../symbol-registry/symbol-registry.service';
 import { PLATFORM_TIMEFRAMES } from '../coverage/coverage-report.types';
 
@@ -10,9 +22,45 @@ export class BistIndexService {
   private readonly logger = new Logger(BistIndexService.name);
 
   constructor(
-    @Optional() orchestrator: MarketDataOrchestrator,
-    @Optional() symbolRegistry: SymbolRegistryService,
+    @Optional() private readonly orchestrator?: MarketDataOrchestrator,
+    @Optional() private readonly symbolRegistry?: SymbolRegistryService,
   ) {}
+
+  /**
+   * Fetch a real quote snapshot for index constituents.
+   *
+   * Derives previousClose and changePercent from REAL historical daily closes
+   * (latest + previous trading day) fetched through the existing orchestrator.
+   * Never fabricates: returns null when real data is unavailable.
+   */
+  private async fetchQuoteForIndex(
+    symbol: string,
+  ): Promise<{
+    symbol: string;
+    close: number;
+    previousClose: number;
+    changePercent: number;
+  } | null> {
+    try {
+      const latest = await this.orchestrator?.fetchLatestPrice(symbol);
+      const close = latest?.data?.close ?? null;
+      if (!latest?.data || close === null || close <= 0) return null;
+
+      const historical = await this.orchestrator?.fetchHistoricalData(symbol, '1d', { limit: 2 });
+      const points = historical?.data ?? [];
+      const sorted = [...points].sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+      const previousClose = sorted.length >= 2 ? sorted[sorted.length - 2].close : null;
+      if (previousClose === null || previousClose <= 0) return null;
+
+      const changePercent = Number((((close - previousClose) / previousClose) * 100).toFixed(4));
+      return { symbol, close, previousClose, changePercent };
+    } catch (error) {
+      this.logger.debug(
+        `Failed to fetch quote for ${symbol}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+      return null;
+    }
+  }
 
   /**
    * Compute BIST100 index.
@@ -56,16 +104,10 @@ export class BistIndexService {
 
       for (const symbol of bist100Constituents) {
         try {
-          const result = await this.orchestrator.fetchLatestPrice(symbol);
-          if (result?.data && result.data.close !== null && result.data.previousClose !== null) {
-            const close = result.data.close;
-            const previousClose = result.data.previousClose;
-            const changePercent = result.data.changePercent ?? 0;
-
-            if (previousClose > 0) {
-              priceData.push({ symbol, close, previousClose, changePercent });
-              validCount++;
-            }
+          const quote = await this.fetchQuoteForIndex(symbol);
+          if (quote) {
+            priceData.push(quote);
+            validCount++;
           }
         } catch (error) {
           this.logger.debug(
@@ -140,6 +182,7 @@ export class BistIndexService {
         changePercent: indexChangePercent,
         provider: 'YAHOO_FINANCE',
         source: 'BIST_INDEX_YAHOO_DERIVED',
+        timestamp: new Date().toISOString(),
         coverage,
       };
     } catch (error) {
@@ -191,16 +234,10 @@ export class BistIndexService {
 
       for (const symbol of bist30Constituents) {
         try {
-          const result = await this.orchestrator.fetchLatestPrice(symbol);
-          if (result?.data && result.data.close !== null && result.data.previousClose !== null) {
-            const close = result.data.close;
-            const previousClose = result.data.previousClose;
-            const changePercent = result.data.changePercent ?? 0;
-
-            if (previousClose > 0) {
-              priceData.push({ symbol, close, previousClose, changePercent });
-              validCount++;
-            }
+          const quote = await this.fetchQuoteForIndex(symbol);
+          if (quote) {
+            priceData.push(quote);
+            validCount++;
           }
         } catch (error) {
           this.logger.debug(
@@ -273,6 +310,7 @@ export class BistIndexService {
         changePercent: indexChangePercent,
         provider: 'YAHOO_FINANCE',
         source: 'BIST_INDEX_YAHOO_DERIVED',
+        timestamp: new Date().toISOString(),
         coverage,
       };
     } catch (error) {
@@ -422,13 +460,13 @@ export class BistIndexService {
         if (!symbol) continue;
 
         try {
-          const result = await this.orchestrator.fetchLatestPrice(symbol);
-          if (result?.data && result.data.close !== null && result.data.previousClose !== null) {
+          const quote = await this.fetchQuoteForIndex(symbol);
+          if (quote) {
             priceData.push({
               symbol,
-              changePercent: result.data.changePercent ?? 0,
-              close: result.data.close,
-              previousClose: result.data.previousClose,
+              changePercent: quote.changePercent,
+              close: quote.close,
+              previousClose: quote.previousClose,
             });
           }
         } catch (error) {
@@ -468,12 +506,16 @@ export class BistIndexService {
       else if (coverage >= 30) status = 'PARTIAL';
       else status = 'UNAVAILABLE';
 
+      // Map numeric coverage percentage to the DataCoverage category.
+      const coverageCategory: DataCoverage =
+        coverage >= 70 ? 'FULL' : coverage >= 30 ? 'PARTIAL' : 'NONE';
+
       return {
         advancers,
         decliners,
         unchanged,
         totalUniverse,
-        coverage: coverage as DataCoverage,
+        coverage: coverageCategory,
         status,
         timestamp: new Date().toISOString(),
         source: 'BIST_BREADTH_DERIVED',
@@ -509,8 +551,8 @@ export class BistIndexService {
       advancers: breadth.advancers,
       decliners: breadth.decliners,
       zeroDecliners: false,
-      status: breadth.status === 'AVAILABLE' ? 'CALCULATED' : 'PARTIAL',
-      confidence: breadth.confidence !== undefined ? breadth.confidence : 'MEDIUM',
+      status: breadth.status === 'AVAILABLE' ? 'AVAILABLE' : 'PARTIAL',
+      confidence: 'MEDIUM',
     };
   }
 
@@ -524,13 +566,9 @@ export class BistIndexService {
    */
   private async computeRelativeStrength(symbol: string): Promise<RelativeStrength | null> {
     try {
-      // Fetch symbol latest price
-      const symbolResult = await this.orchestrator.fetchLatestPrice(symbol);
-      if (
-        !symbolResult?.data ||
-        symbolResult.data.close === null ||
-        symbolResult.data.previousClose === null
-      ) {
+      // Fetch symbol latest price (real close + previous close from history)
+      const quote = await this.fetchQuoteForIndex(symbol);
+      if (!quote) {
         return {
           symbol,
           vsMarket: null,
@@ -544,9 +582,9 @@ export class BistIndexService {
         };
       }
 
-      const symbolClose = symbolResult.data.close;
-      const symbolPreviousClose = symbolResult.data.previousClose;
-      const symbolChangePercent = symbolResult.data.changePercent;
+      const symbolClose = quote.close;
+      const symbolPreviousClose = quote.previousClose;
+      const symbolChangePercent = quote.changePercent;
 
       // Fetch BIST100 synthetic proxy
       const bist100Result = await this.computeBIST100();
@@ -571,14 +609,14 @@ export class BistIndexService {
       // Since we only have synthetic BIST100 proxy (not official), the benchmark is synthetic
       // Compute BIST100 return percentage from synthetic proxy
       const marketReturnPct =
-        bist100Result.previousClose > 0
-          ? ((bist100Result.value! / (bist100Result.previousClose! * 10000)) * 10000 - 1) * 100
+        bist100Result.previousClose !== null && bist100Result.previousClose > 0
+          ? ((bist100Result.value / (bist100Result.previousClose * 10000)) * 10000 - 1) * 100
           : 0;
 
       // Use the changePercent from both if available, otherwise derive
       const rsDifference =
-        symbolChangePercent !== undefined
-          ? symbolChangePercent - bist100Result.changePercent!
+        symbolChangePercent !== null && symbolChangePercent !== undefined
+          ? symbolChangePercent - (bist100Result.changePercent ?? 0)
           : symbolReturnPct - marketReturnPct;
 
       return {
@@ -587,7 +625,7 @@ export class BistIndexService {
         vsSector: null, // sector index not available yet
         market: 'BIST100',
         timeframe: '1D',
-        status: 'CALCULATED',
+        status: 'AVAILABLE',
         confidence: 'MEDIUM',
         calculationTimestamp: new Date().toISOString(),
         benchmarkType:
@@ -619,7 +657,7 @@ export class BistIndexService {
   private async computeVolumeIntelligence(symbol: string): Promise<VolumeIntelligence | null> {
     try {
       // Fetch latest price with volume
-      const latestResult = await this.orchestrator.fetchLatestPrice(symbol);
+      const latestResult = await this.orchestrator?.fetchLatestPrice(symbol);
       if (!latestResult?.data) {
         return {
           symbol,
@@ -643,7 +681,7 @@ export class BistIndexService {
       let volumeChangePercent: number | null = null;
 
       try {
-        const historicalResult = await this.orchestrator.fetchHistoricalData(symbol, '1d', {
+        const historicalResult = await this.orchestrator?.fetchHistoricalData(symbol, '1d', {
           limit: 20,
         });
         if (historicalResult?.data && historicalResult.data.length > 0) {
@@ -697,7 +735,7 @@ export class BistIndexService {
         volumeChangePercent,
         volumeSpike,
         spikeThreshold: 2.0,
-        status: averageVolume !== null ? 'CALCULATED' : 'UNAVAILABLE',
+        status: averageVolume !== null ? 'AVAILABLE' : 'UNAVAILABLE',
         confidence: averageVolume !== null ? 'MEDIUM' : 'NONE',
       };
     } catch (error) {
@@ -738,8 +776,8 @@ export class BistIndexService {
           confidence: 'NONE' as RegimeConfidence,
           supportingIndicators: {
             breadth: null,
-            momentum: null as 'UP' | 'DOWN' | 'SIDEWAYS' | null,
-            trend: null as 'UP' | 'DOWN' | 'SIDEWAYS' | null,
+            momentum: null,
+            trend: null,
           },
           timestamp: new Date().toISOString(),
           source: 'BIST_REGIME_DERIVED',
@@ -747,6 +785,13 @@ export class BistIndexService {
           benchmarkType: 'SYNTHETIC_PROXY' as const,
         };
       }
+
+      // Map breadth DataCoverage category to regime confidence.
+      const coverageConfidence = (coverage: DataCoverage): RegimeConfidence =>
+        coverage === 'FULL' ? 'HIGH' : coverage === 'PARTIAL' ? 'MEDIUM' : 'LOW';
+
+      // Numeric breadth momentum proxy: advancers - decliners.
+      const breadthMomentum = breadth.advancers - breadth.decliners;
 
       // Get BIST100 index for trend analysis
       const bist100 = await this.computeBIST100();
@@ -757,16 +802,11 @@ export class BistIndexService {
         if (breadth.advancers > breadth.decliners) {
           return {
             regime: 'BULL',
-            confidence:
-              breadth.coverage >= 70
-                ? 'HIGH'
-                : breadth.coverage >= 30
-                  ? 'MEDIUM'
-                  : ('LOW' as RegimeConfidence),
+            confidence: coverageConfidence(breadth.coverage),
             supportingIndicators: {
-              breadth: breadth.advancers - breadth.decliners,
-              momentum: 'UP' as 'UP' | 'DOWN' | 'SIDEWAYS',
-              trend: 'UP' as 'UP' | 'DOWN' | 'SIDEWAYS',
+              breadth: breadthMomentum,
+              momentum: breadthMomentum,
+              trend: 'UP',
             },
             timestamp: new Date().toISOString(),
             source: 'BIST_REGIME_BREADTH_ONLY',
@@ -776,16 +816,11 @@ export class BistIndexService {
         } else if (breadth.decliners > breadth.advancers) {
           return {
             regime: 'BEAR',
-            confidence:
-              breadth.coverage >= 70
-                ? 'HIGH'
-                : breadth.coverage >= 30
-                  ? 'MEDIUM'
-                  : ('LOW' as RegimeConfidence),
+            confidence: coverageConfidence(breadth.coverage),
             supportingIndicators: {
-              breadth: breadth.advancers - breadth.decliners,
-              momentum: 'DOWN' as 'UP' | 'DOWN' | 'SIDEWAYS',
-              trend: 'DOWN' as 'UP' | 'DOWN' | 'SIDEWAYS',
+              breadth: breadthMomentum,
+              momentum: breadthMomentum,
+              trend: 'DOWN',
             },
             timestamp: new Date().toISOString(),
             source: 'BIST_REGIME_BREADTH_ONLY',
@@ -795,16 +830,11 @@ export class BistIndexService {
         } else {
           return {
             regime: 'SIDEWAYS',
-            confidence:
-              breadth.coverage >= 70
-                ? 'HIGH'
-                : breadth.coverage >= 30
-                  ? 'MEDIUM'
-                  : ('LOW' as RegimeConfidence),
+            confidence: coverageConfidence(breadth.coverage),
             supportingIndicators: {
-              breadth: breadth.advancers - breadth.decliners,
-              momentum: 'SIDEWAYS' as 'UP' | 'DOWN' | 'SIDEWAYS',
-              trend: 'SIDEWAYS' as 'UP' | 'DOWN' | 'SIDEWAYS',
+              breadth: breadthMomentum,
+              momentum: breadthMomentum,
+              trend: 'SIDEWAYS',
             },
             timestamp: new Date().toISOString(),
             source: 'BIST_REGIME_BREADTH_ONLY',
@@ -824,19 +854,16 @@ export class BistIndexService {
       const positiveBreadth = breadth.advancers > breadth.decliners;
       const negativeBreadth = breadth.decliners > breadth.advancers;
 
+      const confidence = coverageConfidence(breadth.coverage);
+
       if (positiveBreadth && indexUptrend) {
         return {
           regime: 'BULL',
-          confidence:
-            breadth.coverage >= 70
-              ? 'HIGH'
-              : breadth.coverage >= 30
-                ? 'MEDIUM'
-                : ('LOW' as RegimeConfidence),
+          confidence,
           supportingIndicators: {
-            breadth: breadth.advancers - breadth.decliners,
-            momentum: 'UP' as 'UP' | 'DOWN' | 'SIDEWAYS',
-            trend: 'UP' as 'UP' | 'DOWN' | 'SIDEWAYS',
+            breadth: breadthMomentum,
+            momentum: breadthMomentum,
+            trend: 'UP',
           },
           timestamp: new Date().toISOString(),
           source: 'BIST_REGIME_FULL',
@@ -848,16 +875,11 @@ export class BistIndexService {
       if (negativeBreadth && indexDowntrend) {
         return {
           regime: 'BEAR',
-          confidence:
-            breadth.coverage >= 70
-              ? 'HIGH'
-              : breadth.coverage >= 30
-                ? 'MEDIUM'
-                : ('LOW' as RegimeConfidence),
+          confidence,
           supportingIndicators: {
-            breadth: breadth.advancers - breadth.decliners,
-            momentum: 'DOWN' as 'UP' | 'DOWN' | 'SIDEWAYS',
-            trend: 'DOWN' as 'UP' | 'DOWN' | 'SIDEWAYS',
+            breadth: breadthMomentum,
+            momentum: breadthMomentum,
+            trend: 'DOWN',
           },
           timestamp: new Date().toISOString(),
           source: 'BIST_REGIME_FULL',
@@ -870,16 +892,11 @@ export class BistIndexService {
       if (positiveBreadth && !indexUptrend && !indexDowntrend) {
         return {
           regime: 'SIDEWAYS',
-          confidence:
-            breadth.coverage >= 70
-              ? 'HIGH'
-              : breadth.coverage >= 30
-                ? 'MEDIUM'
-                : ('LOW' as RegimeConfidence),
+          confidence,
           supportingIndicators: {
-            breadth: breadth.advancers - breadth.decliners,
-            momentum: 'SIDEWAYS' as 'UP' | 'DOWN' | 'SIDEWAYS',
-            trend: 'SIDEWAYS' as 'UP' | 'DOWN' | 'SIDEWAYS',
+            breadth: breadthMomentum,
+            momentum: breadthMomentum,
+            trend: 'SIDEWAYS',
           },
           timestamp: new Date().toISOString(),
           source: 'BIST_REGIME_FULL',
@@ -891,16 +908,11 @@ export class BistIndexService {
       if (negativeBreadth && !indexUptrend && !indexDowntrend) {
         return {
           regime: 'SIDEWAYS',
-          confidence:
-            breadth.coverage >= 70
-              ? 'HIGH'
-              : breadth.coverage >= 30
-                ? 'MEDIUM'
-                : ('LOW' as RegimeConfidence),
+          confidence,
           supportingIndicators: {
-            breadth: breadth.advancers - breadth.decliners,
-            momentum: 'SIDEWAYS' as 'UP' | 'DOWN' | 'SIDEWAYS',
-            trend: 'SIDEWAYS' as 'UP' | 'DOWN' | 'SIDEWAYS',
+            breadth: breadthMomentum,
+            momentum: breadthMomentum,
+            trend: 'SIDEWAYS',
           },
           timestamp: new Date().toISOString(),
           source: 'BIST_REGIME_FULL',
@@ -914,9 +926,9 @@ export class BistIndexService {
         regime: 'UNKNOWN',
         confidence: 'NONE' as RegimeConfidence,
         supportingIndicators: {
-          breadth: breadth.advancers - breadth.decliners,
-          momentum: 'UNKNOWN' as 'UP' | 'DOWN' | 'SIDEWAYS',
-          trend: 'UNKNOWN' as 'UP' | 'DOWN' | 'SIDEWAYS',
+          breadth: breadthMomentum,
+          momentum: null,
+          trend: null,
         },
         timestamp: new Date().toISOString(),
         source: 'BIST_REGIME_FULL',
@@ -932,8 +944,8 @@ export class BistIndexService {
         confidence: 'NONE' as RegimeConfidence,
         supportingIndicators: {
           breadth: null,
-          momentum: null as 'UP' | 'DOWN' | 'SIDEWAYS' | null,
-          trend: null as 'UP' | 'DOWN' | 'SIDEWAYS' | null,
+          momentum: null,
+          trend: null,
         },
         timestamp: new Date().toISOString(),
         source: 'BIST_REGIME_ERROR',

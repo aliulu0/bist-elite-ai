@@ -24,13 +24,25 @@ import {
   FileText,
   ListChecks,
   Radar,
+  Activity,
   History,
+  BarChart3,
   Send,
+  CalendarCheck,
 } from 'lucide-react';
 
 const navigation = [
   { key: 'dashboard', label: 'Kontrol Paneli', href: '/', icon: LayoutDashboard },
   { key: 'scanner', label: 'Tarayıcı', href: '/scanner', icon: ScanSearch },
+  { key: 'daily-scan', label: 'Günlük Tarama', href: '/daily-scan', icon: CalendarCheck },
+  { key: 'radar', label: 'Radar', href: '/radar', icon: Radar },
+  { key: 'signals', label: 'Sinyaller', href: '/signals', icon: Activity },
+  {
+    key: 'bist-market-intelligence',
+    label: 'BIST Pazar Intelligence',
+    href: '/bist-market-intelligence',
+    icon: BarChart3,
+  },
   { key: 'analysis', label: 'Analiz', href: '/analysis', icon: LineChart },
   { key: 'backtest', label: 'Geri Test', href: '/backtest', icon: FlaskConical },
   { key: 'portfolio', label: 'Portföy', href: '/portfolio', icon: Briefcase },
@@ -41,8 +53,18 @@ const navigation = [
   { key: 'pipeline-status', label: 'İş Hattı', href: '/pipeline-status', icon: ListChecks },
   { key: 'ai-assistant', label: 'AI Asistan', href: '/ai-assistant', icon: Brain },
   { key: 'ai-reports', label: 'AI Raporlar', href: '/ai-reports', icon: FileText },
-  { key: 'research-intelligence', label: 'Araştırma İstihbaratı', href: '/research-intelligence', icon: Radar },
-  { key: 'market-data-history', label: 'Tarihsel Veri', href: '/market-data-history', icon: History },
+  {
+    key: 'research-intelligence',
+    label: 'Araştırma İstihbaratı',
+    href: '/research-intelligence',
+    icon: Radar,
+  },
+  {
+    key: 'market-data-history',
+    label: 'Tarihsel Veri',
+    href: '/market-data-history',
+    icon: History,
+  },
   { key: 'configuration', label: 'Yapılandırma', href: '/configuration', icon: Settings },
   { key: 'performance', label: 'Performans', href: '/performance', icon: Gauge },
   { key: 'providers', label: 'Sağlayıcılar', href: '/providers', icon: Server },
@@ -78,11 +100,18 @@ export function Sidebar() {
           )}
           aria-label={collapsed ? 'Menüyü genişlet' : 'Menüyü daralt'}
         >
-          {collapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+          {collapsed ? (
+            <PanelLeftOpen className="h-4 w-4" />
+          ) : (
+            <PanelLeftClose className="h-4 w-4" />
+          )}
         </button>
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-2 py-3 scrollbar-thin" aria-label="Sayfa navigasyonu">
+      <nav
+        className="flex-1 overflow-y-auto px-2 py-3 scrollbar-thin"
+        aria-label="Sayfa navigasyonu"
+      >
         <ul className="space-y-0.5" role="list">
           {navigation.map((item) => {
             const Icon = item.icon;

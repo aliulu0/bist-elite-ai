@@ -2,11 +2,7 @@ import { IncrementalMarketDataService } from './incremental-market-data.service'
 import { MarketDataOrchestrator } from '../orchestrator/market-data-orchestrator';
 import { MarketDataCacheService } from '../cache/market-data-cache.service';
 import { MarketDataValidationService } from '../market-data-validation.service';
-import {
-  MarketDataPoint,
-  MarketDataResult,
-  IncrementalUpdate,
-} from '../interfaces';
+import { MarketDataPoint, MarketDataResult, IncrementalUpdate } from '../interfaces';
 import { Timeframe, ValidationStatus } from '../interfaces/market-data.types';
 import * as configModule from './incremental-timeframe.config';
 
@@ -99,8 +95,20 @@ describe('IncrementalMarketDataService', () => {
       expect(result!.data).toHaveLength(2);
       expect(result!.incremental.cacheHit).toBe(false);
       expect(result!.incremental.providerUsed).toBe('fintables');
-      expect(cache.set).toHaveBeenCalledWith('any', 'historical', key('THYAO', '1d'), result!.data, expect.any(Number));
-      expect(cache.set).toHaveBeenCalledWith('any', 'historicalMeta', key('THYAO', '1d'), expect.any(Object), expect.any(Number));
+      expect(cache.set).toHaveBeenCalledWith(
+        'any',
+        'historical',
+        key('THYAO', '1d'),
+        result!.data,
+        expect.any(Number),
+      );
+      expect(cache.set).toHaveBeenCalledWith(
+        'any',
+        'historicalMeta',
+        key('THYAO', '1d'),
+        expect.any(Object),
+        expect.any(Number),
+      );
     });
 
     it('warm cache: serves cached data, zero provider requests', async () => {
@@ -150,7 +158,9 @@ describe('IncrementalMarketDataService', () => {
     it('cache disabled: still returns provider data even though cache never stores', async () => {
       cache.get.mockReturnValue(undefined);
       cache.set.mockImplementation(() => false);
-      orchestrator.fetchHistoricalData.mockResolvedValue(makeResult([point('2026-07-01T10:00:00Z')], 'fintables'));
+      orchestrator.fetchHistoricalData.mockResolvedValue(
+        makeResult([point('2026-07-01T10:00:00Z')], 'fintables'),
+      );
 
       const result = await service.fetchHistoricalData('THYAO', '1d');
 
@@ -160,18 +170,26 @@ describe('IncrementalMarketDataService', () => {
 
     it('cache namespace: writes historical + historicalMeta under any namespace', async () => {
       cache.get.mockReturnValue(undefined);
-      orchestrator.fetchHistoricalData.mockResolvedValue(makeResult([point('2026-07-01T10:00:00Z')], 'yahoo'));
+      orchestrator.fetchHistoricalData.mockResolvedValue(
+        makeResult([point('2026-07-01T10:00:00Z')], 'yahoo'),
+      );
 
       await service.fetchHistoricalData('THYAO', '1d');
 
       const namespaces = cache.set.mock.calls.map((c) => [c[0], c[1], c[2]]);
       expect(namespaces).toContainEqual(['any', 'historical', key('THYAO', '1d')]);
-      expect(namespaces).toContainEqual(['any', configModule.HISTORICAL_META_NAMESPACE, key('THYAO', '1d')]);
+      expect(namespaces).toContainEqual([
+        'any',
+        configModule.HISTORICAL_META_NAMESPACE,
+        key('THYAO', '1d'),
+      ]);
     });
 
     it('TTL: uses timeframe-specific TTL (1d => 48h)', async () => {
       cache.get.mockReturnValue(undefined);
-      orchestrator.fetchHistoricalData.mockResolvedValue(makeResult([point('2026-07-01T10:00:00Z')], 'yahoo'));
+      orchestrator.fetchHistoricalData.mockResolvedValue(
+        makeResult([point('2026-07-01T10:00:00Z')], 'yahoo'),
+      );
 
       await service.fetchHistoricalData('THYAO', '1d');
 
@@ -183,7 +201,9 @@ describe('IncrementalMarketDataService', () => {
   describe('INCREMENTAL TESTS', () => {
     it('no cache -> full fetch', async () => {
       cache.get.mockReturnValue(undefined);
-      orchestrator.fetchHistoricalData.mockResolvedValue(makeResult([point('2026-07-01T10:00:00Z')], 'yahoo'));
+      orchestrator.fetchHistoricalData.mockResolvedValue(
+        makeResult([point('2026-07-01T10:00:00Z')], 'yahoo'),
+      );
       const result = await service.fetchHistoricalData('THYAO', '1d');
       expect(result!.incremental.previousBarCount).toBe(0);
       expect(result!.incremental.newBarCount).toBe(1);
@@ -193,7 +213,9 @@ describe('IncrementalMarketDataService', () => {
     it('cache + new candle -> incremental merge', async () => {
       const existing = [point('2026-07-01T10:00:00Z'), point('2026-07-02T10:00:00Z')];
       cache.get.mockImplementation((_: string, type: string) =>
-        type === 'historical' ? existing : { lastTimestamp: '2026-07-02T10:00:00Z', provider: 'cache' },
+        type === 'historical'
+          ? existing
+          : { lastTimestamp: '2026-07-02T10:00:00Z', provider: 'cache' },
       );
       asStale();
       orchestrator.fetchHistoricalRange.mockResolvedValue(
@@ -213,7 +235,9 @@ describe('IncrementalMarketDataService', () => {
     it('duplicate candle -> incoming replaces stale duplicate timestamp', async () => {
       const existing = [point('2026-07-02T10:00:00Z', { close: 100 })];
       cache.get.mockImplementation((_: string, type: string) =>
-        type === 'historical' ? existing : { lastTimestamp: '2026-07-02T10:00:00Z', provider: 'cache' },
+        type === 'historical'
+          ? existing
+          : { lastTimestamp: '2026-07-02T10:00:00Z', provider: 'cache' },
       );
       asStale();
       orchestrator.fetchHistoricalRange.mockResolvedValue(
@@ -229,15 +253,15 @@ describe('IncrementalMarketDataService', () => {
     it('overlapping provider response -> deduped union', async () => {
       const existing = [point('2026-07-01T10:00:00Z'), point('2026-07-02T10:00:00Z')];
       cache.get.mockImplementation((_: string, type: string) =>
-        type === 'historical' ? existing : { lastTimestamp: '2026-07-02T10:00:00Z', provider: 'cache' },
+        type === 'historical'
+          ? existing
+          : { lastTimestamp: '2026-07-02T10:00:00Z', provider: 'cache' },
       );
       asStale();
       orchestrator.fetchHistoricalRange.mockResolvedValue(
-        makeResult(
-          [point('2026-07-02T10:00:00Z'), point('2026-07-03T10:00:00Z')],
-          'yahoo',
-          { validated: true },
-        ),
+        makeResult([point('2026-07-02T10:00:00Z'), point('2026-07-03T10:00:00Z')], 'yahoo', {
+          validated: true,
+        }),
       );
 
       const result = await service.fetchHistoricalData('THYAO', '1d');
@@ -248,15 +272,15 @@ describe('IncrementalMarketDataService', () => {
     it('out-of-order provider response -> merged series is ascending', async () => {
       const existing = [point('2026-07-01T10:00:00Z')];
       cache.get.mockImplementation((_: string, type: string) =>
-        type === 'historical' ? existing : { lastTimestamp: '2026-07-01T10:00:00Z', provider: 'cache' },
+        type === 'historical'
+          ? existing
+          : { lastTimestamp: '2026-07-01T10:00:00Z', provider: 'cache' },
       );
       asStale();
       orchestrator.fetchHistoricalRange.mockResolvedValue(
-        makeResult(
-          [point('2026-07-03T10:00:00Z'), point('2026-07-02T10:00:00Z')],
-          'yahoo',
-          { validated: true },
-        ),
+        makeResult([point('2026-07-03T10:00:00Z'), point('2026-07-02T10:00:00Z')], 'yahoo', {
+          validated: true,
+        }),
       );
 
       const result = await service.fetchHistoricalData('THYAO', '1d');
@@ -271,12 +295,17 @@ describe('IncrementalMarketDataService', () => {
     it('malformed candle -> removed during merge validation', async () => {
       const existing = [point('2026-07-01T10:00:00Z')];
       cache.get.mockImplementation((_: string, type: string) =>
-        type === 'historical' ? existing : { lastTimestamp: '2026-07-01T10:00:00Z', provider: 'cache' },
+        type === 'historical'
+          ? existing
+          : { lastTimestamp: '2026-07-01T10:00:00Z', provider: 'cache' },
       );
       asStale();
       orchestrator.fetchHistoricalRange.mockResolvedValue(
         makeResult(
-          [point('2026-07-01T10:00:00Z', { validationStatus: 'invalid' }), point('2026-07-02T10:00:00Z')],
+          [
+            point('2026-07-01T10:00:00Z', { validationStatus: 'invalid' }),
+            point('2026-07-02T10:00:00Z'),
+          ],
           'yahoo',
           { validated: true },
         ),
@@ -291,7 +320,9 @@ describe('IncrementalMarketDataService', () => {
     it('provider returns no new data -> no incremental update', async () => {
       const existing = [point('2026-07-01T10:00:00Z'), point('2026-07-02T10:00:00Z')];
       cache.get.mockImplementation((_: string, type: string) =>
-        type === 'historical' ? existing : { lastTimestamp: '2026-07-02T10:00:00Z', provider: 'cache' },
+        type === 'historical'
+          ? existing
+          : { lastTimestamp: '2026-07-02T10:00:00Z', provider: 'cache' },
       );
       asStale();
       orchestrator.fetchHistoricalRange.mockResolvedValue(
@@ -308,7 +339,9 @@ describe('IncrementalMarketDataService', () => {
     it('provider failure with existing cache -> stale but valid', async () => {
       const existing = [point('2026-07-01T10:00:00Z')] as MarketDataPoint[];
       cache.get.mockImplementation((_: string, type: string) =>
-        type === 'historical' ? existing : { lastTimestamp: '2026-07-01T10:00:00Z', provider: 'cache' },
+        type === 'historical'
+          ? existing
+          : { lastTimestamp: '2026-07-01T10:00:00Z', provider: 'cache' },
       );
       asStale();
       orchestrator.fetchHistoricalRange.mockRejectedValue(new Error('network'));
@@ -325,11 +358,13 @@ describe('IncrementalMarketDataService', () => {
 
     it('fallback provider -> providerUsed reflects orchestrator fallback choice', async () => {
       cache.get.mockReturnValue(undefined);
-      orchestrator.fetchHistoricalData.mockResolvedValue(makeResult([point('2026-07-01T10:00:00Z')], 'finnhub'));
+      orchestrator.fetchHistoricalData.mockResolvedValue(
+        makeResult([point('2026-07-01T10:00:00Z')], 'yahoo'),
+      );
 
       const result = await service.fetchHistoricalData('THYAO', '1d');
 
-      expect(result!.incremental.providerUsed).toBe('finnhub');
+      expect(result!.incremental.providerUsed).toBe('yahoo');
     });
   });
 
@@ -344,7 +379,9 @@ describe('IncrementalMarketDataService', () => {
       jest.spyOn(service as any, 'loadQualityAssessor').mockReturnValue(null);
       const existing = [point('2026-07-01T10:00:00Z')];
       cache.get.mockImplementation((_: string, type: string) =>
-        type === 'historical' ? existing : { lastTimestamp: '2026-07-01T10:00:00Z', provider: 'cache' },
+        type === 'historical'
+          ? existing
+          : { lastTimestamp: '2026-07-01T10:00:00Z', provider: 'cache' },
       );
       asStale();
       // high < low -> invalid
@@ -359,13 +396,18 @@ describe('IncrementalMarketDataService', () => {
       const result = await service.fetchHistoricalData('THYAO', '1d');
 
       expect(result!.data).toHaveLength(2);
-      expect(result!.data.map((p) => p.timestamp)).toEqual(['2026-07-01T10:00:00Z', '2026-07-03T10:00:00Z']);
+      expect(result!.data.map((p) => p.timestamp)).toEqual([
+        '2026-07-01T10:00:00Z',
+        '2026-07-03T10:00:00Z',
+      ]);
     });
 
     it('duplicate timestamps -> single candle', async () => {
       const existing = [point('2026-07-01T10:00:00Z'), point('2026-07-02T10:00:00Z')];
       cache.get.mockImplementation((_: string, type: string) =>
-        type === 'historical' ? existing : { lastTimestamp: '2026-07-02T10:00:00Z', provider: 'cache' },
+        type === 'historical'
+          ? existing
+          : { lastTimestamp: '2026-07-02T10:00:00Z', provider: 'cache' },
       );
       asStale();
       orchestrator.fetchHistoricalRange.mockResolvedValue(
@@ -380,7 +422,9 @@ describe('IncrementalMarketDataService', () => {
     it('timestamp conflict -> incoming replaces existing', async () => {
       const existing = [point('2026-07-02T10:00:00Z', { close: 100 })];
       cache.get.mockImplementation((_: string, type: string) =>
-        type === 'historical' ? existing : { lastTimestamp: '2026-07-02T10:00:00Z', provider: 'cache' },
+        type === 'historical'
+          ? existing
+          : { lastTimestamp: '2026-07-02T10:00:00Z', provider: 'cache' },
       );
       asStale();
       orchestrator.fetchHistoricalRange.mockResolvedValue(
@@ -403,7 +447,9 @@ describe('IncrementalMarketDataService', () => {
       jest.spyOn(service as any, 'loadQualityAssessor').mockReturnValue(null);
       const existing = [point('2026-07-01T10:00:00Z')];
       cache.get.mockImplementation((_: string, type: string) =>
-        type === 'historical' ? existing : { lastTimestamp: '2026-07-01T10:00:00Z', provider: 'cache' },
+        type === 'historical'
+          ? existing
+          : { lastTimestamp: '2026-07-01T10:00:00Z', provider: 'cache' },
       );
       asStale();
       orchestrator.fetchHistoricalRange.mockResolvedValue(
@@ -423,7 +469,9 @@ describe('IncrementalMarketDataService', () => {
     it('stale data -> metadata marked stale', async () => {
       const existing = [point('2025-01-01T10:00:00Z')];
       cache.get.mockImplementation((_: string, type: string) =>
-        type === 'historical' ? existing : { lastTimestamp: '2025-01-01T10:00:00Z', provider: 'cache' },
+        type === 'historical'
+          ? existing
+          : { lastTimestamp: '2025-01-01T10:00:00Z', provider: 'cache' },
       );
       asStale();
       orchestrator.fetchHistoricalRange.mockResolvedValue(
@@ -455,15 +503,26 @@ describe('IncrementalMarketDataService', () => {
       );
     });
 
-    it.each(['4h', '1d', '1w', '1m'] as Timeframe[])('supports %s with timeframe-scoped cache key', async (tf) => {
-      cache.get.mockReturnValue(undefined);
-      orchestrator.fetchHistoricalData.mockResolvedValue(makeResult([point('2026-07-01T10:00:00Z')], 'yahoo'));
+    it.each(['4h', '1d', '1w', '1m'] as Timeframe[])(
+      'supports %s with timeframe-scoped cache key',
+      async (tf) => {
+        cache.get.mockReturnValue(undefined);
+        orchestrator.fetchHistoricalData.mockResolvedValue(
+          makeResult([point('2026-07-01T10:00:00Z')], 'yahoo'),
+        );
 
-      const result = await service.fetchHistoricalData('THYAO', tf);
+        const result = await service.fetchHistoricalData('THYAO', tf);
 
-      expect(result).not.toBeNull();
-      expect(cache.set).toHaveBeenCalledWith('any', 'historical', key('THYAO', tf), expect.any(Array), expect.any(Number));
-    });
+        expect(result).not.toBeNull();
+        expect(cache.set).toHaveBeenCalledWith(
+          'any',
+          'historical',
+          key('THYAO', tf),
+          expect.any(Array),
+          expect.any(Number),
+        );
+      },
+    );
   });
 
   describe('QUALITY ENRICHMENT', () => {
@@ -516,6 +575,73 @@ describe('IncrementalMarketDataService', () => {
 
       expect(fakeAssessor.assess).not.toHaveBeenCalled();
       expect(result!.quality).toBeUndefined();
+    });
+  });
+
+  describe('STRICT DATE RANGE (from/to clipping)', () => {
+    it('clips a warm-cache series to the requested window', async () => {
+      const existing = [
+        point('2025-08-11T00:00:00.000Z'),
+        point('2025-09-15T00:00:00.000Z'),
+        point('2025-10-20T00:00:00.000Z'),
+      ];
+      cache.get.mockImplementation((_: string, type: string) => {
+        if (type === 'historical') return existing;
+        if (type === configModule.HISTORICAL_META_NAMESPACE) {
+          return { lastTimestamp: '2025-10-20T00:00:00.000Z', provider: 'fintables' };
+        }
+        return undefined;
+      });
+
+      const result = await service.fetchHistoricalData('THYAO', '1d', {
+        startDate: '2025-09-01',
+        endDate: '2025-09-30',
+      });
+
+      expect(result!.data).toHaveLength(1);
+      expect(result!.data[0].timestamp).toBe('2025-09-15T00:00:00.000Z');
+    });
+
+    it('keeps the full series when no range is requested', async () => {
+      const existing = [
+        point('2025-08-11T00:00:00.000Z'),
+        point('2025-09-15T00:00:00.000Z'),
+        point('2025-10-20T00:00:00.000Z'),
+      ];
+      cache.get.mockImplementation((_: string, type: string) => {
+        if (type === 'historical') return existing;
+        if (type === configModule.HISTORICAL_META_NAMESPACE) {
+          return { lastTimestamp: '2025-10-20T00:00:00.000Z', provider: 'fintables' };
+        }
+        return undefined;
+      });
+
+      const result = await service.fetchHistoricalData('THYAO', '1d');
+
+      expect(result!.data).toHaveLength(3);
+    });
+
+    it('clips a freshly fetched series to the requested window (cold cache)', async () => {
+      cache.get.mockReturnValue(undefined);
+      orchestrator.fetchHistoricalData.mockResolvedValue(
+        makeResult(
+          [
+            point('2025-08-11T00:00:00.000Z'),
+            point('2025-09-15T00:00:00.000Z'),
+            point('2025-10-20T00:00:00.000Z'),
+          ],
+          'fintables',
+          { validated: true },
+        ),
+      );
+
+      const result = await service.fetchHistoricalData('THYAO', '1d', {
+        startDate: '2025-10-01',
+        endDate: '2025-12-31',
+      });
+
+      expect(result!.data).toHaveLength(1);
+      expect(result!.data[0].timestamp).toBe('2025-10-20T00:00:00.000Z');
     });
   });
 });

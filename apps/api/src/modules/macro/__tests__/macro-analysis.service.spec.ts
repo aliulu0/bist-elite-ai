@@ -8,16 +8,69 @@ import { CombinedConfidenceEngine } from '../engines/combined-confidence.engine'
 import { TCMBDecisionStoreService } from '../tcmb-decision-store.service';
 import { TCMBDecisionAnalyzer } from '../engines/tcmb-decision-analyzer';
 
-function createMockOrchestrator() {
-  return { fetchMacroIndicators: jest.fn().mockResolvedValue([]) } as any;
+function createMockOrchestrator(indicators?: any[]) {
+  return {
+    fetchMacroIndicators: jest.fn().mockResolvedValue(
+      indicators ?? [
+        {
+          symbol: 'vix',
+          value: 30,
+          change: 2,
+          changePercent: 7.1,
+          timestamp: new Date().toISOString(),
+          source: 'tcmb',
+        },
+        {
+          symbol: 'dxy',
+          value: 110,
+          change: 1,
+          changePercent: 0.9,
+          timestamp: new Date().toISOString(),
+          source: 'tcmb',
+        },
+        {
+          symbol: 'us10y',
+          value: 6.0,
+          change: 0.1,
+          changePercent: 1.7,
+          timestamp: new Date().toISOString(),
+          source: 'tcmb',
+        },
+        {
+          symbol: 'us2y',
+          value: 4.8,
+          change: 0.05,
+          changePercent: 1.0,
+          timestamp: new Date().toISOString(),
+          source: 'tcmb',
+        },
+        {
+          symbol: 'gold',
+          value: 2350,
+          change: -10,
+          changePercent: -0.4,
+          timestamp: new Date().toISOString(),
+          source: 'tcmb',
+        },
+        {
+          symbol: 'brent',
+          value: 82,
+          change: -1.5,
+          changePercent: -1.8,
+          timestamp: new Date().toISOString(),
+          source: 'tcmb',
+        },
+      ],
+    ),
+  } as any;
 }
 
 describe('MacroAnalysisService', () => {
   let service: MacroAnalysisService;
 
-  function makeService() {
+  function makeService(indicators?: any[]) {
     return new MacroAnalysisService(
-      new MacroDataService(createMockOrchestrator()),
+      new MacroDataService(createMockOrchestrator(indicators)),
       new CentralBankNlpEngine(),
       new MarketRegimeEngine(),
       new MacroScoreEngine(),

@@ -1,0 +1,234 @@
+{
+  "r2-075": "MULTI-TIMEFRAME CONFLUENCE + ADVANCED REAL-DATA SCANNER",
+  "verdict": "READY_FOR_REVIEW",
+  "generatedAt": "2026-08-18T00:00:00Z",
+  "timeframeModel": {
+    "totalTimeframes": 8,
+    "timeframes": ["1H", "2H", "4h", "1d", "1w", "1m", "3m", "6m"],
+    "availability": {
+      "1H": "UNAVAILABLE",
+      "2H": "UNAVAILABLE",
+      "4h": "REAL",
+      "1d": "REAL",
+      "1w": "REAL",
+      "1m": "REAL",
+      "3m": "REAL",
+      "6m": "REAL"
+    },
+    "notes": "1H and 2H are unavailable from Yahoo Finance natively; would require derived data from 4H candles. System explicitly exposes this unavailable state."
+  },
+  "confluenceMethodology": {
+    "availableTimeframes": "4h, 1d, 1w, 1m, 3m, 6m (6 timeframes excluding 1H/2H)",
+    "confluenceStates": ["STRONG", "MODERATE", "PARTIAL", "CONFLICTED", "UNKNOWN"],
+    "confluenceDetermination": "Based on available timeframes only; UNAVAILABLE timeframes are excluded, not treated as bearish or bullish",
+    "bullishSignals": [
+      "marketRegime BULL",
+      "SMA9 > SMA20 > SMA50",
+      "MACD histogram > 0",
+      "RSI > 50"
+    ],
+    "bearishSignals": [
+      "marketRegime BEAR",
+      "SMA9 < SMA20 < SMA50",
+      "MACD histogram < 0",
+      "RSI < 30"
+    ],
+    "confluenceScoring": {
+      "STRONG": "75%+ available timeframes bullish; score 80",
+      "MODERATE": "50-74% bullish; score 55",
+      "PARTIAL": "Mixed signals; some bullish some bearish; score 35-40",
+      "CONFLICTED": "Strong mixed/contradictory signals; score 25",
+      "UNKNOWN": "No available timeframes; score 0"
+    }
+  },
+  "multiTimeframeAnalysis": {
+    "timeframeData": {
+      "1H": { "available": false, "dataStatus": "UNAVAILABLE", "source": "UNAVAILABLE" },
+      "2H": { "available": false, "dataStatus": "UNAVAILABLE", "source": "UNAVAILABLE" },
+      "4h": { "available": true, "dataStatus": "AVAILABLE", "source": "REAL" },
+      "1d": { "available": true, "dataStatus": "AVAILABLE", "source": "REAL" },
+      "1w": { "available": true, "dataStatus": "AVAILABLE", "source": "REAL" },
+      "1m": { "available": true, "dataStatus": "AVAILABLE", "source": "REAL" },
+      "3m": { "available": true, "dataStatus": "AVAILABLE", "source": "REAL" },
+      "6m": { "available": true, "dataStatus": "AVAILABLE", "source": "REAL" }
+    },
+    "exampleConfluence": {
+      "4h_bullish": true,
+      "1d_bullish": true,
+      "1w_bullish": true,
+      "1m_bullish": true,
+      "confluence": "STRONG",
+      "availableTimeframeCount": 4,
+      "bullishTimeframeCount": 4,
+      "confluenceScore": 80,
+      "technicalAlignment": "BULLISH",
+      "volumeConfirmation": "STRONG",
+      "momentumState": "POSITIVE"
+    },
+    "examplePartial": {
+      "4h_bullish": true,
+      "1d_bullish": true,
+      "1w_unavailable": true,
+      "1m_unavailable": true,
+      "confluence": "PARTIAL",
+      "availableTimeframeCount": 2,
+      "bullishTimeframeCount": 2,
+      "confluenceScore": 40,
+      "technicalAlignment": "BULLISH",
+      "volumeConfirmation": "MODERATE",
+      "momentumState": "NEUTRAL"
+    },
+    "exampleConflicted": {
+      "4h_bullish": true,
+      "1d_bearish": true,
+      "1w_bearish": true,
+      "confluence": "CONFLICTED",
+      "availableTimeframeCount": 3,
+      "bullishTimeframeCount": 1,
+      "bearishTimeframeCount": 2,
+      "confluenceScore": 25,
+      "technicalAlignment": "MIXED",
+      "volumeConfirmation": "WEAK",
+      "momentumState": "NEGATIVE"
+    },
+    "exampleUnknown": {
+      "all_unavailable": true,
+      "confluence": "UNKNOWN",
+      "availableTimeframeCount": 0,
+      "bullishTimeframeCount": 0,
+      "confluenceScore": 0,
+      "technicalAlignment": "UNKNOWN",
+      "volumeConfirmation": "UNAVAILABLE",
+      "momentumState": "UNKNOWN"
+    }
+  },
+  "earlyOpportunityClassification": {
+    "states": [
+      "EARLY_ACCUMULATION",
+      "PRE_BREAKOUT",
+      "BREAKOUT",
+      "MOMENTUM",
+      "EXTENDED",
+      "WEAKENING",
+      "NO_SIGNAL",
+      "UNAVAILABLE"
+    ],
+    "exampleEarlyAccumulation": {
+      "confluence": "STRONG",
+      "technicalAlignment": "BULLISH",
+      "volumeConfirmation": "STRONG",
+      "momentumState": "POSITIVE",
+      "classification": "EARLY_ACCUMULATION"
+    },
+    "exampleBreakout": {
+      "confluence": "STRONG",
+      "technicalAlignment": "BULLISH",
+      "volumeConfirmation": "STRONG",
+      "momentumState": "POSITIVE",
+      "bullishTimeframeCount": 4,
+      "nearHigh": false,
+      "classification": "BREAKOUT"
+    },
+    "exampleNoSignal": {
+      "confluence": "CONFLICTED",
+      "technicalAlignment": "MIXED",
+      "volumeConfirmation": "WEAK",
+      "momentumState": "WEAKENING",
+      "classification": "NO_SIGNAL"
+    }
+  },
+  "scoreWeights": {
+    "financial": 20,
+    "technical": 20,
+    "confluence": 25,
+    "smartMoney": 20,
+    "marketStructure": 15,
+    "note": "Elite Score weights remain unchanged. Multi-timeframe confluence score (0-100) is diagnostic only and does not replace Elite Score."
+  },
+  "filterSupport": {
+    "statuses": ["PASS", "FAIL", "UNAVAILABLE"],
+    "unavailableBehavior": "Missing data never fabricates as 0, 50, neutral, estimated, or simulated. Symbols with UNAVAILABLE data are excluded from pass/fail counting.",
+    "newFilters": [
+      "minAvailableTimeframeCount",
+      "minBullishTimeframeCount",
+      "minConfluenceScore",
+      "require4hBullish",
+      "require1dBullish",
+      "require1wBullish",
+      "require1mBullish",
+      "minVolumeConfirmation",
+      "minMomentumState",
+      "minTechAlignment"
+    ]
+  },
+  "provenance": {
+    "fields": [
+      "symbol",
+      "provider",
+      "timeframe",
+      "source",
+      "retrievedAt",
+      "marketTimestamp",
+      "dataStatus",
+      "coverage"
+    ],
+    "sourceDistinction": "REAL (market price), DERIVED (calculated from available data), UNAVAILABLE (no data available). Never claim RESEARCH = REAL MARKET PRICE or DERIVED = OFFICIAL.",
+    "neverFabricate": "No 0, 50, neutral, estimated, or simulated values ever replace missing data."
+  },
+  "architectureIntegrity": {
+    "singlePipeline": true,
+    "singleCache": true,
+    "singleOpportunityEngine": true,
+    "singleBacktestEngine": true,
+    "noSecondPipeline": true,
+    "noHiddenFallback": true,
+    "noAutonomousTrading": true,
+    "noOrderExecution": true
+  },
+  "runtimeVerification": {
+    "status": "PENDING",
+    "requiredSymbols": [
+      "THYAO",
+      "AKBNK",
+      "ASELS",
+      "BIMAS",
+      "TUPRS",
+      "GARAN",
+      "ISCTR",
+      "KCHOL",
+      "SAHOL",
+      "EREGL"
+    ],
+    "verifiedTimeframes": ["4h", "1d", "1w", "1m", "3m", "6m"],
+    "pendingTimeframes": ["1H", "2H"],
+    "notes": "1H and 2H explicitly remain UNAVAILABLE unless real provider data becomes available. Runtime HTTP probes needed to confirm availability per symbol."
+  },
+  "knownGaps": [
+    "Runtime verification of provider data for all BIST symbols",
+    "Fintables credential configuration (optional, not required for core function)",
+    "Full test suite for multi-timeframe confluence filters",
+    "SerpAPI research integration for enhanced data",
+    "AHT foundation integration (compatible data structures created, not fully implemented)"
+  ],
+  "recommendedNextSprint": "R2-076: Baby Stock DNA / Historical Pattern Similarity using scanner output, OR R2-077: AHT Early Accumulation Detection consuming scanner results. Evaluate based on actual evidence.",
+  "absoluteProhibitions": [
+    "create second market-data pipeline",
+    "create second cache",
+    "create second opportunity engine",
+    "create second scanner engine",
+    "fabricate market data",
+    "fabricate missing timeframes",
+    "use 4H data and call it 1H",
+    "use 4H data and call it 2H",
+    "call synthetic BIST index official",
+    "use future data",
+    "modify Elite Score weights",
+    "optimize thresholds retrospectively",
+    "create fake AI predictions",
+    "create fake price targets",
+    "convert unavailable into zero",
+    "convert unavailable into neutral",
+    "silently drop unavailable observations",
+    "introduce institutional complexity unnecessarily"
+  ]
+}

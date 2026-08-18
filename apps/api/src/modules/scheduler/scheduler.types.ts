@@ -15,7 +15,8 @@ export type JobName =
   | 'researchRefresh'
   | 'companyResearch'
   | 'agentReachRefresh'
-  | 'verificationRefresh';
+  | 'verificationRefresh'
+  | 'dailyScan';
 
 export type JobStatus = 'idle' | 'running' | 'completed' | 'failed' | 'disabled';
 

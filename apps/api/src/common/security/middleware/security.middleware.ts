@@ -1,7 +1,7 @@
 import { Injectable, NestMiddleware, HttpException, HttpStatus } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { AppLoggerService } from '../../logger/logger.service';
-import { getSecurityConfig, SecurityConfig } from '../security.config';
+import { getSecurityConfig, parseSecurityConfigFromEnv, SecurityConfig } from '../security.config';
 
 @Injectable()
 export class SecurityHeadersMiddleware implements NestMiddleware {
@@ -33,13 +33,16 @@ export class RequestTimeoutMiddleware implements NestMiddleware {
   private readonly timeoutMs: number;
 
   constructor(private readonly logger: AppLoggerService) {
-    this.timeoutMs = getSecurityConfig().request.timeoutMs;
+    this.timeoutMs = getSecurityConfig(parseSecurityConfigFromEnv()).request.timeoutMs;
   }
 
   use(req: Request, res: Response, next: NextFunction): void {
     const timer = setTimeout(() => {
       if (!res.headersSent) {
-        this.logger.warn(`Request timeout: ${req.method} ${req.url} after ${this.timeoutMs}ms`, 'RequestTimeout');
+        this.logger.warn(
+          `Request timeout: ${req.method} ${req.url} after ${this.timeoutMs}ms`,
+          'RequestTimeout',
+        );
         res.status(408).json({
           statusCode: 408,
           message: 'İstek zaman aşımına uğradı.',
@@ -71,7 +74,7 @@ export class RequestSizeMiddleware implements NestMiddleware {
       throw new HttpException(
         {
           statusCode: HttpStatus.URI_TOO_LONG,
-          message: 'İstek URL\'i çok uzun.',
+          message: "İstek URL'i çok uzun.",
           error: 'URI Too Long',
         },
         HttpStatus.URI_TOO_LONG,

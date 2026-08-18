@@ -18,6 +18,8 @@ const routeTitles: Array<[string, string]> = [
   ['/events', 'Olaylar'],
   ['/diagnostics', 'Tanılama'],
   ['/settings', 'Ayarlar'],
+  ['/stock/THYAO', 'Hisse Detay'],
+  ['/radar/THYAO', 'Fırsat Radarı'],
 ];
 
 describe('Topbar route titles', () => {

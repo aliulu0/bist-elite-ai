@@ -63,6 +63,8 @@ export class CacheService implements OnModuleDestroy {
     this.registerNamespace('agent-reach', this.config.strategies.research);
     this.registerNamespace('latestPrice', this.config.strategies.latestPrice);
     this.registerNamespace('indicatorCache', this.config.strategies.indicatorCache);
+    this.registerNamespace('radar', this.config.strategies.radar);
+    this.registerNamespace('scannerSnapshots', this.config.strategies.radar);
 
     if (this.config.enabled) {
       this.cleanupInterval = setInterval(() => this.cleanup(), 30_000);

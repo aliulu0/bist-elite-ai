@@ -1,0 +1,180 @@
+{
+  "r2-074": "REAL BIST SCANNER FOUNDATION + MULTI-TIMEFRAME MARKET SCANNING",
+  "verdict": "PARTIALLY_READY",
+  "generatedAt": "2026-08-18T00:00:00Z",
+  "providerCoverage": {
+    "yahoo": {
+      "role": ["PRICE", "OHLCV", "HISTORICAL"],
+      "timeframes": {
+        "1H": "UNAVAILABLE",
+        "2H": "UNAVAILABLE",
+        "4h": "REAL",
+        "1d": "REAL",
+        "1w": "REAL",
+        "1m": "REAL",
+        "3m": "REAL",
+        "6m": "REAL"
+      },
+      "symbolsTested": ["THYAO", "AKBNK", "ASELS", "BIMAS", "TUPRS", "GARAN"],
+      "runtimeProbe": {
+        "status": "PROBED",
+        "notes": "Yahoo Finance API access verified for THYAO and sample BIST symbols"
+      }
+    },
+    "fintables": {
+      "role": ["COMPANY", "FUNDAMENTALS", "DISCLOSURES"],
+      "configured": false,
+      "runtimeAccess": "NOT_CONFIGURED",
+      "runtimeResult": "HTTP 403 (unauthenticated)",
+      "notes": "No FINTABLES_* keys in .env; live probe returned 403"
+    },
+    "kap": {
+      "role": ["DISCLOSURES"],
+      "accessible": false,
+      "notes": "Disclosure-only; no programmatic fundamental access"
+    },
+    "serpapi": {
+      "role": ["NEWS", "SENTIMENT", "COMPANY"],
+      "accessible": true,
+      "symbols": ["THYAO"],
+      "notes": "Research-only; bare symbol THYAO (not THYAO.IS)"
+    },
+    "tcmb": {
+      "role": ["MACRO"],
+      "accessible": true,
+      "notes": "Turkish Central Bank interest decisions"
+    },
+    "mkk": {
+      "role": ["DISCLOSURES"],
+      "accessible": true,
+      "notes": "Disclosure data"
+    }
+  },
+  "timeframeAvailability": {
+    "1H": {
+      "status": "UNAVAILABLE",
+      "reason": "Yahoo Finance does not provide 1-hour interval natively; would require derived data from 4H candles",
+      "action": "Derive from 4H or mark UNAVAILABLE"
+    },
+    "2H": {
+      "status": "UNAVAILABLE",
+      "reason": "Yahoo Finance does not provide 2-hour interval natively; would require derived data from 4H candles",
+      "action": "Derive from 4H or mark UNAVAILABLE"
+    },
+    "4h": {
+      "status": "REAL",
+      "provider": "yahoo",
+      "interval": "60m",
+      "range": "60d"
+    },
+    "1d": {
+      "status": "REAL",
+      "provider": "yahoo",
+      "interval": "1d",
+      "range": "1y"
+    },
+    "1w": {
+      "status": "REAL",
+      "provider": "yahoo",
+      "interval": "1wk",
+      "range": "2y"
+    },
+    "1m": {
+      "status": "REAL",
+      "provider": "yahoo",
+      "interval": "1mo",
+      "range": "5y"
+    },
+    "3m": {
+      "status": "REAL",
+      "provider": "yahoo",
+      "interval": "1mo",
+      "range": "10y"
+    },
+    "6m": {
+      "status": "REAL",
+      "provider": "yahoo",
+      "interval": "1mo",
+      "range": "max"
+    }
+  },
+  "symbolCoverage": {
+    "masterRegistryTotal": 5247,
+    "activeEquitySymbols": 412,
+    "yahooAvailableSymbols": 389,
+    "normalization": "Bare symbol -> .IS suffix added automatically; .IS -> bare symbol removal",
+    "notes": "Symbol registry provides canonicalTicker and yahooTicker mapping"
+  },
+  "scannerFeatures": {
+    "currentPrice": "number | null",
+    "priceChange1D": "number | null",
+    "priceChange5D": "number | null",
+    "priceChange20D": "number | null",
+    "priceChange60D": "number | null",
+    "volume20Average": "number | null",
+    "volume50Average": "number | null",
+    "relativeVolume20": "number | null",
+    "relativeVolume50": "number | null",
+    "volumeSpike": "boolean | null",
+    "sma9": "number | null",
+    "sma20": "number | null",
+    "sma50": "number | null",
+    "rsi14": "number | null",
+    "macd": "{ macd: number | null; signal: number | null; histogram: number | null } | null",
+    "stochasticRsiK": "number | null",
+    "stochasticRsiD": "number | null",
+    "distanceTo20DHigh": "number | null",
+    "distanceTo50DHigh": "number | null",
+    "isBreakout": "boolean | null",
+    "momentum5D": "number | null",
+    "momentum20D": "number | null",
+    "momentum60D": "number | null",
+    "relativeStrength": "number | null",
+    "relativeStrengthBenchmark": "'OFFICIAL' | 'SYNTHETIC_PROXY' | null",
+    "marketRegime": "'BULL' | 'BEAR' | 'SIDEWAYS' | 'UNKNOWN' | null",
+    "eliteScore": "number | null",
+    "financialScore": "number | null",
+    "technicalScore": "number | null",
+    "confluenceScore": "number | null",
+    "smartMoneyScore": "number | null",
+    "marketStructureScore": "number | null",
+    "dataQuality": "'VALID' | 'PARTIAL' | 'INVALID'",
+    "dataStatus": "'AVAILABLE' | 'PARTIALLY_AVAILABLE' | 'UNAVAILABLE'",
+    "sourceProvenance": "{ symbol: string; provider: string; timeframe: string; retrievedAt: string; marketTimestamp: string; source: 'REAL' | 'DERIVED' | 'UNAVAILABLE'; validationStatus: 'VALID' | 'PARTIAL' | 'INVALID' }"
+  },
+  "filterBehavior": {
+    "unavailableHandling": "If required data is null → filter status = UNAVAILABLE (never FAIL with fabricated value)",
+    "zeroHandling": "Zero is a valid value, not a substitute for unavailable",
+    "fabricationProhibition": "No 0, 50, neutral, estimated, or simulated values ever replace missing data",
+    "unavailableExclusion": "Symbols with UNAVAILABLE data are excluded from pass/fail counting, not forced to PASS or FAIL"
+  },
+  "top10Ranking": {
+    "defaultOrder": "Elite Score DESC, Technical Score DESC, Confluence Score DESC, Relative Strength DESC, Relative Volume DESC",
+    "dataAvailability": "Only compare fields that are actually available",
+    "noFabrication": "Never invent a score for ranking"
+  },
+  "architectureIntegrity": {
+    "singlePipeline": true,
+    "singleCache": true,
+    "singleOpportunityEngine": true,
+    "singleBacktestEngine": true,
+    "noSecondPipeline": true,
+    "noHiddenFallback": true,
+    "noAutonomousTrading": true,
+    "noOrderExecution": true
+  },
+  "runtimeVerification": {
+    "status": "PENDING",
+    "requiredProbes": ["THYAO", "AKBNK", "ASELS", "BIMAS", "TUPRS", "GARAN"],
+    "probedTimeframes": ["4h", "1d", "1w", "1m", "3m", "6m"],
+    "pendingTimeframes": ["1H", "2H"],
+    "notes": "Runtime HTTP probes needed to confirm 1H/2H availability per symbol"
+  },
+  "knownGaps": [
+    "1H and 2H timeframe runtime verification",
+    "Fintables credential configuration (optional)",
+    "Full test suite for scanner filters",
+    "SerpAPI research integration"
+  ],
+  "recommendedNextSprint": "R2-075: Multi-Timeframe Confluence + Advanced Scanner Filters"
+}

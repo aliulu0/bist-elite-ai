@@ -121,6 +121,84 @@ describe('HealthService', () => {
       const result = await service.checkHealth();
       expect(result.status).toBe(HealthStatus.UNHEALTHY);
     });
+
+    it('keeps overall HEALTHY when only an optional check is degraded', async () => {
+      service.registerCheck({
+        name: 'required-ok',
+        check: async () => ({
+          name: 'required-ok',
+          status: HealthStatus.HEALTHY,
+          message: 'OK',
+          duration: 1,
+        }),
+      });
+      service.registerCheck({
+        name: 'optional-redis',
+        optional: true,
+        check: async () => ({
+          name: 'optional-redis',
+          status: HealthStatus.DEGRADED,
+          message: 'redis down',
+          duration: 5,
+        }),
+      });
+
+      const result = await service.checkHealth();
+      expect(result.status).toBe(HealthStatus.HEALTHY);
+      expect(result.components).toHaveLength(2);
+      expect(result.components[1].optional).toBe(true);
+    });
+
+    it('keeps overall HEALTHY when only an optional check is unhealthy', async () => {
+      service.registerCheck({
+        name: 'required-ok',
+        check: async () => ({
+          name: 'required-ok',
+          status: HealthStatus.HEALTHY,
+          message: 'OK',
+          duration: 1,
+        }),
+      });
+      service.registerCheck({
+        name: 'optional-cache',
+        optional: true,
+        check: async () => ({
+          name: 'optional-cache',
+          status: HealthStatus.UNHEALTHY,
+          message: 'unreachable',
+          duration: 5,
+        }),
+      });
+
+      const result = await service.checkHealth();
+      expect(result.status).toBe(HealthStatus.HEALTHY);
+      expect(await service.checkReadiness()).toBe(true);
+    });
+
+    it('optional check does not mask a required degraded check', async () => {
+      service.registerCheck({
+        name: 'required-degraded',
+        check: async () => ({
+          name: 'required-degraded',
+          status: HealthStatus.DEGRADED,
+          message: 'high memory',
+          duration: 5,
+        }),
+      });
+      service.registerCheck({
+        name: 'optional-redis',
+        optional: true,
+        check: async () => ({
+          name: 'optional-redis',
+          status: HealthStatus.DEGRADED,
+          message: 'redis down',
+          duration: 5,
+        }),
+      });
+
+      const result = await service.checkHealth();
+      expect(result.status).toBe(HealthStatus.DEGRADED);
+    });
   });
 
   describe('checkReadiness', () => {
@@ -180,7 +258,15 @@ describe('HealthService', () => {
       process.memoryUsage = originalMemoryUsage;
     });
 
-    const mockMemory = (overrides: Partial<{ heapUsed: number; heapTotal: number; rss: number; external: number; arrayBuffers: number }> = {}) => {
+    const mockMemory = (
+      overrides: Partial<{
+        heapUsed: number;
+        heapTotal: number;
+        rss: number;
+        external: number;
+        arrayBuffers: number;
+      }> = {},
+    ) => {
       process.memoryUsage = jest.fn().mockReturnValue({
         heapUsed: 30 * 1024 * 1024,
         heapTotal: 50 * 1024 * 1024,
@@ -199,7 +285,9 @@ describe('HealthService', () => {
 
       const result = await check.check();
       expect(result.name).toBe('memory');
-      expect([HealthStatus.HEALTHY, HealthStatus.DEGRADED, HealthStatus.UNHEALTHY]).toContain(result.status);
+      expect([HealthStatus.HEALTHY, HealthStatus.DEGRADED, HealthStatus.UNHEALTHY]).toContain(
+        result.status,
+      );
       expect(result.message).toContain('Heap:');
       expect(result.message).toContain('RSS:');
       expect(result.metadata).toBeDefined();
@@ -353,9 +441,11 @@ describe('HealthService', () => {
 
     it('creates a redis health check that times out', async () => {
       const mockRedis = {
-        ping: jest.fn().mockImplementation(
-          () => new Promise<string>((resolve) => setTimeout(() => resolve('PONG'), 10000)),
-        ),
+        ping: jest
+          .fn()
+          .mockImplementation(
+            () => new Promise<string>((resolve) => setTimeout(() => resolve('PONG'), 10000)),
+          ),
       };
 
       const check = service.createRedisCheck(mockRedis as any);

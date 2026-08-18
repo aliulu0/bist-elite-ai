@@ -1,10 +1,11 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Optional } from '@nestjs/common';
 import { MacroAnalysisService } from './macro-analysis.service';
 import { MacroDataService } from './macro-data.service';
 import { MacroEliteScoreService } from './macro-elite-score.service';
 import { CombinedConfidenceService } from './combined-confidence.service';
 import { TCMBDecisionCaptureService } from './tcmb-decision-capture.service';
 import { TCMBDecisionStoreService } from './tcmb-decision-store.service';
+import { EarlyOpportunityIntelligenceService } from '../ai-early-opportunity/early-opportunity.intelligence.service';
 import {
   CentralBank,
   MacroDataSnapshot,
@@ -39,6 +40,7 @@ export class MacroService {
     private readonly combinedConfidenceService: CombinedConfidenceService,
     private readonly captureService: TCMBDecisionCaptureService,
     private readonly decisionStore: TCMBDecisionStoreService,
+    @Optional() private readonly earlyOpportunity?: EarlyOpportunityIntelligenceService,
   ) {}
 
   async getFullAnalysis() {
@@ -88,7 +90,9 @@ export class MacroService {
     return elite.recommendation;
   }
 
-  async getDecisionHistory(limit = 20): Promise<{ decisions: TCMBDecisionRecord[]; total: number }> {
+  async getDecisionHistory(
+    limit = 20,
+  ): Promise<{ decisions: TCMBDecisionRecord[]; total: number }> {
     return {
       decisions: this.decisionStore.list(limit),
       total: this.decisionStore.count(),
@@ -103,7 +107,10 @@ export class MacroService {
       this.getSectorImpacts(),
       this.getAlerts(),
       this.getRegime(),
-      this.combinedConfidenceService.calculate(MacroService.DEFAULT_ELITE_CONFIDENCE, elite.confidence),
+      this.combinedConfidenceService.calculate(
+        MacroService.DEFAULT_ELITE_CONFIDENCE,
+        elite.confidence,
+      ),
       this.eliteService.getObservability(),
     ]);
 
@@ -240,7 +247,7 @@ export class MacroService {
       });
     }
 
-    if (full.regime.components.vix.value >= 25) {
+    if (full.regime.components.vix.value !== null && full.regime.components.vix.value >= 25) {
       alerts.push({
         id: `macro-${Date.now()}-vix-spike`,
         type: 'macro_alert',
@@ -252,7 +259,7 @@ export class MacroService {
       });
     }
 
-    if (full.regime.components.cds.value >= 400) {
+    if (full.regime.components.cds.value !== null && full.regime.components.cds.value >= 400) {
       alerts.push({
         id: `macro-${Date.now()}-cds-spike`,
         type: 'macro_alert',
@@ -268,39 +275,47 @@ export class MacroService {
   }
 
   async getOpportunities(eliteScore = 75): Promise<MacroOpportunity[]> {
-    const [macroScore, sectors] = await Promise.all([
-      this.getMacroScore(),
-      this.getSectorImpacts(),
-    ]);
+    const macroScore = await this.getMacroScore();
+    if (macroScore.macroScore === null) {
+      return [];
+    }
+    if (!this.earlyOpportunity) {
+      this.logger.warn(
+        'EarlyOpportunityIntelligenceService not available; returning no macro opportunities',
+      );
+      return [];
+    }
+
+    const sectors = await this.getSectorImpacts();
+    const sectorMap = new Map(sectors.map((s) => [s.sector, s]));
     const combined = this.analysis['confidenceEngine'].calculate(eliteScore, macroScore.macroScore);
 
-    const sectorMap = new Map(sectors.map((s) => [s.sector, s]));
-    const sampleTickers = [
-      { ticker: 'AKBNK', name: 'Akbank', sector: 'Banking', eliteScore: 78 },
-      { ticker: 'GARAN', name: 'Garanti BBVA', sector: 'Banking', eliteScore: 82 },
-      { ticker: 'EREGL', name: 'Ereğli Demir Çelik', sector: 'Industrial', eliteScore: 65 },
-      { ticker: 'THYAO', name: 'Türk Hava Yolları', sector: 'Transportation', eliteScore: 71 },
-      { ticker: 'ASELS', name: 'Aselsan', sector: 'Defense', eliteScore: 88 },
-      { ticker: 'KCHOL', name: 'Koç Holding', sector: 'Holding', eliteScore: 74 },
-    ];
+    const real = await this.earlyOpportunity
+      .getEarlyOpportunities({}, { limit: 6, runLearning: false })
+      .catch((error) => {
+        this.logger.warn(
+          `Early opportunity scan failed: ${error instanceof Error ? error.message : String(error)}`,
+        );
+        return [];
+      });
 
-    return sampleTickers.map((t) => {
-      const sectorInfo = sectorMap.get(t.sector);
+    return real.map((r) => {
+      const sectorInfo = sectorMap.get(r.sector);
       const impact: MarketImpact = sectorInfo?.impact || 'neutral';
-      const conf = this.analysis['confidenceEngine'].calculate(t.eliteScore, macroScore.macroScore);
+      const conf = this.analysis['confidenceEngine'].calculate(r.eliteScore, macroScore.macroScore);
 
       let priority: 'high' | 'medium' | 'low' = 'medium';
-      if (conf.combined >= 70) priority = 'high';
-      else if (conf.combined < 45) priority = 'low';
+      if (conf.combined !== null && conf.combined >= 70) priority = 'high';
+      else if (conf.combined !== null && conf.combined < 45) priority = 'low';
 
       return {
-        ticker: t.ticker,
-        name: t.name,
-        sector: t.sector,
-        eliteScore: t.eliteScore,
+        ticker: r.ticker,
+        name: r.company,
+        sector: r.sector,
+        eliteScore: r.eliteScore,
         macroScore: macroScore.macroScore,
         combinedConfidence: conf.combined,
-        reason: `Sector: ${t.sector} (${impact.toUpperCase()}), Macro: ${macroScore.macroScore.toFixed(1)}`,
+        reason: `Sector: ${r.sector} (${impact.toUpperCase()}), Erken fırsat skoru: ${r.earlyOpportunityScore}/100`,
         sectorImpact: impact,
         priority,
         timestamp: new Date().toISOString(),
@@ -331,20 +346,23 @@ export class MacroService {
       });
     }
 
-    if (macroScore.macroScore < 40 || regime.regime === 'extreme_risk') {
+    if (
+      (macroScore.macroScore !== null && macroScore.macroScore < 40) ||
+      regime.regime === 'extreme_risk'
+    ) {
       riskItems.push({
         ticker: 'BIST-100',
         name: 'BIST 100 Index',
         sector: 'Broad Market',
         riskType: 'high_macro_risk',
-        riskDescription: `Elevated macro risk: score=${macroScore.macroScore.toFixed(1)}, regime=${regime.regime}`,
+        riskDescription: `Elevated macro risk: score=${macroScore.macroScore ?? 'Veri yok'}, regime=${regime.regime ?? 'Veri yok'}`,
         macroScore: macroScore.macroScore,
         severity: regime.regime,
         timestamp: new Date().toISOString(),
       });
     }
 
-    if (regime.components.cds.value > 300) {
+    if (regime.components.cds.value !== null && regime.components.cds.value > 300) {
       riskItems.push({
         ticker: 'USDTRY',
         name: 'USD/TRY',
@@ -363,7 +381,7 @@ export class MacroService {
         name: 'Exporters',
         sector: 'Export',
         riskType: 'global_risk_exposed',
-        riskDescription: `Strong DXY (${regime.components.dxy.value}) pressures EM currencies, hurting exporters`,
+        riskDescription: `Strong DXY (${regime.components.dxy.value ?? 'Veri yok'}) pressures EM currencies, hurting exporters`,
         macroScore: macroScore.macroScore,
         severity: regime.regime,
         timestamp: new Date().toISOString(),

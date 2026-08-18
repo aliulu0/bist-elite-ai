@@ -16,19 +16,61 @@ import { CombinedConfidenceService } from '../combined-confidence.service';
 function createMockOrchestrator() {
   return {
     fetchMacroIndicators: jest.fn().mockResolvedValue([
-      { symbol: 'vix', value: 30, change: 2, changePercent: 7.1, timestamp: new Date().toISOString(), source: 'finnhub' },
-      { symbol: 'dxy', value: 110, change: 1, changePercent: 0.9, timestamp: new Date().toISOString(), source: 'finnhub' },
-      { symbol: 'us10y', value: 6.0, change: 0.1, changePercent: 1.7, timestamp: new Date().toISOString(), source: 'finnhub' },
-      { symbol: 'us2y', value: 4.8, change: 0.05, changePercent: 1.0, timestamp: new Date().toISOString(), source: 'finnhub' },
-      { symbol: 'gold', value: 2350, change: -10, changePercent: -0.4, timestamp: new Date().toISOString(), source: 'finnhub' },
-      { symbol: 'brent', value: 82, change: -1.5, changePercent: -1.8, timestamp: new Date().toISOString(), source: 'finnhub' },
+      {
+        symbol: 'vix',
+        value: 30,
+        change: 2,
+        changePercent: 7.1,
+        timestamp: new Date().toISOString(),
+        source: 'tcmb',
+      },
+      {
+        symbol: 'dxy',
+        value: 110,
+        change: 1,
+        changePercent: 0.9,
+        timestamp: new Date().toISOString(),
+        source: 'tcmb',
+      },
+      {
+        symbol: 'us10y',
+        value: 6.0,
+        change: 0.1,
+        changePercent: 1.7,
+        timestamp: new Date().toISOString(),
+        source: 'tcmb',
+      },
+      {
+        symbol: 'us2y',
+        value: 4.8,
+        change: 0.05,
+        changePercent: 1.0,
+        timestamp: new Date().toISOString(),
+        source: 'tcmb',
+      },
+      {
+        symbol: 'gold',
+        value: 2350,
+        change: -10,
+        changePercent: -0.4,
+        timestamp: new Date().toISOString(),
+        source: 'tcmb',
+      },
+      {
+        symbol: 'brent',
+        value: 82,
+        change: -1.5,
+        changePercent: -1.8,
+        timestamp: new Date().toISOString(),
+        source: 'tcmb',
+      },
     ]),
     fetchTcmbInterestDecisions: jest.fn().mockResolvedValue([]),
     getProviderStatus: jest.fn().mockResolvedValue([]),
   } as any;
 }
 
-function makeService() {
+function makeService(earlyOpportunity?: any) {
   const orchestrator = createMockOrchestrator();
   const data = new MacroDataService(orchestrator);
   const store = new TCMBDecisionStoreService();
@@ -41,15 +83,12 @@ function makeService() {
     new CombinedConfidenceEngine(),
     store,
   );
-  const capture = new TCMBDecisionCaptureService(
-    orchestrator,
-    new TCMBDecisionAnalyzer(),
-    store,
-    { notify: jest.fn().mockResolvedValue(undefined) },
-  );
+  const capture = new TCMBDecisionCaptureService(orchestrator, new TCMBDecisionAnalyzer(), store, {
+    notify: jest.fn().mockResolvedValue(undefined),
+  });
   const elite = new MacroEliteScoreService(new MacroScoreEngine(), data, store, orchestrator);
   const combined = new CombinedConfidenceService();
-  return new MacroService(analysis, data, elite, combined, capture, store);
+  return new MacroService(analysis, data, elite, combined, capture, store, earlyOpportunity);
 }
 
 describe('MacroController', () => {
@@ -138,8 +177,27 @@ describe('MacroController', () => {
   });
 
   describe('GET /api/macro/opportunities', () => {
-    it('should return macro opportunities', async () => {
+    it('should return an empty array when the early-opportunity source is unavailable', async () => {
       const result = await controller.getOpportunities('80');
+      expect(Array.isArray(result)).toBe(true);
+      expect(result.length).toBe(0);
+    });
+
+    it('should return real opportunities when the early-opportunity source is available', async () => {
+      const early = {
+        getEarlyOpportunities: jest.fn().mockResolvedValue([
+          {
+            ticker: 'THYAO',
+            company: 'Türk Hava Yolları',
+            sector: 'Transportation',
+            eliteScore: 71,
+            earlyOpportunityScore: 85,
+            confidence: 80,
+          },
+        ]),
+      };
+      const ctrl = new MacroController(makeService(early));
+      const result = await ctrl.getOpportunities('80');
       expect(Array.isArray(result)).toBe(true);
       expect(result[0]).toHaveProperty('ticker');
       expect(result[0]).toHaveProperty('eliteScore');

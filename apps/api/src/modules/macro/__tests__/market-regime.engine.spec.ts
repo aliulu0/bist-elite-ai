@@ -66,11 +66,24 @@ describe('MarketRegimeEngine', () => {
       expect(result.regime).toBe('risk_off');
     });
 
-    it('should handle zero values gracefully', () => {
+    it('should not fabricate a regime when no data is available', () => {
       const points: MacroDataPoint[] = [];
       const result = engine.analyze(points);
-      expect(result.score).toBe(97);
-      expect(result.regime).toBe('risk_on');
+      expect(result.score).toBeNull();
+      expect(result.regime).toBeNull();
+      expect(result.signals).toContain('Yetersiz veri: rejim belirlenemedi');
+    });
+
+    it('should ignore pending points and not fabricate a regime', () => {
+      const points = [
+        makePoint('vix', 0, 'pending'),
+        makePoint('dxy', 0, 'pending'),
+        makePoint('us10y', 0, 'pending'),
+        makePoint('turkey_cds', 0, 'pending'),
+      ];
+      const result = engine.analyze(points);
+      expect(result.score).toBeNull();
+      expect(result.regime).toBeNull();
     });
 
     it('should generate VIX spike signal', () => {

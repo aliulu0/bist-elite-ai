@@ -21,6 +21,7 @@ import {
   CompanyResearchJob,
   AgentReachRefreshJob,
   VerificationRefreshJob,
+  DailyScanJob,
   IJob,
 } from './jobs';
 import { JobName } from './scheduler.types';
@@ -57,6 +58,7 @@ const JOB_CLASSES = [
   CompanyResearchJob,
   AgentReachRefreshJob,
   VerificationRefreshJob,
+  DailyScanJob,
 ];
 
 @Module({
@@ -107,6 +109,7 @@ export class SchedulerModule implements OnModuleInit {
       ['companyResearch', this.moduleRef.get(CompanyResearchJob)],
       ['agentReachRefresh', this.moduleRef.get(AgentReachRefreshJob)],
       ['verificationRefresh', this.moduleRef.get(VerificationRefreshJob)],
+      ['dailyScan', this.moduleRef.get(DailyScanJob)],
     ];
 
     for (const [name, job] of jobMap) {
@@ -116,11 +119,14 @@ export class SchedulerModule implements OnModuleInit {
     }
 
     const explicit = process.env.SCHEDULER_ENABLED;
-    const autoStart = explicit === undefined ? process.env.NODE_ENV !== 'test' : explicit !== 'false';
+    const autoStart =
+      explicit === undefined ? process.env.NODE_ENV !== 'test' : explicit !== 'false';
     if (autoStart) {
       const status = this.engine.getStatus();
       this.engine.start();
-      this.logger.log(`Scheduler auto-started with ${status.jobs.filter((j) => j.enabled).length} active jobs`);
+      this.logger.log(
+        `Scheduler auto-started with ${status.jobs.filter((j) => j.enabled).length} active jobs`,
+      );
     }
   }
 }

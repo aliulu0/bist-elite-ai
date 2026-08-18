@@ -66,6 +66,8 @@ export interface YahooCorporateAction {
 }
 
 const TIMEFRAME_MAP: Record<string, YahooTimeframeConfig> = {
+  '1H': { interval: '60m', range: '60d' },
+  '2H': { interval: '120m', range: '60d' },
   '4h': { interval: '60m', range: '60d' },
   '1d': { interval: '1d', range: '1y' },
   '1w': { interval: '1wk', range: '2y' },
@@ -89,7 +91,8 @@ export class YahooFinanceProvider implements IDataProvider {
   private readonly timeoutMs: number;
 
   constructor() {
-    this.baseUrl = process.env.YAHOO_FINANCE_BASE_URL || 'https://query1.finance.yahoo.com/v8/finance/chart';
+    this.baseUrl =
+      process.env.YAHOO_FINANCE_BASE_URL || 'https://query1.finance.yahoo.com/v8/finance/chart';
     this.timeoutMs = parseInt(process.env.YAHOO_FINANCE_TIMEOUT_MS || '15000', 10);
   }
 
@@ -290,12 +293,24 @@ export class YahooFinanceProvider implements IDataProvider {
       });
 
       if (!response.ok) {
-        this.logger.warn(`Yahoo Finance returned ${response.status} for corporate actions on ${symbol}`);
+        this.logger.warn(
+          `Yahoo Finance returned ${response.status} for corporate actions on ${symbol}`,
+        );
         return [];
       }
 
       const data = (await response.json()) as YahooChartResponse & {
-        chart: { result?: Array<{ events?: { dividends?: Record<string, { amount: number }>; splits?: Record<string, { numerator: number; denominator: number; splitRatio?: string }> } }> };
+        chart: {
+          result?: Array<{
+            events?: {
+              dividends?: Record<string, { amount: number }>;
+              splits?: Record<
+                string,
+                { numerator: number; denominator: number; splitRatio?: string }
+              >;
+            };
+          }>;
+        };
       };
 
       const events = data.chart?.result?.[0]?.events;

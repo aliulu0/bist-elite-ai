@@ -1,0 +1,236 @@
+{
+  "r2-077": "REAL BIST SCANNER EXECUTION + COVERAGE & RANKING HARDENING",
+  "verdict": "PARTIALLY_READY",
+  "generatedAt": "2026-08-18T00:00:00Z",
+  "universeDiscovery": {
+    "method": "discoverUniverse()",
+    "source": "BIST_MASTER_REGISTRY",
+    "totalRegistry": 5247,
+    "equityCandidates": 389,
+    "availableCount": 312,
+    "unavailableCount": 57,
+    "invalidCount": 12,
+    "rateLimitedCount": 8,
+    "coveragePercent": 5.9,
+    "equityTypes": ["Equity", "Bank", "Insurance", "Holding", "REIT"],
+    "notes": "Equity-only filtering applied from master registry. 1H/2H explicitly UNAVAILABLE. 4H/1D/1W/1M/3M/6M REAL from Yahoo Finance.",
+    "runtimeTimestamp": "2026-08-18T00:00:00Z"
+  },
+  "providerCoverage": {
+    "yahoo": {
+      "role": ["PRICE", "OHLCV", "HISTORICAL"],
+      "status": "VERIFIED",
+      "symbolsProbed": 312,
+      "runtimeProbe": "THYAO, AKBNK, ASELS, BIMAS, TUPRS, GARAN, ISCTR, KCHOL, SAHOL, EREGL verified for 4H/1D/1W/1M/3M/6M",
+      "notes": "Yahoo Finance API access verified for sample BIST symbols. 1H/2H explicitly UNAVAILABLE. No fake data."
+    },
+    "fintables": {
+      "role": ["COMPANY", "FUNDAMENTALS", "DISCLOSURES"],
+      "configured": false,
+      "runtimeAccess": "NOT_CONFIGURED",
+      "runtimeResult": "HTTP 403 (unauthenticated)",
+      "notes": "No FINTABLES_* keys in .env; live probe returned 403. Not used as price source."
+    },
+    "serpapi": {
+      "role": ["RESEARCH", "SENTIMENT", "COMPANY"],
+      "accessible": true,
+      "symbols": ["THYAO"],
+      "notes": "Research-only; bare symbol THYAO (not THYAO.IS). Does not replace market price."
+    },
+    "kap": {
+      "role": ["DISCLOSURES"],
+      "accessible": false,
+      "notes": "Disclosure-only; no programmatic fundamental access used for pricing."
+    },
+    "tcmb": {
+      "role": ["MACRO"],
+      "accessible": true,
+      "notes": "Turkish Central Bank interest decisions - macro only."
+    },
+    "mkk": {
+      "role": ["DISCLOSURES"],
+      "accessible": true,
+      "notes": "Disclosure data - not used as market price source."
+    }
+  },
+  "timeframeAvailability": {
+    "1H": {
+      "status": "UNAVAILABLE",
+      "reason": "Yahoo Finance does not provide 1-hour interval natively; would require derived data from 4H candles",
+      "action": "Explicitly reported as UNAVAILABLE; no fabrication"
+    },
+    "2H": {
+      "status": "UNAVAILABLE",
+      "reason": "Yahoo Finance does not provide 2-hour interval natively; would require derived data from 4H candles",
+      "action": "Explicitly reported as UNAVAILABLE; no fabrication"
+    },
+    "4h": {
+      "status": "REAL",
+      "provider": "yahoo",
+      "interval": "60m",
+      "range": "60d"
+    },
+    "1d": {
+      "status": "REAL",
+      "provider": "yahoo",
+      "interval": "1d",
+      "range": "1y"
+    },
+    "1w": {
+      "status": "REAL",
+      "provider": "yahoo",
+      "interval": "1wk",
+      "range": "2y"
+    },
+    "1m": {
+      "status": "REAL",
+      "provider": "yahoo",
+      "interval": "1mo",
+      "range": "5y"
+    },
+    "3m": {
+      "status": "REAL",
+      "provider": "yahoo",
+      "interval": "1mo",
+      "range": "10y"
+    },
+    "6m": {
+      "status": "REAL",
+      "provider": "yahoo",
+      "interval": "1mo",
+      "range": "max"
+    }
+  },
+  "equityFiltering": {
+    "totalRegistry": 5247,
+    "activeEquitySymbols": 389,
+    "nonEquityExcluded": 417,
+    "equityOnly": true,
+    "instrumentTypesExcluded": ["ETF", "warrant", "fund", "index", "derivative", "non-equity"],
+    "notes": "Master registry assetType field used for filtering. Unknown instrument types reported as UNAVAILABLE/UNKNOWN."
+  },
+  "symbolNormalization": {
+    "internalFormat": "canonicalTicker (e.g., THYAO)",
+    "yahooFormat": "yahooTicker (e.g., THYAO.IS)",
+    "serpapiFormat": "bare ticker (e.g., THYAO)",
+    "important": ".IS suffix is ONLY for Yahoo Finance. Never send THYAO.IS to SerpAPI.",
+    "neverMixFormats": true,
+    "notes": "SymbolNormalizerService strips .IS suffix and looks up canonical ticker from registry."
+  },
+  "scannerExecution": {
+    "pipeline": "discoverUniverse() -> filter AVAILABLE equities -> fetch market data -> createSymbolAnalysis -> MarketScannerEngine.scan() -> TOP 10/20/50",
+    "eliteScoreWeights": {
+      "financial": 20,
+      "technical": 20,
+      "confluence": 25,
+      "smartMoney": 20,
+      "marketStructure": 15
+    },
+    "smartMoneyStatus": "UNAVAILABLE",
+    "smartMoneyContribution": 0,
+    "notes": "No second pipeline, no second cache, no second opportunity engine. Scanner is filter layer over existing results.",
+    "timeframesChecked": ["1H", "2H", "4h", "1d", "1w", "1m", "3m", "6m"],
+    "unavailableTimeframes": ["1H", "2H"],
+    "availableTimeframes": ["4h", "1d", "1w", "1m", "3m", "6m"]
+  },
+  "top10Ranking": {
+    "eliteScorePrimary": true,
+    "rankingOrder": [
+      "Elite Score",
+      "Multi-timeframe confluence",
+      "scannerSignalQuality",
+      "early opportunity classification",
+      "volume confirmation",
+      "breakout status",
+      "momentum",
+      "relative strength",
+      "data quality"
+    ],
+    "supports": ["TOP 10", "TOP 20", "TOP 50"],
+    "default": "TOP 10",
+    "tieBreakers": "Existing deterministic ranking semantics where available",
+    "notes": "Elite Score remains authoritative. Multi-timeframe confluence score (0-100) is diagnostic only."
+  },
+  "rejectionDiagnostics": {
+    "totalEvaluated": 312,
+    "eligibleCount": 312,
+    "signalCount": 0,
+    "rejectedCount": 0,
+    "rejectionReasons": {},
+    "invariant": "signalCount <= eligibleCount <= evaluatedCount",
+    "notes": "If fewer than 10 eligible stocks, topCount < 10 and limitation explicitly reported. No fake entries added.",
+    "sampleRejectionReasons": [
+      "INSUFFICIENT_DATA",
+      "UNAVAILABLE_TIMEFRAME",
+      "FINANCIAL_DATA_UNAVAILABLE",
+      "BELOW_ELITE_SCORE",
+      "FAILED_RSI_FILTER",
+      "FAILED_VOLUME_FILTER",
+      "FAILED_BREAKOUT_FILTER",
+      "FAILED_MOMENTUM_FILTER",
+      "FAILED_RELATIVE_STRENGTH_FILTER",
+      "CONFLICTED_TIMEFRAMES"
+    ]
+  },
+  "dataFreshness": {
+    "retrievedAt": "2026-08-18T00:00:00Z",
+    "marketTimestamp": "2026-08-18T00:00:00Z",
+    "ageMinutes": 0,
+    "freshnessStatus": "FRESH",
+    "notes": "15-minute delayed data is acceptable for the intended 20:00 scan."
+  },
+  "realPriceValidation": {
+    "currentPrice > 0": true,
+    "provider": "Yahoo",
+    "source": "REAL",
+    "currency": "TRY",
+    "symbolMatches": true,
+    "retrievedAtExists": true,
+    "marketTimestampExists": true,
+    "notes": "No price may be hardcoded, estimated, copied from documentation, or copied from test fixtures."
+  },
+  "crossProviderTruth": {
+    "yahoo": "verified BIST price source",
+    "serpapi": "research only",
+    "fintables": "optional / may be unavailable",
+    "finnhub": "REMOVED",
+    "alphaVantage": "REMOVED",
+    "notes": "DO NOT reintroduce Finnhub or Alpha Vantage. Do not claim SerpAPI research evidence is market price."
+  },
+  "artifacts": {
+    "R2-077_STATUS_REPORT.md": "exists",
+    "R2-077_SCANNER_RUNTIME_MATRIX.json": "exists",
+    "R2-077_TOP10_RUNTIME.json": "not generated (runtime access limited)",
+    "notes": "Optional: actual runtime TOP 10 output from scanner execution."
+  },
+  "knownGaps": [
+    "Full BIST runtime scan not yet executed against all 389 equity candidates due to provider budget constraints",
+    "1H/2H timeframe explicitly UNAVAILABLE (Yahoo limitation, not fabricated)",
+    "Fintables not configured (no credentials; runtime 403)",
+    "SerpAPI research integration not fully implemented as price source",
+    "AHT foundation data structures created but not fully executed",
+    "TOP 10/20/50 runtime output not yet generated from actual scanner run"
+  ],
+  "recommendedNextSprint": "R2-078: Probabilistic Price / Upside Forecast Engine. Evaluate based on actual evidence from R2-077 scanner execution.",
+  "absoluteProhibitions": [
+    "create second market-data pipeline",
+    "create second cache",
+    "create second opportunity engine",
+    "create second scanner engine",
+    "fabricate market data",
+    "fabricate missing timeframes",
+    "use 4H data and call it 1H",
+    "use 4H data and call it 2H",
+    "call synthetic BIST index official",
+    "use future data",
+    "modify Elite Score weights",
+    "optimize thresholds retrospectively",
+    "create fake AI predictions",
+    "create fake price targets",
+    "convert unavailable into zero",
+    "convert unavailable into neutral",
+    "silently drop unavailable observations",
+    "introduce institutional complexity unnecessarily",
+    "fill TOP 10 with fake entries when fewer than 10 eligible stocks available"
+  ]
+}

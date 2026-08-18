@@ -16,3 +16,4 @@ export { ResearchRefreshJob } from './research-refresh.job';
 export { CompanyResearchJob } from './company-research.job';
 export { AgentReachRefreshJob } from './agent-reach-refresh.job';
 export { VerificationRefreshJob } from './verification-refresh.job';
+export { DailyScanJob } from './daily-scan.job';

@@ -96,11 +96,14 @@ async function bootstrap() {
         },
       });
 
-      healthService.registerCheck(
-        healthService.createRedisCheck({
-          ping: async () => redis.ping(),
-        }),
-      );
+      const redisHealthCheck = healthService.createRedisCheck({
+        ping: async () => redis.ping(),
+      });
+      // Redis is an optional cache: the app runs fine without it (in-memory
+      // fallback). An unreachable Redis must not degrade aggregate health or
+      // readiness, but stays visible as an optional component in /health.
+      redisHealthCheck.optional = true;
+      healthService.registerCheck(redisHealthCheck);
 
       appLogger.log('Redis client initialized', 'Bootstrap');
     } catch {

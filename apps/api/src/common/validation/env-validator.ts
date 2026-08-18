@@ -6,12 +6,24 @@ export interface EnvVar {
 
 export const REQUIRED_ENV_VARS: EnvVar[] = [
   { name: 'DATABASE_URL', required: true, description: 'PostgreSQL connection string' },
-  { name: 'REDIS_URL', required: true, description: 'Redis connection string' },
+  {
+    name: 'REDIS_URL',
+    required: false,
+    description: 'Redis connection string (optional — app falls back to in-memory cache)',
+  },
   { name: 'JWT_SECRET', required: true, description: 'JWT signing secret (min 32 chars)' },
   { name: 'CORS_ORIGINS', required: false, description: 'Comma-separated allowed origins' },
   { name: 'PORT', required: false, description: 'API server port (default 3001)' },
-  { name: 'NODE_ENV', required: false, description: 'Environment: development | production | staging' },
-  { name: 'LOG_LEVEL', required: false, description: 'Log level: trace | debug | info | warn | error | fatal' },
+  {
+    name: 'NODE_ENV',
+    required: false,
+    description: 'Environment: development | production | staging',
+  },
+  {
+    name: 'LOG_LEVEL',
+    required: false,
+    description: 'Log level: trace | debug | info | warn | error | fatal',
+  },
   { name: 'SCHEDULER_ENABLED', required: false, description: 'Enable scheduler (true/false)' },
 ];
 

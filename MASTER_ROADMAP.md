@@ -2,17 +2,19 @@
 
 > Platform-wide roadmap for BIST ELITE AI.
 
-> **Status note (R2-047 audit 2026-08-12):** R2-046 was committed in a non-compiling state —
-> `tsc --noEmit -p apps/api/tsconfig.json` currently FAILS with 5 errors in
-> `early-opportunity-backtest`. Its unit tests (52/52) are green but mocked. The line
-> "tsc --noEmit clean" below is **no longer true** until the compile fix is applied.
-> See `FINAL_MASTER_AUDIT/`.
+> **Status note (R2-047B 2026-08-12):** R2-046's compile errors were fixed in R2-047A —
+> `tsc --noEmit -p apps/api/tsconfig.json` is **clean (EXIT 0)**, web tsc is clean, and the
+> runtime was validated against the live dev stack with real BIST data. R2-047B hardens the
+> localhost runtime: provider env config standardization, optional-Redis health/readiness,
+> strict history `from/to` range clipping, and the backtest `:runId` route-shadowing fix.
+> See `docs/R2-047A_STATUS_REPORT.md` and `docs/R2-047B_STATUS_REPORT.md`.
 
 ## Current Status: Sprint 22 (v2.18.0) — Build Broker
 
 ## Completed
 
 ### Phase 4.11: Historical Early Opportunity Backtest & Decision Validation (Sprint 22)
+
 - [x] R2-046 — Historical Early Opportunity Backtest & Decision Validation
   - New `early-opportunity-backtest` module: reuses existing `HistoricalMarketDataService`,
     `EarlyOpportunityIntelligenceService`, `EarlyOpportunityDecisionEngine`, `CacheService`,
@@ -45,12 +47,23 @@
   - `tsc --noEmit` clean.
   - See `docs/R2-046_HISTORICAL_EARLY_OPPORTUNITY_BACKTEST.md`.
 
-  > **❌ R2-047 audit correction:** `tsc --noEmit` is **NOT** clean as committed. 5 errors in this
-  > module break the whole API build (wrong cache/indicator-cache import paths, missing `uuid`,
-  > arity). Tests are green only because dependencies are mocked. Fix details:
-  > `FINAL_MASTER_AUDIT/18_R2-046_BACKTEST_TRUTH_AUDIT.md`.
+  > **✅ R2-047A correction applied:** the 5 compile errors (wrong cache/indicator-cache import paths,
+  > missing `uuid`, arity) were fixed in R2-047A; `tsc --noEmit` is clean again. R2-047B also fixed the
+  > `GET /backtest/early-opportunity/:runId` route that was shadowed by `:ticker`.
+
+### Phase 4.12: R2-047B — Environment, Runtime & Integration Hardening
+
+- [x] Province/provider env config: `.env.example` documents the full provider surface (Finnhub, Alpha Vantage, SerpAPI, Fintables, Yahoo, KAP, TCMB, MKK — `*_ENABLED`/`*_PRIORITY`/`*_TIMEOUT_MS`/`*_RETRY_COUNT`/`*_API_KEY`) matching `market-data.config.ts` exactly; keys stay gitignored and out of source/logs.
+- [x] Deterministic env loading: `load-env.ts` precedence `.env.<NODE_ENV>.local` > `.env.local` > `.env.<NODE_ENV>` > `.env` (app dir before repo root, shell env highest) — identical provider config on every restart.
+- [x] Redis optional: `REDIS_URL` no longer required; health/readiness aggregate required checks only while optional components stay visible; `/health` + `/health/ready` stay 200 without Redis.
+- [x] Strict history `from/to` clipping in `IncrementalMarketDataService` (all 3 read paths) + `HistoricalMarketDataService.getValidatedHistory` — backtest/`/history` consumers receive only in-range bars.
+- [x] Backtest `:runId` route no longer shadowed by `:ticker` (UUID-constrained param declared first).
+- [x] EO data-quality price fallback: intelligence + scanner fall back to last historical bar when latest-price state is absent ("Fiyat verisi yok" inconsistency closed).
+- [x] Verification: API+web `tsc` EXIT 0; regression 53 suites / 758 tests green (incremental 62, health 44, EO + controller 59).
+- [x] Details in `docs/R2-047B_STATUS_REPORT.md`.
 
 ### Phase 4.10: Early Opportunity Decision & Signal Convergence (Sprint 21)
+
 - [x] R2-045 — Early Opportunity Decision & Signal Convergence Engine
   - Pure, deterministic convergence/decision layer (`EarlyOpportunityDecisionEngine.decide`) over the existing
     `EarlyOpportunityIntelligenceResult` — NO new data fetch, NO indicator math, NO GPT.
@@ -79,6 +92,7 @@
   - See `docs/R2-045_EARLY_OPPORTUNITY_DECISION.md`.
 
 ### Phase 4.9: Historical Market Data Backfill & Validation (Sprint 20)
+
 - [x] R2-044 - Historical Market Data Backfill & Validation Engine
   - HistoricalMarketDataService on top of MarketDataOrchestrator / IncrementalMarketDataService (NO second pipeline)
   - Per-symbol status, all-symbol metadata-only report, gap detection, quality, backfill safety gate
@@ -99,6 +113,7 @@
   - See docs/R2-044_HISTORICAL_MARKET_DATA_BACKFILL.md
 
 ### Phase 4.8: Indicator Cache & Advanced Deduplication (Sprint 19)
+
 - [x] R2-043 — Indicator Cache & Advanced Deduplication Engine
   - IndicatorCacheService: caches IndicatorEngine.calculateAll() results by symbol:timeframe:lastBarTimestamp
   - Timeframe TTLs (1h/2h 60s, 4h 120s, 1d 300s, 1w 600s, 1m 900s, 3m 1800s, 6m 3600s); only non-empty results cached
@@ -113,6 +128,7 @@
   - See docs/R2-043_INDICATOR_CACHE_AND_DEDUP.md
 
 ### Phase 4.7: Real Analysis Pipeline Integration (Sprint 18)
+
 - [x] R2-042 — Real Analysis Pipeline Integration & Single-Request Optimization
   - Shared OHLCV/Indicators between PredictionService and SmartMoneyService (pre-fetched context)
   - FinancialDataQualityService as proper singleton injectable (removed ad-hoc instantiation)
@@ -128,6 +144,7 @@
   - See docs/R2-042_ANALYSIS_PIPELINE_INTEGRATION.md
 
 ### Phase 4.6: Real-Time Latest Price Pipeline (Sprint 17)
+
 - [x] R2-041 — Real-Time / Latest-Price Incremental Pipeline
   - LatestPriceIncrementalService: 5-case flow (cold, fresh hit, stale refresh, provider failure + stale fallback, cache disabled)
   - Timeframe-aware TTL: 1h/2h→60s, 4h→120s, 1d→300s, 1w→600s, 1m→900s, 3m→1800s, 6m→3600s
@@ -141,6 +158,7 @@
   - See docs/R2-041_REALTIME_LATEST_PRICE_PIPELINE.md
 
 ### Phase 4.5: Stabilization & Pre-Pipeline Integrity (Sprint 16)
+
 - [x] R2-039 — Stabilization & Pre-Pipeline Integrity
   - Whole-API typecheck restored: `tsc --noEmit` exits 0 (fixed 6 pre-existing errors in
     financial-data-quality imports + early-opportunity.dto class ordering)
@@ -156,6 +174,7 @@
   - See docs/R2-039_STABILIZATION_INTEGRITY.md
 
 ### Phase 4.4: Early Signal Scanner (Sprint 15)
+
 - [x] R2-038 — Early Signal Scanner
   - Deterministic EARLY/CONFIRMED signal detection layer consumed by Early Opportunity Intelligence
   - Six categories: PRICE_VOLUME, SMART_MONEY, FUNDAMENTAL, CATALYST, MULTI_TIMEFRAME, MARKET_STRUCTURE
@@ -173,6 +192,7 @@
   - See docs/R2-038_EARLY_SIGNAL_SCANNER.md
 
 ### Phase 4.2: Market Data Hardening
+
 - [x] R2-033 — Real Market Data Pipeline (Hardened)
   - Finnhub resolution fidelity fix (no more mislabeled 1h/2h/4h/3m/6m candles)
   - Fast-fail guards for unconfigured API-key providers (no wasted 401 retries)
@@ -206,6 +226,7 @@
 ## Completed
 
 ### Phase 4: Core Intelligence Layer (Sprint 11)
+
 - [x] R2-026 — Early Opportunity Engine (pure 0-100 multi-timeframe scorer, scans ALL BIST symbols)
 - [x] R2-027 — Early Opportunity Intelligence Engine (CORE)
   - Core intelligence service reusing Prediction, Research Hub, Smart Money, Catalyst,
@@ -244,6 +265,7 @@
   - Full API test coverage, green build
 
 ### Phase 4.1: Portfolio Intelligence (Sprint 12)
+
 - [x] R2-030 — Portfolio Intelligence Engine & Portfolio Dashboard
   - One unified /portfolio intelligence view consuming ALL existing engines (Early
     Opportunity Intelligence, Multi-Timeframe, Smart Money, Catalyst, Verification AI,
@@ -273,6 +295,7 @@
   - See docs/R2-030_PORTFOLIO_INTELLIGENCE.md
 
 ### Phase 4.2: Data & Research Pipeline (Sprint 13)
+
 - [x] R2-031 — Data Research Pipeline
   - Provider health monitoring for 8 data providers (Yahoo, Finnhub, Alpha Vantage, Fintables, KAP, TCMB, MKK, SerpAPI)
   - Data freshness tracking with FRESH/ACCEPTABLE/STALE/UNAVAILABLE states
@@ -290,6 +313,7 @@
   - See docs/R2-031_DATA_RESEARCH_PIPELINE.md
 
 ### Phase 4.3: Data Quality & Validation (Sprint 14)
+
 - [x] R2-037 — Financial Data Quality & Opportunity Validation
   - FinancialDataQualityService: deterministic quality assessment (0-100) with 6 dimensions
   - Freshness validation (price/fundamental/research) with configurable thresholds
@@ -310,12 +334,14 @@
   - See docs/R2-037_FINANCIAL_DATA_QUALITY.md
 
 ### Phase 3: Production (Sprint 10)
+
 - [x] GitHub repository finalization
 - [x] Documentation suite
 - [x] CI/CD workflows
 - [x] Repository validation tests
 
 ### Phase 2: Intelligence Engines (Sprints 6-9)
+
 - [x] Explainability Engine
 - [x] Elite Score Engine
 - [x] Multi-Timeframe Consensus Engine
@@ -329,11 +355,14 @@
 - [x] Production Readiness
 
 ### Phase 1: Foundation (Sprints 1-5)
+
 - [x] Monorepo setup (Turborepo, pnpm)
 - [x] Database schema, auth, security, observability
 
 ## In Progress
+
 ### Phase 5: Data Pipeline
+
 - [ ] Real-time BIST data feed integration
 - [ ] Historical data import (10+ years)
 - [ ] Alternative data sources (sentiment, news)
@@ -341,7 +370,9 @@
 - [ ] Incremental data updates
 
 ## Planned
+
 ### Phase 6: ML & AI
+
 - [ ] ML model training pipeline
 - [ ] Feature engineering automation
 - [ ] Model performance monitoring
@@ -349,6 +380,7 @@
 - [ ] Model versioning and rollback
 
 ### Phase 7: Frontend Integration
+
 - [ ] Next.js dashboard with real-time data
 - [ ] Interactive charts (TradingView lightweight-charts)
 - [ ] Portfolio management UI

@@ -1,4 +1,4 @@
-﻿import { EliteScannerEngine } from '../elite-scanner-engine.service';
+import { EliteScannerEngine } from '../elite-scanner-engine.service';
 import {
   StrategyRegistry,
   ValueHunterStrategy,
@@ -33,8 +33,18 @@ import { ScoreEngine } from '../../scoring/score-engine.service';
 import { ScorePipeline } from '../../scoring/score-pipeline.service';
 import { ScoreRegistry } from '../../scoring/score-registry.service';
 import { ScoreCalculator } from '../../scoring/score-calculator.service';
-import { EliteScannerStrategy, ScannerInstrument, EliteScannerContext, EliteScannerResult } from '../elite-scanner.types';
-import { ScoreEngineInput, ScorePipelineInput, HistoricalPricePoint, FinancialSnapshot } from '../../scoring/scoring-types';
+import {
+  EliteScannerStrategy,
+  ScannerInstrument,
+  EliteScannerContext,
+  EliteScannerResult,
+} from '../elite-scanner.types';
+import {
+  ScoreEngineInput,
+  ScorePipelineInput,
+  HistoricalPricePoint,
+  FinancialSnapshot,
+} from '../../scoring/scoring-types';
 
 const DAY_MS = 86400000;
 
@@ -43,14 +53,29 @@ function iso(offset: number): string {
 }
 
 function makeInstrument(ticker: string): ScannerInstrument {
-  return { ticker, yahooTicker: `${ticker}.IS`, company: `Şirket ${ticker}`, sector: 'Ulaştırma', market: 'BIST', assetType: 'Equity', currency: 'TRY', isin: null };
+  return {
+    ticker,
+    yahooTicker: `${ticker}.IS`,
+    company: `Şirket ${ticker}`,
+    sector: 'Ulaştırma',
+    market: 'BIST',
+    assetType: 'Equity',
+    currency: 'TRY',
+    isin: null,
+  };
 }
 
 function makeContext(overrides: Partial<EliteScannerContext> = {}): EliteScannerContext {
   const instrument = makeInstrument('THYAO');
   return {
     instrument,
-    marketData: { price: 300, volume: 1_000_000, marketCap: 400_000_000_000, provider: 'yahoo', lastUpdate: '2025-01-15T00:00:00.000Z' },
+    marketData: {
+      price: 300,
+      volume: 1_000_000,
+      marketCap: 400_000_000_000,
+      provider: 'yahoo',
+      lastUpdate: '2025-01-15T00:00:00.000Z',
+    },
     ...overrides,
   };
 }
@@ -168,7 +193,14 @@ describe('StrategyRegistry', () => {
       name: 'Özel Strateji',
       description: 'Test',
       enabled: true,
-      evaluate: () => ({ score: 0, passed: [], failedReasons: ['Test'], signals: [], reasons: [], confidence: 0 }),
+      evaluate: () => ({
+        score: 0,
+        passed: [],
+        failedReasons: ['Test'],
+        signals: [],
+        reasons: [],
+        confidence: 0,
+      }),
     });
     expect(registry.get('custom')).toBeDefined();
     expect(registry.list().length).toBe(10);
@@ -422,9 +454,36 @@ describe('QullamaggieStrategy', () => {
 describe('ScannerFilter', () => {
   const filter = new ScannerFilter();
   const instruments: ScannerInstrument[] = [
-    { ticker: 'THYAO', yahooTicker: 'THYAO.IS', company: 'A', sector: 'Ulaştırma', market: 'BIST', assetType: 'Equity', currency: 'TRY', isin: null },
-    { ticker: 'GARAN', yahooTicker: 'GARAN.IS', company: 'B', sector: 'Bankacılık', market: 'BIST', assetType: 'Bank', currency: 'TRY', isin: null },
-    { ticker: 'X', yahooTicker: 'X.IS', company: 'C', sector: 'Ulaştırma', market: 'BIST', assetType: 'Equity', currency: 'TRY', isin: null },
+    {
+      ticker: 'THYAO',
+      yahooTicker: 'THYAO.IS',
+      company: 'A',
+      sector: 'Ulaştırma',
+      market: 'BIST',
+      assetType: 'Equity',
+      currency: 'TRY',
+      isin: null,
+    },
+    {
+      ticker: 'GARAN',
+      yahooTicker: 'GARAN.IS',
+      company: 'B',
+      sector: 'Bankacılık',
+      market: 'BIST',
+      assetType: 'Bank',
+      currency: 'TRY',
+      isin: null,
+    },
+    {
+      ticker: 'X',
+      yahooTicker: 'X.IS',
+      company: 'C',
+      sector: 'Ulaştırma',
+      market: 'BIST',
+      assetType: 'Equity',
+      currency: 'TRY',
+      isin: null,
+    },
   ];
 
   it('should filter by sector', () => {
@@ -453,11 +512,54 @@ describe('ScannerFilter', () => {
 describe('ScannerRegistry', () => {
   it('should count instruments from master registry', () => {
     const symbolRegistry = {
-      getMasterRegistry: () => [
-        { ticker: 'THYAO', yahooTicker: 'THYAO.IS', companyName: 'Türk Hava Yolları', turkishName: null, sector: 'Ulaştırma', industry: null, market: 'BIST', exchange: 'IST', currency: 'TRY', status: 'active', assetType: 'Equity', dataSources: [], isin: null },
-        { ticker: 'GARAN', yahooTicker: 'GARAN.IS', companyName: 'Garanti', turkishName: null, sector: 'Bankacılık', industry: null, market: 'BIST', exchange: 'IST', currency: 'TRY', status: 'active', assetType: 'Bank', dataSources: [], isin: null },
-        { ticker: 'DELIST', yahooTicker: 'DELIST.IS', companyName: 'Eski', turkishName: null, sector: null, industry: null, market: 'BIST', exchange: 'IST', currency: 'TRY', status: 'inactive', assetType: 'Equity', dataSources: [], isin: null },
-      ] as any,
+      getMasterRegistry: () =>
+        [
+          {
+            ticker: 'THYAO',
+            yahooTicker: 'THYAO.IS',
+            companyName: 'Türk Hava Yolları',
+            turkishName: null,
+            sector: 'Ulaştırma',
+            industry: null,
+            market: 'BIST',
+            exchange: 'IST',
+            currency: 'TRY',
+            status: 'active',
+            assetType: 'Equity',
+            dataSources: [],
+            isin: null,
+          },
+          {
+            ticker: 'GARAN',
+            yahooTicker: 'GARAN.IS',
+            companyName: 'Garanti',
+            turkishName: null,
+            sector: 'Bankacılık',
+            industry: null,
+            market: 'BIST',
+            exchange: 'IST',
+            currency: 'TRY',
+            status: 'active',
+            assetType: 'Bank',
+            dataSources: [],
+            isin: null,
+          },
+          {
+            ticker: 'DELIST',
+            yahooTicker: 'DELIST.IS',
+            companyName: 'Eski',
+            turkishName: null,
+            sector: null,
+            industry: null,
+            market: 'BIST',
+            exchange: 'IST',
+            currency: 'TRY',
+            status: 'inactive',
+            assetType: 'Equity',
+            dataSources: [],
+            isin: null,
+          },
+        ] as any,
     };
     const registry = new ScannerRegistry(symbolRegistry as any);
 
@@ -515,24 +617,44 @@ describe('EliteScannerEngine with ScoreEngine', () => {
 
   function makeDeps() {
     const orchestrator = {
-      fetchCompany: jest.fn(async (s: string) => ({ data: { symbol: s, marketCap: 100, lastUpdated: '2025-01-15T00:00:00.000Z' }, provider: 'yahoo', cached: false, timestamp: '2025-01-15T00:00:00.000Z' })),
+      fetchCompany: jest.fn(async (s: string) => ({
+        data: { symbol: s, marketCap: 100, lastUpdated: '2025-01-15T00:00:00.000Z' },
+        provider: 'yahoo',
+        cached: false,
+        timestamp: '2025-01-15T00:00:00.000Z',
+      })),
       fetchFinancials: jest.fn(async () => null),
       fetchBalanceSheet: jest.fn(async () => null),
       fetchIncomeStatement: jest.fn(async () => null),
       fetchCashFlow: jest.fn(async () => null),
     };
     const marketDataService = {
-      fetchLatest: jest.fn(async (s: string) => ({ symbol: s, close: 50, volume: 10_000, timestamp: '2025-01-15T00:00:00.000Z' })),
+      fetchLatest: jest.fn(async (s: string) => ({
+        symbol: s,
+        close: 50,
+        volume: 10_000,
+        timestamp: '2025-01-15T00:00:00.000Z',
+      })),
       fetchData: jest.fn(async () => []),
     };
     const cacheService = {
-      getOrSet: jest.fn(async (_p: string, _type: string, _s: string, factory: () => any) => factory()),
+      getOrSet: jest.fn(async (_p: string, _type: string, _s: string, factory: () => any) =>
+        factory(),
+      ),
     };
     const scoreEngine = makeScoreEngineMock();
     const indicatorEngine = { calculateAll: jest.fn(() => []) };
     const verificationRepository = { getVerificationResult: jest.fn(async () => undefined) };
     const researchIntelligence = { getCompanyResearch: jest.fn(async () => ({ catalysts: [] })) };
-    return { orchestrator, marketDataService, cacheService, scoreEngine, indicatorEngine, verificationRepository, researchIntelligence };
+    return {
+      orchestrator,
+      marketDataService,
+      cacheService,
+      scoreEngine,
+      indicatorEngine,
+      verificationRepository,
+      researchIntelligence,
+    };
   }
 
   function makeEngine() {
@@ -613,7 +735,14 @@ describe('EliteScannerEngine with ScoreEngine', () => {
             { dimension: 'verification' as const, score: 90, label: 'Doğrulama', details: {} },
             { dimension: 'catalyst' as const, score: 55, label: 'Katalizör', details: {} },
           ],
-          aiResult: { aiScore, aiConfidence, weightedScore: 70, scores: [], availableDimensionCount: 10, totalDimensions: 10 },
+          aiResult: {
+            aiScore,
+            aiConfidence,
+            weightedScore: 70,
+            scores: [],
+            availableDimensionCount: 10,
+            totalDimensions: 10,
+          },
           pipelineDurationMs: 5,
         },
       };
@@ -633,7 +762,9 @@ describe('EliteScannerEngine with ScoreEngine', () => {
 
   it('should handle errors gracefully', async () => {
     const { engine, deps } = makeEngine();
-    deps.orchestrator.fetchCompany.mockImplementation(async () => { throw new Error('hata'); });
+    deps.orchestrator.fetchCompany.mockImplementation(async () => {
+      throw new Error('hata');
+    });
     const response = await engine.scan([makeInstrument('THYAO')], new ValueHunterStrategy());
     expect(response.summary.errorCount).toBe(1);
     expect(response.results).toHaveLength(0);
@@ -661,7 +792,14 @@ describe('ScannerService with ScoreEngine', () => {
             { dimension: 'verification' as const, score: 90, label: 'Doğrulama', details: {} },
             { dimension: 'catalyst' as const, score: 55, label: 'Katalizör', details: {} },
           ],
-          aiResult: { aiScore: 72, aiConfidence: 85, weightedScore: 70, scores: [], availableDimensionCount: 10, totalDimensions: 10 },
+          aiResult: {
+            aiScore: 72,
+            aiConfidence: 85,
+            weightedScore: 70,
+            scores: [],
+            availableDimensionCount: 10,
+            totalDimensions: 10,
+          },
           pipelineDurationMs: 5,
         },
       })),
@@ -674,24 +812,63 @@ describe('ScannerService with ScoreEngine', () => {
   function makeService() {
     const symbolRegistry = {
       getMasterRegistry: () => [
-        { ticker: 'THYAO', yahooTicker: 'THYAO.IS', companyName: 'Türk Hava Yolları', turkishName: null, sector: 'Ulaştırma', industry: null, market: 'BIST', exchange: 'IST', currency: 'TRY', status: 'active', assetType: 'Equity', dataSources: [], isin: null },
-        { ticker: 'GARAN', yahooTicker: 'GARAN.IS', companyName: 'Garanti', turkishName: null, sector: 'Bankacılık', industry: null, market: 'BIST', exchange: 'IST', currency: 'TRY', status: 'active', assetType: 'Bank', dataSources: [], isin: null },
+        {
+          ticker: 'THYAO',
+          yahooTicker: 'THYAO.IS',
+          companyName: 'Türk Hava Yolları',
+          turkishName: null,
+          sector: 'Ulaştırma',
+          industry: null,
+          market: 'BIST',
+          exchange: 'IST',
+          currency: 'TRY',
+          status: 'active',
+          assetType: 'Equity',
+          dataSources: [],
+          isin: null,
+        },
+        {
+          ticker: 'GARAN',
+          yahooTicker: 'GARAN.IS',
+          companyName: 'Garanti',
+          turkishName: null,
+          sector: 'Bankacılık',
+          industry: null,
+          market: 'BIST',
+          exchange: 'IST',
+          currency: 'TRY',
+          status: 'active',
+          assetType: 'Bank',
+          dataSources: [],
+          isin: null,
+        },
       ],
     };
     const registry = new ScannerRegistry(symbolRegistry as any);
     const strategyRegistry = new StrategyRegistry();
     const orchestrator = {
-      fetchCompany: jest.fn(async (s: string) => ({ data: { marketCap: 100, lastUpdated: '2025-01-15T00:00:00.000Z' }, provider: 'yahoo' })),
+      fetchCompany: jest.fn(async (s: string) => ({
+        data: { marketCap: 100, lastUpdated: '2025-01-15T00:00:00.000Z' },
+        provider: 'yahoo',
+      })),
       fetchFinancials: jest.fn(async () => null),
       fetchBalanceSheet: jest.fn(async () => null),
       fetchIncomeStatement: jest.fn(async () => null),
       fetchCashFlow: jest.fn(async () => null),
     };
     const marketDataService = {
-      fetchLatest: jest.fn(async () => ({ close: 50, volume: 100, timestamp: '2025-01-15T00:00:00.000Z' })),
+      fetchLatest: jest.fn(async () => ({
+        close: 50,
+        volume: 100,
+        timestamp: '2025-01-15T00:00:00.000Z',
+      })),
       fetchData: jest.fn(async () => []),
     };
-    const cacheService = { getOrSet: jest.fn(async (_p: string, _t: string, _s: string, factory: () => any) => factory()) };
+    const cacheService = {
+      getOrSet: jest.fn(async (_p: string, _t: string, _s: string, factory: () => any) =>
+        factory(),
+      ),
+    };
     const scoreEngine = makeScoreEngineMock();
     const indicatorEngine = { calculateAll: jest.fn(() => []) };
     const verificationRepository = { getVerificationResult: jest.fn(async () => undefined) };

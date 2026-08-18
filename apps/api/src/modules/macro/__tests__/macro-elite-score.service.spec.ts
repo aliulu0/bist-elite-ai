@@ -7,24 +7,65 @@ import { TCMBDecisionAnalyzer } from '../engines/tcmb-decision-analyzer';
 function createMockOrchestrator(indicators?: any[]) {
   return {
     fetchMacroIndicators: jest.fn().mockResolvedValue(
-      indicators ??
-        [
-          { symbol: 'vix', value: 30, change: 2, changePercent: 7.1, timestamp: new Date().toISOString(), source: 'finnhub' },
-          { symbol: 'dxy', value: 110, change: 1, changePercent: 0.9, timestamp: new Date().toISOString(), source: 'finnhub' },
-          { symbol: 'us10y', value: 6.0, change: 0.1, changePercent: 1.7, timestamp: new Date().toISOString(), source: 'finnhub' },
-          { symbol: 'us2y', value: 4.8, change: 0.05, changePercent: 1.0, timestamp: new Date().toISOString(), source: 'finnhub' },
-          { symbol: 'gold', value: 2350, change: -10, changePercent: -0.4, timestamp: new Date().toISOString(), source: 'finnhub' },
-          { symbol: 'brent', value: 82, change: -1.5, changePercent: -1.8, timestamp: new Date().toISOString(), source: 'finnhub' },
-        ],
+      indicators ?? [
+        {
+          symbol: 'vix',
+          value: 30,
+          change: 2,
+          changePercent: 7.1,
+          timestamp: new Date().toISOString(),
+          source: 'tcmb',
+        },
+        {
+          symbol: 'dxy',
+          value: 110,
+          change: 1,
+          changePercent: 0.9,
+          timestamp: new Date().toISOString(),
+          source: 'tcmb',
+        },
+        {
+          symbol: 'us10y',
+          value: 6.0,
+          change: 0.1,
+          changePercent: 1.7,
+          timestamp: new Date().toISOString(),
+          source: 'tcmb',
+        },
+        {
+          symbol: 'us2y',
+          value: 4.8,
+          change: 0.05,
+          changePercent: 1.0,
+          timestamp: new Date().toISOString(),
+          source: 'tcmb',
+        },
+        {
+          symbol: 'gold',
+          value: 2350,
+          change: -10,
+          changePercent: -0.4,
+          timestamp: new Date().toISOString(),
+          source: 'tcmb',
+        },
+        {
+          symbol: 'brent',
+          value: 82,
+          change: -1.5,
+          changePercent: -1.8,
+          timestamp: new Date().toISOString(),
+          source: 'tcmb',
+        },
+      ],
     ),
     getProviderStatus: jest.fn().mockResolvedValue([]),
   } as any;
 }
 
 const HAWKISH_TEXT =
-  'Kurul politika faizini %45\'den %50\'ye yükseltti. Parasal sıkılaşma devam ediyor. Sıkı duruş korunuyor. Enflasyon riski yukarı yönlü.';
+  "Kurul politika faizini %45'den %50'ye yükseltti. Parasal sıkılaşma devam ediyor. Sıkı duruş korunuyor. Enflasyon riski yukarı yönlü.";
 const DOVISH_TEXT =
-  'Kurul politika faizini %50\'den %45\'e indirdi. Faiz indirimi kararı alındı. Dezenflasyon sürecinin güçlendiği değerlendiriliyor. Gevşeme eğilimi belirginleşti.';
+  "Kurul politika faizini %50'den %45'e indirdi. Faiz indirimi kararı alındı. Dezenflasyon sürecinin güçlendiği değerlendiriliyor. Gevşeme eğilimi belirginleşti.";
 
 function makeService(indicators?: any[]) {
   const orchestrator = createMockOrchestrator(indicators);
@@ -85,7 +126,7 @@ describe('MacroEliteScoreService', () => {
       storeDecision(hawkish.store, hawkish.analyzer, '2026-07-24', HAWKISH_TEXT, 50, 45);
       const hawkishResult = await hawkish.service.calculate();
 
-      expect(hawkishResult.eliteScore).toBeLessThan(baseResult.eliteScore);
+      expect(hawkishResult.eliteScore!).toBeLessThan(baseResult.eliteScore!);
     });
 
     it('should increase the elite score for a dovish decision', async () => {
@@ -96,7 +137,7 @@ describe('MacroEliteScoreService', () => {
       storeDecision(dovish.store, dovish.analyzer, '2026-07-24', DOVISH_TEXT, 45, 50);
       const dovishResult = await dovish.service.calculate();
 
-      expect(dovishResult.eliteScore).toBeGreaterThan(baseResult.eliteScore);
+      expect(dovishResult.eliteScore!).toBeGreaterThan(baseResult.eliteScore!);
     });
   });
 
@@ -106,16 +147,16 @@ describe('MacroEliteScoreService', () => {
       const normalResult = await normal.service.calculate();
 
       const inverted = makeService([
-        { symbol: 'vix', value: 30, timestamp: new Date().toISOString(), source: 'finnhub' },
-        { symbol: 'dxy', value: 110, timestamp: new Date().toISOString(), source: 'finnhub' },
-        { symbol: 'us10y', value: 6.0, timestamp: new Date().toISOString(), source: 'finnhub' },
-        { symbol: 'us2y', value: 6.5, timestamp: new Date().toISOString(), source: 'finnhub' },
-        { symbol: 'gold', value: 2350, timestamp: new Date().toISOString(), source: 'finnhub' },
-        { symbol: 'brent', value: 82, timestamp: new Date().toISOString(), source: 'finnhub' },
+        { symbol: 'vix', value: 30, timestamp: new Date().toISOString(), source: 'tcmb' },
+        { symbol: 'dxy', value: 110, timestamp: new Date().toISOString(), source: 'tcmb' },
+        { symbol: 'us10y', value: 6.0, timestamp: new Date().toISOString(), source: 'tcmb' },
+        { symbol: 'us2y', value: 6.5, timestamp: new Date().toISOString(), source: 'tcmb' },
+        { symbol: 'gold', value: 2350, timestamp: new Date().toISOString(), source: 'tcmb' },
+        { symbol: 'brent', value: 82, timestamp: new Date().toISOString(), source: 'tcmb' },
       ]);
       const invertedResult = await inverted.service.calculate();
 
-      expect(invertedResult.eliteScore).toBeLessThan(normalResult.eliteScore);
+      expect(invertedResult.eliteScore!).toBeLessThan(normalResult.eliteScore!);
     });
   });
 

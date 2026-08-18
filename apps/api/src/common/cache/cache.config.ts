@@ -18,10 +18,11 @@ export interface CacheConfig {
     scores: { ttl: number; maxEntries: number };
     marketData: { ttl: number; maxEntries: number };
     portfolio: { ttl: number; maxEntries: number };
-     api: { ttl: number; maxEntries: number };
+    api: { ttl: number; maxEntries: number };
     research: { ttl: number; maxEntries: number };
     latestPrice: { ttl: number; maxEntries: number };
     indicatorCache: { ttl: number; maxEntries: number };
+    radar: { ttl: number; maxEntries: number };
   };
   compression: {
     enabled: boolean;
@@ -39,7 +40,7 @@ const DEFAULTS: CacheConfig = {
   enabled: true,
   ttl: 300_000,
   maxEntries: 10_000,
-  maxEntrySize: 1024 * 1024,
+  maxEntrySize: 5 * 1024 * 1024,
   prefix: 'bist:cache:',
   redis: {
     enabled: false,
@@ -59,6 +60,7 @@ const DEFAULTS: CacheConfig = {
     research: { ttl: 300_000, maxEntries: 5_000 },
     latestPrice: { ttl: 120_000, maxEntries: 2_000 },
     indicatorCache: { ttl: 300_000, maxEntries: 5_000 },
+    radar: { ttl: 300_000, maxEntries: 100 },
   },
   compression: {
     enabled: true,

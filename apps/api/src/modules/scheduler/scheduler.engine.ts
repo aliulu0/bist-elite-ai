@@ -1,14 +1,33 @@
 import { Injectable, Logger, OnModuleDestroy, Optional } from '@nestjs/common';
-import { JobName, JobState, JobExecution, SchedulerStatus, SchedulerResult } from './scheduler.types';
+import {
+  JobName,
+  JobState,
+  JobExecution,
+  SchedulerStatus,
+  SchedulerResult,
+} from './scheduler.types';
 import { SchedulerConfig, DEFAULT_SCHEDULER_CONFIG } from './scheduler.config';
 import { IJob } from './jobs/job.interface';
 
 const ALL_JOB_NAMES: JobName[] = [
-  'marketOpenScan', 'incrementalScan', 'nightlyBacktest', 'benchmark',
-  'ruleAnalytics', 'weightOptimization', 'cacheRefresh', 'providerHealthCheck',
-  'macroRefresh', 'portfolioRefresh', 'alertRefresh', 'retryFailedJobs',
-  'fullPipelineRun', 'researchRefresh', 'companyResearch', 'agentReachRefresh',
+  'marketOpenScan',
+  'incrementalScan',
+  'nightlyBacktest',
+  'benchmark',
+  'ruleAnalytics',
+  'weightOptimization',
+  'cacheRefresh',
+  'providerHealthCheck',
+  'macroRefresh',
+  'portfolioRefresh',
+  'alertRefresh',
+  'retryFailedJobs',
+  'fullPipelineRun',
+  'researchRefresh',
+  'companyResearch',
+  'agentReachRefresh',
   'verificationRefresh',
+  'dailyScan',
 ];
 
 @Injectable()
@@ -62,7 +81,10 @@ export class SchedulerEngine implements OnModuleDestroy {
       if (!state.enabled) continue;
 
       const intervalMs = state.intervalMs;
-      this.timers.set(name, setInterval(() => this.executeJob(name), intervalMs));
+      this.timers.set(
+        name,
+        setInterval(() => this.executeJob(name), intervalMs),
+      );
       this.logger.debug(`Scheduled ${name} every ${intervalMs}ms`);
     }
 
@@ -111,7 +133,9 @@ export class SchedulerEngine implements OnModuleDestroy {
         if (!success) {
           lastError = result.message;
           if (attempt < jobConfig.retryAttempts) {
-            this.logger.warn(`Job ${name} attempt ${attempt + 1} failed: ${result.message}, retrying...`);
+            this.logger.warn(
+              `Job ${name} attempt ${attempt + 1} failed: ${result.message}, retrying...`,
+            );
             await this.delay(jobConfig.retryDelayMs);
           }
         } else {
@@ -151,7 +175,9 @@ export class SchedulerEngine implements OnModuleDestroy {
       if (state.consecutiveFailures >= this.config.maxConsecutiveFailures) {
         state.enabled = false;
         state.status = 'disabled';
-        this.logger.error(`Job ${name} disabled after ${state.consecutiveFailures} consecutive failures`);
+        this.logger.error(
+          `Job ${name} disabled after ${state.consecutiveFailures} consecutive failures`,
+        );
       }
     }
 
@@ -161,9 +187,7 @@ export class SchedulerEngine implements OnModuleDestroy {
       jobHistory.splice(0, jobHistory.length - this.config.maxHistoryPerJob);
     }
 
-    this.logger.debug(
-      `Job ${name} ${success ? 'completed' : 'failed'} in ${durationMs}ms`,
-    );
+    this.logger.debug(`Job ${name} ${success ? 'completed' : 'failed'} in ${durationMs}ms`);
 
     return execution;
   }
@@ -177,7 +201,10 @@ export class SchedulerEngine implements OnModuleDestroy {
 
     if (this.running && !this.timers.has(name)) {
       const intervalMs = state.intervalMs;
-      this.timers.set(name, setInterval(() => this.executeJob(name), intervalMs));
+      this.timers.set(
+        name,
+        setInterval(() => this.executeJob(name), intervalMs),
+      );
     }
   }
 

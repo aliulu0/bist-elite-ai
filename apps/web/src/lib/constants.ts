@@ -3,7 +3,8 @@ export const API_BASE_URL = '/api';
 export const QUERY_KEYS = {
   health: ['health'] as const,
   marketData: (symbol: string, timeframe: string) => ['marketData', symbol, timeframe] as const,
-  technicalAnalysis: (symbol: string, timeframe: string) => ['technicalAnalysis', symbol, timeframe] as const,
+  technicalAnalysis: (symbol: string, timeframe: string) =>
+    ['technicalAnalysis', symbol, timeframe] as const,
   financialAnalysis: (symbol: string) => ['financialAnalysis', symbol] as const,
   scanner: ['scanner'] as const,
   scannerResults: ['scanner', 'results'] as const,
@@ -22,6 +23,17 @@ export const QUERY_KEYS = {
   workflowJobs: ['workflowQueue', 'jobs'] as const,
   diagnostics: ['diagnostics'] as const,
   auditLog: ['auditLog'] as const,
+  radarTop: ['radar', 'top'] as const,
+  radarStatus: ['radar', 'status'] as const,
+  radarTicker: (ticker: string) => ['radar', 'ticker', ticker] as const,
+  radarLearnedConfigs: ['radar', 'learned-configs'] as const,
+  signalsTop: ['signals', 'top'] as const,
+  signalsTicker: (ticker: string) => ['signals', 'ticker', ticker] as const,
+  searchTicker: (ticker: string) => ['search', ticker] as const,
+  marketOverview: ['market', 'overview'] as const,
+  topLists: ['topLists'] as const,
+  backtestEO: (runId: string) => ['backtest', 'early-opportunity', runId] as const,
+  symbols: ['symbols'] as const,
 } as const;
 
 export const SIDEBAR_WIDTH = 256;

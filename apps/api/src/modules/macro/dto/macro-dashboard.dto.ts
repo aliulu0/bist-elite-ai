@@ -1,4 +1,10 @@
-import { MacroDataPoint, MacroDataSnapshot, MarketImpact, MarketRegimeType, MacroAlertEvent } from '../macro.types';
+import {
+  MacroDataPoint,
+  MacroDataSnapshot,
+  MarketImpact,
+  MarketRegimeType,
+  MacroAlertEvent,
+} from '../macro.types';
 import { TCMBDecisionRecord } from '../macro-elite.types';
 import { TCMBDecisionAnalysis } from '../engines/tcmb-decision-analyzer';
 import { ApiProperty } from '@nestjs/swagger';
@@ -47,8 +53,8 @@ export interface SectorModelDto {
 }
 
 export class MacroEliteCardDto {
-  @ApiProperty({ example: 58 })
-  score!: number;
+  @ApiProperty({ example: 58, nullable: true })
+  score!: number | null;
 
   @ApiProperty({ example: 72 })
   confidence!: number;
@@ -73,8 +79,8 @@ export class MacroTrendCardDto {
   @ApiProperty({ example: 0 })
   change!: number;
 
-  @ApiProperty({ example: 58 })
-  currentScore!: number;
+  @ApiProperty({ example: 58, nullable: true })
+  currentScore!: number | null;
 
   @ApiProperty({ example: 58, nullable: true })
   previousScore!: number | null;
@@ -90,8 +96,8 @@ export class MacroRiskCardDto {
   @ApiProperty({ example: 'moderate', enum: ['low', 'moderate', 'high', 'extreme'] })
   level!: string;
 
-  @ApiProperty({ example: 42 })
-  score!: number;
+  @ApiProperty({ example: 42, nullable: true })
+  score!: number | null;
 
   @ApiProperty({ type: [String] })
   drivers!: string[];
@@ -110,14 +116,14 @@ export class MacroOpportunityDto {
   @ApiProperty({ example: 'Transportation' })
   sector!: string;
 
-  @ApiProperty({ example: 71 })
-  eliteScore!: number;
+  @ApiProperty({ example: 71, nullable: true })
+  eliteScore!: number | null;
 
-  @ApiProperty({ example: 58 })
-  macroScore!: number;
+  @ApiProperty({ example: 58, nullable: true })
+  macroScore!: number | null;
 
-  @ApiProperty({ example: 66 })
-  combinedConfidence!: number;
+  @ApiProperty({ example: 66, nullable: true })
+  combinedConfidence!: number | null;
 
   @ApiProperty({ example: 'high', enum: ['high', 'medium', 'low'] })
   priority!: string;

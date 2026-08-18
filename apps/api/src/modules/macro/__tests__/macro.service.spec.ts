@@ -15,12 +15,54 @@ import { CombinedConfidenceService } from '../combined-confidence.service';
 function createMockOrchestrator() {
   return {
     fetchMacroIndicators: jest.fn().mockResolvedValue([
-      { symbol: 'vix', value: 30, change: 2, changePercent: 7.1, timestamp: new Date().toISOString(), source: 'finnhub' },
-      { symbol: 'dxy', value: 110, change: 1, changePercent: 0.9, timestamp: new Date().toISOString(), source: 'finnhub' },
-      { symbol: 'us10y', value: 6.0, change: 0.1, changePercent: 1.7, timestamp: new Date().toISOString(), source: 'finnhub' },
-      { symbol: 'us2y', value: 4.8, change: 0.05, changePercent: 1.0, timestamp: new Date().toISOString(), source: 'finnhub' },
-      { symbol: 'gold', value: 2350, change: -10, changePercent: -0.4, timestamp: new Date().toISOString(), source: 'finnhub' },
-      { symbol: 'brent', value: 82, change: -1.5, changePercent: -1.8, timestamp: new Date().toISOString(), source: 'finnhub' },
+      {
+        symbol: 'vix',
+        value: 30,
+        change: 2,
+        changePercent: 7.1,
+        timestamp: new Date().toISOString(),
+        source: 'tcmb',
+      },
+      {
+        symbol: 'dxy',
+        value: 110,
+        change: 1,
+        changePercent: 0.9,
+        timestamp: new Date().toISOString(),
+        source: 'tcmb',
+      },
+      {
+        symbol: 'us10y',
+        value: 6.0,
+        change: 0.1,
+        changePercent: 1.7,
+        timestamp: new Date().toISOString(),
+        source: 'tcmb',
+      },
+      {
+        symbol: 'us2y',
+        value: 4.8,
+        change: 0.05,
+        changePercent: 1.0,
+        timestamp: new Date().toISOString(),
+        source: 'tcmb',
+      },
+      {
+        symbol: 'gold',
+        value: 2350,
+        change: -10,
+        changePercent: -0.4,
+        timestamp: new Date().toISOString(),
+        source: 'tcmb',
+      },
+      {
+        symbol: 'brent',
+        value: 82,
+        change: -1.5,
+        changePercent: -1.8,
+        timestamp: new Date().toISOString(),
+        source: 'tcmb',
+      },
     ]),
     fetchTcmbInterestDecisions: jest.fn().mockResolvedValue([]),
     getProviderStatus: jest.fn().mockResolvedValue([]),
@@ -40,7 +82,7 @@ describe('MacroService', () => {
   let service: MacroService;
   let analysis: MacroAnalysisService;
 
-  function makeService() {
+  function makeService(earlyOpportunity?: any) {
     const orchestrator = createMockOrchestrator();
     const data = new MacroDataService(orchestrator);
     const store = new TCMBDecisionStoreService();
@@ -61,7 +103,16 @@ describe('MacroService', () => {
     );
     const elite = new MacroEliteScoreService(new MacroScoreEngine(), data, store, orchestrator);
     const combined = new CombinedConfidenceService();
-    return { service: new MacroService(a, data, elite, combined, capture, store), analysis: a };
+    return {
+      service: new MacroService(a, data, elite, combined, capture, store, earlyOpportunity),
+      analysis: a,
+    };
+  }
+
+  function createMockEarlyOpportunity(rows: any[] = []) {
+    return {
+      getEarlyOpportunities: jest.fn().mockResolvedValue(rows),
+    } as any;
   }
 
   beforeEach(() => {
@@ -131,27 +182,73 @@ describe('MacroService', () => {
   });
 
   describe('getOpportunities', () => {
-    it('should return macro opportunities array', async () => {
+    it('should return real opportunities mapped from the early-opportunity pipeline', async () => {
+      const early = createMockEarlyOpportunity([
+        {
+          ticker: 'THYAO',
+          company: 'Türk Hava Yolları',
+          sector: 'Transportation',
+          eliteScore: 71,
+          earlyOpportunityScore: 85,
+          confidence: 80,
+        },
+        {
+          ticker: 'AKBNK',
+          company: 'Akbank',
+          sector: 'Banking',
+          eliteScore: 78,
+          earlyOpportunityScore: 80,
+          confidence: 75,
+        },
+      ]);
+      const { service } = makeService(early);
       const result = await service.getOpportunities(80);
       expect(Array.isArray(result)).toBe(true);
-      expect(result.length).toBeGreaterThan(0);
-      expect(result[0]).toHaveProperty('ticker');
-      expect(result[0]).toHaveProperty('eliteScore');
+      expect(result.length).toBe(2);
+      expect(result[0].ticker).toBe('THYAO');
+      expect(result[0].eliteScore).toBe(71);
       expect(result[0]).toHaveProperty('macroScore');
       expect(result[0]).toHaveProperty('combinedConfidence');
       expect(result[0]).toHaveProperty('priority');
     });
 
     it('should use default elite score when not provided', async () => {
+      const early = createMockEarlyOpportunity([
+        {
+          ticker: 'THYAO',
+          company: 'Türk Hava Yolları',
+          sector: 'Transportation',
+          eliteScore: 71,
+          earlyOpportunityScore: 85,
+          confidence: 80,
+        },
+      ]);
+      const { service } = makeService(early);
       const result = await service.getOpportunities();
       expect(Array.isArray(result)).toBe(true);
       expect(result.length).toBeGreaterThan(0);
     });
 
-    it('should assign high priority to high combined confidence', async () => {
-      const result = await service.getOpportunities(95);
-      const highPriority = result.find((r) => r.priority === 'high');
-      expect(highPriority).toBeDefined();
+    it('should map combined confidence to priority levels', async () => {
+      const early = createMockEarlyOpportunity([
+        {
+          ticker: 'LOWTK',
+          company: 'Low Co',
+          sector: 'Banking',
+          eliteScore: 20,
+          earlyOpportunityScore: 25,
+          confidence: 20,
+        },
+      ]);
+      const { service } = makeService(early);
+      const result = await service.getOpportunities(20);
+      expect(result[0].priority).toBe('low');
+    });
+
+    it('should return an empty array when the early-opportunity source is unavailable', async () => {
+      const { service } = makeService();
+      const result = await service.getOpportunities(80);
+      expect(result).toEqual([]);
     });
   });
 

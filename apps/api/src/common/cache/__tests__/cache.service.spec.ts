@@ -179,8 +179,10 @@ describe('CacheService', () => {
 
   describe('size estimation', () => {
     it('rejects oversized entries', () => {
-      const result = service.set('big', 'x'.repeat(2 * 1024 * 1024));
+      const small = new CacheService(getCacheConfig({ maxEntrySize: 1024 }));
+      const result = small.set('big', 'x'.repeat(2 * 1024));
       expect(result).toBe(false);
+      small.onModuleDestroy();
     });
   });
 });

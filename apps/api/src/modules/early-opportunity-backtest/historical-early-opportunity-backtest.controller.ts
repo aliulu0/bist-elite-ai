@@ -1,21 +1,65 @@
 import { Controller, Get, Post, Param, Body, Query, NotFoundException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiParam, ApiQuery, ApiBody } from '@nestjs/swagger';
 import { HistoricalEarlyOpportunityBacktestService } from './historical-early-opportunity-backtest.service';
-import { EarlyOpportunityBacktestRequestDto, EarlyOpportunityBacktestRunDto, BacktestRunSummaryDto, BacktestRunResponseDto, DecisionTableRowDto } from './dto/early-opportunity-backtest-request.dto';
+import {
+  EarlyOpportunityBacktestRequestDto,
+  EarlyOpportunityBacktestRunDto,
+  BacktestRunSummaryDto,
+  BacktestRunResponseDto,
+  DecisionTableRowDto,
+} from './dto/early-opportunity-backtest-request.dto';
 import { BacktestRunConfig, DecisionTableRow } from './early-opportunity-backtest.types';
 
 @ApiTags('Backtest / Early Opportunity')
 @Controller('backtest/early-opportunity')
 export class HistoricalEarlyOpportunityBacktestController {
-  constructor(
-    private readonly service: HistoricalEarlyOpportunityBacktestService,
-  ) {}
+  constructor(private readonly service: HistoricalEarlyOpportunityBacktestService) {}
+
+  @Get(':runId([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})')
+  @ApiOperation({ summary: 'Backtest sonucunu getir' })
+  @ApiParam({ name: 'runId' })
+  async getRun(@Param('runId') runId: string): Promise<BacktestRunResponseDto> {
+    const result = this.service.getRun(runId);
+    if (!result) throw new NotFoundException(`Backtest çalıştırması bulunamadı: ${runId}`);
+    const summary = this.service.getSummary(runId);
+    const table = this.service.getDecisions(runId);
+    return {
+      runId: result.runId,
+      completedAt: result.completedAt,
+      decisionsEvaluated: result.decisions.length,
+      outcomesEvaluated: result.outcomes.length,
+      executionDurationMs: result.performance.executionDurationMs,
+      providerCalls: result.performance.providerCalls,
+      cacheHits: result.performance.cacheHits,
+      summary: summary ?? {
+        runId,
+        decisionsEvaluated: 0,
+        winRate: 0,
+        averageReturn: 0,
+        medianReturn: 0,
+        benchmarkExcessReturn: null,
+        maxDrawdown: 0,
+        averageLeadTime: null,
+        falsePositiveCount: 0,
+        missedOpportunityCount: 0,
+        sampleQuality: 'INSUFFICIENT_SAMPLE',
+        survivorshipWarning: 'SURVIVORSHIP_BIAS_POSSIBLE',
+        pointInTimeVerified: true,
+      },
+      decisionTable: table,
+    };
+  }
 
   @Get(':ticker')
   @ApiOperation({ summary: 'Belirli bir hisse için geçmiş erken fırsat değerlendirmesi' })
   @ApiParam({ name: 'ticker', example: 'THYAO.IS' })
-  async getTickerSummary(@Param('ticker') ticker: string): Promise<{ ticker: string; message: string }> {
-    return { ticker, message: `Geçmiş erken fırsat değerlendirmesi için POST /backtest/early-opportunity/run kullanın.` };
+  async getTickerSummary(
+    @Param('ticker') ticker: string,
+  ): Promise<{ ticker: string; message: string }> {
+    return {
+      ticker,
+      message: `Geçmiş erken fırsat değerlendirmesi için POST /backtest/early-opportunity/run kullanın.`,
+    };
   }
 
   @Get()
@@ -27,7 +71,9 @@ export class HistoricalEarlyOpportunityBacktestController {
   @Post('run')
   @ApiOperation({ summary: 'Geçmiş erken fırsat backtest çalıştırması başlat' })
   @ApiBody({ type: EarlyOpportunityBacktestRequestDto })
-  async runBacktest(@Body() dto: EarlyOpportunityBacktestRequestDto): Promise<EarlyOpportunityBacktestRunDto> {
+  async runBacktest(
+    @Body() dto: EarlyOpportunityBacktestRequestDto,
+  ): Promise<EarlyOpportunityBacktestRunDto> {
     const config: BacktestRunConfig = {
       symbols: dto.symbols,
       timeframes: dto.timeframes,
@@ -50,32 +96,6 @@ export class HistoricalEarlyOpportunityBacktestController {
       message: `Backtest tamamlandı. ${result.decisions.length} karar değerlendirildi.`,
       startedAt: result.startedAt,
       config: dto,
-    };
-  }
-
-  @Get(':runId')
-  @ApiOperation({ summary: 'Backtest sonucunu getir' })
-  @ApiParam({ name: 'runId' })
-  async getRun(@Param('runId') runId: string): Promise<BacktestRunResponseDto> {
-    const result = this.service.getRun(runId);
-    if (!result) throw new NotFoundException(`Backtest çalıştırması bulunamadı: ${runId}`);
-    const summary = this.service.getSummary(runId);
-    const table = this.service.getDecisions(runId);
-    return {
-      runId: result.runId,
-      completedAt: result.completedAt,
-      decisionsEvaluated: result.decisions.length,
-      outcomesEvaluated: result.outcomes.length,
-      executionDurationMs: result.performance.executionDurationMs,
-      providerCalls: result.performance.providerCalls,
-      cacheHits: result.performance.cacheHits,
-      summary: summary ?? {
-        runId, decisionsEvaluated: 0, winRate: 0, averageReturn: 0, medianReturn: 0,
-        benchmarkExcessReturn: null, maxDrawdown: 0, averageLeadTime: null,
-        falsePositiveCount: 0, missedOpportunityCount: 0, sampleQuality: 'INSUFFICIENT_SAMPLE',
-        survivorshipWarning: 'SURVIVORSHIP_BIAS_POSSIBLE', pointInTimeVerified: true,
-      },
-      decisionTable: table,
     };
   }
 

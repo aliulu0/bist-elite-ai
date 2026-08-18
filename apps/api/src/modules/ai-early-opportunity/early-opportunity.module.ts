@@ -89,6 +89,7 @@ import { EarlyOpportunityDecisionController } from './decision/early-opportunity
     SelfLearningService,
     EarlyOpportunityDecisionEngine,
     EarlyOpportunityDecisionService,
+    EarlySignalScannerService,
   ],
 })
 export class EarlyOpportunityModule {}

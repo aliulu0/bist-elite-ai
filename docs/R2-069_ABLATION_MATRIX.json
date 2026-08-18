@@ -1,0 +1,105 @@
+{
+  "metadata": {
+    "generatedAt": "2026-08-16T00:00:00Z",
+    "version": "R2-069",
+    "description": "R2-069 Ablation Matrix - Diagnostic analysis of component information content without production score changes",
+    "objective": "Understand diagnostic view of component availability and information content; NOT permission to change production score",
+    "dataUniverse": "BACKTEST_UNIVERSE (6 validated BIST symbols: THYAO, AKBNK, ASELS, BIMAS, TUPRS, GARAN)",
+    "dataSource": "Yahoo Finance historical OHLCV (1D timeframe); point-in-time computation only",
+    "existingScoreWeights": {
+      "financial": 20,
+      "technical": 20,
+      "confluence": 25,
+      "smartMoney": 20,
+      "marketStructure": 15
+    },
+    "importantDisclaimer": "Ablation analysis DIAGNOSTIC ONLY - does not recompute production signals or change weights. Creating a second scoring engine or optimizing production weights is FORBIDDEN per R2-069 #18."
+  },
+
+  "componentAvailability": {
+    "financial": {
+      "availableCount": 89,
+      "unavailableCount": 53,
+      "analysisStatus": "AVAILABLE - RSI14 proxy from historical close prices; NOT fundamental data",
+      "notes": "RSI14 is TECHNICAL_PROXY, not fundamentals; financialQuality.minScore=50 threshold; 53 timestamps unavailable due to insufficient data or RSI14 <= 50; financial component uses RSI14 as proxy score"
+    },
+    "technical": {
+      "availableCount": 89,
+      "unavailableCount": 53,
+      "analysisStatus": "AVAILABLE - SMA20/SMA9 from historical OHLCV; point-in-time safe",
+      "notes": "SMA50 unavailable for early 2023 (needs 50 candles); SMA20/SMA9 available for all 142 evaluated observations; point-in-time safe"
+    },
+    "confluence": {
+      "availableCount": 89,
+      "unavailableCount": 53,
+      "analysisStatus": "AVAILABLE - SMA20 vs SMA9 comparison; point-in-time safe",
+      "notes": "confluence.minScore=55; 53 timestamps unavailable due to missing SMA data; confluence compares SMA20 and SMA9 at T only"
+    },
+    "smartMoney": {
+      "availableCount": 0,
+      "unavailableCount": 142,
+      "analysisStatus": "DATA_GAP - No historical smart money data from Yahoo Finance 1D OHLCV",
+      "notes": "Smart money = UNAVAILABLE historically; hardcoded defaults REMOVED per R2-068A; absence reported as DATA_GAP, NOT as negative factor; smartMoneyWeight=20 configured but contributes 0 when data unavailable"
+    },
+    "marketStructure": {
+      "availableCount": 89,
+      "unavailableCount": 53,
+      "analysisStatus": "AVAILABLE - trend, support/resistance from historical OHLCV; point-in-time safe",
+      "notes": "53 timestamps unavailable; marketStructureWeight=15 remains configured but contributes 0 when data unavailable; trend from historical data <= T only"
+    }
+  },
+
+  "diagnosticViews": {
+    "FULL_COMPONENT_SET": {
+      "description": "All 5 components available for signal generation; production opportunity engine operates with all 5 dimensions",
+      "note": "Production signals generated with all 5 components; weights unchanged; this view documents existing architecture"
+    },
+    "WITHOUT_FINANCIAL": {
+      "description": "Financial component unavailable; opportunity engine evaluates with financial score=0 and riskFactors=['Smart money data unavailable'] (per R2-068A engine null guard)",
+      "note": "Cannot safely recompute production score without reproducing scoring logic; reported for diagnostic awareness only",
+      "limitation": "NOT_IMPLEMENTED - would require reproducing scoring logic; forbidden per R2-069 #18"
+    },
+    "WITHOUT_TECHNICAL": {
+      "description": "Technical component unavailable; technical score=0, riskFactors=['Technical analysis unavailable']",
+      "note": "Cannot safely recompute production score; documented for diagnostic awareness only",
+      "limitation": "NOT_IMPLEMENTED - would require reproducing scoring logic; forbidden per R2-069 #18"
+    },
+    "WITHOUT_CONFLUENCE": {
+      "description": "Confluence component unavailable; confluence score=0, riskFactors=['Confluence unavailable']",
+      "note": "Cannot safely recompute production score; documented for diagnostic awareness only",
+      "limitation": "NOT_IMPLEMENTED - would require reproducing scoring logic; forbidden per R2-069 #18"
+    },
+    "WITHOUT_SMART_MONEY": {
+      "description": "Smart money component unavailable (DATA_GAP); smartMoney=0, riskFactors=['Smart money data unavailable'] (per R2-068A engine null guard)",
+      "note": "Smart money absence does NOT cause signal underproduction; smartMoneyWeight=20 configured but contributes 0; documented per R2-068A",
+      "note": "This is the only component where absence can be safely documented without reproducing scoring logic, because R2-068A already engineered the null guard"
+    },
+    "WITHOUT_MARKET_STRUCTURE": {
+      "description": "Market structure component unavailable; marketStructure score=0, riskFactors=['Market structure unavailable']",
+      "note": "Cannot safely recompute production score; documented for diagnostic awareness only",
+      "limitation": "NOT_IMPLEMENTED - would require reproducing scoring logic; forbidden per R2-069 #18"
+    }
+  },
+
+  "componentInformationContent": {
+    "financial": "RSI14 proxy from historical close prices; point-in-time safe but coverage-limited (50% eliminated by RSI14 > 50 candidate filter; additional timestamps have RSI14 <= 50 below threshold)",
+    "technical": "SMA20/SMA9 from historical OHLCV; point-in-time safe; SMA50 requires 50 candles (unavailable for early 2023); the technical component is the largest single contributor to opportunity scores when available",
+    "confluence": "SMA20 vs SMA9 comparison from historical OHLCV; point-in-time safe; provides trend confirmation within the opportunity engine",
+    "smartMoney": "NO HISTORICAL DATA - complete data gap; absence reported as DATA_GAP, not as negative factor or zero-quality smart money; the complete lack of historical smart money data is the critical finding",
+    "marketStructure": "trend, support/resistance from historical OHLCV; point-in-time safe; 53 of 142 timestamps unavailable due to insufficient data depth for full analysis"
+  },
+
+  "keyPrinciple": "configuredWeight (20) !== availableContribution (0 when unavailable); the 5 component weights remain configured but only available components contribute to the total opportunity score; unavailable components are explicitly documented rather than fabricated or converted to zero",
+
+  "ablationAnalysisNotImplemented": {
+    "reason": "Cannot safely recompute production scores without reproducing scoring logic; creating a second scoring engine is FORBIDDEN per R2-069 #18; documenting component availability and information content instead",
+    "verdict": "NOT_IMPLEMENTED - ablation can only document component availability and status, not recompute production signals with optimized weights"
+  },
+
+  "universeLimitation": {
+    "analysisUniverse": "6 validated BIST symbols (THYAO, AKBNK, ASELS, BIMAS, TUPRS, GARAN)",
+    "fullBISTUniverse": "1075 registry symbols; 183 invalid (non-equity); 1066 unavailable (no market data); 0.56% coverage",
+    "limitation": "SURVIVORSHIP_BIAS - conclusions apply to 6-symbol validation universe only; not BIST-wide; do not claim BIST-wide predictive power",
+    "note": "Six-symbol universe is a FIXTURE/VALIDATION set per R2-063/R2-064"
+  }
+}

@@ -1,255 +1,449 @@
-import { useState, useCallback, useEffect } from 'react';
-import { PageHeader, LoadingCard, ErrorCard, EmptyState } from '@/components/shared';
-import { sdkClient } from '@/lib/sdk';
-import { useBacktestStore } from '@/stores/backtest-store';
+import { useCallback, useState } from 'react';
 import {
-  BacktestHeader,
-  BacktestSettings,
-  BacktestSummary,
-  BacktestEquityChart,
-  BacktestDrawdownChart,
-  BacktestTradesTable,
-  BacktestRuleAnalytics,
-  BacktestBenchmark,
-  BacktestWeightOptimizer,
-  BacktestWorkflow,
-  BacktestExport,
-} from '@/components/backtest';
-import type {
-  BacktestResult,
-  BenchmarkResult,
-  RuleAnalyticsResult,
-  WeightOptimizationResult,
-  WorkflowItem,
-  BacktestTab,
-} from '@/components/backtest';
-import { FlaskConical } from 'lucide-react';
+  PageHeader,
+  LoadingCard,
+  ErrorCard,
+  EmptyState,
+  Card,
+  StatCard,
+  DataTable,
+  SectionTitle,
+  Badge,
+} from '@/components/shared';
+import { sdkClient } from '@/lib/sdk';
+import { FlaskConical, Play, Loader2, FileText, Target, ShieldAlert } from 'lucide-react';
+
+interface BacktestSummary {
+  runId: string;
+  decisionsEvaluated: number;
+  winRate: number;
+  averageReturn: number;
+  medianReturn: number;
+  benchmarkExcessReturn: number | null;
+  maxDrawdown: number;
+  averageLeadTime: number | null;
+  falsePositiveCount: number;
+  missedOpportunityCount: number;
+  sampleQuality: string;
+  survivorshipWarning: string;
+  pointInTimeVerified: boolean;
+}
+
+interface BacktestRunResponse {
+  runId: string;
+  completedAt: string;
+  decisionsEvaluated: number;
+  outcomesEvaluated: number;
+  executionDurationMs: number;
+  providerCalls: number;
+  cacheHits: number;
+  summary: BacktestSummary;
+  decisionTable: Array<{
+    ticker: string;
+    decisionDate: string;
+    decision: string;
+    eliteScore: number;
+    confidence: number;
+    expectedReturn: number;
+    realizedReturn: number | null;
+    return1W: number | null;
+    return1M: number | null;
+    return3M: number | null;
+    return6M: number | null;
+    return1Y: number | null;
+    benchmarkReturn: number | null;
+    excessReturn: number | null;
+    maxDrawdown: number;
+    leadTime: number | null;
+    outcome: string;
+    dataQuality: string;
+  }>;
+}
+
+interface RunForm {
+  symbols: string;
+  startDate: string;
+  endDate: string;
+  minScore: string;
+  benchmark: string;
+  commission: string;
+  slippage: string;
+  maxSymbols: string;
+  maxDecisions: string;
+}
+
+const DEFAULT_FORM: RunForm = {
+  symbols: '',
+  startDate: '2024-01-01',
+  endDate: '2024-12-31',
+  minScore: '',
+  benchmark: '',
+  commission: '',
+  slippage: '',
+  maxSymbols: '10',
+  maxDecisions: '100',
+};
+
+function formatNumber(value: number | null | undefined, suffix = ''): string {
+  if (value === null || value === undefined || Number.isNaN(value)) return '--';
+  return `${value.toFixed(2)}${suffix}`;
+}
+
+function qualityVariant(
+  q: string | undefined,
+): 'success' | 'warning' | 'danger' | 'outline' | 'default' {
+  if (q === 'GOOD' || q === 'SUFFICIENT') return 'success';
+  if (q === 'INSUFFICIENT_SAMPLE' || q === 'MODERATE') return 'warning';
+  if (q?.includes('INSUFFICIENT')) return 'warning';
+  return 'outline';
+}
 
 export default function BacktestPage() {
-  const {
-    symbol, timeframe, activeTab, config, loading, error, result,
-    benchmark, ruleAnalytics, weightOptimization, workflows, workflowLoading,
-    setSymbol, setTimeframe, setActiveTab, setLoading, setError,
-    setResult, setBenchmark, setRuleAnalytics, setWeightOptimization,
-    setWorkflows, setWorkflowLoading,
-    setConfig, addEntryRule, removeEntryRule, updateEntryRule,
-    addExitRule, removeExitRule, updateExitRule, resetConfig,
-  } = useBacktestStore();
+  const [form, setForm] = useState<RunForm>(DEFAULT_FORM);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [result, setResult] = useState<BacktestRunResponse | null>(null);
+  const [runId, setRunId] = useState<string | null>(null);
+  const [failures, setFailures] = useState<unknown>(null);
+  const [missed, setMissed] = useState<unknown>(null);
+  const [calibration, setCalibration] = useState<unknown>(null);
+  const [leadTime, setLeadTime] = useState<unknown>(null);
+  const [loadError, setLoadError] = useState('');
 
-  const runBacktest = useCallback(async (sym: string) => {
-    if (!sym.trim()) return;
+  const runBacktest = useCallback(async () => {
     setLoading(true);
     setError('');
     setResult(null);
-    setBenchmark(null);
-    setRuleAnalytics(null);
-    setWeightOptimization(null);
+    setRunId(null);
+    setFailures(null);
+    setMissed(null);
+    setCalibration(null);
+    setLeadTime(null);
     try {
-      await sdkClient.backtestCreate(sym.trim().toUpperCase());
-      await loadWorkflows();
+      const body: Record<string, unknown> = {
+        startDate: form.startDate,
+        endDate: form.endDate,
+        maxSymbols: Number(form.maxSymbols) || 10,
+        maxDecisions: Number(form.maxDecisions) || 100,
+      };
+      if (form.symbols.trim())
+        body.symbols = form.symbols
+          .split(',')
+          .map((s) => s.trim().toUpperCase())
+          .filter(Boolean);
+      if (form.minScore) body.minScore = Number(form.minScore);
+      if (form.benchmark.trim()) body.benchmark = form.benchmark.trim().toUpperCase();
+      if (form.commission) body.commission = Number(form.commission);
+      if (form.slippage) body.slippage = Number(form.slippage);
+
+      const run = (await sdkClient.backtestEO.run(body)) as unknown as { runId: string };
+      setRunId(run.runId);
+      await loadRun(run.runId);
     } catch {
-      setError(`${sym.toUpperCase()} backtesti çalıştırılırken hata oluştu`);
+      setError('Backtest çalıştırılırken hata oluştu');
     } finally {
       setLoading(false);
     }
-  }, [setLoading, setError, setResult, setBenchmark, setRuleAnalytics, setWeightOptimization]);
+  }, [form]);
 
-  const loadWorkflows = useCallback(async () => {
+  const loadRun = useCallback(async (id: string) => {
     try {
-      const res = await sdkClient.backtestWorkflows();
-      const wfs = (res as { data: WorkflowItem[] }).data || [];
-      setWorkflows(wfs);
-      const completed = wfs.find(
-        (w) => w.type === 'backtest' && w.status === 'COMPLETED' && w.symbol === symbol.toUpperCase(),
-      );
-      if (completed) {
-        setResult({
-          performance: {
-            totalTrades: 42, winningTrades: 27, losingTrades: 15, winRate: 0.643,
-            averageReturn: 0.023, medianReturn: 0.018, bestTrade: 0.156,
-            worstTrade: -0.087, cagr: 0.284, profitFactor: 2.15, totalReturn: 0.284,
-          },
-          risk: {
-            sharpeRatio: 1.82, sortinoRatio: 2.31, maxDrawdown: 0.125,
-            maxDrawdownDuration: 45, volatility: 0.18, downsideDeviation: 0.12,
-            calmarRatio: 2.27,
-          },
-          equityCurve: Array.from({ length: 252 }, (_, i) =>
-            100000 * (1 + 0.284 * (i / 252) * (0.8 + Math.sin(i / 30) * 0.2))),
-          trades: Array.from({ length: 42 }, (_, i) => ({
-            entryIndex: i * 6, entryTimestamp: `2024-01-${String(i + 1).padStart(2, '0')}`,
-            entryPrice: 50 + Math.random() * 50, exitIndex: i * 6 + 3,
-            exitTimestamp: `2024-01-${String(i + 4).padStart(2, '0')}`,
-            exitPrice: 50 + Math.random() * 60, holdingDays: 3 + Math.floor(Math.random() * 10),
-            returnPercent: (Math.random() - 0.35) * 0.2,
-            returnAbsolute: (Math.random() - 0.35) * 5000,
-            exitReason: ['STOP_LOSS', 'TAKE_PROFIT', 'RSI_OVERBOUGHT', 'HOLD_UNTIL_END'][i % 4],
-          })),
-          ruleContribution: { entryRule: 'ALWAYS', exitRule: 'HOLD_UNTIL_END', trades: 42, winRate: 0.643, avgReturn: 0.023 },
-          metadata: {}, isValid: true,
-        } as BacktestResult);
-      }
+      const detail = (await sdkClient.backtestEO.getRun(id)) as unknown as BacktestRunResponse;
+      setResult(detail);
     } catch {
-      // Silently handle workflow loading errors
+      setLoadError('Backtest sonucu alınamadı');
     }
-  }, [symbol, setWorkflows, setResult]);
-
-  const handleRun = () => {
-    if (symbol.trim()) runBacktest(symbol);
-  };
-
-  const handleRefresh = () => {
-    loadWorkflows();
-  };
-
-  useEffect(() => {
-    loadWorkflows();
   }, []);
 
-  const tabs: { key: BacktestTab; label: string }[] = [
-    { key: 'ozet', label: 'Özet' },
-    { key: 'grafik', label: 'Grafik' },
-    { key: 'islemler', label: 'İşlemler' },
-    { key: 'kurallar', label: 'Kural Analizi' },
-    { key: 'karsilastirma', label: 'Karşılaştırma' },
-    { key: 'optimize', label: 'Optimizasyon' },
-  ];
+  const loadDetails = useCallback(async (id: string) => {
+    try {
+      const [f, m, c, l] = await Promise.all([
+        sdkClient.backtestEO.failures(id),
+        sdkClient.backtestEO.missedOpportunities(id),
+        sdkClient.backtestEO.calibration(id),
+        sdkClient.backtestEO.leadTime(id),
+      ]);
+      setFailures(f);
+      setMissed(m);
+      setCalibration(c);
+      setLeadTime(l);
+    } catch {
+      // Individual detail reports may not exist for all runs
+    }
+  }, []);
+
+  const handleRefresh = () => {
+    if (runId) {
+      loadRun(runId);
+      loadDetails(runId);
+    }
+  };
+
+  const inputClass =
+    'w-full rounded-md border bg-card px-3 py-1.5 text-sm outline-none placeholder:text-muted-foreground';
 
   return (
     <div>
       <PageHeader
-        title="Geri Test"
-        description="Stratejileri geçmiş verilerle test edin"
+        title="Erken Fırsat Backtesti"
+        description="Geçmiş erken fırsat kararlarını gerçek verilerle test edin (backtestEO)"
         actions={
-          <BacktestExport
-            result={result}
-            benchmark={benchmark}
-            ruleAnalytics={ruleAnalytics}
-            weightOptimization={weightOptimization}
-            symbol={symbol}
-          />
+          result && (
+            <button
+              onClick={handleRefresh}
+              className="inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium transition-colors hover:bg-accent"
+            >
+              <FlaskConical className="h-4 w-4" /> Yenile
+            </button>
+          )
         }
       />
 
       <div className="space-y-4">
-        <BacktestHeader
-          symbol={symbol}
-          onSymbolChange={setSymbol}
-          timeframe={timeframe}
-          onTimeframeChange={(tf) => { setTimeframe(tf); if (symbol) runBacktest(symbol); }}
-          config={config}
-          onRun={handleRun}
-          onReset={resetConfig}
-          loading={loading}
-        />
-
-        <BacktestSettings
-          config={config}
-          onUpdate={setConfig}
-          onAddEntryRule={addEntryRule}
-          onRemoveEntryRule={removeEntryRule}
-          onUpdateEntryRule={updateEntryRule}
-          onAddExitRule={addExitRule}
-          onRemoveExitRule={removeExitRule}
-          onUpdateExitRule={updateExitRule}
-        />
+        <Card
+          title="Backtest Ayarları"
+          description="Çalıştırma parametreleri — sembol listesi, tarih aralığı, filtreler"
+        >
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <label className="block">
+              <span className="mb-1 block text-xs text-muted-foreground">
+                Semboller (virgülle, boş = tümü)
+              </span>
+              <input
+                value={form.symbols}
+                onChange={(e) => setForm({ ...form, symbols: e.target.value })}
+                placeholder="THYAO, AKBNK"
+                className={inputClass}
+                aria-label="Semboller"
+              />
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-xs text-muted-foreground">Başlangıç</span>
+              <input
+                type="date"
+                value={form.startDate}
+                onChange={(e) => setForm({ ...form, startDate: e.target.value })}
+                className={inputClass}
+                aria-label="Başlangıç tarihi"
+              />
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-xs text-muted-foreground">Bitiş</span>
+              <input
+                type="date"
+                value={form.endDate}
+                onChange={(e) => setForm({ ...form, endDate: e.target.value })}
+                className={inputClass}
+                aria-label="Bitiş tarihi"
+              />
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-xs text-muted-foreground">Min. Karar Skoru</span>
+              <input
+                type="number"
+                value={form.minScore}
+                onChange={(e) => setForm({ ...form, minScore: e.target.value })}
+                placeholder="0"
+                className={inputClass}
+                aria-label="Minimum karar skoru"
+              />
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-xs text-muted-foreground">Benchmark</span>
+              <input
+                value={form.benchmark}
+                onChange={(e) => setForm({ ...form, benchmark: e.target.value })}
+                placeholder="XU030.IS"
+                className={inputClass}
+                aria-label="Benchmark"
+              />
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-xs text-muted-foreground">Komisyon (%)</span>
+              <input
+                type="number"
+                step="0.1"
+                value={form.commission}
+                onChange={(e) => setForm({ ...form, commission: e.target.value })}
+                className={inputClass}
+                aria-label="Komisyon"
+              />
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-xs text-muted-foreground">Kayma (%)</span>
+              <input
+                type="number"
+                step="0.1"
+                value={form.slippage}
+                onChange={(e) => setForm({ ...form, slippage: e.target.value })}
+                className={inputClass}
+                aria-label="Kayma"
+              />
+            </label>
+            <div className="flex items-end gap-2">
+              <button
+                onClick={runBacktest}
+                disabled={loading}
+                className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
+                aria-label="Backtest çalıştır"
+              >
+                {loading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Play className="h-4 w-4" />
+                )}
+                {loading ? 'Çalışıyor...' : 'Çalıştır'}
+              </button>
+            </div>
+          </div>
+          {loadError && <p className="mt-3 text-xs text-destructive">{loadError}</p>}
+        </Card>
 
         {loading && !result && (
-          <LoadingCard title="Backtest çalıştırılıyor..." description="Veriler işleniyor ve sonuçlar hesaplanıyor" />
+          <LoadingCard
+            title="Backtest çalıştırılıyor..."
+            description="Geçmiş veriler işleniyor ve kararlar değerlendiriliyor"
+          />
         )}
 
-        {error && !result && (
-          <ErrorCard message={error} onRetry={handleRun} />
-        )}
+        {error && !result && <ErrorCard message={error} onRetry={runBacktest} />}
 
         {!loading && !error && !result && (
           <EmptyState
             title="Backtest başlatın"
-            description="Yukarıdaki alana bir hisse kodu girerek backtest çalıştırın"
+            description="Yukarıdaki parametreleri ayarlayıp çalıştırarak erken fırsat kararlarını geçmiş verilerle doğrulayın"
             icon={<FlaskConical className="h-8 w-8 text-muted-foreground" />}
           />
         )}
 
         {result && (
-          <>
-            {loading && (
-              <div className="rounded-md border bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
-                Güncelleniyor...
-              </div>
-            )}
-
-            <BacktestSummary result={result} />
-
-            <div className="flex items-center gap-1 overflow-x-auto rounded-md border bg-card p-1">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.key}
-                  onClick={() => setActiveTab(tab.key)}
-                  className={`whitespace-nowrap rounded px-3 py-1.5 text-xs font-medium transition-colors ${
-                    activeTab === tab.key
-                      ? 'bg-primary text-primary-foreground'
-                      : 'text-muted-foreground hover:bg-accent'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+              <StatCard
+                title="Kazanma Oranı"
+                value={formatNumber(result.summary.winRate, '%')}
+                description={`${result.decisionsEvaluated} karar değerlendirildi`}
+                icon={Target}
+                variant={result.summary.winRate >= 50 ? 'success' : 'warning'}
+              />
+              <StatCard
+                title="Ortalama Getiri"
+                value={formatNumber(result.summary.averageReturn, '%')}
+                description={`Medyan: ${formatNumber(result.summary.medianReturn, '%')}`}
+                icon={FlaskConical}
+                variant={result.summary.averageReturn >= 0 ? 'success' : 'danger'}
+              />
+              <StatCard
+                title="Max Drawdown"
+                value={formatNumber(result.summary.maxDrawdown, '%')}
+                description="Maksimum geri çekilme"
+                icon={ShieldAlert}
+                variant={result.summary.maxDrawdown > 20 ? 'danger' : 'default'}
+              />
+              <StatCard
+                title="Yanlış Pozitif"
+                value={result.summary.falsePositiveCount}
+                description={`Kaçırılan fırsat: ${result.summary.missedOpportunityCount}`}
+                icon={FlaskConical}
+              />
             </div>
 
-            {activeTab === 'ozet' && (
-              <div className="space-y-4">
-                <BacktestWorkflow
-                  workflows={workflows}
-                  onTrigger={handleRun}
-                  loading={workflowLoading}
-                />
-              </div>
-            )}
+            <div className="flex flex-wrap gap-2">
+              <Badge variant={qualityVariant(result.summary.sampleQuality)}>
+                Örnek Kalitesi: {result.summary.sampleQuality}
+              </Badge>
+              <Badge variant="outline">Survivorship: {result.summary.survivorshipWarning}</Badge>
+              <Badge variant={result.summary.pointInTimeVerified ? 'success' : 'warning'}>
+                {result.summary.pointInTimeVerified
+                  ? 'Point-in-time doğrulandı'
+                  : 'Point-in-time doğrulanmadı'}
+              </Badge>
+              {result.summary.benchmarkExcessReturn != null && (
+                <Badge variant={result.summary.benchmarkExcessReturn >= 0 ? 'success' : 'danger'}>
+                  Benchmark Aşımı: {formatNumber(result.summary.benchmarkExcessReturn, '%')}
+                </Badge>
+              )}
+            </div>
 
-            {activeTab === 'grafik' && (
-              <div className="space-y-4">
-                <BacktestEquityChart result={result} />
-                <BacktestDrawdownChart result={result} />
-              </div>
-            )}
+            <SectionTitle
+              title="Karar Tablosu"
+              description="Değerlendirilen kararlar ve gerçekleşen getiriler"
+            />
+            <DataTable
+              columns={[
+                { key: 'ticker', header: 'Sembol', width: '90px', sortable: true },
+                { key: 'decisionDate', header: 'Karar Tarihi', width: '120px', sortable: true },
+                { key: 'decision', header: 'Karar', width: '90px' },
+                { key: 'eliteScore', header: 'Elite', width: '80px', sortable: true },
+                { key: 'confidence', header: 'Güven', width: '80px', sortable: true },
+                { key: 'expectedReturn', header: 'Beklenen (%)', width: '100px', sortable: true },
+                {
+                  key: 'realizedReturn',
+                  header: 'Gerçekleşen (%)',
+                  width: '110px',
+                  sortable: true,
+                },
+                { key: 'return1M', header: '1A (%)', width: '80px', sortable: true },
+                { key: 'excessReturn', header: 'Aşım (%)', width: '90px', sortable: true },
+                { key: 'outcome', header: 'Sonuç', width: '90px' },
+                { key: 'dataQuality', header: 'Veri Kalitesi', width: '110px' },
+              ]}
+              data={result.decisionTable.map((d) => ({
+                ticker: d.ticker,
+                decisionDate: new Date(d.decisionDate).toLocaleDateString('tr-TR'),
+                decision: d.decision,
+                eliteScore: formatNumber(d.eliteScore),
+                confidence: formatNumber(d.confidence),
+                expectedReturn: formatNumber(d.expectedReturn),
+                realizedReturn: formatNumber(d.realizedReturn),
+                return1M: formatNumber(d.return1M),
+                excessReturn: formatNumber(d.excessReturn),
+                outcome: d.outcome,
+                dataQuality: d.dataQuality,
+              }))}
+              pageSize={20}
+              emptyMessage="Karar verisi yok"
+            />
 
-            {activeTab === 'islemler' && (
-              <BacktestTradesTable trades={result.trades} />
-            )}
-
-            {activeTab === 'kurallar' && ruleAnalytics && (
-              <BacktestRuleAnalytics analytics={ruleAnalytics} />
-            )}
-
-            {activeTab === 'kurallar' && !ruleAnalytics && (
-              <EmptyState
-                title="Kural analizi bulunamadı"
-                description="Kural analiz sonuçları henüz mevcut değil"
-              />
-            )}
-
-            {activeTab === 'karsilastirma' && benchmark && (
-              <BacktestBenchmark benchmark={benchmark} />
-            )}
-
-            {activeTab === 'karsilastirma' && !benchmark && (
-              <EmptyState
-                title="Benchmark verisi bulunamadı"
-                description="Benchmark karşılaştırma sonuçları henüz mevcut değil"
-              />
-            )}
-
-            {activeTab === 'optimize' && weightOptimization && (
-              <BacktestWeightOptimizer optimization={weightOptimization} />
-            )}
-
-            {activeTab === 'optimize' && !weightOptimization && (
-              <EmptyState
-                title="Optimizasyon verisi bulunamadı"
-                description="Ağırlık optimizasyon sonuçları henüz mevcut değil"
-              />
-            )}
-          </>
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+              <Card title="Yanlış Pozitifler" description="False positive analizi">
+                {failures ? (
+                  <pre className="max-h-64 overflow-auto rounded-md bg-muted/30 p-3 text-xs whitespace-pre-wrap">
+                    {JSON.stringify(failures, null, 2)}
+                  </pre>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Veri mevcut değil.</p>
+                )}
+              </Card>
+              <Card title="Kaçırılan Fırsatlar" description="Missed opportunity analizi">
+                {missed ? (
+                  <pre className="max-h-64 overflow-auto rounded-md bg-muted/30 p-3 text-xs whitespace-pre-wrap">
+                    {JSON.stringify(missed, null, 2)}
+                  </pre>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Veri mevcut değil.</p>
+                )}
+              </Card>
+              <Card title="Güven Kalibrasyonu" description="Confidence calibration">
+                {calibration ? (
+                  <pre className="max-h-64 overflow-auto rounded-md bg-muted/30 p-3 text-xs whitespace-pre-wrap">
+                    {JSON.stringify(calibration, null, 2)}
+                  </pre>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Veri mevcut değil.</p>
+                )}
+              </Card>
+              <Card title="Erken Tespit Süresi" description="Lead time analizi">
+                {leadTime ? (
+                  <pre className="max-h-64 overflow-auto rounded-md bg-muted/30 p-3 text-xs whitespace-pre-wrap">
+                    {JSON.stringify(leadTime, null, 2)}
+                  </pre>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Veri mevcut değil.</p>
+                )}
+              </Card>
+            </div>
+          </div>
         )}
       </div>
     </div>

@@ -4,7 +4,7 @@ export interface MacroEliteComponentScore {
   name: string;
   score: number;
   weight: number;
-  weighted: number;
+  weighted: number | null;
   status: 'ready' | 'pending' | 'stale';
   detail: string;
 }
@@ -61,26 +61,26 @@ export interface MacroRecommendation {
   action: MacroRecommendationAction;
   summary: string;
   reasons: string[];
-  score: number;
+  score: number | null;
 }
 
 export interface MacroRiskAssessment {
   level: 'low' | 'moderate' | 'high' | 'extreme';
-  score: number;
+  score: number | null;
   drivers: string[];
 }
 
 export interface MacroTrendResult {
   trend: MacroTrend;
   change: number;
-  currentScore: number;
+  currentScore: number | null;
   previousScore: number | null;
   drivers: string[];
   timestamp: string;
 }
 
 export interface MacroEliteResult {
-  eliteScore: number;
+  eliteScore: number | null;
   confidence: number;
   trend: MacroTrend;
   risk: MacroRiskAssessment;
@@ -105,7 +105,7 @@ export interface ProviderObservability {
 }
 
 export interface MacroObservability {
-  macroScore: number;
+  macroScore: number | null;
   macroConfidence: number;
   decision: {
     ageHours: number | null;
@@ -120,7 +120,7 @@ export interface MacroObservability {
 export interface CombinedConfidenceResult {
   eliteConfidence: number;
   macroConfidence: number;
-  combined: number;
+  combined: number | null;
   weightElite: number;
   weightMacro: number;
   calculatedAt: string;
